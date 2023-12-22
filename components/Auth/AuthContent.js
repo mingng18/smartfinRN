@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 
 import FlatButton from "../ui/FlatButton";
@@ -61,29 +62,31 @@ function AuthContent({ isLogin, onAuthenticate }) {
   }
 
   return (
-    <KeyboardAvoidingView>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View>
-          <View style={styles.header}>
-            <Text style={styles.titleText}>Welcome to {"\n"}</Text>
+    <ScrollView automaticallyAdjustKeyboardInsets={true}>
+      <KeyboardAvoidingView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View>
+            <View style={styles.header}>
+              <Text style={styles.titleText}>Welcome to {"\n"}</Text>
 
-            <Text style={styles.titleText2}>My TB Companion</Text>
-          </View>
-          <View style={styles.authContent}>
-            <AuthForm
-              isLogin={isLogin}
-              onSubmit={submitHandler}
-              credentialsInvalid={credentialsInvalid}
-            />
-            <View style={styles.buttons}>
-              <FlatButton onPress={switchAuthModeHandler}>
-                {isLogin ? "Create a new user" : "Log in instead"}
-              </FlatButton>
+              <Text style={styles.titleText2}>My TB Companion</Text>
+            </View>
+            <View style={styles.authContent}>
+              <AuthForm
+                isLogin={isLogin}
+                onSubmit={submitHandler}
+                credentialsInvalid={credentialsInvalid}
+              />
+              <View style={styles.buttons}>
+                <FlatButton onPress={switchAuthModeHandler}>
+                  {isLogin ? "Create a new user" : "Log in instead"}
+                </FlatButton>
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 }
 

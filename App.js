@@ -1,6 +1,8 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
+import * as SecureStore from "expo-secure-store";
+import AppLoading from "expo-app-loading";
 
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
@@ -9,8 +11,6 @@ import { Colors } from "./constants/styles";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import { useContext, useEffect, useState } from "react";
 import IconButton from "./components/ui/IconButton";
-import * as SecureStore from "expo-secure-store";
-import AppLoading from "expo-app-loading";
 
 const Stack = createNativeStackNavigator();
 
