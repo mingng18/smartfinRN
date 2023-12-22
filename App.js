@@ -14,6 +14,7 @@ import IconButton from "./components/ui/IconButton";
 
 const Stack = createNativeStackNavigator();
 
+//A prototype auth page
 function AuthStack() {
   return (
     <Stack.Navigator
@@ -30,6 +31,7 @@ function AuthStack() {
   );
 }
 
+//A prototype home page after log in
 function AuthenticatedStack() {
   const authCtx = useContext(AuthContext);
 
@@ -59,6 +61,7 @@ function AuthenticatedStack() {
   );
 }
 
+//A function component to choose the Entry Point for user based on the log in status
 function Navigation() {
   const authCtx = useContext(AuthContext);
   return (
@@ -68,6 +71,10 @@ function Navigation() {
   );
 }
 
+
+//A function to handle the initialization of log in status of the user.
+//Fetching the user token from thee local storage of the device if available.
+//While fetching, display loading screen. 
 function Root() {
   const [isTryingLogin, setIsTryingLogin] = useState(true);
   const authCtx = useContext(AuthContext);
@@ -92,6 +99,7 @@ function Root() {
   return <Navigation />;
 }
 
+//Apps Starts here
 export default function App() {
   return (
     <>

@@ -32,3 +32,6 @@ function AuthContextProvider({ children }) {
 }
 
 export default AuthContextProvider;
+
+
+/*A provider to manage the content stored in the memory level of the device*/

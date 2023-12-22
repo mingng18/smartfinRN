@@ -18,6 +18,7 @@ function SignupScreen() {
       authCtx.authenticate(token);
     }catch(error){
       Alert.alert("Authentication failed, please check your input and try again later.")
+      console.log(error);
     }
       setIsAuthenticating(false);
   }
