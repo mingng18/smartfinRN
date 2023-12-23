@@ -1,0 +1,14 @@
+{
+  "customColors": {
+    "sourceYellow": "#EFAC51",
+    "yellow": "#845400",
+    "onYellow": "#FFFFFF",
+    "yellowContainer": "#FFDDB6",
+    "onYellowContainer": "#2A1800",
+    "sourceGreen": "#D6F4C8",
+    "green": "#306B25",
+    "onGreen": "#FFFFFF",
+    "greenContainer": "#B1F49D",
+    "onGreenContainer": "#012200"
+  }
+}
