@@ -75,6 +75,17 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
         secure
         isInvalid={passwordIsInvalid}
       />
+      {isLogin ? "" : <TextInput
+        mode="outlined"
+        style={{ height: 56, marginTop: 16 }}
+        label="Confirm Password"
+        placeholder="Type your password"
+        onChangeText={updateInputValueHandler.bind(this, "confirm password")}
+        value={enteredPassword}
+        secure
+        isInvalid={passwordIsInvalid}
+        
+      />}
       <Button
         key="forgotPassword"
         mode="text"
@@ -82,7 +93,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
         onPress={() => {}}
         style={{ marginTop: 8, width: "100%", alignItems: "flex-end" }}
       >
-        Forgot Password?
+        {isLogin ? "Forgot Password?" : ""}
       </Button>
       <View style={{ flexGrow: 1 }} />
       {/* <Input

@@ -15,7 +15,7 @@ import FlatButton from "../ui/FlatButton";
 import AuthForm from "./AuthForm";
 import { useNavigation } from "@react-navigation/native";
 
-function AuthContent({ isLogin, onAuthenticate }) {
+function AuthContentSignup({ isLogin, onAuthenticate }) {
   const navigation = useNavigation();
   const theme = useTheme();
 
@@ -28,7 +28,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
 
   function switchAuthModeHandler() {
     if (isLogin) {
-      navigation.replace("Signup");
+      navigation.navigate("Signup");
     } else {
       navigation.replace("Login");
     }
@@ -68,22 +68,8 @@ function AuthContent({ isLogin, onAuthenticate }) {
         {/* <ScrollView automaticallyAdjustKeyboardInsets={true}> */}
         <KeyboardAvoidingView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ height: "100%" }}>
-              <View style={[styles.header]}>
-                <Text
-                  style={[styles.titleText, { color: theme.colors.onPrimary }]}
-                  variant="headlineLarge"
-                >
-                  Welcome to
-                </Text>
 
-                <Text
-                  style={[styles.titleText2, { color: theme.colors.onPrimary }]}
-                  variant="displayLarge"
-                >
-                  My TB Companion
-                </Text>
-              </View>
+            <View style={{ height: "100%" }}>
               <View
                 style={[
                   styles.authContent,
@@ -102,38 +88,10 @@ function AuthContent({ isLogin, onAuthenticate }) {
                     width: "100%",
                   }}
                 >
-                  <Button
-                    mode="contained-tonal"
-                    onPress={() => {}}
-                    style={[styles.button, { flex: 1, marginRight: 8 }]}
-                  >
-                    Patient Sign Up
-                  </Button>
-                  <Button
-                    mode="contained-tonal"
-                    onPress={() => {}}
-                    style={[styles.button, { flex: 1, marginLeft: 8 }]}
-                  >
-                    Healthcare Sign Up
-                  </Button>
                 </View>
                 <Divider style={{ height: 1 }} />
                 {/* TODO: To be Google Sign in */}
-                <Button
-                  mode="contained-tonal"
-                  icon="google"
-                  onPress={() => {}}
-                  style={[
-                    styles.button,
-                    {
-                      height: 40,
-                      marginTop: 16,
-                      backgroundColor: theme.colors.surfaceVariant,
-                    },
-                  ]}
-                >
-                  Google Sign In
-                </Button>
+
                 {/* TODO: To be removed */}
                 {/* <View style={styles.buttons}>
                 <FlatButton onPress={switchAuthModeHandler}>
@@ -153,7 +111,7 @@ function AuthContent({ isLogin, onAuthenticate }) {
   );
 }
 
-export default AuthContent;
+export default AuthContentSignup;
 
 const styles = StyleSheet.create({
   titleText: {

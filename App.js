@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { configureFonts, MD3LightTheme, PaperProvider } from "react-native-paper";
 import { useFonts } from 'expo-font';
@@ -14,6 +14,7 @@ import { Colors } from "./constants/styles";
 // import { baseVariants, customVariants } from "./constants/customFonts";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import IconButton from "./components/ui/IconButton";
+import CustomNavigationBar from "./components/ui/NavigationBar";
 
 const Stack = createNativeStackNavigator();
 
@@ -22,14 +23,14 @@ function AuthStack() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: false,
+        header: (props) => <CustomNavigationBar {...props} />,
         headerStyle: { backgroundColor: Colors.primary500 },
         headerTintColor: "white",
         contentStyle: { backgroundColor: Colors.primary100 },
       }}
     >
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
+      <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: true}}/>
     </Stack.Navigator>
   );
 }

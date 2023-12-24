@@ -1,52 +1,67 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
-  View,
   StyleSheet,
+  View,
   SafeAreaView,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
+  ScrollView,
 } from "react-native";
-
-import AuthContentSignup from "../../components/Auth/AuthContent_Signup";
-import LoadingOverlay from "../../components/ui/LoadingOverlay";
-import { createUser } from "../../util/auth";
-import { AuthContext } from "../../store/auth-context";
-import AuthForm from "../../components/Auth/AuthForm";
 import { Text, useTheme, Button, Divider } from "react-native-paper";
 
-function SignupScreen() {
-  const [isAuthenticating, setIsAuthenticating] = useState();
+import FlatButton from "../ui/FlatButton";
+import AuthForm from "./AuthForm";
+import { useNavigation } from "@react-navigation/native";
+
+function AuthContentLogin({ isLogin, onAuthenticate }) {
+  const navigation = useNavigation();
+  const theme = useTheme();
+
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
     password: false,
     confirmEmail: false,
     confirmPassword: false,
   });
-  const theme = useTheme();
 
-  const authCtx = useContext(AuthContext);
-
-  async function signupHandler({ email, password }) {
-    setIsAuthenticating(true);
-    try {
-      const token = await createUser(email, password);
-      authCtx.authenticate(token);
-    } catch (error) {
-      Alert.alert(
-        "Authentication failed, please check your input and try again later."
-      );
-      console.log(error);
+  function switchAuthModeHandler() {
+    if (isLogin) {
+      navigation.navigate("Signup");
+    } else {
+      navigation.replace("Login");
     }
-    setIsAuthenticating(false);
   }
 
-  if (isAuthenticating) {
-    return <LoadingOverlay message="Creating user..." />;
+  function submitHandler(credentials) {
+    let { email, confirmEmail, password, confirmPassword } = credentials;
+
+    email = email.trim();
+    password = password.trim();
+
+    const emailIsValid = email.includes("@");
+    const passwordIsValid = password.length > 6;
+    const emailsAreEqual = email === confirmEmail;
+    const passwordsAreEqual = password === confirmPassword;
+
+    if (
+      !emailIsValid ||
+      !passwordIsValid ||
+      (!isLogin && (!emailsAreEqual || !passwordsAreEqual))
+    ) {
+      Alert.alert("Invalid input", "Please check your entered credentials.");
+      setCredentialsInvalid({
+        email: !emailIsValid,
+        confirmEmail: !emailIsValid || !emailsAreEqual,
+        password: !passwordIsValid,
+        confirmPassword: !passwordIsValid || !passwordsAreEqual,
+      });
+      return;
+    }
+    onAuthenticate({ email, password });
   }
 
-  return <AuthContentSignup onAuthenticate={signupHandler}/>;
   return (
     <>
       <SafeAreaView style={{ backgroundColor: theme.colors.primary, flex: 1 }}>
@@ -54,17 +69,32 @@ function SignupScreen() {
         <KeyboardAvoidingView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ height: "100%" }}>
+              <View style={[styles.header]}>
+                <Text
+                  style={[styles.titleText, { color: theme.colors.onPrimary }]}
+                  variant="headlineLarge"
+                >
+                  Welcome to
+                </Text>
+
+                <Text
+                  style={[styles.titleText2, { color: theme.colors.onPrimary }]}
+                  variant="displayLarge"
+                >
+                  My TB Companion
+                </Text>
+              </View>
               <View
                 style={[
                   styles.authContent,
                   { backgroundColor: theme.colors.background },
                 ]}
               >
-                {/* <AuthContentSignup
-                  isLogin={true}
-                  onSubmit={signupHandler}
+                <AuthForm
+                  isLogin={isLogin}
+                  onSubmit={submitHandler}
                   credentialsInvalid={credentialsInvalid}
-                /> */}
+                />
                 <View
                   style={{
                     flexDirection: "row",
@@ -74,14 +104,14 @@ function SignupScreen() {
                 >
                   <Button
                     mode="contained-tonal"
-                    onPress={() => {}}
+                    onPress={switchAuthModeHandler}
                     style={[styles.button, { flex: 1, marginRight: 8 }]}
                   >
                     Patient Sign Up
                   </Button>
                   <Button
                     mode="contained-tonal"
-                    onPress={() => {}}
+                    onPress={switchAuthModeHandler}
                     style={[styles.button, { flex: 1, marginLeft: 8 }]}
                   >
                     Healthcare Sign Up
@@ -123,7 +153,7 @@ function SignupScreen() {
   );
 }
 
-export default SignupScreen;
+export default AuthContentLogin;
 
 const styles = StyleSheet.create({
   titleText: {
