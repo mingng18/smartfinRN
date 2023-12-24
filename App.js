@@ -8,7 +8,7 @@ import * as SecureStore from "expo-secure-store";
 import AppLoading from "expo-app-loading";
 
 import LoginScreen from "./screens/LoginScreen";
-import SignupScreen from "./screens/SignupScreen";
+import SignupScreen from "./screens/auth/SignupScreen";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import { Colors } from "./constants/styles";
 // import { baseVariants, customVariants } from "./constants/customFonts";
