@@ -13,6 +13,7 @@ import AppLoading from "expo-app-loading";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import Navigation from "./navigation/Navigation";
 import { baseVariants, customVariants } from "./constants/customFonts";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 //A function to handle the initialization of log in status of the user.
 //Fetching the user token from thee local storage of the device if available.
@@ -87,10 +88,12 @@ export default function App() {
   }
 
   return (
-    <AuthContextProvider>
-      <PaperProvider theme={lightTheme}>
-        <Root />
-      </PaperProvider>
-    </AuthContextProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthContextProvider>
+        <PaperProvider theme={lightTheme}>
+          <Root />
+        </PaperProvider>
+      </AuthContextProvider>
+    </GestureHandlerRootView>
   );
 }
