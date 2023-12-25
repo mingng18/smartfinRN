@@ -1,83 +1,18 @@
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   configureFonts,
   MD3LightTheme,
   PaperProvider,
 } from "react-native-paper";
+import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import AppLoading from "expo-app-loading";
-
-import LoginScreen from "./screens/LoginScreen";
-import SignupScreen from "./screens/auth/SignupScreen";
-import WelcomeScreen from "./screens/WelcomeScreen";
-import { Colors } from "./constants/styles";
-// import { baseVariants, customVariants } from "./constants/customFonts";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
-import IconButton from "./components/ui/IconButton";
-import CustomNavigationBar from "./components/ui/NavigationBar";
+import Navigation from "./navigation/Navigation";
 
-const Stack = createNativeStackNavigator();
-
-//A prototype auth page
-function AuthStack() {
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        header: (props) => <CustomNavigationBar {...props} />,
-        headerStyle: { backgroundColor: Colors.primary500 },
-        headerTintColor: "white",
-        contentStyle: { backgroundColor: Colors.primary100 },
-      }}
-    >
-      <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}}/>
-      <Stack.Screen name="Signup" component={SignupScreen} options={{headerShown: true}}/>
-    </Stack.Navigator>
-  );
-}
-
-//A prototype home page after log in
-function AuthenticatedStack() {
-  const authCtx = useContext(AuthContext);
-
-  return (
-    <Stack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: Colors.primary500 },
-        headerTintColor: "white",
-        contentStyle: { backgroundColor: Colors.primary100 },
-      }}
-    >
-      <Stack.Screen
-        name="Welcome"
-        component={WelcomeScreen}
-        options={{
-          headerRight: ({ tintColor }) => (
-            <IconButton
-              icon="exit"
-              color={tintColor}
-              size={24}
-              onPress={authCtx.logout}
-            />
-          ),
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-//A function component to choose the Entry Point for user based on the log in status
-function Navigation() {
-  const authCtx = useContext(AuthContext);
-  return (
-    <NavigationContainer>
-      {authCtx.isAuthenticated ? <AuthenticatedStack /> : <AuthStack />}
-    </NavigationContainer>
-  );
-}
 
 //A function to handle the initialization of log in status of the user.
 //Fetching the user token from thee local storage of the device if available.
