@@ -12,7 +12,7 @@ import * as SecureStore from "expo-secure-store";
 import AppLoading from "expo-app-loading";
 import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import Navigation from "./navigation/Navigation";
-
+import { baseVariants, customVariants } from "./constants/customFonts";
 
 //A function to handle the initialization of log in status of the user.
 //Fetching the user token from thee local storage of the device if available.
@@ -44,83 +44,6 @@ function Root() {
 //Define the theme for the app, which is the color and the typography
 const lightThemeColors = require("./constants/light-theme-colors.json");
 const lightThemeCustomColors = require("./constants/light-theme-custom-colors.json");
-
-const baseFont = { fontFamily: "DMSans-Regular" };
-const baseVariants = configureFonts({ config: baseFont });
-
-// Then, define custom fonts for different variants
-// Customize individual base variants:
-
-const customVariants = {
-  displayLarge: {
-    ...baseVariants.displayLarge,
-    fontFamily: "DMSans-Bold",
-  },
-  displayMedium: {
-    ...baseVariants.displayMedium,
-    fontFamily: "DMSans-Regular",
-  },
-  displaySmall: {
-    ...baseVariants.displaySmall,
-    fontFamily: "DMSans-Regular",
-  },
-  headlineLarge: {
-    ...baseVariants.headlineLarge,
-    fontFamily: "DMSans-Bold",
-  },
-  headlineMedium: {
-    ...baseVariants.headlineMedium,
-    fontFamily: "DMSans-Regular",
-  },
-  headlineSmall: {
-    ...baseVariants.headlineSmall,
-    fontFamily: "DMSans-Regular",
-  },
-  titleLarge: {
-    ...baseVariants.titleLarge,
-    fontFamily: "DMSans-Medium",
-  },
-  titleMedium: {
-    ...baseVariants.titleMedium,
-    fontFamily: "DMSans-Bold",
-  },
-  titleSmall: {
-    ...baseVariants.titleSmall,
-    fontFamily: "DMSans-Medium",
-  },
-  bodyLarge: {
-    ...baseVariants.bodyLarge,
-    fontFamily: "DMSans-Regular",
-  },
-  bodyMedium: {
-    ...baseVariants.bodyMedium,
-    fontFamily: "DMSans-Regular",
-  },
-  bodySmall: {
-    ...baseVariants.bodySmall,
-    fontFamily: "DMSans-Regular",
-  },
-  labelLargeProminent: {
-    ...baseVariants.labelLarge,
-    fontFamily: "DMSans-SemiBold",
-  },
-  labelLarge: {
-    ...baseVariants.labelLarge,
-    fontFamily: "DMSans-Medium",
-  },
-  labelMediumProminent: {
-    ...baseVariants.labelMedium,
-    fontFamily: "DMSans-SemiBold",
-  },
-  labelMedium: {
-    ...baseVariants.labelMedium,
-    fontFamily: "DMSans-SemiBold",
-  },
-  labelSmall: {
-    ...baseVariants.labelSmall,
-    fontFamily: "DMSans-Medium",
-  },
-};
 
 const lightTheme = {
   ...MD3LightTheme,
@@ -164,13 +87,10 @@ export default function App() {
   }
 
   return (
-    <>
-      <StatusBar style="light" />
-      <AuthContextProvider>
-        <PaperProvider theme={lightTheme}>
-          <Root />
-        </PaperProvider>
-      </AuthContextProvider>
-    </>
+    <AuthContextProvider>
+      <PaperProvider theme={lightTheme}>
+        <Root />
+      </PaperProvider>
+    </AuthContextProvider>
   );
 }

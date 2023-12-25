@@ -2,7 +2,6 @@ import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import { Button, TextInput } from "react-native-paper";
-import Input from "./Input";
 
 function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
   const [enteredEmail, setEnteredEmail] = useState("");

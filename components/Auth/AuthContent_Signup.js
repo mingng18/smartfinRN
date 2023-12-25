@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { Text, useTheme, Button, Divider } from "react-native-paper";
 
-import FlatButton from "../ui/FlatButton";
 import AuthForm from "./AuthForm";
 import { useNavigation } from "@react-navigation/native";
 

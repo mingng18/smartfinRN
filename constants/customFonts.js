@@ -5,12 +5,12 @@ import { configureFonts } from "react-native-paper";
 // displaySmall, headlineMedium, titleLarge etc.
 
 const baseFont = { fontFamily: "DMSans-Regular" };
-const baseVariants = configureFonts({ config: baseFont });
+export const baseVariants = configureFonts({ config: baseFont });
 
 // Then, define custom fonts for different variants
 // Customize individual base variants:
 
-const customVariants = {
+export const customVariants = {
   displayLarge: {
     ...baseVariants.displayLarge,
     fontFamily: "DMSans-Bold",
