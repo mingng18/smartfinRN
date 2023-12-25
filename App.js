@@ -1,7 +1,11 @@
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { configureFonts, MD3LightTheme, PaperProvider } from "react-native-paper";
-import { useFonts } from 'expo-font';
+import {
+  configureFonts,
+  MD3LightTheme,
+  PaperProvider,
+} from "react-native-paper";
+import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
@@ -196,7 +200,6 @@ const lightTheme = {
     ...lightThemeCustomColors.customColors,
   },
 };
-
 
 //Apps Starts here
 export default function App() {
