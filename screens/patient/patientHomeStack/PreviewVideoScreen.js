@@ -5,13 +5,9 @@ import { View, StyleSheet } from "react-native";
 import {
   ActivityIndicator,
   Button,
-  Dialog,
-  Portal,
-  Text,
   useTheme,
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
