@@ -4,32 +4,51 @@ import PreviewVideoScreen from "../screens/patient/patientHomeStack/PreviewVideo
 import PatientBottomNavBar from "./PatientBottomNavBar";
 import { useTheme } from "react-native-paper";
 import CustomAppBar from "../components/ui/CustomAppBar";
+import ReportSideEffectScreen from "../screens/patient/patientHomeStack/ReportSideEffectScreen";
+import { useNavigation } from "@react-navigation/native";
+import { useLayoutEffect } from "react";
 
 const PatientStack = createNativeStackNavigator();
 
 export default function PatientStackGroup() {
-
   const theme = useTheme();
-    return (
-      <PatientStack.Navigator
+
+  return (
+    <PatientStack.Navigator
       screenOptions={{
         header: (props) => <CustomAppBar {...props} />,
       }}
-      >
-        <PatientStack.Screen
-          name="PatientBottomNavBar"
-          component={PatientBottomNavBar}
-          options={{ headerShown: false }}
-        />
-        <PatientStack.Screen
-          name="PreviewVideoScreen"
-          component={PreviewVideoScreen}
-          options={{ headerShown: true, presentation: "fullScreenModal", tabBarStyle: {
+      
+    >
+      <PatientStack.Screen
+        name="PatientBottomNavBar"
+        component={PatientBottomNavBar}
+        options={{ headerShown: false }}
+      />
+      <PatientStack.Screen
+        name="PreviewVideoScreen"
+        component={PreviewVideoScreen}
+        options={{
+          headerShown: true,
+          presentation: "fullScreenModal",
+          tabBarStyle: {
             display: "none",
           },
-          tabBarButton: () => null,}}
-        />
-      </PatientStack.Navigator>
-    );
-  }
-  
+          tabBarButton: () => null,
+        }}
+      />
+      <PatientStack.Screen
+        name="ReportSideEffectScreen"
+        component={ReportSideEffectScreen}
+        options={{
+          headerShown: true,
+          presentation: 'fullScreenModal'
+          // tabBarStyle: {
+          //   display: "none",
+          // },
+          // tabBarButton: () => null,
+        }}
+      />
+    </PatientStack.Navigator>
+  );
+}

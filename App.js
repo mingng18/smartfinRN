@@ -14,6 +14,8 @@ import AuthContextProvider, { AuthContext } from "./store/auth-context";
 import Navigation from "./navigation/Navigation";
 import { baseVariants, customVariants } from "./constants/customFonts";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { enGB, registerTranslation } from "react-native-paper-dates";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 //A function to handle the initialization of log in status of the user.
 //Fetching the user token from thee local storage of the device if available.
@@ -87,11 +89,16 @@ export default function App() {
     return null;
   }
 
+  // Initialise the React NAtive Paper Calendar library
+  registerTranslation("en-GB", enGB);
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <AuthContextProvider>
         <PaperProvider theme={lightTheme}>
-          <Root />
+          <BottomSheetModalProvider>
+            <Root />
+          </BottomSheetModalProvider>
         </PaperProvider>
       </AuthContextProvider>
     </GestureHandlerRootView>

@@ -51,11 +51,11 @@
     "surfaceContainerHighest": "#E3E2E9",
     "elevation": {
       "level0": "transparent",
-      "level1": "rgb(251, 241, 242)",
-      "level2": "rgb(249, 235, 235)",
-      "level3": "rgb(246, 229, 227)",
-      "level4": "rgb(246, 226, 224)",
-      "level5": "rgb(244, 222, 219)"
+      "level1": "#FFFFFF",
+      "level2": "#F4F3FA",
+      "level3": "#EEEDF4",
+      "level4": "#E8E7EF",
+      "level5": "#E3E2E9"
     },
     "surfaceDisabled": "rgba(32, 26, 24, 0.12)",
     "onSurfaceDisabled": "rgba(32, 26, 24, 0.38)",
