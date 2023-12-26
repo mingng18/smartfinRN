@@ -62,8 +62,6 @@ function PatientHomeScreen() {
   return (
     <GestureHandlerRootView>
       {/* <ScrollView automaticallyAdjustKeyboardInsets={true}> */}
-      <KeyboardAvoidingView>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View
             style={{
               backgroundColor: theme.colors.secondaryContainer,
@@ -192,8 +190,6 @@ function PatientHomeScreen() {
             </View>
           </View>
           <UploadVideoModal bottomSheetModalRef={bottomSheetModalRef} />
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
       {/* </ScrollView> */}
     </GestureHandlerRootView>
   );
