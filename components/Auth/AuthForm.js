@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 
 import { Button, TextInput } from "react-native-paper";
 
-function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
+function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword }) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredConfirmEmail, setEnteredConfirmEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
@@ -89,7 +89,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid }) {
         key="forgotPassword"
         mode="text"
         compact
-        onPress={() => {}}
+        onPress={()=>showForgotPassword()}
         style={{ marginTop: 8, width: "100%", alignItems: "flex-end" }}
       >
         {isLogin ? "Forgot Password?" : ""}

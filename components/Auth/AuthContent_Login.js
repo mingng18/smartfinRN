@@ -9,7 +9,7 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import { Text, useTheme, Button, Divider } from "react-native-paper";
+import { Text, useTheme, Button, Divider, Portal, Modal, TextInput } from "react-native-paper";
 
 import AuthForm from "./AuthForm";
 import { useNavigation } from "@react-navigation/native";
@@ -17,13 +17,27 @@ import { useNavigation } from "@react-navigation/native";
 function AuthContentLogin({ isLogin, onAuthenticate }) {
   const navigation = useNavigation();
   const theme = useTheme();
+  
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
 
+  const [visible, setVisible] = useState(false);
+  const [enteredForgotEmail, setEnteredForgotEmail] = useState("");
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
     password: false,
     confirmEmail: false,
     confirmPassword: false,
   });
+
+  async function forgotPasswordHandler() {
+    try {
+      const email = await sendPasswordResetEmail(enteredForgotEmail);
+      Alert.alert("Password reset!");
+    } catch (error) {
+      Alert.alert("Something went wrong, please check your email entered is correct and try again.");
+    }
+  }
 
   function switchAuthModeHandler() {
     if (isLogin) {
@@ -68,6 +82,42 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
         <KeyboardAvoidingView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={{ height: "100%" }}>
+            <Portal>
+                  <Modal
+                    visible={visible}
+                    onDismiss={hideModal}
+                    contentContainerStyle={{
+                      backgroundColor: "white",
+                      padding: 20,
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.titleText,
+                        { color: theme.colors.onPrimary },
+                      ]}
+                    >
+                      Please enter your email to reset password
+                    </Text>
+                    <TextInput
+                      mode="outlined"
+                      style={{ height: 56 }}
+                      label="Forgot Email Address"
+                      placeholder="Type your email"
+                      onChangeText={email => setEnteredForgotEmail(email)}
+                      value={enteredForgotEmail}
+                      keyboardType="email-address"
+                      // isInvalid={emailIsInvalid}
+                    />
+                    <Button
+                      mode="contained"
+                      onPress={forgotPasswordHandler}
+                      style={{ height: 40 }}
+                    >
+                      {"Reset Password"}
+                    </Button>
+                  </Modal>
+                </Portal>
               <View style={[styles.header]}>
                 <Text
                   style={[styles.titleText, { color: theme.colors.onPrimary }]}
@@ -93,6 +143,7 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                   isLogin={isLogin}
                   onSubmit={submitHandler}
                   credentialsInvalid={credentialsInvalid}
+                  showForgotPassword={showModal}
                 />
                 <View
                   style={{

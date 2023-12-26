@@ -30,9 +30,10 @@ function Root() {
 
   useEffect(() => {
     async function fetchToken() {
+      // await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
       const storedToken = await SecureStore.getItemAsync("token");
-
-      if (storedToken != "") {
+      console.log("Initialized token:" + storedToken);
+      if (storedToken != "" && storedToken != null) {
         // authCtx.authenticate(storedToken);
         dispatch(authenticateStoreNative(storedToken));
       }

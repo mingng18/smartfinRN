@@ -13,7 +13,7 @@ export default function Navigation() {
 
   return (
     <NavigationContainer>
-      {authenticated ? <AuthStack /> : <AuthStack />}
+      {authenticated ? <PatientStackGroup /> : <AuthStack />}
     </NavigationContainer>
   );
 }
