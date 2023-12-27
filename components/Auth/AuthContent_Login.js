@@ -35,9 +35,21 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
   const [credentialsInvalid, setCredentialsInvalid] = useState({
     email: false,
     password: false,
-    confirmEmail: false,
-    confirmPassword: false,
   });
+
+  const [enteredEmail, setEnteredEmail] = useState("");
+  const [enteredPassword, setEnteredPassword] = useState("");
+
+  function updateInputValueHandler(inputType, enteredValue) {
+    switch (inputType) {
+      case "email":
+        setEnteredEmail(enteredValue);
+        break;
+      case "password":
+        setEnteredPassword(enteredValue);
+        break;
+    }
+  }
 
   async function forgotPasswordHandler() {
     try {
@@ -59,27 +71,21 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
   }
 
   function submitHandler(credentials) {
-    let { email, confirmEmail, password, confirmPassword } = credentials;
 
-    email = email.trim();
-    password = password.trim();
+    email = enteredEmail.trim();
+    password = enteredPassword.trim();
 
     const emailIsValid = email.includes("@");
     const passwordIsValid = password.length > 6;
-    const emailsAreEqual = email === confirmEmail;
-    const passwordsAreEqual = password === confirmPassword;
 
     if (
       !emailIsValid ||
-      !passwordIsValid ||
-      (!isLogin && (!emailsAreEqual || !passwordsAreEqual))
+      !passwordIsValid
     ) {
       Alert.alert("Invalid input", "Please check your entered credentials.");
       setCredentialsInvalid({
         email: !emailIsValid,
-        confirmEmail: !emailIsValid || !emailsAreEqual,
         password: !passwordIsValid,
-        confirmPassword: !passwordIsValid || !passwordsAreEqual,
       });
       return;
     }
@@ -150,12 +156,52 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                   { backgroundColor: theme.colors.background },
                 ]}
               >
-                <AuthForm
-                  isLogin={isLogin}
-                  onSubmit={submitHandler}
-                  credentialsInvalid={credentialsInvalid}
-                  showForgotPassword={showModal}
-                />
+                <View style={{ marginBottom: 16 }}>
+                  <TextInput
+                    mode="outlined"
+                    style={{ height: 56 }}
+                    label="Email Address"
+                    placeholder="Type your email"
+                    onChangeText={updateInputValueHandler.bind(this, "email")}
+                    value={enteredEmail}
+                    keyboardType="email-address"
+                    error={credentialsInvalid.email}
+                  />
+                  <TextInput
+                    mode="outlined"
+                    style={{ height: 56, marginTop: 16 }}
+                    label="Password"
+                    placeholder="Type your password"
+                    onChangeText={updateInputValueHandler.bind(
+                      this,
+                      "password"
+                    )}
+                    value={enteredPassword}
+                    secureTextEntry
+                    error={credentialsInvalid.password}
+                  />
+                  <Button
+                    key="forgotPassword"
+                    mode="text"
+                    compact
+                    onPress={() => showModal()}
+                    style={{
+                      marginTop: 8,
+                      width: "100%",
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    {isLogin ? "Forgot Password?" : ""}
+                  </Button>
+                  <View style={{ flexGrow: 1 }} />
+                  <Button
+                    mode="contained"
+                    onPress={submitHandler}
+                    style={{ height: 40 }}
+                  >
+                    Log In
+                  </Button>
+                </View>
                 <View
                   style={{
                     flexDirection: "row",
