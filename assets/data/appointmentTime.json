@@ -1,0 +1,10 @@
+{
+  "appointmentTime": [
+    { "label": "2:00 pm", "hour": 2 , "minute" : 0 },
+    { "label": "2:30 pm", "hour": 2 , "minute" : 30 },
+    { "label": "3:00 pm", "hour": 3 , "minute" : 0 },
+    { "label": "3:30 pm", "hour": 3 , "minute" : 30 },
+    { "label": "4:00 pm", "hour": 4 , "minute" : 0 },
+    { "label": "4:30 pm", "hour": 4 , "minute" : 30 }
+  ]
+}

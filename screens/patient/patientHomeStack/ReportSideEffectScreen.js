@@ -17,6 +17,7 @@ import * as SecureStore from "expo-secure-store";
 import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
+import MessageDialog from "../../../components/ui/MessageDialog";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -71,20 +72,20 @@ function ReportSideEffectScreen() {
       setTimePickerOpen(false);
       setHour(hours);
       setMinute(minutes);
-      console.log({ hours, minutes });
+      // console.log({ hours, minutes });
     },
     [setTimePickerOpen]
   );
 
   //Symptoms Checkbox
   const handleCheckboxChange = (value) => {
-    let newArray = [...symptoms]; 
+    let newArray = [...symptoms];
     if (newArray.includes(value)) {
-      newArray = newArray.filter((oldValue) => oldValue !== value); 
+      newArray = newArray.filter((oldValue) => oldValue !== value);
     } else {
-      newArray.push(value); 
+      newArray.push(value);
     }
-    setSymptoms(newArray); 
+    setSymptoms(newArray);
   };
 
   //TODO update date, hour, minute and symptoms to firebase
@@ -117,114 +118,126 @@ function ReportSideEffectScreen() {
 
 
   return (
-    <ScrollView
-      automaticallyAdjustKeyboardInsets={true}
-      style={{
-        backgroundColor: theme.colors.background,
-      }}
-    >
-      <View
+    <>
+      <ScrollView
+        automaticallyAdjustKeyboardInsets={true}
         style={{
-          paddingHorizontal: 16,
-          paddingTop: 16,
           backgroundColor: theme.colors.background,
-          flex: 1,
         }}
       >
-        <Text variant="titleLarge">When did these symptoms start?</Text>
-        <Pressable onPress={() => setCalendarOpen(true)}>
-          <View pointerEvents="none">
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Date"
-              placeholder="Starting date of the symptoms"
-              value={date}
-              onChangeText={(value) => setDate(value)}
-              right={
-                <TextInput.Icon
-                  icon="calendar-blank"
-                  color={theme.colors.onBackground}
-                />
-              }
-              maxLength={100}
-            />
-          </View>
-        </Pressable>
-        <Pressable onPress={() => setTimePickerOpen(true)}>
-          <View pointerEvents="none">
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Time"
-              placeholder="Starting date of the symptoms"
-              value={hour == "" ? `` : `${hour} : ${minute}`}
-              onChangeText={(value) => setDate(value)}
-              right={
-                <TextInput.Icon
-                  icon="clock"
-                  color={theme.colors.onBackground}
-                />
-              }
-              maxLength={100}
-            />
-          </View>
-        </Pressable>
-        <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
-          Symptoms experienced
-        </Text>
-        {tuberculosisSymptoms.map((symptom, i) => (
-          <Checkbox.Item
-            key={symptom}
-            label={symptom}
-            accessibilityLabel={symptom}
-            mode="android"
-            status={symptoms.includes(symptom) ? "checked" : "unchecked"}
-            onPress={() => handleCheckboxChange(symptom)}
-            style={{ justifyContent: "flex-start" }}
-            labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
-            position="leading"
-          />
-        ))}
-        <View style={{ alignItems: "flex-end" }}>
-          <Button
-            mode="contained"
-            style={{ marginTop: 40, marginBottom: 56 }}
-            onPress={() => setDialogVisible(true)}
-          >
-            Report
-          </Button>
-        </View>
-        {/* Modal for date picker and time picker */}
         <View
-          style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 16,
+            backgroundColor: theme.colors.background,
+            flex: 1,
+          }}
         >
-          <DatePickerModal
-            locale="en-GB"
-            mode="single"
-            visible={calendarOpen}
-            onDismiss={onDismissSingle}
-            date={date}
-            onConfirm={onConfirmSingle}
-            presentationStyle="pageSheet"
-          />
-          <TimePickerModal
-            locale="en-GB"
-            visible={timePickerOpen}
-            onDismiss={onDismiss}
-            onConfirm={onConfirm}
-            use24HourClock={false}
-          />
-          <ReportedDialog
+          <Text variant="titleLarge">When did these symptoms start?</Text>
+          <Pressable onPress={() => setCalendarOpen(true)}>
+            <View pointerEvents="none">
+              <TextInput
+                mode="outlined"
+                style={{ marginTop: 16 }}
+                label="Date"
+                placeholder="Starting date of the symptoms"
+                value={date}
+                onChangeText={(value) => setDate(value)}
+                right={
+                  <TextInput.Icon
+                    icon="calendar-blank"
+                    color={theme.colors.onBackground}
+                  />
+                }
+                maxLength={100}
+              />
+            </View>
+          </Pressable>
+          <Pressable onPress={() => setTimePickerOpen(true)}>
+            <View pointerEvents="none">
+              <TextInput
+                mode="outlined"
+                style={{ marginTop: 16 }}
+                label="Time"
+                placeholder="Starting date of the symptoms"
+                value={hour == "" ? `` : `${hour} : ${minute}`}
+                onChangeText={(value) => setDate(value)}
+                right={
+                  <TextInput.Icon
+                    icon="clock"
+                    color={theme.colors.onBackground}
+                  />
+                }
+                maxLength={100}
+              />
+            </View>
+          </Pressable>
+          <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
+            Symptoms experienced
+          </Text>
+          {tuberculosisSymptoms.map((symptom, i) => (
+            <Checkbox.Item
+              key={symptom}
+              label={symptom}
+              accessibilityLabel={symptom}
+              mode="android"
+              status={symptoms.includes(symptom) ? "checked" : "unchecked"}
+              onPress={() => handleCheckboxChange(symptom)}
+              style={{ justifyContent: "flex-start" }}
+              labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
+              position="leading"
+            />
+          ))}
+          <View style={{ alignItems: "flex-end" }}>
+            <Button
+              mode="contained"
+              style={{ marginTop: 40, marginBottom: 56 }}
+              onPress={() => setDialogVisible(true)}
+            >
+              Report
+            </Button>
+          </View>
+          {/* Modal for date picker and time picker */}
+          <View
+            style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+          >
+            <DatePickerModal
+              locale="en-GB"
+              mode="single"
+              visible={calendarOpen}
+              onDismiss={onDismissSingle}
+              date={date}
+              onConfirm={onConfirmSingle}
+              presentationStyle="pageSheet"
+            />
+            <TimePickerModal
+              locale="en-GB"
+              visible={timePickerOpen}
+              onDismiss={onDismiss}
+              onConfirm={onConfirm}
+              use24HourClock={false}
+            />
+            {/* <MessageDialog
             visible={dialogVisible}
             close={() => {
               submitDataToDatabase();
               navigation.goBack();
             }}
-          />
+            title="Report Successful!"
+            content="The healthcare will reviewed it shortly."
+            buttonText="Back to Home Page"
+          /> */}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <ReportedDialog
+        visible={dialogVisible}
+        close={() => {
+          setDialogVisible(false);
+          navigation.goBack();
+        }}
+      />
+    </>
   );
 }
 

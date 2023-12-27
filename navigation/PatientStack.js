@@ -7,6 +7,9 @@ import CustomAppBar from "../components/ui/CustomAppBar";
 import ReportSideEffectScreen from "../screens/patient/patientHomeStack/ReportSideEffectScreen";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
+import AllAppointmentScreen from "../screens/patient/patientHomeStack/AllAppointmentScreen";
+import AppointmentDetailsScreen from "../screens/patient/patientHomeStack/AppointmentDetailsScreen";
+import BookAppointmentScreen from "../screens/patient/patientHomeStack/BookAppointmentScreen";
 
 const PatientStack = createNativeStackNavigator();
 
@@ -31,10 +34,6 @@ export default function PatientStackGroup() {
         options={{
           headerShown: true,
           presentation: "fullScreenModal",
-          tabBarStyle: {
-            display: "none",
-          },
-          tabBarButton: () => null,
         }}
       />
       <PatientStack.Screen
@@ -43,10 +42,30 @@ export default function PatientStackGroup() {
         options={{
           headerShown: true,
           presentation: 'fullScreenModal'
-          // tabBarStyle: {
-          //   display: "none",
-          // },
-          // tabBarButton: () => null,
+        }}
+      />
+      <PatientStack.Screen
+        name="AllAppointmentScreen"
+        component={AllAppointmentScreen}
+        options={{
+          headerShown: true,
+          presentation: 'fullScreenModal'
+        }}
+      />
+      <PatientStack.Screen
+        name="AppointmentDetailsScreen"
+        component={AppointmentDetailsScreen}
+        options={{
+          headerShown: true,
+          presentation: 'fullScreenModal'
+        }}
+      />
+      <PatientStack.Screen
+        name="BookAppointmentScreen"
+        component={BookAppointmentScreen}
+        options={{
+          headerShown: true,
+          presentation: 'fullScreenModal'
         }}
       />
     </PatientStack.Navigator>
