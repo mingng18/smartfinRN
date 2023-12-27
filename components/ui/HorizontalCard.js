@@ -19,10 +19,7 @@ export default function HorizontalCard({
         android_ripple={{ color: theme.colors.onBackground, borderless: false }}
         style={[styles.cardContainer]}
       >
-        <Image
-          source={require("../../assets/blank-profile-pic.png")}
-          style={styles.profilePic}
-        />
+        <Image source={{ uri: profilePic }} style={styles.profilePicStyle} />
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>
@@ -49,7 +46,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  profilePic: {
+  profilePicStyle: {
     width: 40,
     height: 40,
     marginRight: 16,

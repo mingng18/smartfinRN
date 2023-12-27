@@ -14,7 +14,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
 
   const handleClosePress = () => bottomSheetModalRef.current.close();
 
-  const pickImage = async () => {
+  const pickVideo = async () => {
     //No permission when launching image library
     setTimeout(() => setDialogVisible(true), 1000);
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,7 +55,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
           <Button
             mode="text"
             onPress={() => {
-              pickImage();
+              pickVideo();
               bottomSheetModalRef.current.close();
             }}
           >

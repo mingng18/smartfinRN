@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -25,13 +25,11 @@ function AuthContentSignup({ isLogin, onAuthenticate }) {
     confirmPassword: false,
   });
 
-  function switchAuthModeHandler() {
-    if (isLogin) {
-      navigation.navigate("Signup");
-    } else {
-      navigation.replace("Login");
-    }
-  }
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Sign In Credentials",
+    });
+  });
 
   function submitHandler(credentials) {
     let { email, confirmEmail, password, confirmPassword } = credentials;
@@ -64,10 +62,8 @@ function AuthContentSignup({ isLogin, onAuthenticate }) {
   return (
     <>
       <SafeAreaView style={{ backgroundColor: theme.colors.primary, flex: 1 }}>
-        {/* <ScrollView automaticallyAdjustKeyboardInsets={true}> */}
         <KeyboardAvoidingView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-
             <View style={{ height: "100%" }}>
               <View
                 style={[
@@ -80,28 +76,10 @@ function AuthContentSignup({ isLogin, onAuthenticate }) {
                   onSubmit={submitHandler}
                   credentialsInvalid={credentialsInvalid}
                 />
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginVertical: 16,
-                    width: "100%",
-                  }}
-                >
-                </View>
-                <Divider style={{ height: 1 }} />
-                {/* TODO: To be Google Sign in */}
-
-                {/* TODO: To be removed */}
-                {/* <View style={styles.buttons}>
-                <FlatButton onPress={switchAuthModeHandler}>
-                  {isLogin ? "Create a new user" : "Log in instead"}
-                </FlatButton>
-              </View> */}
               </View>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-        {/* </ScrollView> */}
       </SafeAreaView>
       <SafeAreaView
         style={{ flex: 0, backgroundColor: theme.colors.background }}
@@ -126,8 +104,6 @@ const styles = StyleSheet.create({
   authContent: {
     flexGrow: 1,
     padding: 16,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
   },
   buttons: {
     marginTop: 8,

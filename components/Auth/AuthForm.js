@@ -54,16 +54,6 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword })
         keyboardType="email-address"
         isInvalid={emailIsInvalid}
       />
-      {/* TODO: remove */}
-      {/* {!isLogin && (
-          <Input
-            label="Confirm Email Address"
-            onUpdateValue={updateInputValueHandler.bind(this, "confirmEmail")}
-            value={enteredConfirmEmail}
-            keyboardType="email-address"
-            isInvalid={emailsDontMatch}
-          />
-        )} */}
       <TextInput
         mode="outlined"
         style={{ height: 56, marginTop: 16 }}
@@ -71,7 +61,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword })
         placeholder="Type your password"
         onChangeText={updateInputValueHandler.bind(this, "password")}
         value={enteredPassword}
-        secure
+        secureTextEntry
         isInvalid={passwordIsInvalid}
       />
       {isLogin ? "" : <TextInput
@@ -95,25 +85,6 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword })
         {isLogin ? "Forgot Password?" : ""}
       </Button>
       <View style={{ flexGrow: 1 }} />
-      {/* <Input
-          label="Password"
-          onUpdateValue={updateInputValueHandler.bind(this, "password")}
-          secure
-          value={enteredPassword}
-          isInvalid={passwordIsInvalid}
-        /> */}
-      {/* {!isLogin && (
-          <Input
-            label="Confirm Password"
-            onUpdateValue={updateInputValueHandler.bind(
-              this,
-              "confirmPassword"
-            )}
-            secure
-            value={enteredConfirmPassword}
-            isInvalid={passwordsDontMatch}
-          />
-        )} */}
       <Button mode="contained" onPress={submitHandler} style={{ height: 40 }}>
         {isLogin ? "Log In" : "Sign Up"}
       </Button>

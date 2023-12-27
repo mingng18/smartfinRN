@@ -13,26 +13,28 @@ export default function CustomDropDownPicker({
   const theme = useTheme();
   return (
     <DropDownPicker
-      style={{
-        backgroundColor: theme.colors.background,
-        borderRadius: 4,
-        borderColor: theme.colors.onSurface,
-      }}
+      style={[
+        {
+          backgroundColor: theme.colors.background,
+          borderRadius: 4,
+          borderColor: theme.colors.outline, 
+        },
+      ]}
       arrowIconStyle={{
         width: 24,
         height: 24,
         marginRight: 4,
-        color: theme.colors.onSurface,
+        color: theme.colors.outline,
       }}
       tickIconStyle={{
         width: 24,
         height: 24,
         marginRight: 4,
-        color: theme.colors.onSurface,
+        color: theme.colors.outline,
       }}
       dropDownContainerStyle={{
         backgroundColor: theme.colors.background,
-        borderColor: theme.colors.onSurface,
+        borderColor: theme.colors.outline,
       }}
       textStyle={{
         fontFamily: "DMSans-Regular",
@@ -44,7 +46,7 @@ export default function CustomDropDownPicker({
         marginLeft: 4,
         fontFamily: "DMSans-Regular",
         fontSize: 16,
-        color: theme.colors.onSurface,
+        color: theme.colors.onSurfaceVariant,
       }}
       placeholder={placeholder}
       open={open}

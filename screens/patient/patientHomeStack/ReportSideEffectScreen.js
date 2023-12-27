@@ -17,7 +17,6 @@ import * as SecureStore from "expo-secure-store";
 import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
-import MessageDialog from "../../../components/ui/MessageDialog";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();

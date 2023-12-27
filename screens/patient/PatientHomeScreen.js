@@ -10,12 +10,13 @@ import { useNavigation } from "@react-navigation/native";
 import {
   GestureHandlerRootView,
   ScrollView,
-  TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import React, { useCallback, useLayoutEffect, useMemo, useRef } from "react";
 import ToDoCard from "../../components/ui/ToDoCard";
 import CTAButton from "../../components/ui/CTAButton";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
+import { BLANK_PROFILE_PIC } from "../../constants/constants";
+
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
@@ -70,7 +71,7 @@ function PatientHomeScreen() {
         <View style={[styles.homeHeader]}>
           {/* TODO Change the name to the patients image */}
           <Image
-            source={require("../../assets/blank-profile-pic.png")}
+            source={{uri : BLANK_PROFILE_PIC}}
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <View style={[styles.headerText]}>
