@@ -1,62 +1,61 @@
-// Function to store a document in Firestore
-async function storeDocument(collection, document) {
-    const url = `https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/${collection}`;
-    
-    const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(document),
-    });
+import { db } from "./firebaseConfig";
+import { setError } from "../store/redux/application_state/errorStateSlice";
+import {
+  removePendingState,
+  setInPendingState,
+} from "../store/redux/application_state/pendingStateSlice";
+import { useDispatch } from "react-redux";
+import { getFirestore, collection, getDocs, setDoc, doc, addDoc } from "firebase/firestore";
 
-    if (response.ok) {
-        console.log('Document stored successfully!');
+export async function fetchDocument(collectionName, documentId) {
+    const docRef = doc(db, collectionName, documentId);
+    const docSnapshot = await getDoc(docRef);
+
+    if (docSnapshot.exists()) {
+        const documentData = docSnapshot.data();
+        return { id: docSnapshot.id, ...documentData };
     } else {
-        console.error('Failed to store document:', response.status);
+        throw new Error("Document does not exist");
     }
 }
 
-// Function to retrieve a document from Firestore
-async function retrieveDocument(collection, documentId) {
-    const url = `https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/${collection}/${documentId}`;
-    
-    const response = await fetch(url);
+export async function fetchCollection(collectionName) {
+    try {
+        const collectionRef = collection(db, collectionName);
+        const snapshot = await getDocs(collectionRef);
+        const documents = [];
 
-    if (response.ok) {
-        const data = await response.json();
-        console.log('Retrieved document:', data);
-    } else {
-        console.error('Failed to retrieve document:', response.status);
+        snapshot.forEach((doc) => {
+            documents.push({ id: doc.id, ...doc.data() });
+        });
+
+        return documents;
+    } catch (error) {
+        throw new Error("Failed to fetch collection: " + error.message);
     }
 }
 
-// Function to edit a document in Firestore
-async function editDocument(collection, documentId, updatedDocument) {
-    const url = `https://firestore.googleapis.com/v1/projects/YOUR_PROJECT_ID/databases/(default)/documents/${collection}/${documentId}`;
-    
-    const response = await fetch(url, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedDocument),
-    });
+export async function addDocument(collectionName, documentData) {
+    try {
+        const collectionRef = collection(db, collectionName);
+        const docRef = await addDoc(collectionRef, documentData);
+        return docRef.id;
+    } catch (error) {
+        throw new Error("Failed to store document: " + error.message);
+    }
+}
 
-    if (response.ok) {
-        console.log('Document edited successfully!');
-    } else {
-        console.error('Failed to edit document:', response.status);
+//to further edit unusable at the moment
+export async function editDocument(collectionName, documentId, updatedData) {
+    try {
+        const docRef = doc(db, collectionName, documentId);
+        await setDoc(docRef, updatedData);
+    } catch (error) {
+        throw new Error("Failed to edit document: " + error.message);
     }
 }
 
 
 
-// // Example usage
-// const myDocument = {
-//     name: 'John Doe',
-//     age: 30,
-// };
 
-// storeDocument('users', myDocument);
-// retrieveDocument('users', 'documentId');
+

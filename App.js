@@ -10,6 +10,9 @@ import { StatusBar } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import AppLoading from "expo-app-loading";
+import { db, getPatient } from "./util/firebaseConfig";
+import { collection, getDocs } from 'firebase/firestore/lite';
+
 // import { AuthContext } from "./store/auth-context";
 import Navigation from "./navigation/Navigation";
 import { baseVariants, customVariants } from "./constants/customFonts";
@@ -19,6 +22,8 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
 import {store} from './store/redux/store'
 import { authenticateStoreNative } from "./store/redux/authSlice";
+import { setInPendingState, removePendingState } from "./store/redux/application_state/pendingStateSlice"
+import { fetchCollection, fetchDocument } from "./util/firestoreWR";
 
 //A function to handle the initialization of log in status of the user.
 //Fetching the user token from thee local storage of the device if available.
@@ -29,13 +34,14 @@ function Root() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+
     async function fetchToken() {
-      // await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
+      await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
       const storedToken = await SecureStore.getItemAsync("token");
       console.log("Initialized token:" + storedToken);
       if (storedToken != "" && storedToken != null) {
-        // authCtx.authenticate(storedToken);
-        dispatch(authenticateStoreNative(storedToken));
+        const storedUid = await SecureStore.getItemAsync("uid");
+        dispatch(authenticateStoreNative(storedToken, storedUid));
       }
       setIsTryingLogin(false);
     }

@@ -6,12 +6,12 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Keyboard
+  Keyboard,
 } from "react-native";
 
 import AuthContentSignup from "../../components/Auth/AuthContent_Signup";
 import LoadingOverlay from "../../components/ui/LoadingOverlay";
-import { createUser } from "../../util/auth";
+import { createUser } from "../../util/firebaseAuth";
 // import { AuthContext } from "../../store/auth-context";
 import AuthForm from "../../components/Auth/AuthForm";
 import { Text, useTheme, Button, Divider } from "react-native-paper";
@@ -34,11 +34,11 @@ function SignupScreen() {
   async function signupHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
-      const token = await createUser(email, password);
+      const snapshot = await createUser(email, password);
       // authCtx.authenticate(token);
       // dispatch(authenticate({token : token}))
-      
-      dispatch(authenticateStoreNative(token));
+
+      dispatch(authenticateStoreNative(snapshot.token, snapshot.uid));
     } catch (error) {
       Alert.alert(
         "Authentication failed, please check your input and try again later."
@@ -52,81 +52,7 @@ function SignupScreen() {
     return <LoadingOverlay message="Creating user..." />;
   }
 
-  return <AuthContentSignup onAuthenticate={signupHandler}/>;
-  return (
-    <>
-      <SafeAreaView style={{ backgroundColor: theme.colors.primary, flex: 1 }}>
-        {/* <ScrollView automaticallyAdjustKeyboardInsets={true}> */}
-        <KeyboardAvoidingView>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ height: "100%" }}>
-              <View
-                style={[
-                  styles.authContent,
-                  { backgroundColor: theme.colors.background },
-                ]}
-              >
-                {/* <AuthContentSignup
-                  isLogin={true}
-                  onSubmit={signupHandler}
-                  credentialsInvalid={credentialsInvalid}
-                /> */}
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginVertical: 16,
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    mode="contained-tonal"
-                    onPress={() => {}}
-                    style={[styles.button, { flex: 1, marginRight: 8 }]}
-                  >
-                    Patient Sign Up
-                  </Button>
-                  <Button
-                    mode="contained-tonal"
-                    onPress={() => {}}
-                    style={[styles.button, { flex: 1, marginLeft: 8 }]}
-                  >
-                    Healthcare Sign Up
-                  </Button>
-                </View>
-                <Divider style={{ height: 1 }} />
-                {/* TODO: To be Google Sign in */}
-                <Button
-                  mode="contained-tonal"
-                  icon="google"
-                  onPress={() => {}}
-                  style={[
-                    styles.button,
-                    {
-                      height: 40,
-                      marginTop: 16,
-                      backgroundColor: theme.colors.surfaceVariant,
-                    },
-                  ]}
-                >
-                  Google Sign In
-                </Button>
-                {/* TODO: To be removed */}
-                {/* <View style={styles.buttons}>
-                <FlatButton onPress={switchAuthModeHandler}>
-                  {isLogin ? "Create a new user" : "Log in instead"}
-                </FlatButton>
-              </View> */}
-              </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </KeyboardAvoidingView>
-        {/* </ScrollView> */}
-      </SafeAreaView>
-      <SafeAreaView
-        style={{ flex: 0, backgroundColor: theme.colors.background }}
-      />
-    </>
-  );
+  return <AuthContentSignup onAuthenticate={signupHandler} />;
 }
 
 export default SignupScreen;

@@ -12,7 +12,11 @@ import {
 } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
+import * as SecureStore from "expo-secure-store";
+
 import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
+import { addDocument } from "../../../util/firestoreWR";
+import { serverTimestamp, Timestamp } from "firebase/firestore";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -23,6 +27,7 @@ function ReportSideEffectScreen() {
   const [dialogVisible, setDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
+  const [submitDate, setSubmitDate] = React.useState(undefined);
   const [hour, setHour] = React.useState("");
   const [minute, setMinute] = React.useState("");
   const [symptoms, setSymptoms] = React.useState([]);
@@ -51,6 +56,7 @@ function ReportSideEffectScreen() {
         .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
       console.log(formattedDate);
       setDate(formattedDate);
+      setSubmitDate(params.date);
     },
     [setCalendarOpen, setDate]
   );
@@ -82,6 +88,33 @@ function ReportSideEffectScreen() {
   };
 
   //TODO update date, hour, minute and symptoms to firebase
+  async function submitDataToDatabase() {
+    try {
+      const storedUid = await SecureStore.getItemAsync("uid");
+      submitDate.setMinutes(hour);
+      submitDate.setHours(minute);
+      submitDate.setSeconds(0);
+
+      const newSideEffect = {
+        created_timestamp: serverTimestamp(),
+        side_effect_occuring_timestamp: Timestamp.fromDate(submitDate),
+        reviewed_timestamp: null,
+        healthcare_id: null,
+        patient_id: storedUid,
+        se_status: "pending",
+        symptoms: symptoms,
+        remarks: null,
+      };
+
+      await addDocument("side_effect", newSideEffect);
+    } catch (error) {
+      console.error("Error submitting data to database:", error);
+      // Handle the error here (e.g., show an error message to the user)
+    } finally {
+      setDialogVisible(false);
+    }
+  }
+
 
   return (
     <ScrollView
@@ -185,7 +218,7 @@ function ReportSideEffectScreen() {
           <ReportedDialog
             visible={dialogVisible}
             close={() => {
-              setDialogVisible(false);
+              submitDataToDatabase();
               navigation.goBack();
             }}
           />

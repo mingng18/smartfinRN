@@ -3,7 +3,7 @@ import { Alert } from "react-native";
 
 import AuthContentLogin from "../components/Auth/AuthContent_Login";
 import LoadingOverlay from "../components/ui/LoadingOverlay";
-import { login } from "../util/auth";
+import { login } from "../util/firebaseAuth";
 // import { AuthContext } from "../store/auth-context";
 import { useDispatch } from "react-redux";
 import { authenticateStoreNative } from "../store/redux/authSlice";
@@ -17,11 +17,11 @@ function LoginScreen() {
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
-      const token = await login(email, password);
+      const snapshot = await login(email, password);
       // authCtx.authenticate(token);
       // dispatch(authenticate({token : token}))
 
-      dispatch(authenticateStoreNative(token));
+      dispatch(authenticateStoreNative(snapshot.token, snapshot.uid));
     } catch (error) {
       Alert.alert(
         "Authentication failed! Please check your credentials or sign up a new account!"

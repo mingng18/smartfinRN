@@ -13,6 +13,7 @@ import { Text, useTheme, Button, Divider, Portal, Modal, TextInput } from "react
 
 import AuthForm from "./AuthForm";
 import { useNavigation } from "@react-navigation/native";
+import {sendPasswordResetEmail} from "../../util/firebaseAuth";
 
 function AuthContentLogin({ isLogin, onAuthenticate }) {
   const navigation = useNavigation();
