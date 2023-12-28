@@ -34,7 +34,6 @@ import { fetchCollection, fetchDocument } from "./util/firestoreWR";
 //While fetching, display loading screen.
 function Root() {
   const [isTryingLogin, setIsTryingLogin] = useState(true);
-  // const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
 
   useEffect(() => {

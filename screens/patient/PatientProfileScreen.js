@@ -2,7 +2,6 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { Button, Chip, IconButton, Text, useTheme } from "react-native-paper";
 import TextListButton from "../../components/ui/TextListButton";
-import { Button } from "react-native-paper";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
@@ -13,6 +12,8 @@ import { logoutDeleteNative } from "../../store/redux/authSlice";
 
 function PatientProfileScreen() {
   const theme = useTheme();
+  const auth = getAuth();
+  const dispatch = useDispatch();
 
   function signOutHandler() {
   

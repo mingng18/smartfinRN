@@ -59,18 +59,18 @@ export default function PersonalInformationScreen() {
 
   async function nextButtonHandler() {
 
+    // Calculate age based on nric
     if (nric !== null){
       const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
       setAge(((new Date().getFullYear() - nric.slice(0, 2))- millennium));
-      console.log(age)
     }
 
     // Input validation logic
-    const nameRegex = /^[A-Za-z ]+$/;
-    const phoneRegex = /^\+[0-9]{10,13}$/;
-    const nricRegex = /^[0-9]{12}$/;
-    const passportRegex = /^[A-Za-z]{1}\d{7}$/;
-    const ageRegex = /^\d{1,3}$/;
+    const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
+    const phoneRegex = /^\+[0-9]{10,13}$/; //+60123456789
+    const nricRegex = /^[0-9]{12}$/; //Without spacing and -
+    const passportRegex = /^[A-Za-z]{1}\d{7}$/; //A1234567
+    const ageRegex = /^\d{1,3}$/; //1-3 digits
 
     const isFirstNameValid = nameRegex.test(firstName);
     const isLastNameValid = nameRegex.test(lastName);

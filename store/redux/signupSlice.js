@@ -19,8 +19,15 @@ const signupSlice = createSlice({
         password: '',
         profilePictureURI: null,
         age: null,
+        signupMode: '',
+        staffId: '',
+        role: '',
+        category: '',
     },
     reducers: {
+        updateSignupMode: (state, action) => {
+            state.signupMode = action.payload.signupMode;
+        },
         updateSignInCredentials: (state, action) => {
             state.email = action.payload.email;
             state.password = action.payload.password;
@@ -33,6 +40,13 @@ const signupSlice = createSlice({
             state.nationality = action.payload.nationality;
             state.nric_passport = action.payload.nric_passport;
             state.age = action.payload.age;
+        },
+        updateHealthcareInformation: (state, action) => {
+            state.firstName = action.payload.firstName;
+            state.lastName = action.payload.lastName;
+            state.staffId = action.payload.staffId;
+            state.role = action.payload.role;
+            state.category = action.payload.category;
         },
         updateProfilePictureURI: (state, action) => {
             state.profilePictureURI = action.payload.profilePictureURI;
@@ -47,9 +61,11 @@ const signupSlice = createSlice({
     },
 });
 
+export const updateSignupMode = signupSlice.actions.updateSignupMode;
 export const updateProfilePictureURI = signupSlice.actions.updateProfilePictureURI;
 export const updateSignInCredentials = signupSlice.actions.updateSignInCredentials;
 export const updatePersonalInformation = signupSlice.actions.updatePersonalInformation;
+export const updateHealthcareInformation = signupSlice.actions.updateHealthcareInformation;
 export const updateMedicalInformation = signupSlice.actions.updateMedicalInformation;
 
 export default signupSlice.reducer;

@@ -8,7 +8,7 @@ import LoadingOverlay from "../../components/ui/LoadingOverlay";
 import { useDispatch } from "react-redux";
 
 
-import { updateSignInCredentials } from "../../store/redux/signupSlice";
+import { updateSignInCredentials, updateSignupMode } from "../../store/redux/signupSlice";
 
 
 export default function SignInInfoScreen({ route }) {
@@ -46,14 +46,8 @@ export default function SignInInfoScreen({ route }) {
     }
     setIsAuthenticating(true);
     try {
-      
-      // const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      // const user = userCredential.user;
-      // const token = await user.getIdTokenResult()
-      
-      // dispatch(authenticateStoreNative(token.token, user.uid));
       dispatch(updateSignInCredentials({email: email, password: password}));
-
+      dispatch(updateSignupMode({signupMode: signUpMode}) );
       if (signUpMode === "patient") {
         navigation.navigate("PersonalInformationScreen");
       } else {

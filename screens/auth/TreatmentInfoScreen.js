@@ -60,6 +60,7 @@ export default function TreatmentInfoScreen() {
     // Add more treatment options as needed
   ]);
 
+  //Text inputs
   const [durationOfTreatment, setDurationOfTreatment] = React.useState("");
   const [numberOfTablets, setNumberOfTablets] = React.useState("");
   const [credentialsInvalid, setCredentialsInvalid] = React.useState({
@@ -70,12 +71,6 @@ export default function TreatmentInfoScreen() {
   const [submitDate, setSubmitDate] = React.useState("");
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: "Treatment Information",
-    });
-  });
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {
@@ -100,7 +95,7 @@ export default function TreatmentInfoScreen() {
     [setCalendarOpen, setDiagnosisDate]
   );
 
-  async function saveUserDateToFirestore(userType,userId, profilePicUrl) {
+  async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
     await addDocumentWithId(userType, userId, {
       email: signupInfo.email,
       first_name: signupInfo.firstName,
@@ -123,7 +118,7 @@ export default function TreatmentInfoScreen() {
 
   async function uploadImage(uri, path, userId) {
     console.log("Uploading image to " + uri);
-    console.log("User is  " + userId)
+    console.log("User is  " + userId);
     const imageData = await fetch(uri);
     const imageBlob = await imageData.blob();
 
@@ -142,24 +137,23 @@ export default function TreatmentInfoScreen() {
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
           console.log("File available at ", downloadURL);
-          await saveUserDateToFirestore("patient",userId, downloadURL);
+          await saveUserDateToFirestore("patient", userId, downloadURL);
         });
       }
     );
   }
 
-  //TODO Handle Submission
+  //Handle Submission Function : To be called when user clicks on the sign up button
   async function handleFinishSignUpSubmission() {
+    //format date to firebase format
     setSubmitDate(new Date().setDate(submitDate));
-    console.log(submitDate);
-    console.log("NOw treatment is " + treatment);
 
-    const durationOfTreatmentRegex = /^[0-9]{1,3}$/;
-    const numberOfTabletsRegex = /^(?!0\d)\d{1,2}$/;
-    const diagnosisDateRegex = /.+/;
+    //Validate input
+    const durationOfTreatmentRegex = /^[0-9]{1,3}$/; //1-3 digits
+    const numberOfTabletsRegex = /^(?!0\d)\d{1,2}$/; //1-2 digits, cannot start with 0
+    const diagnosisDateRegex = /.+/; //Any character, cannot blank
 
-    const isDurationOfTreatmentValid =
-      durationOfTreatmentRegex.test(durationOfTreatment);
+    const isDurationOfTreatmentValid = durationOfTreatmentRegex.test(durationOfTreatment);
     const isNumberOfTabletsValid = numberOfTabletsRegex.test(numberOfTablets);
     const isDiagnosisDateValid = diagnosisDateRegex.test(diagnosisDate);
 
@@ -177,6 +171,7 @@ export default function TreatmentInfoScreen() {
       return Alert.alert("Invalid input", "Please check your entered details.");
     }
 
+    //Update redux store
     dispatch(
       updateMedicalInformation({
         // dateOfDiagnosis: submitDate,
@@ -205,6 +200,7 @@ export default function TreatmentInfoScreen() {
     );
     //Debug use---------------------------------------------------------------
 
+    //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
       //Create user
       const userCredential = await createUserWithEmailAndPassword(
@@ -218,7 +214,7 @@ export default function TreatmentInfoScreen() {
       dispatch(authenticateStoreNative(token.token, user.uid));
 
       //Upload profile picture
-      const ppStorageRef = ref(storage, "profilePicture/" + user.uid);
+      const ppStorageRef = ref(storage, "patientProfilePicture/" + user.uid);
       setIsUploading(true);
       const donwloadURL = await uploadImage(
         signupInfo.profilePictureURI,
@@ -228,7 +224,6 @@ export default function TreatmentInfoScreen() {
       setIsUploading(false);
 
       //Add user data to firestore
-      
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."
@@ -251,6 +246,12 @@ export default function TreatmentInfoScreen() {
       }
     );
   }
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Treatment Information",
+    });
+  });
 
   return (
     <View

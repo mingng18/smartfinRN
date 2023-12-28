@@ -1,12 +1,9 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import PatientHomeScreen from "../screens/patient/PatientHomeScreen";
 import PreviewVideoScreen from "../screens/patient/patientHomeStack/PreviewVideoScreen";
 import PatientBottomNavBar from "./PatientBottomNavBar";
 import { useTheme } from "react-native-paper";
 import CustomAppBar from "../components/ui/CustomAppBar";
 import ReportSideEffectScreen from "../screens/patient/patientHomeStack/ReportSideEffectScreen";
-import { useNavigation } from "@react-navigation/native";
-import { useLayoutEffect } from "react";
 import AllAppointmentScreen from "../screens/patient/patientHomeStack/AllAppointmentScreen";
 import AppointmentDetailsScreen from "../screens/patient/patientHomeStack/AppointmentDetailsScreen";
 import BookAppointmentScreen from "../screens/patient/patientHomeStack/BookAppointmentScreen";
