@@ -56,7 +56,7 @@ const PatientBottomNavBar = () => {
       barStyle={{ backgroundColor: theme.colors.primary }}
       activeColor={theme.colors.onPrimary}
       inactiveColor={theme.colors.primaryContainer}
-      initialRouteName="Home"
+      initialRouteName="Profile"
       backBehavior="none"
       style={{margin: 0, padding: 0}}
     >
