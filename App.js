@@ -36,7 +36,7 @@ function Root() {
   useEffect(() => {
 
     async function fetchToken() {
-      await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
+      // await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
       const storedToken = await SecureStore.getItemAsync("token");
       console.log("Initialized token:" + storedToken);
       if (storedToken != "" && storedToken != null) {

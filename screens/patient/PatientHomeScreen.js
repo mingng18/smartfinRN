@@ -22,9 +22,9 @@ function PatientHomeScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
 
-  useLayoutEffect(() => {
-    navigate("BookAppointmentScreen");
-  });
+  // useLayoutEffect(() => {
+  //   navigate("BookAppointmentScreen");
+  // });
 
   //TODO: update each details
   const [toDoDetails, setToDoDetails] = React.useState([

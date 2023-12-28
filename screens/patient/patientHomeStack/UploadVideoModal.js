@@ -61,7 +61,13 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
           >
             Upload Video from Storage
           </Button>
-          <Button mode="text" onPress={() => {}}>
+          <Button
+            mode="text"
+            onPress={() => {
+              navigate("CameraScreen", "video");
+              bottomSheetModalRef.current.close();
+            }}
+          >
             Take Video
           </Button>
           <View
