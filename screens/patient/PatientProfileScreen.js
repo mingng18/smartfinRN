@@ -14,6 +14,22 @@ import { logoutDeleteNative } from "../../store/redux/authSlice";
 function PatientProfileScreen() {
   const theme = useTheme();
 
+  function signOutHandler() {
+  
+    signOut(auth)
+      .then(async () => {
+        // Sign out successful
+        console.log("User signed out successfully");
+        dispatch(logoutDeleteNative());
+        // navigation.navigate("Login");
+        // Add any additional logic or navigation here
+      })
+      .catch((error) => {
+        // An error occurred during sign out
+        console.error("Error signing out:", error);
+        // Handle the error or display an error message
+      });}
+
   return (
     <View
       style={{
@@ -127,7 +143,7 @@ function PatientProfileScreen() {
       {/* ========================== Settings ======================= */}
       <TextListButton text={"Settings"} onPressCallback={() => {}} />
       <TextListButton text={"History"} onPressCallback={() => {}} />
-      <Button mode="contained" style={{ marginTop: 24 }} onPress={() => {}}>
+      <Button mode="contained" style={{ marginTop: 24 }} onPress={() => signOutHandler()}>
         Sign Out
       </Button>
     </View>
