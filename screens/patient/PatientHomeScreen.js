@@ -17,14 +17,13 @@ import CTAButton from "../../components/ui/CTAButton";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 
-
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
 
-  useLayoutEffect(() => {
-    navigate("BookAppointmentScreen");
-  });
+  // useLayoutEffect(() => {
+  //   navigate("AllAppointmentScreen");
+  // });
 
   //TODO: update each details
   const [toDoDetails, setToDoDetails] = React.useState([
@@ -71,7 +70,7 @@ function PatientHomeScreen() {
         <View style={[styles.homeHeader]}>
           {/* TODO Change the name to the patients image */}
           <Image
-            source={{uri : BLANK_PROFILE_PIC}}
+            source={{ uri: BLANK_PROFILE_PIC }}
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <View style={[styles.headerText]}>

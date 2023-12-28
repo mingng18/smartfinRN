@@ -18,10 +18,9 @@ function LoginScreen() {
   const dispatch = useDispatch();
   const auth = getAuth();
 
-  React.useLayoutEffect(() => {
-    navigate("HealthcareInformationScreen");
-  });
-
+  // React.useLayoutEffect(() => {
+  //   navigate("HealthcareInformationScreen");
+  // });
 
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);

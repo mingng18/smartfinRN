@@ -23,6 +23,7 @@ function PreviewVideoScreen() {
       headerTitle: "Upload Video",
     });
     setVideo(params);
+    console.log(video);
   });
 
   const pickImage = async () => {

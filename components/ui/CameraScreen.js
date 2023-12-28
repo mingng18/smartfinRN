@@ -1,21 +1,40 @@
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Camera, CameraType } from "expo-camera";
 import React from "react";
-import { View, Image } from "react-native";
+import { View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CameraScreen() {
-  const [type, setType] = React.useState(CameraType.back);
-  const [hasCameraPermission, setHasCameraPermission] = React.useState();
-  const cameraRef = React.useRef();
   const theme = useTheme();
   const navigation = useNavigation();
+  const { params } = useRoute();
+  const [isRecordingPage, setIsRecordingPage] = React.useState(false);
+
+  //Permission
+  const [hasCameraPermission, setHasCameraPermission] = React.useState(null);
+  const [hasAudioPermission, setHasAudioPermission] = React.useState(null);
+
+  //Camera State
+  const [type, setType] = React.useState(CameraType.back);
+  const [isRecording, setIsRecording] = React.useState(false);
+  const cameraRef = React.useRef();
+
+  React.useLayoutEffect(() => {
+    if (params === "video") {
+      setIsRecordingPage(true);
+    } else {
+      setIsRecordingPage(false);
+    }
+  });
 
   React.useEffect(() => {
     (async () => {
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
       setHasCameraPermission(cameraStatus.status === "granted");
+
+      const audioStatus = await Camera.requestMicrophonePermissionsAsync();
+      setHasAudioPermission(audioStatus.status === "granted");
     })();
   }, []);
 
@@ -30,13 +49,38 @@ export default function CameraScreen() {
     }
   };
 
+  const takeVideo = async () => {
+    if (cameraRef) {
+      try {
+        setIsRecording(true);
+        await cameraRef.current.recordAsync().then((data) => {
+          console.log("Finish loading");
+          navigation.navigate("PreviewVideoScreen", data.uri);
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  };
+
+  const stopVideo = async () => {
+    if (cameraRef.current && isRecording) {
+      cameraRef.current.stopRecording();
+      setIsRecording(false);
+    }
+  };
+
   function toggleCameraType() {
     setType((current) =>
       current === CameraType.back ? CameraType.front : CameraType.back
     );
   }
 
-  if (!hasCameraPermission) {
+  if (hasCameraPermission === null || hasAudioPermission === null) {
+    return <View />;
+  }
+
+  if (!hasCameraPermission || !hasAudioPermission) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>No access to the camera</Text>
@@ -67,17 +111,50 @@ export default function CameraScreen() {
             style={{ position: "absolute", left: "3%", top: "3%" }}
             onPress={() => navigation.goBack()}
           />
-          <IconButton
-            icon="circle-slice-8"
-            iconColor="white"
-            size={80}
-            onPress={takePicture}
-            style={{
-              position: "absolute",
-              alignSelf: "center",
-              bottom: "5%",
-            }}
-          />
+          {isRecordingPage ? (
+            <>
+              {isRecording ? (
+                <IconButton
+                  icon="stop-circle"
+                  iconColor={theme.colors.primaryContainer}
+                  size={80}
+                  onPress={stopVideo}
+                  style={{
+                    position: "absolute",
+                    alignSelf: "center",
+                    bottom: "5%",
+                  }}
+                />
+              ) : (
+                <IconButton
+                  icon="record-rec"
+                  iconColor={theme.colors.primaryContainer}
+                  size={100}
+                  onPress={takeVideo}
+                  style={{
+                    position: "absolute",
+                    alignSelf: "center",
+                    bottom: "5%",
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <>
+              <Text>WTF</Text>
+              <IconButton
+                icon="circle-slice-8"
+                iconColor="white"
+                size={80}
+                onPress={takePicture}
+                style={{
+                  position: "absolute",
+                  alignSelf: "center",
+                  bottom: "5%",
+                }}
+              />
+            </>
+          )}
         </Camera>
       </View>
     </SafeAreaView>

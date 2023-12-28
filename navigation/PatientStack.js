@@ -10,6 +10,9 @@ import { useLayoutEffect } from "react";
 import AllAppointmentScreen from "../screens/patient/patientHomeStack/AllAppointmentScreen";
 import AppointmentDetailsScreen from "../screens/patient/patientHomeStack/AppointmentDetailsScreen";
 import BookAppointmentScreen from "../screens/patient/patientHomeStack/BookAppointmentScreen";
+import CameraScreen from "../components/ui/CameraScreen";
+import VideoDetailsScreen from "../screens/patient/patientHomeStack/VideoDetailsScreen";
+import SideEffectDetailsScreen from "../screens/patient/patientHomeStack/SideEffectDetailsScreen";
 
 const PatientStack = createNativeStackNavigator();
 
@@ -66,6 +69,27 @@ export default function PatientStackGroup() {
         options={{
           headerShown: true,
           presentation: 'fullScreenModal'
+        }}
+      />
+      <PatientStack.Screen
+        name="CameraScreen"
+        component={CameraScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <PatientStack.Screen
+        name="VideoDetailsScreen"
+        component={VideoDetailsScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="SideEffectDetailsScreen"
+        component={SideEffectDetailsScreen}
+        options={{
+          headerShown: true,
         }}
       />
     </PatientStack.Navigator>

@@ -46,7 +46,6 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword })
     <View style={{ flexDirection: "column", flexGrow: 1 }}>
       <TextInput
         mode="outlined"
-        style={{ height: 56 }}
         label="Email Address"
         placeholder="Type your email"
         onChangeText={updateInputValueHandler.bind(this, "email")}
@@ -56,7 +55,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword })
       />
       <TextInput
         mode="outlined"
-        style={{ height: 56, marginTop: 16 }}
+        style={{ marginTop: 16 }}
         label="Password"
         placeholder="Type your password"
         onChangeText={updateInputValueHandler.bind(this, "password")}
@@ -66,7 +65,7 @@ function AuthForm({ isLogin, onSubmit, credentialsInvalid, showForgotPassword })
       />
       {isLogin ? "" : <TextInput
         mode="outlined"
-        style={{ height: 56, marginTop: 16 }}
+        style={{ marginTop: 16 }}
         label="Confirm Password"
         placeholder="Type your password"
         onChangeText={updateInputValueHandler.bind(this, "confirm password")}

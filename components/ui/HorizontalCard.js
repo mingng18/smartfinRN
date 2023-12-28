@@ -13,13 +13,23 @@ export default function HorizontalCard({
   const theme = useTheme();
 
   return (
-    <View style={[styles.pressableContainer, { backgroundColor: color }]}>
+    <View
+      style={[
+        styles.pressableContainer,
+        {
+          backgroundColor: color,
+          marginBottom: 16,
+        },
+      ]}
+    >
       <Pressable
         onPress={onPressedCallback}
         android_ripple={{ color: theme.colors.onBackground, borderless: false }}
         style={[styles.cardContainer]}
       >
-        <Image source={{ uri: profilePic }} style={styles.profilePicStyle} />
+        {profilePic && (
+          <Image source={{ uri: profilePic }} style={styles.profilePicStyle} />
+        )}
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>
@@ -39,7 +49,6 @@ const styles = StyleSheet.create({
   pressableContainer: {
     overflow: "hidden",
     borderRadius: 8,
-    marginTop: 16,
   },
   cardContainer: {
     padding: 16,
@@ -56,6 +65,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: 'baseline',
   },
 });
