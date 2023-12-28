@@ -54,7 +54,22 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
   async function forgotPasswordHandler() {
     try {
       const email = await sendPasswordResetEmail(enteredForgotEmail);
-      Alert.alert("Password reset!");
+      Alert.alert(
+        "Password reset!",
+        "A reset link has been sent to the email address.",
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              hideModal();
+            },
+            style: "cancel",
+          },
+        ],
+        {
+          cancelable: false,
+        }
+      );
     } catch (error) {
       Alert.alert(
         "Something went wrong, please check your email entered is correct and try again."
@@ -71,17 +86,13 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
   }
 
   function submitHandler(credentials) {
-
     email = enteredEmail.trim();
     password = enteredPassword.trim();
 
     const emailIsValid = email.includes("@");
     const passwordIsValid = password.length > 6;
 
-    if (
-      !emailIsValid ||
-      !passwordIsValid
-    ) {
+    if (!emailIsValid || !passwordIsValid) {
       Alert.alert("Invalid input", "Please check your entered credentials.");
       setCredentialsInvalid({
         email: !emailIsValid,
@@ -104,21 +115,25 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                   visible={visible}
                   onDismiss={hideModal}
                   contentContainerStyle={{
-                    backgroundColor: "white",
-                    padding: 20,
+                    backgroundColor: theme.colors.background,
+                    padding: 16,
+                    paddingVertical: 40,
+                    marginHorizontal: 16,
+                    borderRadius: 16,
+                    justifyContent: "flex-start",
                   }}
                 >
                   <Text
+                    variant="titleLarge"
                     style={[
-                      styles.titleText,
-                      { color: theme.colors.onPrimary },
+                      { color: theme.colors.onBackground, marginBottom: 16 },
                     ]}
                   >
                     Please enter your email to reset password
                   </Text>
                   <TextInput
                     mode="outlined"
-                    style={{ height: 56 }}
+                    style={{ marginBottom: 40 }}
                     label="Forgot Email Address"
                     placeholder="Type your email"
                     onChangeText={(email) => setEnteredForgotEmail(email)}
@@ -126,13 +141,18 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                     keyboardType="email-address"
                     // isInvalid={emailIsInvalid}
                   />
-                  <Button
-                    mode="contained"
-                    onPress={forgotPasswordHandler}
-                    style={{ height: 40 }}
-                  >
-                    {"Reset Password"}
-                  </Button>
+                  <View style={{ flexDirection: "row-reverse" }}>
+                    <Button mode="contained" onPress={forgotPasswordHandler}>
+                      Reset Password
+                    </Button>
+                    <Button
+                      mode="contained-tonal"
+                      onPress={hideModal}
+                      style={{ marginRight: 16 }}
+                    >
+                      Cancel
+                    </Button>
+                  </View>
                 </Modal>
               </Portal>
               <View style={[styles.header]}>
@@ -156,52 +176,47 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                   { backgroundColor: theme.colors.background },
                 ]}
               >
-                <View style={{ marginBottom: 16 }}>
-                  <TextInput
-                    mode="outlined"
-                    style={{ height: 56 }}
-                    label="Email Address"
-                    placeholder="Type your email"
-                    onChangeText={updateInputValueHandler.bind(this, "email")}
-                    value={enteredEmail}
-                    keyboardType="email-address"
-                    error={credentialsInvalid.email}
-                  />
-                  <TextInput
-                    mode="outlined"
-                    style={{ height: 56, marginTop: 16 }}
-                    label="Password"
-                    placeholder="Type your password"
-                    onChangeText={updateInputValueHandler.bind(
-                      this,
-                      "password"
-                    )}
-                    value={enteredPassword}
-                    secureTextEntry
-                    error={credentialsInvalid.password}
-                  />
-                  <Button
-                    key="forgotPassword"
-                    mode="text"
-                    compact
-                    onPress={() => showModal()}
-                    style={{
-                      marginTop: 8,
-                      width: "100%",
-                      alignItems: "flex-end",
-                    }}
-                  >
-                    {isLogin ? "Forgot Password?" : ""}
-                  </Button>
-                  <View style={{ flexGrow: 1 }} />
-                  <Button
-                    mode="contained"
-                    onPress={submitHandler}
-                    style={{ height: 40 }}
-                  >
-                    Log In
-                  </Button>
-                </View>
+                <TextInput
+                  mode="outlined"
+                  style={{ height: 56 }}
+                  label="Email Address"
+                  placeholder="Type your email"
+                  onChangeText={updateInputValueHandler.bind(this, "email")}
+                  value={enteredEmail}
+                  keyboardType="email-address"
+                  error={credentialsInvalid.email}
+                />
+                <TextInput
+                  mode="outlined"
+                  style={{ height: 56, marginTop: 16 }}
+                  label="Password"
+                  placeholder="Type your password"
+                  onChangeText={updateInputValueHandler.bind(this, "password")}
+                  value={enteredPassword}
+                  secureTextEntry
+                  error={credentialsInvalid.password}
+                />
+                <Button
+                  key="forgotPassword"
+                  mode="text"
+                  compact
+                  onPress={() => showModal()}
+                  style={{
+                    marginTop: 8,
+                    width: "100%",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  "Forgot Password?"
+                </Button>
+                <View style={{ flexGrow: 1 }} />
+                <Button
+                  mode="contained"
+                  onPress={submitHandler}
+                  style={{ height: 40 }}
+                >
+                  Log In
+                </Button>
                 <View
                   style={{
                     flexDirection: "row",

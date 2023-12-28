@@ -24,13 +24,11 @@ export default function CustomDropDownPicker({
         width: 24,
         height: 24,
         marginRight: 4,
-        color: theme.colors.outline,
       }}
       tickIconStyle={{
         width: 24,
         height: 24,
         marginRight: 4,
-        color: theme.colors.outline,
       }}
       dropDownContainerStyle={{
         backgroundColor: theme.colors.background,
