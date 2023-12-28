@@ -45,6 +45,15 @@ export async function addDocument(collectionName, documentData) {
     }
 }
 
+export async function addDocumentWithId(collectionName, documentId, documentData) {
+    try {
+        const docRef = doc(db, collectionName, documentId);
+        await setDoc(docRef, documentData);
+    } catch (error) {
+        throw new Error("Failed to store document: " + error.message);
+    }
+}
+
 //to further edit unusable at the moment
 export async function editDocument(collectionName, documentId, updatedData) {
     try {

@@ -8,6 +8,7 @@ import { login } from "../util/firebaseAuth";
 import { useDispatch } from "react-redux";
 import { authenticateStoreNative } from "../store/redux/authSlice";
 import { useNavigation } from "@react-navigation/native";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
@@ -15,6 +16,7 @@ function LoginScreen() {
 
   // const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
+  const auth = getAuth();
 
   React.useLayoutEffect(() => {
     navigate("HealthcareInformationScreen");
@@ -24,15 +26,19 @@ function LoginScreen() {
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
-      const snapshot = await login(email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const token = await user.getIdTokenResult()
+      // const snapshot = await login(email, password);
       // authCtx.authenticate(token);
       // dispatch(authenticate({token : token}))
 
-      dispatch(authenticateStoreNative(snapshot.token, snapshot.uid));
+      dispatch(authenticateStoreNative(token.token, user.uid));
     } catch (error) {
       Alert.alert(
         "Authentication failed! Please check your credentials or sign up a new account!"
       );
+      console.log(error); //Debug use
     }
     setIsAuthenticating(false);
   }

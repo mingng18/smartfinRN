@@ -28,20 +28,17 @@ function SignupScreen() {
   });
   const theme = useTheme();
 
-  // const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
 
   async function signupHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
       const snapshot = await createUser(email, password);
-      // authCtx.authenticate(token);
-      // dispatch(authenticate({token : token}))
 
       dispatch(authenticateStoreNative(snapshot.token, snapshot.uid));
     } catch (error) {
       Alert.alert(
-        "Authentication failed, please check your input and try again later."
+        "Sign Up failed, please check your input and try again later."
       );
       console.log(error);
     }

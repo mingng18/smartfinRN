@@ -7,6 +7,7 @@ const authSlice = createSlice({
         token: "",
         isAuthenticated: false,
         user_uid: "",
+        first_time_login : true,
     },
     reducers: {
         authenticate: (state, action) => {
@@ -18,6 +19,9 @@ const authSlice = createSlice({
             state.token = null;
             state.isAuthenticated = false;
         },
+        setFirstTimeLogin: (state, action) => {
+            state.first_time_login = action.payload.first_time_login;
+        }
     },
 });
 
@@ -47,7 +51,7 @@ export const logoutDeleteNative = () => {
     };
 };
 
-
+export const setFirstTimeLogin = authSlice.actions.setFirstTimeLogin;
 export const authenticate = authSlice.actions.authenticate;
 export const logout = authSlice.actions.logout;
 export default authSlice.reducer;

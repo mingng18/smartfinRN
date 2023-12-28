@@ -11,7 +11,8 @@ import { useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import AppLoading from "expo-app-loading";
 import { db, getPatient } from "./util/firebaseConfig";
-import { collection, getDocs } from 'firebase/firestore/lite';
+import { collection, getDocs } from "firebase/firestore/lite";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 // import { AuthContext } from "./store/auth-context";
 import Navigation from "./navigation/Navigation";
@@ -20,9 +21,12 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { enGB, registerTranslation } from "react-native-paper-dates";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
-import {store} from './store/redux/store'
+import { store } from "./store/redux/store";
 import { authenticateStoreNative } from "./store/redux/authSlice";
-import { setInPendingState, removePendingState } from "./store/redux/application_state/pendingStateSlice"
+import {
+  setInPendingState,
+  removePendingState,
+} from "./store/redux/application_state/pendingStateSlice";
 import { fetchCollection, fetchDocument } from "./util/firestoreWR";
 
 //A function to handle the initialization of log in status of the user.
@@ -34,9 +38,36 @@ function Root() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     async function fetchToken() {
-      await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
+      const auth = getAuth();
+      const user = auth.currentUser;
+      // console.log("User now: " + user.uid);
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          async (user) => {
+            const token = await user.getIdTokenResult().token;
+            console.log("Starting token: " + token)
+            dispatch(authenticateStoreNative(token, user.uid));
+          }
+          // console.log("Display name: " + user.getIdTokenResult());
+          // dispatch(authenticateStoreNative(await user.getIdTokenResult()), user.uid);
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/auth.user
+          // const uid = user.uid;
+          // ...
+        } else {
+          async (user) => {
+            const token = await user.getIdTokenResult().token;
+            console.log("Starting token: " + token)
+            dispatch(authenticateStoreNative(token, user.uid));
+          }
+          // console.log("Display name: " + user.getIdTokenResult());
+          // User is signed out
+          // ...
+        }
+      });
+
+      // await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
       const storedToken = await SecureStore.getItemAsync("token");
       console.log("Initialized token:" + storedToken);
       if (storedToken != "" && storedToken != null) {

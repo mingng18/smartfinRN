@@ -77,9 +77,9 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
     }
   }
 
-  function switchAuthModeHandler() {
+  function switchAuthModeHandler(mode) {
     if (isLogin) {
-      navigation.navigate("SignInInfoScreen");
+      navigation.navigate("SignInInfoScreen", { signUpMode: mode });
     } else {
       navigation.replace("Login");
     }
@@ -207,7 +207,7 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                     alignItems: "flex-end",
                   }}
                 >
-                  "Forgot Password?"
+                  Forgot Password?
                 </Button>
                 <View style={{ flexGrow: 1 }} />
                 <Button
@@ -226,14 +226,14 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                 >
                   <Button
                     mode="contained-tonal"
-                    onPress={switchAuthModeHandler}
+                    onPress={()=>switchAuthModeHandler("patient")}
                     style={[styles.button, { flex: 1, marginRight: 8 }]}
                   >
                     Patient Sign Up
                   </Button>
                   <Button
                     mode="contained-tonal"
-                    onPress={switchAuthModeHandler}
+                    onPress={()=>switchAuthModeHandler("healthcare")}
                     style={[styles.button, { flex: 1, marginLeft: 8 }]}
                   >
                     Healthcare Sign Up
@@ -256,17 +256,10 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                 >
                   Google Sign In
                 </Button>
-                {/* TODO: To be removed */}
-                {/* <View style={styles.buttons}>
-                <FlatButton onPress={switchAuthModeHandler}>
-                  {isLogin ? "Create a new user" : "Log in instead"}
-                </FlatButton>
-              </View> */}
               </View>
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-        {/* </ScrollView> */}
       </SafeAreaView>
       <SafeAreaView
         style={{ flex: 0, backgroundColor: theme.colors.background }}
