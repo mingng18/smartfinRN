@@ -18,3 +18,8 @@ export const VIDEO_STATUS = {
 	ACCEPTED: 'accepted',
 	REJECTED: 'rejected',
 }
+
+export const SIDE_EFFECT_STATUS = {
+	PENDING: 'pending',
+	REVIEWED: 'reviewed',
+}

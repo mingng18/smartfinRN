@@ -134,6 +134,11 @@ function PatientCalendarScreen() {
                   hour12: true,
                 })}
               color={theme.colors.yellowContainer}
+              onPressedCallback={() => {
+                navigate("SideEffectDetailsScreen", {
+                  sideEffect: sideEffect,
+                });
+              }}
             />
           ))}
         </>
@@ -226,6 +231,7 @@ function PatientCalendarScreen() {
             backgroundColor: theme.colors.surfaceContainerHigh,
             marginBottom: 16,
           }}
+          onPress={() => navigate("BookAppointmentScreen")}
         >
           Book an appointment
         </Button>
@@ -267,9 +273,14 @@ const sideEffectData = [
   {
     side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     severity: "danger",
+    se_status: 'pending',
+    symptoms: ['cough', 'blood']
   },
   {
     side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     severity: "mild",
+    se_status: 'reviewed',
+    symptoms: ['cough', 'nausea'],
+    remarks: 'Drink more water'
   },
 ];

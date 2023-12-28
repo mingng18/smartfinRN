@@ -65,7 +65,7 @@ export default function VideoDetailsScreen() {
               })}
           </Text>
         </View>
-        <Text variant="titleLarge" style={{ marginTop: 32 }}>
+        <Text variant="bodyLarge" style={{ marginTop: 32 }}>
           The video has been <em>approved</em> by doctor.
         </Text>
       </View>

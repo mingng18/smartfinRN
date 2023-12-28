@@ -12,6 +12,7 @@ import AppointmentDetailsScreen from "../screens/patient/patientHomeStack/Appoin
 import BookAppointmentScreen from "../screens/patient/patientHomeStack/BookAppointmentScreen";
 import CameraScreen from "../components/ui/CameraScreen";
 import VideoDetailsScreen from "../screens/patient/patientHomeStack/VideoDetailsScreen";
+import SideEffectDetailsScreen from "../screens/patient/patientHomeStack/SideEffectDetailsScreen";
 
 const PatientStack = createNativeStackNavigator();
 
@@ -80,6 +81,13 @@ export default function PatientStackGroup() {
       <PatientStack.Screen
         name="VideoDetailsScreen"
         component={VideoDetailsScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="SideEffectDetailsScreen"
+        component={SideEffectDetailsScreen}
         options={{
           headerShown: true,
         }}
