@@ -45,7 +45,7 @@ const PatientBottomNavBar = () => {
       focusedIcon: "account",
       component: PatientProfileScreen,
       unfocusedIcon: "account-outline",
-    }
+    },
   ]);
 
   return (
@@ -53,15 +53,12 @@ const PatientBottomNavBar = () => {
       theme={{
         colors: { secondaryContainer: theme.colors.onPrimaryContainer },
       }}
-    //   screenOptions={({ route, navigation }) => ({
-    //     headerShown: false,
-    //   })}
       barStyle={{ backgroundColor: theme.colors.primary }}
       activeColor={theme.colors.onPrimary}
       inactiveColor={theme.colors.primaryContainer}
       initialRouteName="Home"
       backBehavior="none"
-      
+      style={{margin: 0, padding: 0}}
     >
       {routes.map((route) => (
         <Tab.Screen

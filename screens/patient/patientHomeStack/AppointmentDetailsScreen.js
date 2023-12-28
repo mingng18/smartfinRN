@@ -1,46 +1,172 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { APPOINTMENT_STATUS } from "../../../constants/constants";
+import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
 
 export default function AppointmentDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
-  const [appointmentStatus, setAppointmentStatus] = React.useState();
-  const [dialogVisible, setDialogVisible] = React.useState(false);
+  const currentAppointment = params.appointment;
+  // const [dialogVisible, setDialogVisible] = React.useState(false);
 
   //Set the Appointment Status to change layout
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Appointment",
     });
-    setAppointmentStatus(APPOINTMENT_STATUS.PENDING);
-    console.log(params);
   });
 
-  let firstMessage = "";
-  let secondMessage = "";
-  switch (appointmentStatus) {
-    case APPOINTMENT_STATUS.APPROVED:
-      firstMessage =
-        "Your appointment has been confirmed by the doctor, please join the call on time.";
-      secondMessage = "If you cannot make it, please request a cancellation.";
-      break;
-    case APPOINTMENT_STATUS.PENDING:
-      firstMessage =
-        "This appointment is currently pending approval from the doctor.";
-      secondMessage =
-        "If you cannot make it, please request a cancellation or you can reschedule it.";
-      break;
-    case APPOINTMENT_STATUS.CANCELLED:
-      firstMessage = "This appointment has been cancelled by the healthcare.";
-      break;
-    case APPOINTMENT_STATUS.COMPLETED:
-      firstMessage = "This appointment is completed.";
-      break;
+  //Determine the container color
+  function containerColor(appointment) {
+    return appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED
+      ? theme.colors.secondaryContainer
+      : theme.colors.surfaceContainer;
+  }
+
+  function PendingCard() {
+    return (
+      <View>
+        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+          This appointment is currently pending approval from the doctor.
+        </Text>
+        <Text variant="bodyLarge" style={{ marginTop: 24 }}>
+          If you cannot make it, please request a cancellation or you can
+          reschedule it.
+        </Text>
+        <View
+          style={{
+            flexDirection: "row-reverse",
+            marginTop: 40,
+            flexWrap: "wrap",
+          }}
+        >
+          <Button
+            mode="contained"
+            onPress={rescheduleAppointment()}
+            style={{ marginLeft: 16 }}
+          >
+            Reschedule
+          </Button>
+          <Button
+            mode="contained-tonal"
+            onPress={() => {
+              Alert.alert(
+                "Cancel Appointment?",
+                "Are you sure want to cancel the appointment?",
+                [
+                  {
+                    text: "Go Back",
+                    onPress: () => {},
+                    style: "cancel",
+                  },
+                  {
+                    text: "Cancel",
+                    onPress: () => {
+                      cancelAppointment();
+                    },
+                    style: "cancel",
+                  },
+                ],
+                {
+                  cancelable: false,
+                }
+              );
+            }}
+          >
+            Cancel Appointment
+          </Button>
+        </View>
+      </View>
+    );
+  }
+
+  function AcceptedCard() {
+    return (
+      <View>
+        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+          Your appointment has been confirmed by the doctor, please join the
+          call on time.
+        </Text>
+        <Text variant="bodyLarge" style={{ marginTop: 24 }}>
+          If you cannot make it, please request a cancellation.
+        </Text>
+        <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
+          <Button
+            mode="contained"
+            onPress={handleVideoCall()}
+            style={{ marginLeft: 16 }}
+          >
+            Video Call
+          </Button>
+          <Button
+            mode="contained-tonal"
+            onPress={() => {
+              Alert.alert(
+                "Cancel Appointment?",
+                "Are you sure want to cancel the appointment?",
+                [
+                  {
+                    text: "Go Back",
+                    onPress: () => {},
+                    style: "cancel",
+                  },
+                  {
+                    text: "Go Back",
+                    onPress: () => {
+                      cancelAppointment();
+                    },
+                    style: "cancel",
+                  },
+                ],
+                {
+                  cancelable: false,
+                }
+              );
+            }}
+          >
+            Cancel Appointment
+          </Button>
+        </View>
+      </View>
+    );
+  }
+
+  function CompletedCard() {
+    return (
+      <View>
+        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+          This appointment is completed.
+        </Text>
+        <Text variant="titleLarge" style={{ marginTop: 32 }}>
+          Remarks/Notes
+        </Text>
+        <Text variant="bodyLarge" style={{ marginTop: 8 }}>
+          If you cannot make it, please request a cancellation or you can
+          reschedule it.
+        </Text>
+      </View>
+    );
+  }
+
+  function CancelledCard() {
+    return (
+      <View>
+        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+          This appointment has been cancelled by the healthcare.
+        </Text>
+        <Text variant="titleLarge" style={{ marginTop: 32 }}>
+          Cancellation Reasons
+        </Text>
+        <Text variant="bodyLarge" style={{ marginTop: 8 }}>
+          If you cannot make it, please request a cancellation or you can
+          reschedule it.
+        </Text>
+      </View>
+    );
   }
 
   //TODO Handle Video Call
@@ -51,6 +177,7 @@ export default function AppointmentDetailsScreen() {
 
   //TODO Cancel Appointment
   const cancelAppointment = () => {};
+
   return (
     <View
       style={{
@@ -59,94 +186,33 @@ export default function AppointmentDetailsScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <HorizontalCard {...params} />
-      <Text variant="bodyLarge" style={{ marginTop: 16 }}>
-        {firstMessage}
-      </Text>
-      <Text variant="bodyLarge" style={{ marginTop: 24 }}>
-        {secondMessage}
-      </Text>
-      <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
-        {appointmentStatus == APPOINTMENT_STATUS.PENDING ? (
-          <>
-            <Button mode="contained" onPress={rescheduleAppointment()}>
-              Reschedule
-            </Button>
-            <Button
-              mode="contained-tonal"
-              style={{ marginRight: 16 }}
-              onPress={() => {
-                setDialogVisible(true);
-              }}
-            >
-              Cancel Appointment
-            </Button>
-          </>
-        ) : appointmentStatus == APPOINTMENT_STATUS.APPROVED ? (
-          <>
-            <Button mode="contained" onPress={handleVideoCall()}>
-              Video Call
-            </Button>
-            <Button
-              mode="contained-tonal"
-              style={{ marginRight: 16 }}
-              onPress={() => {
-                setDialogVisible(true);
-              }}
-            >
-              Cancel Appointment
-            </Button>
-          </>
-        ) : (
-          <></>
-        )}
-      </View>
-      {appointmentStatus == APPOINTMENT_STATUS.COMPLETED && (
-        <View>
-          <Text variant="titleLarge" style={{ marginTop: 32 }}>
-            Remarks/Notes
-          </Text>
-          <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-            If you cannot make it, please request a cancellation or you can
-            reschedule it.
-          </Text>
-        </View>
-      )}
-      {appointmentStatus == APPOINTMENT_STATUS.CANCELLED && (
-        <View>
-          <Text variant="titleLarge" style={{ marginTop: 32 }}>
-            Cancellation Reasons
-          </Text>
-          <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-            If you cannot make it, please request a cancellation or you can
-            reschedule it.
-          </Text>
-        </View>
-      )}
-      <CancellationDialog
-        visible={dialogVisible}
-        close={() => {
-          setDialogVisible(false);
-        }}
-        cancel={cancelAppointment()}
+      <HorizontalCard
+        profilePic={params.profilePic}
+        subject={params.name}
+        status={capitalizeFirstLetter(currentAppointment.appointment_status)}
+        date={currentAppointment.scheduled_timestamp
+          .toDate()
+          .toISOString()
+          .slice(0, 10)}
+        time={currentAppointment.scheduled_timestamp
+          .toDate()
+          .toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })}
+        color={containerColor(currentAppointment)}
       />
+      {currentAppointment.appointment_status === APPOINTMENT_STATUS.PENDING &&
+        PendingCard()}
+      {currentAppointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED &&
+        AcceptedCard()}
+      {currentAppointment.appointment_status === APPOINTMENT_STATUS.COMPLETED &&
+        CompletedCard()}
+      {currentAppointment.appointment_status === APPOINTMENT_STATUS.CANCELLED &&
+        CancelledCard()}
     </View>
   );
 }
 
 const styles = StyleSheet.create({});
-
-const CancellationDialog = ({ visible, close, cancel }) => (
-  <Portal>
-    <Dialog onDismiss={close} visible={visible} dismissable={false}>
-      <Dialog.Title>Cancel Appointment? </Dialog.Title>
-      <Dialog.Content>
-        <Text>Are you sure want to cancel the appointment?</Text>
-      </Dialog.Content>
-      <Dialog.Actions>
-        <Button onPress={close}>Go back</Button>
-        <Button onPress={cancel}>Cancel</Button>
-      </Dialog.Actions>
-    </Dialog>
-  </Portal>
-);
