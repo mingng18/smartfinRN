@@ -29,12 +29,15 @@ export default function PreviewProfilePicScreen() {
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [uri, setUri] = React.useState("");
+  const [isEditing, setIsEditing] = React.useState(false);
+  //TODO handle isEditing state
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Profile Picture",
     });
-    setUri(params);
+    setUri(params.uri);
+    setIsEditing(params.isEditing);
   });
 
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
@@ -45,7 +48,7 @@ export default function PreviewProfilePicScreen() {
       category: signupInfo.category,
       role: signupInfo.role,
       staff_id: signupInfo.staffId,
-      profile_picture: profilePicUrl
+      profile_picture: profilePicUrl,
     });
   }
 
@@ -168,7 +171,7 @@ export default function PreviewProfilePicScreen() {
           }}
           style={{ marginLeft: 16 }}
         >
-        {signupMode === "patient"? Next : "Signup"}
+          {signupMode === "patient" ? "Next" : isEditing ? "Update" : "Signup"}
         </Button>
         <Button
           mode="contained-tonal"

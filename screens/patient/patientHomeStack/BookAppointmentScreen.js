@@ -166,5 +166,3 @@ export default function BookAppointmentScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

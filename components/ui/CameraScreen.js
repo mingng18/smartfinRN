@@ -18,14 +18,12 @@ export default function CameraScreen() {
   //Camera State
   const [type, setType] = React.useState(CameraType.back);
   const [isRecording, setIsRecording] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState(false);
   const cameraRef = React.useRef();
 
   React.useLayoutEffect(() => {
-    if (params === "video") {
-      setIsRecordingPage(true);
-    } else {
-      setIsRecordingPage(false);
-    }
+    setIsRecordingPage(params.isVideo);
+    setIsEditing(params.isEditing);
   });
 
   React.useEffect(() => {
@@ -42,7 +40,7 @@ export default function CameraScreen() {
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        navigation.navigate("PreviewProfilePicScreen", data.uri);
+        navigation.navigate("PreviewProfilePicScreen", { uri: data.uri, isEditing: isEditing });
       } catch (e) {
         console.log(e);
       }

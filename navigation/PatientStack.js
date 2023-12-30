@@ -10,6 +10,16 @@ import BookAppointmentScreen from "../screens/patient/patientHomeStack/BookAppoi
 import CameraScreen from "../components/ui/CameraScreen";
 import VideoDetailsScreen from "../screens/patient/patientHomeStack/VideoDetailsScreen";
 import SideEffectDetailsScreen from "../screens/patient/patientHomeStack/SideEffectDetailsScreen";
+import ProgressTracker from "../screens/patient/patientHomeStack/ProgressTracker";
+import PatientSettingsScreen from "../screens/patient/patientHomeStack/PatientSettingsScreen";
+import LanguageScreen from "../screens/patient/patientHomeStack/LanguageScreen";
+import PatientHistoryScreen from "../screens/patient/patientHomeStack/PatientHistoryScreen";
+import ReminderScreen from "../screens/patient/patientHomeStack/ReminderScreen";
+import PatientHistoryTab from "./PatientHistoryTab";
+import PatientEditProfileScreen from "../screens/patient/patientHomeStack/PatientEditProfileScreen";
+import ChangePasswordScreen from "../screens/patient/patientHomeStack/ChangePasswordScreen";
+import PreviewProfilePicScreen from "../screens/auth/PreviewProfilePicScreen";
+import TuberculosisMaterialsScreen from "../screens/patient/patientHomeStack/TuberculosisMaterialsScreen";
 
 const PatientStack = createNativeStackNavigator();
 
@@ -21,7 +31,6 @@ export default function PatientStackGroup() {
       screenOptions={{
         header: (props) => <CustomAppBar {...props} />,
       }}
-      
     >
       <PatientStack.Screen
         name="PatientBottomNavBar"
@@ -41,7 +50,7 @@ export default function PatientStackGroup() {
         component={ReportSideEffectScreen}
         options={{
           headerShown: true,
-          presentation: 'fullScreenModal'
+          presentation: "fullScreenModal",
         }}
       />
       <PatientStack.Screen
@@ -49,7 +58,7 @@ export default function PatientStackGroup() {
         component={AllAppointmentScreen}
         options={{
           headerShown: true,
-          presentation: 'fullScreenModal'
+          presentation: "fullScreenModal",
         }}
       />
       <PatientStack.Screen
@@ -57,7 +66,7 @@ export default function PatientStackGroup() {
         component={AppointmentDetailsScreen}
         options={{
           headerShown: true,
-          presentation: 'fullScreenModal'
+          presentation: "fullScreenModal",
         }}
       />
       <PatientStack.Screen
@@ -65,7 +74,7 @@ export default function PatientStackGroup() {
         component={BookAppointmentScreen}
         options={{
           headerShown: true,
-          presentation: 'fullScreenModal'
+          presentation: "fullScreenModal",
         }}
       />
       <PatientStack.Screen
@@ -85,6 +94,76 @@ export default function PatientStackGroup() {
       <PatientStack.Screen
         name="SideEffectDetailsScreen"
         component={SideEffectDetailsScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="ProgressTracker"
+        component={ProgressTracker}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="PatientSettingsScreen"
+        component={PatientSettingsScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="LanguageScreen"
+        component={LanguageScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="PatientHistoryScreen"
+        component={PatientHistoryScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="ReminderScreen"
+        component={ReminderScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="PatientHistoryTab"
+        component={PatientHistoryTab}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="PatientEditProfileScreen"
+        component={PatientEditProfileScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="ChangePasswordScreen"
+        component={ChangePasswordScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="PreviewProfilePicScreen"
+        component={PreviewProfilePicScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="TuberculosisMaterialsScreen"
+        component={TuberculosisMaterialsScreen}
         options={{
           headerShown: true,
         }}

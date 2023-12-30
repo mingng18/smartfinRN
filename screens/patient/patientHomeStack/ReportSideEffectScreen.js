@@ -69,9 +69,11 @@ function ReportSideEffectScreen() {
   const onConfirm = React.useCallback(
     ({ hours, minutes }) => {
       setTimePickerOpen(false);
-      setHour(hours);
-      setMinute(minutes);
-      // console.log({ hours, minutes });
+      // Pad the hours and minutes with leading zeros if necessary
+      const paddedHour = String(hours).padStart(2, "0");
+      const paddedMinute = String(minutes).padStart(2, "0");
+      setHour(paddedHour);
+      setMinute(paddedMinute);
     },
     [setTimePickerOpen]
   );

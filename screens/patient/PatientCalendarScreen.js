@@ -1,14 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import {
-  useTheme,
-  Text,
-  Chip,
-  Button,
-  IconButton,
-  Divider,
-} from "react-native-paper";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme, Text, Button, Divider } from "react-native-paper";
 import { Timestamp } from "firebase/firestore";
 import CustomCalendar from "../../components/ui/CustomCalendar";
 import { ScrollView } from "react-native-gesture-handler";
@@ -273,14 +265,14 @@ const sideEffectData = [
   {
     side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     severity: "danger",
-    se_status: 'pending',
-    symptoms: ['cough', 'blood']
+    se_status: "pending",
+    symptoms: ["cough", "blood"],
   },
   {
     side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     severity: "mild",
-    se_status: 'reviewed',
-    symptoms: ['cough', 'nausea'],
-    remarks: 'Drink more water'
+    se_status: "reviewed",
+    symptoms: ["cough", "nausea"],
+    remarks: "Drink more water",
   },
 ];

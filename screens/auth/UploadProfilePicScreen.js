@@ -24,7 +24,7 @@ export default function UploadProfilePicScreen() {
 
     if (!result.canceled) {
       let uri = result.assets[0].uri;
-      navigation.navigate("PreviewProfilePicScreen", uri);
+      navigation.navigate("PreviewProfilePicScreen", {uri: uri});
     }
   };
 

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { FAB, Text, useTheme } from "react-native-paper";
 import {} from "../../../assets/blank-profile-pic.png";
 import {
@@ -54,73 +54,78 @@ function AllAppointmentScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <View style={{ marginTop: 16 }} />
-      {appointmentData.map((appointment, i) => {
-        //TODO query for the profilepic and name
-        const profilePic = "../../assets/blank-profile-pic.png";
-        const name = "bruh";
-        return (
-          <HorizontalCard
-            key={i}
-            profilePic={profilePic}
-            subject={name}
-            status={capitalizeFirstLetter(appointment.appointment_status)}
-            date={appointment.scheduled_timestamp
-              .toDate()
-              .toISOString()
-              .slice(0, 10)}
-            time={appointment.scheduled_timestamp
-              .toDate()
-              .toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              })}
-            color={containerColor(appointment)}
-            onPressedCallback={() => {
-              navigation.navigate("AppointmentDetailsScreen", {
-                appointment: appointment,
-                profilePic: profilePic,
-                name: name,
-              });
-            }}
-          />
-        );
-      })}
-      <Text variant="titleLarge" style={{ marginVertical: 16 }}>
-        Past Appointments
-      </Text>
-      {appointmentData.map((appointment, i) => {
-        //TODO query for the profilepic and name
-        const profilePic = "../../assets/blank-profile-pic.png";
-        const name = "bruh";
-        return (
-          <HorizontalCard
-            key={i}
-            profilePic={profilePic}
-            subject={name}
-            status={capitalizeFirstLetter(appointment.appointment_status)}
-            date={appointment.scheduled_timestamp
-              .toDate()
-              .toISOString()
-              .slice(0, 10)}
-            time={appointment.scheduled_timestamp
-              .toDate()
-              .toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              })}
-            color={containerColor(appointment)}
-            onPressedCallback={() => {
-              navigation.navigate("AppointmentDetailsScreen", {
-                appointment: appointment,
-              });
-            }}
-          />
-        );
-      })}
-      <View style={{ marginBottom: 38 }} />
+      <ScrollView
+        style={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ marginTop: 16 }} />
+        {appointmentData.map((appointment, i) => {
+          //TODO query for the profilepic and name
+          const profilePic = "../../assets/blank-profile-pic.png";
+          const name = "bruh";
+          return (
+            <HorizontalCard
+              key={i}
+              profilePic={profilePic}
+              subject={name}
+              status={capitalizeFirstLetter(appointment.appointment_status)}
+              date={appointment.scheduled_timestamp
+                .toDate()
+                .toISOString()
+                .slice(0, 10)}
+              time={appointment.scheduled_timestamp
+                .toDate()
+                .toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+              color={containerColor(appointment)}
+              onPressedCallback={() => {
+                navigation.navigate("AppointmentDetailsScreen", {
+                  appointment: appointment,
+                  profilePic: profilePic,
+                  name: name,
+                });
+              }}
+            />
+          );
+        })}
+        <Text variant="titleLarge" style={{ marginVertical: 16 }}>
+          Past Appointments
+        </Text>
+        {appointmentData.map((appointment, i) => {
+          //TODO query for the profilepic and name
+          const profilePic = "../../assets/blank-profile-pic.png";
+          const name = "bruh";
+          return (
+            <HorizontalCard
+              key={i}
+              profilePic={profilePic}
+              subject={name}
+              status={capitalizeFirstLetter(appointment.appointment_status)}
+              date={appointment.scheduled_timestamp
+                .toDate()
+                .toISOString()
+                .slice(0, 10)}
+              time={appointment.scheduled_timestamp
+                .toDate()
+                .toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+              color={containerColor(appointment)}
+              onPressedCallback={() => {
+                navigation.navigate("AppointmentDetailsScreen", {
+                  appointment: appointment,
+                });
+              }}
+            />
+          );
+        })}
+        <View style={{ marginBottom: 38 }} />
+      </ScrollView>
       <View style={{ flex: 1, position: "absolute", bottom: 56, right: 16 }}>
         <FAB
           icon="calendar"

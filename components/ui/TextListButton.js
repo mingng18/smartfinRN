@@ -10,10 +10,10 @@ export default function TextListButton({onPressCallback, text}) {
         alignItems: "center",
         marginTop: 16,
       }}
-      onPress={onPressCallback()}
+      onPress={onPressCallback}
     >
       <Text variant="titleLarge">{text}</Text>
-      <IconButton icon="arrow-top-right" size={24} onPress={() => {}} />
+      <IconButton icon="arrow-top-right" size={24} onPress={onPressCallback} />
     </Pressable>
   );
 }

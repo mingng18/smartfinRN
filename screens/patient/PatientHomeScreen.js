@@ -177,7 +177,7 @@ function PatientHomeScreen() {
             {/* TODO TB Materials */}
             <Button
               mode="contained"
-              onPressed={() => {}}
+              onPress={() => navigate("TuberculosisMaterialsScreen")}
               style={{ margin: 16 }}
             >
               Learn more about TB

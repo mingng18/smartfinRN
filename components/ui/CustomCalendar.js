@@ -20,8 +20,6 @@ export default function CustomCalendar({
 }) {
   const theme = useTheme();
 
-  //Segmented Button
-
   //useMemo to optimise performance
   //Decide which colour to color the container
   const marked = React.useMemo(() => {

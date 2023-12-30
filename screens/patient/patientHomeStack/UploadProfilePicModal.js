@@ -6,31 +6,30 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 
-export default function UploadVideoModal({ bottomSheetModalRef }) {
+export default function UploadProfilePicModal({ bottomSheetModalRef }) {
   const { navigate } = useNavigation();
   const snapPoints = React.useMemo(() => ["30%"], []);
   const theme = useTheme();
-  const [dialogVisible, setDialogVisible] = React.useState(false);
+  //   const [dialogVisible, setDialogVisible] = React.useState(false);
 
   const handleClosePress = () => bottomSheetModalRef.current.close();
 
-  const pickVideo = async () => {
+  const pickImage = async () => {
     //No permission when launching image library
-    setTimeout(() => setDialogVisible(true), 1000);
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      quality: 0.3,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.5,
     });
 
     if (!result.canceled) {
       let uri = result.assets[0].uri;
-      navigate("PreviewVideoScreen", uri);
+      navigate("PreviewProfilePicScreen", { uri: uri, isEditing: true });
     }
-    setDialogVisible(false);
   };
 
   return (
     <>
+      {console.log("hi")}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
@@ -43,7 +42,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
             justifyContent: "space-between",
           }}
         >
-          <Text variant="labelLargeProminent">Upload Video</Text>
+          <Text variant="labelLargeProminent">Upload Profile Picture</Text>
           <View
             style={{
               backgroundColor: theme.colors.primary,
@@ -55,20 +54,20 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
           <Button
             mode="text"
             onPress={() => {
-              pickVideo();
+              pickImage();
               bottomSheetModalRef.current.close();
             }}
           >
-            Upload Video from Storage
+            Upload Photo from Storage
           </Button>
           <Button
             mode="text"
             onPress={() => {
-              navigate("CameraScreen", {isVideo: true});
+              navigate("CameraScreen", { isEditing: true });
               bottomSheetModalRef.current.close();
             }}
           >
-            Take Video
+            Take Photo
           </Button>
           <View
             style={{
@@ -83,12 +82,12 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
           </Button>
         </View>
       </BottomSheetModal>
-      <LoadingIndicatorDialog
+      {/* <LoadingIndicatorDialog
         visible={dialogVisible}
         close={() => {
           setDialogVisible(false);
         }}
-      />
+      /> */}
     </>
   );
 }

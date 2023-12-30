@@ -7,16 +7,19 @@ import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { useDispatch } from "react-redux";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
-
-
+import React from "react";
 
 function PatientProfileScreen() {
   const theme = useTheme();
   const auth = getAuth();
   const dispatch = useDispatch();
+  const { navigate } = useNavigation();
+
+  // React.useLayoutEffect(() => {
+  //   navigate("PatientEditProfileScreen");
+  // });
 
   function signOutHandler() {
-  
     signOut(auth)
       .then(async () => {
         // Sign out successful
@@ -29,7 +32,8 @@ function PatientProfileScreen() {
         // An error occurred during sign out
         console.error("Error signing out:", error);
         // Handle the error or display an error message
-      });}
+      });
+  }
 
   return (
     <View
@@ -61,7 +65,7 @@ function PatientProfileScreen() {
             <Text variant="bodyLarge"> !</Text>
           </View>
         </View>
-        <IconButton icon="pencil" size={24} onPress={() => {}} />
+        <IconButton icon="pencil" size={24} onPress={() => {navigate("PatientEditProfileScreen")}} />
       </View>
       {/* ========================PERSONAL INFO======================= */}
       {/* TODO change the personal information */}
@@ -108,14 +112,15 @@ function PatientProfileScreen() {
           style={{ position: "absolute", right: "0%", top: "0%" }}
           icon="arrow-top-right"
           size={24}
-          onPress={() => {}}
+          onPress={() => {
+            navigate("ProgressTracker");
+          }}
         />
         <AnimatedCircularProgress
           size={280}
           width={15}
-          fill={50}
+          fill={50} // The percentage of the progress is put here
           tintColor={theme.colors.primary}
-          onAnimationComplete={() => console.log("onAnimationComplete")}
           backgroundColor={theme.colors.primaryContainer}
           arcSweepAngle={180}
           rotation={270}
@@ -142,9 +147,19 @@ function PatientProfileScreen() {
         </AnimatedCircularProgress>
       </View>
       {/* ========================== Settings ======================= */}
-      <TextListButton text={"Settings"} onPressCallback={() => {}} />
-      <TextListButton text={"History"} onPressCallback={() => {}} />
-      <Button mode="contained" style={{ marginTop: 24 }} onPress={() => signOutHandler()}>
+      <TextListButton
+        text={"Settings"}
+        onPressCallback={() => navigate("PatientSettingsScreen")}
+      />
+      <TextListButton
+        text={"History"}
+        onPressCallback={() => navigate("PatientHistoryTab")}
+      />
+      <Button
+        mode="contained"
+        style={{ marginTop: 24 }}
+        onPress={() => signOutHandler()}
+      >
         Sign Out
       </Button>
     </View>
