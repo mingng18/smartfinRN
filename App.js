@@ -6,7 +6,7 @@ import {
 } from "react-native-paper";
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
-import { StatusBar } from "expo-status-bar";
+import { StatusBar, setStatusBarStyle } from "expo-status-bar";
 import { useContext, useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import AppLoading from "expo-app-loading";
@@ -45,9 +45,9 @@ function Root() {
         if (user) {
           async (user) => {
             const token = await user.getIdTokenResult().token;
-            console.log("Starting token: " + token)
+            console.log("Starting token: " + token);
             dispatch(authenticateStoreNative(token, user.uid));
-          }
+          };
           // console.log("Display name: " + user.getIdTokenResult());
           // dispatch(authenticateStoreNative(await user.getIdTokenResult()), user.uid);
           // User is signed in, see docs for a list of available properties
@@ -57,9 +57,9 @@ function Root() {
         } else {
           async (user) => {
             const token = await user.getIdTokenResult().token;
-            console.log("Starting token: " + token)
+            console.log("Starting token: " + token);
             dispatch(authenticateStoreNative(token, user.uid));
-          }
+          };
           // console.log("Display name: " + user.getIdTokenResult());
           // User is signed out
           // ...
@@ -134,12 +134,14 @@ export default function App() {
   // Initialise the React NAtive Paper Calendar library
   registerTranslation("en-GB", enGB);
 
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
         {/* <AuthContextProvider> */}
         <PaperProvider theme={lightTheme}>
           <BottomSheetModalProvider>
+            <StatusBar style="dark" />
             <Root />
           </BottomSheetModalProvider>
         </PaperProvider>
