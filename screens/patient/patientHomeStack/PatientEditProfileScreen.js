@@ -74,6 +74,7 @@ function PatientEditProfileScreen() {
           Personal Information
         </Text>
         <PersonalInfoForm isEditing />
+        <View style={{ marginTop: 32 }} />
         <TreatmentInfoForm isEditing />
         <View style={{ marginBottom: 54 }} />
       </ScrollView>

@@ -14,9 +14,11 @@ import { useDispatch } from "react-redux";
 import { GENDER, NATIONALITY } from "../../constants/constants";
 
 export default function PersonalInfoForm({ isEditing }) {
+  //TODO handle isEditing case
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -44,13 +46,21 @@ export default function PersonalInfoForm({ isEditing }) {
   });
   const [isAuthenticating, setIsAuthenticating] = React.useState();
 
-  async function nextButtonHandler() {
-    // Calculate age based on nric
-    if (nric !== null) {
-      const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
-      setAge(new Date().getFullYear() - nric.slice(0, 2) - millennium);
-    }
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Personal Information",
+    });
+  });
 
+  function handlerForAgeInputChange(value) {
+    setNric(value);
+    if (nric !== null) {
+      // Calculate age based on nric
+      setAge(new Date().getFullYear() - value.slice(0, 2) - millennium);
+    }
+  }
+
+  async function nextButtonHandler() {
     // Input validation logic
     const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
     const phoneRegex = /^\+[0-9]{10,13}$/; //+60123456789
@@ -74,18 +84,6 @@ export default function PersonalInfoForm({ isEditing }) {
       age: !isAgeValid,
     });
 
-    if (
-      !isFirstNameValid ||
-      !isLastNameValid ||
-      !isPhoneNumberValid ||
-      (!isNricValid && !isPassportValid) ||
-      !isAgeValid
-    ) {
-      return Alert.alert(
-        "Invalid input",
-        "Please check your entered credentials."
-      );
-    }
     // Debug use---------------------------------------------------------------
     console.log(
       "isFirstNameValid: " +
@@ -108,6 +106,19 @@ export default function PersonalInfoForm({ isEditing }) {
         age
     );
     //Debug use---------------------------------------------------------------
+
+    if (
+      !isFirstNameValid ||
+      !isLastNameValid ||
+      !isPhoneNumberValid ||
+      (!isNricValid && !isPassportValid) ||
+      !isAgeValid
+    ) {
+      return Alert.alert(
+        "Invalid input",
+        "Please check your entered credentials."
+      );
+    }
 
     setIsAuthenticating(true);
     try {
@@ -223,7 +234,7 @@ export default function PersonalInfoForm({ isEditing }) {
             placeholder="Type without spacing and -"
             maxLength={12}
             value={nric}
-            onChangeText={(value) => setNric(value)}
+            onChangeText={(value) => handlerForAgeInputChange(value)}
             error={credentialsInvalid.nric}
           />
         ) : (
@@ -248,6 +259,7 @@ export default function PersonalInfoForm({ isEditing }) {
             />
           </>
         )}
+
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
           <Button mode="contained" onPress={() => nextButtonHandler()}>
             Next

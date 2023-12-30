@@ -60,11 +60,11 @@ export default function PersonalInformationScreen() {
     });
   });
 
-  function handlerForAgeInputChange(value){
+  function handlerForAgeInputChange(value) {
     setNric(value);
-    if (nric !== null){// Calculate age based on nric
-      setAge(((new Date().getFullYear() - value.slice(0, 2))- millennium));
-      
+    if (nric !== null) {
+      // Calculate age based on nric
+      setAge(new Date().getFullYear() - value.slice(0, 2) - millennium);
     }
   }
 
@@ -91,7 +91,7 @@ export default function PersonalInformationScreen() {
       passport: !isPassportValid,
       age: !isAgeValid,
     });
-    
+
     // Debug use---------------------------------------------------------------
     console.log(
       "isFirstNameValid: " +
@@ -110,10 +110,11 @@ export default function PersonalInformationScreen() {
         isPassportValid +
         "\n" +
         "isAgeValid: " +
-        isAgeValid + age
+        isAgeValid +
+        age
     );
     //Debug use---------------------------------------------------------------
-    
+
     if (
       !isFirstNameValid ||
       !isLastNameValid ||
@@ -124,8 +125,8 @@ export default function PersonalInformationScreen() {
       return Alert.alert(
         "Invalid input",
         "Please check your entered credentials."
-        );
-      }
+      );
+    }
 
     setIsAuthenticating(true);
     try {
@@ -174,110 +175,6 @@ export default function PersonalInformationScreen() {
           paddingHorizontal: 16,
         }}
       >
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            marginBottom: 16,
-          }}
-        >
-          <TextInput
-            mode="outlined"
-            style={{ flex: 1 }}
-            label="First Name"
-            placeholder="Muhammad Ali"
-            maxLength={100}
-            value={firstName}
-            onChangeText={(value) => setFirstName(value)}
-            error={credentialsInvalid.firstName}
-          />
-          <TextInput
-            mode="outlined"
-            style={{ flex: 1, marginLeft: 16 }}
-            label="Last Name"
-            placeholder="Mohammad Abu"
-            maxLength={100}
-            value={lastName}
-            onChangeText={(value) => setLastName(value)}
-            error={credentialsInvalid.lastName}
-          />
-        </View>
-        <CustomDropDownPicker
-          open={genderOpen}
-          setOpen={setGenderOpen}
-          value={gender}
-          setValue={setGender}
-          items={genderData}
-          setItems={setGenderData}
-          placeholder="Gender"
-        />
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-around",
-            marginVertical: 16,
-          }}
-        >
-          <TextInput
-            mode="outlined"
-            style={{ flex: 3 }}
-            label="Mobile Phone Number"
-            maxLength={13}
-            placeholder="+60123456789"
-            value={phoneNumber}
-            onChangeText={(value) => setPhoneNumber(value)}
-            error={credentialsInvalid.phoneNumber}
-          />
-        </View>
-        <CustomDropDownPicker
-          open={nationalityOpen}
-          setOpen={setNationalityOpen}
-          value={nationality}
-          setValue={setNationality}
-          items={nationalityData}
-          setItems={setNationalityData}
-          placeholder="Nationality"
-        />
-        {nationality == "Malaysian" ? (
-          <TextInput
-            mode="outlined"
-            style={{ marginTop: 16 }}
-            label="NRIC"
-            placeholder="Type without spacing and -"
-            maxLength={12}
-            value={nric}
-            onChangeText={(value) => handlerForAgeInputChange(value)}
-            error={credentialsInvalid.nric}
-          />
-        ) : (
-          <>
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Passport Number"
-              maxLength={12}
-              value={passport}
-              onChangeText={(value) => setPassport(value)}
-              error={credentialsInvalid.passport}
-            />
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Age"
-              maxLength={3}
-              value={age}
-              onChangeText={(value) => setAge(value)}
-              error={credentialsInvalid.age}
-            />
-          </>
-        )}
-
-        <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-          <Button mode="contained" onPress={() => nextButtonHandler()}>
-            Next
-          </Button>
-        </View>
         <PersonalInfoForm isEditing={false} />
       </View>
     </TouchableWithoutFeedback>
