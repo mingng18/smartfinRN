@@ -18,6 +18,7 @@ export default function PersonalInformationScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -57,14 +58,15 @@ export default function PersonalInformationScreen() {
     });
   });
 
-  async function nextButtonHandler() {
-
-    // Calculate age based on nric
-    if (nric !== null){
-      const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
-      setAge(((new Date().getFullYear() - nric.slice(0, 2))- millennium));
+  function handlerForAgeInputChange(value){
+    setNric(value);
+    if (nric !== null){// Calculate age based on nric
+      setAge(((new Date().getFullYear() - value.slice(0, 2))- millennium));
+      
     }
+  }
 
+  async function nextButtonHandler() {
     // Input validation logic
     const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
     const phoneRegex = /^\+[0-9]{10,13}$/; //+60123456789
@@ -87,7 +89,29 @@ export default function PersonalInformationScreen() {
       passport: !isPassportValid,
       age: !isAgeValid,
     });
-
+    
+    // Debug use---------------------------------------------------------------
+    console.log(
+      "isFirstNameValid: " +
+        isFirstNameValid +
+        "\n" +
+        "isLastNameValid: " +
+        isLastNameValid +
+        "\n" +
+        "isPhoneNumberValid: " +
+        isPhoneNumberValid +
+        "\n" +
+        "isNricValid: " +
+        isNricValid +
+        "\n" +
+        "isPassportValid: " +
+        isPassportValid +
+        "\n" +
+        "isAgeValid: " +
+        isAgeValid + age
+    );
+    //Debug use---------------------------------------------------------------
+    
     if (
       !isFirstNameValid ||
       !isLastNameValid ||
@@ -100,27 +124,6 @@ export default function PersonalInformationScreen() {
         "Please check your entered credentials."
         );
       }
-      // Debug use---------------------------------------------------------------
-      console.log(
-        "isFirstNameValid: " +
-          isFirstNameValid +
-          "\n" +
-          "isLastNameValid: " +
-          isLastNameValid +
-          "\n" +
-          "isPhoneNumberValid: " +
-          isPhoneNumberValid +
-          "\n" +
-          "isNricValid: " +
-          isNricValid +
-          "\n" +
-          "isPassportValid: " +
-          isPassportValid +
-          "\n" +
-          "isAgeValid: " +
-          isAgeValid + age
-      );
-      //Debug use---------------------------------------------------------------
 
     setIsAuthenticating(true);
     try {
@@ -242,7 +245,7 @@ export default function PersonalInformationScreen() {
             placeholder="Type without spacing and -"
             maxLength={12}
             value={nric}
-            onChangeText={(value) => setNric(value)}
+            onChangeText={(value) => handlerForAgeInputChange(value)}
             error={credentialsInvalid.nric}
           />
         ) : (

@@ -61,8 +61,8 @@ export default function TreatmentInfoScreen() {
   ]);
 
   //Text inputs
-  const [durationOfTreatment, setDurationOfTreatment] = React.useState("");
-  const [numberOfTablets, setNumberOfTablets] = React.useState("");
+  const [durationOfTreatment, setDurationOfTreatment] = React.useState(0);
+  const [numberOfTablets, setNumberOfTablets] = React.useState(0);
   const [credentialsInvalid, setCredentialsInvalid] = React.useState({
     durationOfTreatment: false,
     numberOfTablets: false,
@@ -105,9 +105,9 @@ export default function TreatmentInfoScreen() {
       age: signupInfo.age,
       date_of_diagnosis: submitDate,
       diagnosis: signupInfo.diagnosis,
-      treatment_duration_month: signupInfo.durationOfTreatment,
+      treatment_duration_month: parseInt(signupInfo.durationOfTreatment),
       treatment: signupInfo.currentTreatment,
-      number_of_tablets: signupInfo.numberOfTablets,
+      number_of_tablets: parseInt(signupInfo.numberOfTablets),
       profile_pic_url: profilePicUrl,
       compliance_status: "Compliant",
       gender: signupInfo.gender,
@@ -310,7 +310,7 @@ export default function TreatmentInfoScreen() {
           open={treatmentOpen}
           setOpen={setTreatmentOpen}
           value={treatment}
-          setValue={setTreatment}
+          setValue={(value) => setTreatment(value)}
           items={treatmentData}
           setItems={setTreatmentData}
           placeholder="Treatment"

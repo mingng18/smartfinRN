@@ -168,7 +168,7 @@ export default function PreviewProfilePicScreen() {
           }}
           style={{ marginLeft: 16 }}
         >
-        {signupMode === "patient"? Next : "Signup"}
+        {signupMode === "patient"? "Next" : "Signup"}
         </Button>
         <Button
           mode="contained-tonal"
