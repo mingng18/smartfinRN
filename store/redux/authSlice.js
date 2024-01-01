@@ -13,7 +13,7 @@ const authSlice = createSlice({
         authenticate: (state, action) => {
             state.token = action.payload.token;
             state.isAuthenticated = true;
-            state.user_uid = action.payload.uid;
+            state.user_uid = action.payload.user_uid;
         },
         logout: (state) => {
             state.token = null;
@@ -27,7 +27,7 @@ const authSlice = createSlice({
 
 export const authenticateStoreNative = (storedToken, userId) => {
     return async (dispatch) => {
-        dispatch(authenticate({ token: storedToken , uid: userId}));
+        dispatch(authenticate({ token: storedToken , user_uid: userId}));
         try {
             await SecureStore.setItemAsync("token", storedToken);
             await SecureStore.setItemAsync("uid", userId)

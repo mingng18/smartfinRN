@@ -1,22 +1,32 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import {
-  ActivityIndicator,
-  Button,
-  useTheme,
-} from "react-native-paper";
+import { View, StyleSheet, Alert } from "react-native";
+import { ActivityIndicator, Button, useTheme } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
+import {
+  getDownloadURL,
+  getMetadata,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { useSelector } from "react-redux";
+import { Timestamp, doc, setDoc } from "firebase/firestore";
+import { addDocumentWithId } from "../../../util/firestoreWR";
+import { db } from "../../../util/firebaseConfig";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const theme = useTheme();
+  const storageRef = getStorage();
+  const uid = useSelector((state) => state.authObject.user_uid);
   const { key, name, params, path } = route;
   const [video, setVideo] = React.useState("");
   const videoRef = React.useRef(null);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [uploadProgress, setUploadProgress] = React.useState(0);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,8 +51,92 @@ function PreviewVideoScreen() {
     setIsLoading(false);
   };
 
+  async function saveVideoDataToFirestore(documentType, videoId, videoUrl) {
+    await setDoc(doc(db, documentType, videoId), {
+      medical_checklist: "",
+      rejected_reason: null,
+      reviewed_timestamp: null,
+      reviewer_id: null,
+      status: "pending",
+      submitter_id: uid,
+      uploaded_timestamp: Timestamp.now(),
+      video_url: videoUrl,
+    });
+  }
+
   //TODO Upload Video to firestore
-  const handleVideoSubmit = () => {};
+  const handleVideoSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const videoData = await fetch(video);
+      const videoBlob = await videoData.blob();
+
+      if (uid === null || uid === undefined || uid === "") {
+        Alert.alert(
+          "Error",
+          "Something wrong, please login again and try again"
+        );
+        return;
+      }
+      const videoRef = ref(storageRef, "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString());
+
+      uploadTask = uploadBytesResumable(videoRef, videoBlob);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Video upload is " + progress + "% done");
+          setUploadProgress(progress.toFixed(2));
+        },
+        (error) => {
+          switch (error.code) {
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              Alert.alert(
+                "Unauthorized",
+                "Error uploading video, please login again and try again"
+              );
+
+              break;
+            case "storage/canceled":
+              // User canceled the upload
+              Alert.alert("Cancelled", "Video upload cancelled");
+              break;
+
+            // ...
+
+            case "storage/unknown":
+              // Unknown error occurred, inspect error.serverResponse
+              Alert.alert("Error", "Error uploading video, please try again");
+              break;
+          }
+          setIsLoading(false);
+        },
+        (snapshot) => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            getMetadata(videoRef)
+              .then(async (metadata) => {
+                console.log(" video metadata: " + metadata.md5Hash);
+                console.log("File available at ", downloadURL);
+                await saveVideoDataToFirestore("video", metadata.name, downloadURL);
+                // Metadata now contains the metadata for 'images/forest.jpg'
+              })
+              .catch((error) => {
+                // Uh-oh, an error occurred!
+                console.log("Error while getting metadata and writing to firestore: " + error);
+              });
+            setIsLoading(false);
+            console.log("Video uploaded successfully!");
+          });
+        }
+      );
+    } catch (error) {
+      setIsLoading(false);
+      Alert.alert("Error", "Error uploading video, please try again");
+      console.error("Error uploading video:", error);
+    }
+  };
 
   return (
     <View
@@ -60,7 +154,7 @@ function PreviewVideoScreen() {
           aspectRatio: 9 / 16,
           alignSelf: "center",
           borderRadius: 16,
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <Video

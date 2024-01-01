@@ -58,7 +58,7 @@ function Root() {
           async (user) => {
             const token = await user.getIdTokenResult().token;
             console.log("Starting token: " + token);
-            dispatch(authenticateStoreNative(token, user.uid));
+            dispatch(authenticateStoreNative(token, userr.uid));
           };
           // console.log("Display name: " + user.getIdTokenResult());
           // User is signed out
@@ -71,6 +71,7 @@ function Root() {
       console.log("Initialized token:" + storedToken);
       if (storedToken != "" && storedToken != null) {
         const storedUid = await SecureStore.getItemAsync("uid");
+        console.log("Initialized uid:" + storedUid);
         dispatch(authenticateStoreNative(storedToken, storedUid));
       }
       setIsTryingLogin(false);
