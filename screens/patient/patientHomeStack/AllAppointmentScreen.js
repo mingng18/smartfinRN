@@ -10,34 +10,52 @@ import {
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { Timestamp } from "firebase/firestore";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { useSelector } from "react-redux";
+import { fetchDocument } from "../../../util/firestoreWR";
 
 function AllAppointmentScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const appointments = useSelector(
+    (state) => state.appointmentObject.appointments
+  );
+  const [acceptedAppointment, setAcceptedAppointment] = React.useState([]);
+  const [pendingAppointment, setPendingAppointment] = React.useState([]);
+  const [completedAppointment, setCompletedAppointment] = React.useState([]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "All Appointments",
     });
-
-    //Query for all appointment, and seperate into
-    // pending accpeted
-    // past appointment
-    //order by time
-    // setCompleteAppointment(appointmentData);
-    // setIncompleteAppointment(appointmentData);
   });
 
-  const appointmentData = [
-    {
-      scheduled_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
-      appointment_status: "pending",
-    },
-    {
-      scheduled_timestamp: Timestamp.fromDate(new Date("2023-12-23")),
-      appointment_status: "accepted",
-    },
-  ];
+  React.useEffect(() => {
+    console.log("appointments", appointments);
+    setAcceptedAppointment(
+      appointments.filter(
+        (appointment) =>
+          appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED
+      )
+    );
+
+    setPendingAppointment(
+      appointments.filter(
+        (appointment) =>
+          appointment.appointment_status === APPOINTMENT_STATUS.PENDING
+      )
+    );
+
+    console.log(acceptedAppointment.length);
+    console.log(pendingAppointment.length);
+    setCompletedAppointment(
+      appointments
+        .filter(
+          (appointment) =>
+            appointment.appointment_status === APPOINTMENT_STATUS.COMPLETED
+        )
+        .sort((a, b) => a.scheduled_timestamp - b.scheduled_timestamp)
+    );
+  }, [appointments]);
 
   //Determine the container color
   function containerColor(appointment) {
@@ -54,76 +72,102 @@ function AllAppointmentScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <ScrollView
-        style={{ flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 16 }} />
-        {appointmentData.map((appointment, i) => {
-          //TODO query for the profilepic and name
-          const profilePic = "../../assets/blank-profile-pic.png";
-          const name = "bruh";
+        {acceptedAppointment.map((appointment) => {
           return (
             <HorizontalCard
-              key={i}
-              profilePic={profilePic}
-              subject={name}
+              key={appointment.id}
+              profilePic={appointment.healthcare_profile_picture}
+              subject={capitalizeFirstLetter(appointment.healthcare_first_name)}
               status={capitalizeFirstLetter(appointment.appointment_status)}
-              date={appointment.scheduled_timestamp
-                .toDate()
+              date={new Date(appointment.scheduled_timestamp)
                 .toISOString()
                 .slice(0, 10)}
-              time={appointment.scheduled_timestamp
-                .toDate()
-                .toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
+              time={new Date(
+                appointment.scheduled_timestamp
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
               color={containerColor(appointment)}
               onPressedCallback={() => {
                 navigation.navigate("AppointmentDetailsScreen", {
                   appointment: appointment,
-                  profilePic: profilePic,
-                  name: name,
                 });
               }}
             />
           );
         })}
+        {pendingAppointment.map((appointment) => {
+          return (
+            <HorizontalCard
+              key={appointment.id}
+              profilePic={appointment.healthcare_profile_picture}
+              subject={capitalizeFirstLetter(appointment.healthcare_first_name)}
+              status={capitalizeFirstLetter(appointment.appointment_status)}
+              date={new Date(appointment.scheduled_timestamp)
+                .toISOString()
+                .slice(0, 10)}
+              time={new Date(
+                appointment.scheduled_timestamp
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
+              color={containerColor(appointment)}
+              onPressedCallback={() => {
+                navigation.navigate("AppointmentDetailsScreen", {
+                  appointment: appointment,
+                });
+              }}
+            />
+          );
+        })}
+        {pendingAppointment.length == 0 && acceptedAppointment.length == 0 && (
+          <Text variant="bodyLarge" style={{ marginBottom: 16 }}>
+            You dont have any pending appointment
+          </Text>
+        )}
         <Text variant="titleLarge" style={{ marginVertical: 16 }}>
           Past Appointments
         </Text>
-        {appointmentData.map((appointment, i) => {
-          //TODO query for the profilepic and name
-          const profilePic = "../../assets/blank-profile-pic.png";
-          const name = "bruh";
-          return (
-            <HorizontalCard
-              key={i}
-              profilePic={profilePic}
-              subject={name}
-              status={capitalizeFirstLetter(appointment.appointment_status)}
-              date={appointment.scheduled_timestamp
-                .toDate()
-                .toISOString()
-                .slice(0, 10)}
-              time={appointment.scheduled_timestamp
-                .toDate()
-                .toLocaleTimeString("en-US", {
+        {completedAppointment.length > 0 ? (
+          completedAppointment.map((appointment) => {
+            return (
+              <HorizontalCard
+                key={appointment.id}
+                profilePic={appointment.healthcare_profile_picture}
+                subject={capitalizeFirstLetter(
+                  appointment.healthcare_first_name
+                )}
+                status={capitalizeFirstLetter(appointment.appointment_status)}
+                date={new Date(appointment.scheduled_timestamp)
+                  .toISOString()
+                  .slice(0, 10)}
+                time={new Date(
+                  appointment.scheduled_timestamp
+                ).toLocaleTimeString("en-US", {
                   hour: "numeric",
                   minute: "numeric",
                   hour12: true,
                 })}
-              color={containerColor(appointment)}
-              onPressedCallback={() => {
-                navigation.navigate("AppointmentDetailsScreen", {
-                  appointment: appointment,
-                });
-              }}
-            />
-          );
-        })}
+                color={containerColor(appointment)}
+                onPressedCallback={() => {
+                  navigation.navigate("AppointmentDetailsScreen", {
+                    appointment: appointment,
+                  });
+                }}
+              />
+            );
+          })
+        ) : (
+          <Text variant="bodyLarge" style={{ marginBottom: 16 }}>
+            You dont have any completed appointment
+          </Text>
+        )}
         <View style={{ marginBottom: 38 }} />
       </ScrollView>
       <View style={{ flex: 1, position: "absolute", bottom: 56, right: 16 }}>

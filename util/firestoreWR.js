@@ -12,6 +12,7 @@ import {
   setDoc,
   doc,
   addDoc,
+  getDoc,
 } from "firebase/firestore";
 
 export async function fetchDocument(collectionName, documentId) {
@@ -82,18 +83,37 @@ export async function fetchAppointmentsForPatient(patientId) {
     const querySnapshot = await getDocs(collectionRef);
 
     const appointments = [];
+    const promises = [];
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.patient_id === patientId) {
-        appointments.push({ id: doc.id, ...data });
+        const promise = fetchDocument("healthcare", data.healthcare_id)
+          .then((healthcareDoc) => {
+            appointments.push({
+              id: doc.id,
+              healthcare_profile_picture: healthcareDoc.profile_picture,
+              healthcare_first_name: healthcareDoc.first_name,
+              ...data,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to fetch healthcare document:", error);
+          });
+
+        promises.push(promise);
       }
     });
 
+    await Promise.all(promises); // Wait for all fetchDocument calls to complete
+
+    // console.log("appointments", appointments);
     return appointments;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
   }
 }
+
 
 export async function fetchSideEffectsForPatient(patientId) {
   try {
@@ -107,7 +127,6 @@ export async function fetchSideEffectsForPatient(patientId) {
         sideEffects.push({ id: doc.id, ...data });
       }
     });
-
 
     return sideEffects;
   } catch (error) {

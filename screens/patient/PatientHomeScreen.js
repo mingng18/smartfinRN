@@ -9,8 +9,12 @@ import React, { useRef } from "react";
 import ToDoCard from "../../components/ui/ToDoCard";
 import CTAButton from "../../components/ui/CTAButton";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
-import { BLANK_PROFILE_PIC } from "../../constants/constants";
-import { useDispatch } from "react-redux";
+import {
+  APPOINTMENT_STATUS,
+  BLANK_PROFILE_PIC,
+  VIDEO_STATUS,
+} from "../../constants/constants";
+import { useDispatch, useSelector } from "react-redux";
 import * as SecureStore from "expo-secure-store";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
@@ -20,7 +24,16 @@ function PatientHomeScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const appointments = useSelector(
+    (state) => state.appointmentObject.appointments
+  );
+  const videos = useSelector((state) => state.videoObject.videos);
+  const [pendingAppointmentsCount, setPendingAppointmentsCount] =
+    React.useState(0);
+  const [rejectedVideosCount, setRejectedVideosCount] = React.useState(0);
+  const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
 
+  //Load all data with userId on the home page
   React.useEffect(() => {
     const fetchDataForPatient = async () => {
       const storedUid = await SecureStore.getItemAsync("uid");
@@ -32,31 +45,39 @@ function PatientHomeScreen() {
     fetchDataForPatient();
   }, [dispatch]);
 
-  //TODO: update each details
-  const [toDoDetails, setToDoDetails] = React.useState([
-    {
-      title: "You haven’t take\nmedication yet today",
-      icon: "medical-bag",
-      count: "0",
-      onPressedCallback: () => bottomSheetModalRef.current?.present(),
-    },
-    {
-      title: "Appointment",
-      icon: "calendar",
-      count: "4",
-      onPressedCallback: () => navigate("AllAppointmentScreen"),
-    },
-    {
-      title: "Video Call Missed",
-      icon: "video",
-      count: "2",
-    },
-    {
-      title: "Video Rejected",
-      icon: "play",
-      count: "2",
-    },
-  ]);
+  React.useEffect(() => {
+    //Check the count of the pending appointment
+    const calculatePendingAppointmentsCount = () => {
+      const appointmentData = appointments.filter(
+        (appointment) =>
+          appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED
+      );
+      setPendingAppointmentsCount(appointmentData.length);
+    };
+
+    //Check the count of the rejected video
+    const calculateRejectedVideosCount = () => {
+      const vid = videos.filter(
+        (video) => video.status === VIDEO_STATUS.REJECTED
+      );
+      setRejectedVideosCount(vid.length);
+    };
+
+    //Check if the patient has ate medicine today
+    const calculateHasAteMedicine = () => {
+      const vid = videos.filter((video) => {
+        return (
+          new Date(video.uploaded_timestamp).toISOString().slice(0, 10) ===
+          new Date().toISOString().slice(0, 10)
+        );
+      });
+      setHasAteMedicine(vid.length > 0);
+    };
+
+    calculatePendingAppointmentsCount();
+    calculateRejectedVideosCount();
+    calculateHasAteMedicine();
+  }, [appointments, videos]);
 
   // modal ref
   const bottomSheetModalRef = useRef(null);
@@ -107,25 +128,64 @@ function PatientHomeScreen() {
               To-Do List
             </Text>
             <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
-              <ScrollView
-                horizontal
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
-              >
-                {toDoDetails.map((toDoSingle, index) => {
-                  const isLastItem = index === toDoDetails.length - 1;
-                  return (
+              {hasAteMedicine &&
+              pendingAppointmentsCount == 0 &&
+              rejectedVideosCount == 0 ? (
+                <Text
+                  variant="bodyLarge"
+                  style={{
+                    marginHorizontal: 16,
+                    flex: 1,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  Congratulations! Your to-do lists have been cleared!
+                </Text>
+              ) : (
+                <ScrollView
+                  horizontal
+                  showsVerticalScrollIndicator={false}
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {!hasAteMedicine && (
                     <ToDoCard
-                      key={toDoSingle.title}
-                      title={toDoSingle.title}
-                      icon={toDoSingle.icon}
-                      count={toDoSingle.count}
-                      isLastItem={isLastItem}
-                      onPressedCallback={toDoSingle.onPressedCallback}
+                      title={"You haven’t take\nmedication yet today"}
+                      icon="medical-bag"
+                      count={0}
+                      onPressedCallback={() =>
+                        bottomSheetModalRef.current?.present()
+                      }
                     />
-                  );
-                })}
-              </ScrollView>
+                  )}
+                  {pendingAppointmentsCount > 0 && (
+                    <ToDoCard
+                      title={"Appointment"}
+                      icon="calendar"
+                      count={pendingAppointmentsCount}
+                      onPressedCallback={() =>
+                        bottomSheetModalRef.current?.present()
+                      }
+                    />
+                  )}
+                  {rejectedVideosCount > 0 && (
+                    <ToDoCard
+                      title={"Video Rejected"}
+                      icon="play"
+                      count={rejectedVideosCount}
+                      onPressedCallback={() => {}}
+                    />
+                  )}
+
+                  {/* TODO Video Call Missed */}
+                  {/* <ToDoCard
+                  title="Video Call Missed"
+                  icon="video"
+                  count={1}
+                  onPressedCallback={() => {}}
+                /> */}
+                  <View style={{ marginRight: 16 }} />
+                </ScrollView>
+              )}
             </View>
           </View>
           {/* ================== CTA buttons ============== */}
