@@ -1,29 +1,36 @@
-import {
-  View,
-  KeyboardAvoidingView,
-  StyleSheet,
-  Keyboard,
-  Image,
-} from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import {
   GestureHandlerRootView,
   ScrollView,
 } from "react-native-gesture-handler";
-import React, { useCallback, useLayoutEffect, useMemo, useRef } from "react";
+import React, { useRef } from "react";
 import ToDoCard from "../../components/ui/ToDoCard";
 import CTAButton from "../../components/ui/CTAButton";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { useDispatch } from "react-redux";
+import * as SecureStore from "expo-secure-store";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
+  const dispatch = useDispatch();
 
-  // useLayoutEffect(() => {
-  //   navigate("AllAppointmentScreen");
-  // });
+  React.useEffect(() => {
+    const fetchDataForPatient = async () => {
+      const storedUid = await SecureStore.getItemAsync("uid");
+      dispatch(fetchAppointments(storedUid));
+      dispatch(fetchSideEffects(storedUid));
+      dispatch(fetchVideos(storedUid));
+    };
+
+    fetchDataForPatient();
+  }, [dispatch]);
 
   //TODO: update each details
   const [toDoDetails, setToDoDetails] = React.useState([

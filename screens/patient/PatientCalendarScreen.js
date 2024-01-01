@@ -7,6 +7,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { Pressable, View } from "react-native";
 import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import { useSelector } from "react-redux";
 
 function PatientCalendarScreen() {
   const { navigate } = useNavigation();
@@ -23,12 +24,19 @@ function PatientCalendarScreen() {
   const [isVideo, setIsVideo] = React.useState(true);
   const [isAppointment, setIsAppointment] = React.useState(true);
   const [isSideEffect, setIsSideEffect] = React.useState(true);
+  const appointments = useSelector(
+    (state) => state.appointmentObject.appointments
+  );
+  const sideEffects = useSelector(
+    (state) => state.sideEffectObject.sideEffects
+  );
+  const videos = useSelector((state) => state.videoObject.videos);
 
   React.useLayoutEffect(() => {
     //TODO populate data into video, appointment and sideEffect
-    setVideo(videoData);
-    setAppointment(appointmentData);
-    setSideEffect(sideEffectData);
+    setAppointment(appointments);
+    setSideEffect(sideEffects);
+    setVideo(videos);
   });
 
   //Refresh the calendar when there is new data
@@ -42,9 +50,11 @@ function PatientCalendarScreen() {
   //Combine all data to be pass to calendar
   const combinedDates = (video, appointment, sideEffect) => {
     const allDates = [
-      ...video.map((item) => item.uploaded_timestamp.toDate()),
-      ...appointment.map((item) => item.scheduled_timestamp.toDate()),
-      ...sideEffect.map((item) => item.side_effect_occuring_timestamp.toDate()),
+      ...video.map((item) => new Date(item.uploaded_timestamp)),
+      ...appointment.map((item) => new Date(item.scheduled_timestamp)),
+      ...sideEffect.map(
+        (item) => new Date(item.side_effect_occuring_timestamp)
+      ),
     ];
 
     const substringedDates = Array.from(
@@ -59,7 +69,7 @@ function PatientCalendarScreen() {
   const VideoHorizontalCard = () => {
     const matchedVideo = video.find(
       (item) =>
-        item.uploaded_timestamp.toDate().toISOString().slice(0, 10) ===
+        new Date(item.uploaded_timestamp).toISOString().slice(0, 10) ===
         selectedDate
     );
 
@@ -101,8 +111,7 @@ function PatientCalendarScreen() {
   const SideEffectHorizontalCard = () => {
     const matchedSideEffects = sideEffect.filter(
       (item) =>
-        item.side_effect_occuring_timestamp
-          .toDate()
+        new Date(item.side_effect_occuring_timestamp)
           .toISOString()
           .slice(0, 10) === selectedDate
     );
@@ -114,17 +123,16 @@ function PatientCalendarScreen() {
             <HorizontalCard
               key={i}
               subject={capitalizeFirstLetter(sideEffect.severity)}
-              date={sideEffect.side_effect_occuring_timestamp
-                .toDate()
+              date={new Date(sideEffect.side_effect_occuring_timestamp)
                 .toISOString()
                 .slice(0, 10)}
-              time={sideEffect.side_effect_occuring_timestamp
-                .toDate()
-                .toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
+              time={new Date(
+                sideEffect.side_effect_occuring_timestamp
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
               color={theme.colors.yellowContainer}
               onPressedCallback={() => {
                 navigate("SideEffectDetailsScreen", {
@@ -143,7 +151,7 @@ function PatientCalendarScreen() {
   const AppointmentHorizontalCard = () => {
     const matchedAppointment = appointment.filter(
       (item) =>
-        item.scheduled_timestamp.toDate().toISOString().slice(0, 10) ===
+        new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
         selectedDate
     );
 
@@ -159,17 +167,16 @@ function PatientCalendarScreen() {
                 profilePic={profilePic}
                 subject={name}
                 status={capitalizeFirstLetter(appointment.appointment_status)}
-                date={appointment.scheduled_timestamp
-                  .toDate()
+                date={new Date(appointment.scheduled_timestamp)
                   .toISOString()
                   .slice(0, 10)}
-                time={appointment.scheduled_timestamp
-                  .toDate()
-                  .toLocaleTimeString("en-US", {
-                    hour: "numeric",
-                    minute: "numeric",
-                    hour12: true,
-                  })}
+                time={new Date(
+                  appointment.scheduled_timestamp
+                ).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
                 color={theme.colors.secondaryContainer}
                 onPressedCallback={() => {
                   navigate("AppointmentDetailsScreen", {
@@ -241,38 +248,57 @@ export default PatientCalendarScreen;
 // Dummy data
 const videoData = [
   {
-    uploaded_timestamp: Timestamp.fromDate(new Date("2023-12-20")),
+    medical_checklist: "pending",
+    rejected_reason: "pending",
+    reviewed_timestamp: Timestamp.fromDate(new Date("2023-12-20")),
+    reviewer_id: "pending",
     status: "pending",
-  },
-  {
-    uploaded_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
-    status: "rejected",
+    submitter_id: "pending",
+    uploaded_timestamp: Timestamp.fromDate(new Date("2023-12-20")),
+    video_url: "pending",
   },
 ];
 
 const appointmentData = [
   {
-    scheduled_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     appointment_status: "pending",
+    created_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
+    healthcare_id: "dsdujdfjdnsf",
+    patient_id: "asiudbahfsas",
+    remarks: "test",
+    scheduled_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
   },
   {
-    scheduled_timestamp: Timestamp.fromDate(new Date("2023-12-23")),
     appointment_status: "accepted",
+    created_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
+    healthcare_id: "dsdujdfjdnsf",
+    patient_id: "asiudbahfsas",
+    remarks: "test",
+    scheduled_timestamp: Timestamp.fromDate(new Date("2023-12-23")),
   },
 ];
 
 const sideEffectData = [
   {
-    side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
-    severity: "danger",
+    created_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
+    healthcare_id: "dsdujdfjdnsf",
+    patient_id: "X2U3YtMP1GQ9wo377rBpj8nrGPu2",
+    remarks: "lol",
+    reviewed_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     se_status: "pending",
+    severity: "danger",
+    side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     symptoms: ["cough", "blood"],
   },
   {
-    side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
-    severity: "mild",
-    se_status: "reviewed",
-    symptoms: ["cough", "nausea"],
+    created_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
+    healthcare_id: "dsdujdfjdnsf",
+    patient_id: "X2U3YtMP1GQ9wo377rBpj8nrGPu2",
+    reviewed_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
     remarks: "Drink more water",
+    se_status: "reviewed",
+    severity: "mild",
+    side_effect_occuring_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
+    symptoms: ["cough", "nausea"],
   },
 ];
