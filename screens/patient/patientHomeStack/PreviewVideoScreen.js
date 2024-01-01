@@ -64,7 +64,8 @@ function PreviewVideoScreen() {
     });
   }
 
-  //TODO Upload Video to firestore
+  //Upload video to firestore
+  //TODO : more specific error handling
   const handleVideoSubmit = async () => {
     try {
       setIsLoading(true);
@@ -120,11 +121,13 @@ function PreviewVideoScreen() {
                 console.log(" video metadata: " + metadata.md5Hash);
                 console.log("File available at ", downloadURL);
                 await saveVideoDataToFirestore("video", metadata.name, downloadURL);
+                navigation.navigate("PatientHomeScreen");
                 // Metadata now contains the metadata for 'images/forest.jpg'
               })
               .catch((error) => {
                 // Uh-oh, an error occurred!
                 console.log("Error while getting metadata and writing to firestore: " + error);
+                Alert.alert("Error", "Error uploading video, please try again");
               });
             setIsLoading(false);
             console.log("Video uploaded successfully!");
