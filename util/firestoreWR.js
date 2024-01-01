@@ -16,14 +16,21 @@ import {
 } from "firebase/firestore";
 
 export async function fetchDocument(collectionName, documentId) {
-  const docRef = doc(db, collectionName, documentId);
-  const docSnapshot = await getDoc(docRef);
+  try {
+    const docRef = doc(db, collectionName, documentId);
+    const docSnapshot = await getDoc(docRef);
 
-  if (docSnapshot.exists()) {
-    const documentData = docSnapshot.data();
-    return { id: docSnapshot.id, ...documentData };
-  } else {
-    throw new Error("Document does not exist");
+    if (docSnapshot.exists()) {
+      const documentData = docSnapshot.data();
+      return { id: docSnapshot.id, ...documentData };
+    } else {
+      throw new Error(
+        `Document '${documentId}' does not exist in collection '${collectionName}'`
+      );
+    }
+  } catch (error) {
+    console.log("Error fetching document:", error);
+    throw new Error("Failed to fetch document");
   }
 }
 
@@ -113,7 +120,6 @@ export async function fetchAppointmentsForPatient(patientId) {
     throw new Error("Failed to fetch appointments: " + error.message);
   }
 }
-
 
 export async function fetchSideEffectsForPatient(patientId) {
   try {

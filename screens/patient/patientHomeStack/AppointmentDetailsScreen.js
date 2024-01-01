@@ -115,7 +115,7 @@ export default function AppointmentDetailsScreen() {
                     style: "cancel",
                   },
                   {
-                    text: "Go Back",
+                    text: "Cancel",
                     onPress: () => {
                       cancelAppointment();
                     },

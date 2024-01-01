@@ -29,7 +29,6 @@ export default function UploadProfilePicModal({ bottomSheetModalRef }) {
 
   return (
     <>
-      {console.log("hi")}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}

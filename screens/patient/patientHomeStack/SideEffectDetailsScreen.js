@@ -65,19 +65,16 @@ export default function SideEffectDetailsScreen() {
         }}
       >
         <Text>
-          {currentSideEffect.side_effect_occuring_timestamp
-            .toDate()
-            .toISOString()
-            .slice(0, 10)}
+          {currentSideEffect.side_effect_occuring_timestamp.slice(0, 10)}
         </Text>
         <Text>
-          {currentSideEffect.side_effect_occuring_timestamp
-            .toDate()
-            .toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            })}
+          {new Date(
+            currentSideEffect.side_effect_occuring_timestamp
+          ).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          })}
         </Text>
       </View>
       <Text variant="titleLarge" style={{ marginTop: 32 }}>
@@ -85,7 +82,11 @@ export default function SideEffectDetailsScreen() {
       </Text>
       <View style={{ marginTop: 8, flexDirection: "row", flexWrap: "wrap" }}>
         {currentSideEffect.symptoms.map((symptom, i) => {
-          return <Chip style={{ marginRight: 16 }}>{capitalizeFirstLetter(symptom)}</Chip>;
+          return (
+            <Chip style={{ marginRight: 16 }}>
+              {capitalizeFirstLetter(symptom)}
+            </Chip>
+          );
         })}
       </View>
       {currentSideEffect.se_status === SIDE_EFFECT_STATUS.REVIEWED &&
@@ -96,4 +97,3 @@ export default function SideEffectDetailsScreen() {
   );
 }
 
-const styles = StyleSheet.create({});

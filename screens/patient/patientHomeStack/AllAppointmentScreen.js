@@ -29,8 +29,8 @@ function AllAppointmentScreen() {
     });
   });
 
+  //Seperate the appointment into accepeted, pending and completed
   React.useEffect(() => {
-    console.log("appointments", appointments);
     setAcceptedAppointment(
       appointments.filter(
         (appointment) =>
@@ -45,8 +45,6 @@ function AllAppointmentScreen() {
       )
     );
 
-    console.log(acceptedAppointment.length);
-    console.log(pendingAppointment.length);
     setCompletedAppointment(
       appointments
         .filter(
@@ -58,6 +56,8 @@ function AllAppointmentScreen() {
   }, [appointments]);
 
   //Determine the container color
+  //If it is accepted, the color is bluie
+  //otherwise it is grey color
   function containerColor(appointment) {
     return appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED
       ? theme.colors.secondaryContainer

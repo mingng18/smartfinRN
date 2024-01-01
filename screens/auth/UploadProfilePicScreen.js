@@ -3,7 +3,6 @@ import React from "react";
 import { Image, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import Navigation from "../../navigation/Navigation";
 
 export default function UploadProfilePicScreen() {
   const navigation = useNavigation();

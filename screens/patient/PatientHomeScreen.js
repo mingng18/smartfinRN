@@ -163,7 +163,7 @@ function PatientHomeScreen() {
                       icon="calendar"
                       count={pendingAppointmentsCount}
                       onPressedCallback={() =>
-                        bottomSheetModalRef.current?.present()
+                        navigate('AllAppointmentScreen')
                       }
                     />
                   )}
