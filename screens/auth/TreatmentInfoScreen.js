@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute, useTheme } from "@react-navigation/native";
 import React from "react";
 import { View } from "react-native";
 
@@ -24,9 +24,8 @@ export default function TreatmentInfoScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <ScrollView automaticallyAdjustKeyboardInsets={true}>
         <TreatmentInfoForm />
-      </ScrollView>
+
     </View>
   );
 }

@@ -6,6 +6,7 @@ import {
   ScrollView,
 } from "react-native-gesture-handler";
 import React, { useRef } from "react";
+
 import ToDoCard from "../../components/ui/ToDoCard";
 import CTAButton from "../../components/ui/CTAButton";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
@@ -27,6 +28,7 @@ function PatientHomeScreen() {
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
+  const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
   const [pendingAppointmentsCount, setPendingAppointmentsCount] =
     React.useState(0);
@@ -46,6 +48,8 @@ function PatientHomeScreen() {
   }, [dispatch]);
 
   React.useEffect(() => {
+    console.log("the user : " + user.first_name + " " + user.last_name)
+    console.log("the profile pic : " + BLANK_PROFILE_PIC)
     //Check the count of the pending appointment
     const calculatePendingAppointmentsCount = () => {
       const appointmentData = appointments.filter(
@@ -98,7 +102,7 @@ function PatientHomeScreen() {
         <View style={[styles.homeHeader]}>
           {/* TODO Change the name to the patients image */}
           <Image
-            source={{ uri: BLANK_PROFILE_PIC }}
+            source={BLANK_PROFILE_PIC }
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <View style={[styles.headerText]}>

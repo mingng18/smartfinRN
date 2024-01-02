@@ -16,8 +16,10 @@ import { enGB, registerTranslation } from "react-native-paper-dates";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/redux/store";
-import { authenticateStoreNative } from "./store/redux/authSlice";
+import { authenticateStoreNative, fetchPatientData } from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
+import { fetchDocument } from "./util/firestoreWR";
+import { Alert } from "react-native";
 // import { AuthContext } from "./store/auth-context";
 
 //Open SplashScreen for loading
@@ -55,18 +57,36 @@ function Root() {
             dispatch(authenticateStoreNative(token, user.uid));
           };
           // console.log("Display name: " + user.getIdTokenResult());
-          // User is signed out
-          // ...
         }
       });
-
-      // await SecureStore.deleteItemAsync("token"); // temporary used to perform logout, dev only
       const storedToken = await SecureStore.getItemAsync("token");
       console.log("Initialized token:" + storedToken);
       if (storedToken != "" && storedToken != null) {
         const storedUid = await SecureStore.getItemAsync("uid");
         console.log("Initialized uid:" + storedUid);
         dispatch(authenticateStoreNative(storedToken, storedUid));
+        const user = await fetchDocument("patient", storedUid).then((user) => {
+          console.log(user + " is the user");
+          dispatch(fetchPatientData({
+            age: user.age,
+            compliance_status: user.compliance_status,
+            data_of_diagnosis: user.data_of_diagnosis,
+            diagnosis: user.diagnosis,
+            email: user.email,
+            first_name: user.first_name,
+            gender: user.gender,
+            last_name: user.last_name,
+            nationality: user.nationality,
+            notes: user.notes,
+            nric_passport: user.nric_passport,
+            number_of_tablets: user.number_of_tablets,
+            phone_number: user.phone_number,
+            profile_pic_url: user.profile_pic_url,
+            treatment: user.treatment,
+            treatment_duration_months: user.treatment_duration_months,
+          }));
+        });
+        Alert.alert("Welcome back!", "You have been logged in automatically.");
       }
       setIsTryingLogin(false);
     }

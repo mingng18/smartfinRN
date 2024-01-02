@@ -50,7 +50,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //Treatment Drop down
   const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState(0);
+  const [treatment, setTreatment] = React.useState(null);
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
   //Text inputs
@@ -64,6 +64,10 @@ export default function TreatmentInfoForm({ isEditing }) {
   const [submitDate, setSubmitDate] = React.useState("");
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
+
+  React.useState(() => {
+    console.log("treatment change: " + treatment);
+  }, [treatment]);
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {
@@ -216,8 +220,6 @@ export default function TreatmentInfoForm({ isEditing }) {
         user.uid
       );
       setIsUploading(false);
-
-      //Add user data to firestore
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."

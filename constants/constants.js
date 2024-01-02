@@ -1,5 +1,4 @@
-export const BLANK_PROFILE_PIC = "assets/blank-profile-pic.png";
-
+export const BLANK_PROFILE_PIC = require('../assets/blank-profile-pic.png');
 export const APPOINTMENT_STATUS = {
   PENDING: "pending",
   ACCEPTED: "accepted",
