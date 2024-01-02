@@ -1,22 +1,11 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text, TouchableRipple, useTheme } from "react-native-paper";
 
-export default function ToDoCard({
-  icon,
-  title,
-  count,
-  onPressedCallback,
-  isLastItem,
-}) {
+export default function ToDoCard({ icon, title, count, onPressedCallback }) {
   const theme = useTheme();
 
   return (
-    <View
-      style={[
-        { borderRadius: 8, overflow: "hidden", marginLeft: 16 },
-        isLastItem ? { marginRight: 16 } : {},
-      ]}
-    >
+    <View style={[{ borderRadius: 8, overflow: "hidden", marginLeft: 16 }]}>
       <Pressable
         onPress={onPressedCallback}
         android_ripple={{ color: theme.colors.onBackground, borderless: true }}
@@ -55,6 +44,6 @@ const styles = StyleSheet.create({
     // paddingBottom: 0,
     borderRadius: 8,
     alignItems: "center",
-    justifyContent: 'center'
+    justifyContent: "center",
   },
 });

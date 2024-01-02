@@ -119,11 +119,13 @@ function PatientProfileScreen() {
         <AnimatedCircularProgress
           size={280}
           width={15}
+          prefill={50}
           fill={50} // The percentage of the progress is put here
           tintColor={theme.colors.primary}
           backgroundColor={theme.colors.primaryContainer}
           arcSweepAngle={180}
           rotation={270}
+          
         >
           {(fill) => (
             <>

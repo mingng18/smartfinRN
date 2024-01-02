@@ -1,6 +1,6 @@
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { View } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Button, Portal, Text, useTheme } from "react-native-paper";
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
@@ -64,7 +64,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
           <Button
             mode="text"
             onPress={() => {
-              navigate("CameraScreen", {isVideo: true});
+              navigate("CameraScreen", { isVideo: true });
               bottomSheetModalRef.current.close();
             }}
           >

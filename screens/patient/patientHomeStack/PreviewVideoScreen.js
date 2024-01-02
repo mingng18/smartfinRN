@@ -22,6 +22,7 @@ function PreviewVideoScreen() {
   const theme = useTheme();
   const storageRef = getStorage();
   const uid = useSelector((state) => state.authObject.user_uid);
+  
   const { key, name, params, path } = route;
   const [video, setVideo] = React.useState("");
   const videoRef = React.useRef(null);

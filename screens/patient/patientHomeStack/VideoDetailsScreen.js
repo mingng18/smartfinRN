@@ -50,19 +50,17 @@ export default function VideoDetailsScreen() {
           }}
         >
           <Text variant="bodyLarge">
-            {currentVideo.reviewed_timestamp
-              .toDate()
-              .toISOString()
-              .slice(0, 10)}
+            {currentVideo.reviewed_timestamp.slice(0, 10)}
           </Text>
           <Text variant="bodyLarge">
-            {currentVideo.reviewed_timestamp
-              .toDate()
-              .toLocaleTimeString("en-US", {
+            {new Date(currentVideo.reviewed_timestamp).toLocaleTimeString(
+              "en-US",
+              {
                 hour: "numeric",
                 minute: "numeric",
                 hour12: true,
-              })}
+              }
+            )}
           </Text>
         </View>
         <Text variant="bodyLarge" style={{ marginTop: 32 }}>

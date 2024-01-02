@@ -4,36 +4,37 @@ import { Button, Divider, Icon, Text, useTheme } from "react-native-paper";
 import React, { useState, useMemo } from "react";
 import { Timestamp } from "firebase/firestore";
 import { VIDEO_STATUS } from "../../../constants/constants";
+import { useSelector } from "react-redux";
 
 export default function ProgressTracker() {
   const theme = useTheme();
+  const videos = useSelector((state) => state.videoObject.videos);
+  const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
 
-  const videoData = [
-    {
-      uploaded_timestamp: Timestamp.fromDate(new Date("2023-12-20")),
-      status: "pending",
-    },
-    {
-      uploaded_timestamp: Timestamp.fromDate(new Date("2023-12-21")),
-      status: "rejected",
-    },
-    {
-      uploaded_timestamp: Timestamp.fromDate(new Date("2023-12-28")),
-      status: "accepted",
-    },
-  ];
+  const startDate = new Date("2023-12-01");
+  const today = new Date();
 
-  const startDate = new Date("2023-12-01"); // Replace with your start date
-  const today = new Date(); // Replace with your start date
+  React.useEffect(() => {
+    //Check if the patient has ate medicine today
+    const calculateHasAteMedicine = () => {
+      const vid = videos.filter((video) => {
+        return (
+          new Date(video.uploaded_timestamp).toISOString().slice(0, 10) ===
+          new Date().toISOString().slice(0, 10)
+        );
+      });
+      setHasAteMedicine(vid.length > 0);
+    };
+
+    calculateHasAteMedicine();
+  }, [videos]);
 
   const marked = useMemo(() => {
     const markedDates = {};
     while (startDate <= today) {
       const dateString = startDate.toISOString().slice(0, 10);
-      const video = videoData.find(
-        (v) =>
-          v.uploaded_timestamp.toDate().toISOString().slice(0, 10) ===
-          dateString
+      const video = videos.find(
+        (v) => v.uploaded_timestamp.slice(0, 10) === dateString
       );
 
       //Excluide date other than today
@@ -61,16 +62,7 @@ export default function ProgressTracker() {
       startDate.setDate(startDate.getDate() + 1); // Move to the next date
     }
     return markedDates;
-  }, [startDate, today, videoData]);
-
-  function checkTodayVideo() {
-    const todayVideo = videoData.find(
-      (v) =>
-        v.uploaded_timestamp.toDate().toISOString().slice(0, 10) ===
-        today.toISOString().slice(0, 10)
-    );
-    return todayVideo;
-  }
+  }, [startDate, today, videos]);
 
   return (
     <KeyboardAvoidingView>
@@ -116,7 +108,7 @@ export default function ProgressTracker() {
         </View>
         <Divider />
         <Text variant="bodyLarge" style={{ marginTop: 24 }}>
-          {checkTodayVideo && checkTodayVideo.status === VIDEO_STATUS.ACCEPTED
+          {hasAteMedicine
             ? "You have completed your medication today!"
             : "You haven't complete your medication today."}
         </Text>

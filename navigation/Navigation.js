@@ -25,8 +25,6 @@ export default function Navigation() {
     patientExist = fetchDocument("patients", uid);
     healthCareExist = fetchDocument("healthcare", uid);
 
-    
-
     if (patientExist) {
       dispatch(setFirstTimeLogin({ first_time_login: false }));
     } else if (healthCareExist) {

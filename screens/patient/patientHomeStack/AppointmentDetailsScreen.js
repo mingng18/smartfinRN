@@ -115,7 +115,7 @@ export default function AppointmentDetailsScreen() {
                     style: "cancel",
                   },
                   {
-                    text: "Go Back",
+                    text: "Cancel",
                     onPress: () => {
                       cancelAppointment();
                     },
@@ -187,20 +187,21 @@ export default function AppointmentDetailsScreen() {
       }}
     >
       <HorizontalCard
-        profilePic={params.profilePic}
-        subject={params.name}
+        profilePic={currentAppointment.healthcare_profile_picture}
+        subject={capitalizeFirstLetter(
+          currentAppointment.healthcare_first_name
+        )}
         status={capitalizeFirstLetter(currentAppointment.appointment_status)}
-        date={currentAppointment.scheduled_timestamp
-          .toDate()
+        date={new Date(currentAppointment.scheduled_timestamp)
           .toISOString()
           .slice(0, 10)}
-        time={currentAppointment.scheduled_timestamp
-          .toDate()
-          .toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true,
-          })}
+        time={new Date(
+          currentAppointment.scheduled_timestamp
+        ).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        })}
         color={containerColor(currentAppointment)}
       />
       {currentAppointment.appointment_status === APPOINTMENT_STATUS.PENDING &&

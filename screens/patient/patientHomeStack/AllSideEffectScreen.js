@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import {  useTheme } from "react-native-paper";
+import { useTheme } from "react-native-paper";
 import {} from "../../../assets/blank-profile-pic.png";
 import {
   BLANK_PROFILE_PIC,
@@ -10,10 +10,14 @@ import {
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { Timestamp } from "firebase/firestore";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { useSelector } from "react-redux";
 
 function AllSideEffectScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const sideEffects = useSelector(
+    (state) => state.sideEffectObject.sideEffects
+  );
 
   React.useLayoutEffect(() => {
     //Query for all appointment, and seperate into
@@ -24,25 +28,25 @@ function AllSideEffectScreen() {
     // setIncompleteAppointment(appointmentData);
   });
 
-  const sideEffectData = [
-    {
-      side_effect_occuring_timestamp: Timestamp.fromDate(
-        new Date("2023-12-21")
-      ),
-      severity: "severe",
-      se_status: "pending",
-      symptoms: ["cough", "blood"],
-    },
-    {
-      side_effect_occuring_timestamp: Timestamp.fromDate(
-        new Date("2023-12-21")
-      ),
-      severity: "moderate",
-      se_status: "reviewed",
-      symptoms: ["cough", "nausea"],
-      remarks: "Drink more water",
-    },
-  ];
+  // const sideEffects = [
+  //   {
+  //     side_effect_occuring_timestamp: Timestamp.fromDate(
+  //       new Date("2023-12-21")
+  //     ),
+  //     severity: "severe",
+  //     se_status: "pending",
+  //     symptoms: ["cough", "blood"],
+  //   },
+  //   {
+  //     side_effect_occuring_timestamp: Timestamp.fromDate(
+  //       new Date("2023-12-21")
+  //     ),
+  //     severity: "moderate",
+  //     se_status: "reviewed",
+  //     symptoms: ["cough", "nausea"],
+  //     remarks: "Drink more water",
+  //   },
+  // ];
 
   //Determine the container color
   function containerColor(appointment) {
@@ -63,22 +67,19 @@ function AllSideEffectScreen() {
     >
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 16 }} />
-        {sideEffectData.map((sideEffect, i) => (
+        {sideEffects.map((sideEffect, i) => (
           <HorizontalCard
             key={i}
             //   profilePic={"lol"}
             subject={capitalizeFirstLetter(sideEffect.severity)}
-            date={sideEffect.side_effect_occuring_timestamp
-              .toDate()
-              .toISOString()
-              .slice(0, 10)}
-            time={sideEffect.side_effect_occuring_timestamp
-              .toDate()
-              .toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              })}
+            date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
+            time={new Date(
+              sideEffect.side_effect_occuring_timestamp
+            ).toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            })}
             color={containerColor(sideEffect)}
             onPressedCallback={() => {
               navigation.navigate("SideEffectDetailsScreen", {

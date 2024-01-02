@@ -26,16 +26,15 @@ export default function CustomCalendar({
     return highlightedDates.reduce((acc, date) => {
       const videoMatch = video.some(
         (item) =>
-          item.uploaded_timestamp.toDate().toISOString().slice(0, 10) === date
+          new Date(item.uploaded_timestamp).toISOString().slice(0, 10) === date
       );
       const appointmentMatch = appointment.some(
         (item) =>
-          item.scheduled_timestamp.toDate().toISOString().slice(0, 10) === date
+          new Date(item.scheduled_timestamp).toISOString().slice(0, 10) === date
       );
       const sideEffectMatch = sideEffect.some(
         (item) =>
-          item.side_effect_occuring_timestamp
-            .toDate()
+          new Date(item.side_effect_occuring_timestamp)
             .toISOString()
             .slice(0, 10) === date
       );
