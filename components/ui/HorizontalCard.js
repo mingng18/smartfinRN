@@ -1,5 +1,6 @@
 import { Image, Pressable, StyleSheet, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
+import { BLANK_PROFILE_PIC } from "../../constants/constants";
 
 export default function HorizontalCard({
   profilePic,
@@ -18,7 +19,6 @@ export default function HorizontalCard({
         styles.pressableContainer,
         {
           backgroundColor: color,
-          marginBottom: 16,
         },
       ]}
     >
@@ -28,7 +28,10 @@ export default function HorizontalCard({
         style={[styles.cardContainer]}
       >
         {profilePic && (
-          <Image source={{ uri: profilePic }} style={styles.profilePicStyle} />
+          <Image
+            source={profilePic !== "" ? profilePic : BLANK_PROFILE_PIC}
+            style={styles.profilePicStyle}
+          />
         )}
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
@@ -49,11 +52,13 @@ const styles = StyleSheet.create({
   pressableContainer: {
     overflow: "hidden",
     borderRadius: 8,
+    marginBottom: 16,
   },
   cardContainer: {
     padding: 16,
     flexDirection: "row",
     alignItems: "center",
+    height: 80
   },
   profilePicStyle: {
     width: 40,

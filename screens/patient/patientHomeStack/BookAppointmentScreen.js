@@ -95,8 +95,9 @@ export default function BookAppointmentScreen() {
 
     try {
       const storedUid = await SecureStore.getItemAsync("uid");
-      const submitDate = new Date(); // Use new Date() directly
-
+      console.log(submitDate + " before set time");
+      setSubmitDate(new Date().setDate(submitDate));
+      console.log(submitDate + " before set time 2");
       // Set the time for the submitDate
       submitDate.setHours(time.hour, time.minute, 0, 0); // Set hours, minutes, seconds, and milliseconds
 
@@ -108,6 +109,7 @@ export default function BookAppointmentScreen() {
         remarks: "",
         scheduled_timestamp: submitDate,
       });
+      console.log("submitDate " + submitDate);
 
       // Notify user and navigate
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

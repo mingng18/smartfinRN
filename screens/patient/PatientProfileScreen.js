@@ -67,7 +67,9 @@ function PatientProfileScreen() {
               variant="bodyLarge"
               style={{ fontFamily: "DMSans-Bold", color: theme.colors.green }}
             >
-              {user.compliance_status.toUpperCase()}
+              {user.compliance_status
+                ? user.compliance_status.toUpperCase()
+                : "NICE"}
             </Text>
             <Text variant="bodyLarge"> !</Text>
           </View>

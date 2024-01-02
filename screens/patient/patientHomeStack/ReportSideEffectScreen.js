@@ -17,6 +17,7 @@ import * as Haptics from "expo-haptics";
 import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { SIDE_EFFECT_SEVERITY } from "../../../constants/constants";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -88,6 +89,11 @@ function ReportSideEffectScreen() {
     setSymptoms(newArray);
   };
 
+  //TODO calculate severity
+  function calculateSeverity() {
+    return SIDE_EFFECT_SEVERITY.SEVERE;
+  }
+
   //TODO update date, hour, minute and symptoms to firebase
   async function submitDataToDatabase() {
     if (!submitDate || hour === "" || minute === "" || symptoms.length == 0) {
@@ -110,6 +116,7 @@ function ReportSideEffectScreen() {
         se_status: "pending",
         symptoms: symptoms,
         remarks: null,
+        severity: calculateSeverity(),
       };
 
       await addDocument("side_effect", newSideEffect);

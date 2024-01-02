@@ -114,17 +114,16 @@ export default function VideoDetailsScreen() {
           marginTop: 8,
         }}
       >
+        <Text>{currentVideo.uploaded_timestamp.slice(0, 10)}</Text>
         <Text>
-          {currentVideo.uploaded_timestamp.toDate().toISOString().slice(0, 10)}
-        </Text>
-        <Text>
-          {currentVideo.uploaded_timestamp
-            .toDate()
-            .toLocaleTimeString("en-US", {
+          {new Date(currentVideo.uploaded_timestamp).toLocaleTimeString(
+            "en-US",
+            {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
-            })}
+            }
+          )}
         </Text>
       </View>
       {currentVideo.status === VIDEO_STATUS.ACCEPTED && AcceptedVideoCard()}
