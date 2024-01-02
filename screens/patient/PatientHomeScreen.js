@@ -20,6 +20,8 @@ import * as SecureStore from "expo-secure-store";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
+import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import * as Haptics from "expo-haptics";
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
@@ -48,8 +50,8 @@ function PatientHomeScreen() {
   }, [dispatch]);
 
   React.useEffect(() => {
-    console.log("the user : " + user.first_name + " " + user.last_name)
-    console.log("the profile pic : " + BLANK_PROFILE_PIC)
+    console.log("the user : " + user.first_name + " " + user.last_name);
+    console.log("the profile pic : " + BLANK_PROFILE_PIC);
     //Check the count of the pending appointment
     const calculatePendingAppointmentsCount = () => {
       const appointmentData = appointments.filter(
@@ -100,15 +102,17 @@ function PatientHomeScreen() {
       >
         {/* ================ HomeHeader =============== */}
         <View style={[styles.homeHeader]}>
-          {/* TODO Change the name to the patients image */}
           <Image
-            source={BLANK_PROFILE_PIC }
+            source={
+              user.profile_pic_url ? user.profile_pic_url : BLANK_PROFILE_PIC
+            }
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <View style={[styles.headerText]}>
-            <Text variant="bodyLarge">Hello, </Text>
-            {/* TODO Change the name to the patients name */}
-            <Text variant="headlineLarge">Arul</Text>
+            <Text variant="bodyLarge">Hello</Text>
+            <Text variant="headlineLarge">
+              {capitalizeFirstLetter(user.first_name)}
+            </Text>
           </View>
         </View>
         {/* ================ TodoList ============== */}
@@ -166,9 +170,7 @@ function PatientHomeScreen() {
                       title={"Appointment"}
                       icon="calendar"
                       count={pendingAppointmentsCount}
-                      onPressedCallback={() =>
-                        navigate('AllAppointmentScreen')
-                      }
+                      onPressedCallback={() => navigate("AllAppointmentScreen")}
                     />
                   )}
                   {rejectedVideosCount > 0 && (
@@ -179,6 +181,16 @@ function PatientHomeScreen() {
                       onPressedCallback={() => {}}
                     />
                   )}
+                  <ToDoCard
+                    title={"Video Rejected"}
+                    icon="play"
+                    count={rejectedVideosCount}
+                    onPressedCallback={() => {
+                      Haptics.impactAsync(
+                        Haptics.ImpactFeedbackStyle.Heavy
+                      );
+                    }}
+                  />
 
                   {/* TODO Video Call Missed */}
                   {/* <ToDoCard
@@ -218,7 +230,9 @@ function PatientHomeScreen() {
                 icon="emoticon-sick"
                 title="Report Side Effect"
                 color={theme.colors.secondary}
-                onPressedCallback={() => navigate("ReportSideEffectScreen")}
+                onPressedCallback={() => {
+                  navigate("ReportSideEffectScreen");
+                }}
               />
               <CTAButton
                 icon="calendar-blank"

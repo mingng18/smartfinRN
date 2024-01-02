@@ -29,7 +29,6 @@ function PatientCalendarScreen() {
   const [isAppointment, setIsAppointment] = React.useState(true);
   const [isSideEffect, setIsSideEffect] = React.useState(true);
 
-
   //Refresh the calendar when there is new data
   React.useEffect(() => {
     if (videos || appointments || sideEffects) {
@@ -140,6 +139,7 @@ function PatientCalendarScreen() {
   //The Horizontal Card for appointment effect
   //including pending, approved, completed, cancelled
   const AppointmentHorizontalCard = () => {
+    console.log(appointments);
     const matchedAppointment = appointments.filter(
       (item) =>
         new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
@@ -150,13 +150,15 @@ function PatientCalendarScreen() {
       return (
         <>
           {matchedAppointment.map((appointment, i) => {
-            const profilePic = "../../assets/blank-profile-pic.png";
-            const name = "bruh";
             return (
               <HorizontalCard
                 key={i}
-                profilePic={profilePic}
-                subject={name}
+                profilePic={appointment.healthcare_profile_picture}
+                subject={capitalizeFirstLetter(
+                  appointment.healthcare_first_name === ""
+                    ? "Awaiting Confirmation"
+                    : appointment.healthcare_first_name
+                )}
                 status={capitalizeFirstLetter(appointment.appointment_status)}
                 date={new Date(appointment.scheduled_timestamp)
                   .toISOString()
@@ -172,8 +174,6 @@ function PatientCalendarScreen() {
                 onPressedCallback={() => {
                   navigate("AppointmentDetailsScreen", {
                     appointment: appointment,
-                    profilePic: profilePic,
-                    name: name,
                   });
                 }}
               />

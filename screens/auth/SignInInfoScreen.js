@@ -7,9 +7,10 @@ import { createUser } from "../../util/firebaseAuth";
 import LoadingOverlay from "../../components/ui/LoadingOverlay";
 import { useDispatch } from "react-redux";
 
-
-import { updateSignInCredentials, updateSignupMode } from "../../store/redux/signupSlice";
-
+import {
+  updateSignInCredentials,
+  updateSignupMode,
+} from "../../store/redux/signupSlice";
 
 export default function SignInInfoScreen({ route }) {
   const { signUpMode } = route.params;
@@ -17,8 +18,6 @@ export default function SignInInfoScreen({ route }) {
   const theme = useTheme();
   const { params } = useRoute();
   const dispatch = useDispatch();
-
-  
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,37 +29,36 @@ export default function SignInInfoScreen({ route }) {
     confirmPassword: false,
   });
 
-  async function nextButtonHandler( ) {
-
+  async function nextButtonHandler() {
     const emailIsValid = email.includes("@");
     const passwordIsValid = password.length > 6;
     const confirmPasswordIsValid = password === confirmPassword;
     if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
-      
       setCredentialsInvalid({
         email: !emailIsValid,
         password: !passwordIsValid,
         confirmPassword: !confirmPasswordIsValid,
       });
-      return Alert.alert("Invalid input", "Please check your entered credentials.");;
+      return Alert.alert(
+        "Invalid input",
+        "Please check your entered credentials."
+      );
     }
     setIsAuthenticating(true);
     try {
-      dispatch(updateSignInCredentials({email: email, password: password}));
-      dispatch(updateSignupMode({signupMode: signUpMode}) );
+      dispatch(updateSignInCredentials({ email: email, password: password }));
+      dispatch(updateSignupMode({ signupMode: signUpMode }));
       if (signUpMode === "patient") {
         navigation.navigate("PersonalInformationScreen");
       } else {
         navigation.navigate("HealthcareInformationScreen");
       }
-
-      
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your input and try again later."
       );
       console.log(error); //Debug use
-    }finally{
+    } finally {
       setIsAuthenticating(false);
     }
   }
@@ -107,8 +105,8 @@ export default function SignInInfoScreen({ route }) {
         variant="bodySmall"
         style={{ marginTop: 4, color: theme.colors.onSurface }}
       >
-        Your password should consist of a combination of alphabets, numbers, and
-        symbols.
+        Your password must contain a combination of letters, numbers, and
+        symbols, with at least 6 numbers included.
       </Text>
       <TextInput
         mode="outlined"

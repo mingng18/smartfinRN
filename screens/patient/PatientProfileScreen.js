@@ -5,15 +5,18 @@ import TextListButton from "../../components/ui/TextListButton";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
 import React from "react";
+import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { capitalizeFirstLetter } from "../../util/capsFirstWord";
 
 function PatientProfileScreen() {
   const theme = useTheme();
   const auth = getAuth();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+  const user = useSelector((state) => state.authObject);
 
   // React.useLayoutEffect(() => {
   //   navigate("PatientEditProfileScreen");
@@ -48,24 +51,36 @@ function PatientProfileScreen() {
       <View style={[styles.homeHeader]}>
         {/* TODO Change the name to the patients image */}
         <Image
-          source={require("../../assets/blank-profile-pic.png")}
+          source={
+            user.profile_pic_url ? user.profile_pic_url : BLANK_PROFILE_PIC
+          }
           style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
         />
         <View style={[styles.headerText]}>
           {/* TODO Change the name to the patients name */}
-          <Text variant="headlineLarge">Arul</Text>
+          <Text variant="headlineLarge">
+            {capitalizeFirstLetter(user.first_name)}
+          </Text>
           <View style={{ flexDirection: "row" }}>
             <Text variant="bodyLarge">You are doing </Text>
             <Text
               variant="bodyLarge"
               style={{ fontFamily: "DMSans-Bold", color: theme.colors.green }}
             >
-              GOOD
+              {user.compliance_status
+                ? user.compliance_status.toUpperCase()
+                : "NICE"}
             </Text>
             <Text variant="bodyLarge"> !</Text>
           </View>
         </View>
-        <IconButton icon="pencil" size={24} onPress={() => {navigate("PatientEditProfileScreen")}} />
+        <IconButton
+          icon="pencil"
+          size={24}
+          onPress={() => {
+            navigate("PatientEditProfileScreen");
+          }}
+        />
       </View>
       {/* ========================PERSONAL INFO======================= */}
       {/* TODO change the personal information */}
@@ -125,7 +140,6 @@ function PatientProfileScreen() {
           backgroundColor={theme.colors.primaryContainer}
           arcSweepAngle={180}
           rotation={270}
-          
         >
           {(fill) => (
             <>

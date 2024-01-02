@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useLayoutEffect } from "react";
-import { Pressable, TouchableOpacity, View } from "react-native";
+import { Alert, Pressable, TouchableOpacity, View } from "react-native";
 import {
   Button,
   Checkbox,
@@ -13,10 +13,11 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
-
+import * as Haptics from "expo-haptics";
 import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { SIDE_EFFECT_SEVERITY } from "../../../constants/constants";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -24,7 +25,6 @@ function ReportSideEffectScreen() {
   const theme = useTheme();
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [timePickerOpen, setTimePickerOpen] = React.useState(false);
-  const [dialogVisible, setDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
   const [submitDate, setSubmitDate] = React.useState(undefined);
@@ -89,8 +89,18 @@ function ReportSideEffectScreen() {
     setSymptoms(newArray);
   };
 
+  //TODO calculate severity
+  function calculateSeverity() {
+    return SIDE_EFFECT_SEVERITY.SEVERE;
+  }
+
   //TODO update date, hour, minute and symptoms to firebase
   async function submitDataToDatabase() {
+    if (!submitDate || hour === "" || minute === "" || symptoms.length == 0) {
+      Alert.alert("Error", "Please fill in all the details");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return;
+    }
     try {
       const storedUid = await SecureStore.getItemAsync("uid");
       submitDate.setMinutes(hour);
@@ -106,154 +116,125 @@ function ReportSideEffectScreen() {
         se_status: "pending",
         symptoms: symptoms,
         remarks: null,
+        severity: calculateSeverity(),
       };
 
       await addDocument("side_effect", newSideEffect);
     } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Error Submitting", "Please try again later");
       console.error("Error submitting data to database:", error);
       // Handle the error here (e.g., show an error message to the user)
     } finally {
-      setDialogVisible(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Success", "Side Effects successfully reported.");
+      navigation.popToTop();
     }
   }
 
-
   return (
-    <>
-      <ScrollView
-        automaticallyAdjustKeyboardInsets={true}
+    <ScrollView
+      automaticallyAdjustKeyboardInsets={true}
+      style={{
+        backgroundColor: theme.colors.background,
+      }}
+    >
+      <View
         style={{
+          paddingHorizontal: 16,
+          paddingTop: 16,
           backgroundColor: theme.colors.background,
+          flex: 1,
         }}
       >
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-            backgroundColor: theme.colors.background,
-            flex: 1,
-          }}
-        >
-          <Text variant="titleLarge">When did these symptoms start?</Text>
-          <Pressable onPress={() => setCalendarOpen(true)}>
-            <View pointerEvents="none">
-              <TextInput
-                mode="outlined"
-                style={{ marginTop: 16 }}
-                label="Date"
-                placeholder="Starting date of the symptoms"
-                value={date}
-                onChangeText={(value) => setDate(value)}
-                right={
-                  <TextInput.Icon
-                    icon="calendar-blank"
-                    color={theme.colors.onBackground}
-                  />
-                }
-                maxLength={100}
-              />
-            </View>
-          </Pressable>
-          <Pressable onPress={() => setTimePickerOpen(true)}>
-            <View pointerEvents="none">
-              <TextInput
-                mode="outlined"
-                style={{ marginTop: 16 }}
-                label="Time"
-                placeholder="Starting date of the symptoms"
-                value={hour == "" ? `` : `${hour} : ${minute}`}
-                onChangeText={(value) => setDate(value)}
-                right={
-                  <TextInput.Icon
-                    icon="clock"
-                    color={theme.colors.onBackground}
-                  />
-                }
-                maxLength={100}
-              />
-            </View>
-          </Pressable>
-          <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
-            Symptoms experienced
-          </Text>
-          {tuberculosisSymptoms.map((symptom, i) => (
-            <Checkbox.Item
-              key={symptom}
-              label={symptom}
-              accessibilityLabel={symptom}
-              mode="android"
-              status={symptoms.includes(symptom) ? "checked" : "unchecked"}
-              onPress={() => handleCheckboxChange(symptom)}
-              style={{ justifyContent: "flex-start" }}
-              labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
-              position="leading"
+        <Text variant="titleLarge">When did these symptoms start?</Text>
+        <Pressable onPress={() => setCalendarOpen(true)}>
+          <View pointerEvents="none">
+            <TextInput
+              mode="outlined"
+              style={{ marginTop: 16 }}
+              label="Date"
+              placeholder="Starting date of the symptoms"
+              value={date}
+              onChangeText={(value) => setDate(value)}
+              right={
+                <TextInput.Icon
+                  icon="calendar-blank"
+                  color={theme.colors.onBackground}
+                />
+              }
+              maxLength={100}
             />
-          ))}
-          <View style={{ alignItems: "flex-end" }}>
-            <Button
-              mode="contained"
-              style={{ marginTop: 40, marginBottom: 56 }}
-              onPress={() => setDialogVisible(true)}
-            >
-              Report
-            </Button>
           </View>
-          {/* Modal for date picker and time picker */}
-          <View
-            style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+        </Pressable>
+        <Pressable onPress={() => setTimePickerOpen(true)}>
+          <View pointerEvents="none">
+            <TextInput
+              mode="outlined"
+              style={{ marginTop: 16 }}
+              label="Time"
+              placeholder="Starting date of the symptoms"
+              value={hour == "" ? `` : `${hour} : ${minute}`}
+              onChangeText={(value) => setDate(value)}
+              right={
+                <TextInput.Icon
+                  icon="clock"
+                  color={theme.colors.onBackground}
+                />
+              }
+              maxLength={100}
+            />
+          </View>
+        </Pressable>
+        <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
+          Symptoms experienced
+        </Text>
+        {tuberculosisSymptoms.map((symptom, i) => (
+          <Checkbox.Item
+            key={symptom}
+            label={symptom}
+            accessibilityLabel={symptom}
+            mode="android"
+            status={symptoms.includes(symptom) ? "checked" : "unchecked"}
+            onPress={() => handleCheckboxChange(symptom)}
+            style={{ justifyContent: "flex-start" }}
+            labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
+            position="leading"
+          />
+        ))}
+        <View style={{ alignItems: "flex-end" }}>
+          <Button
+            mode="contained"
+            style={{ marginTop: 40, marginBottom: 56 }}
+            onPress={() => submitDataToDatabase()}
           >
-            <DatePickerModal
-              locale="en-GB"
-              mode="single"
-              visible={calendarOpen}
-              onDismiss={onDismissSingle}
-              date={date}
-              onConfirm={onConfirmSingle}
-              presentationStyle="pageSheet"
-            />
-            <TimePickerModal
-              locale="en-GB"
-              visible={timePickerOpen}
-              onDismiss={onDismiss}
-              onConfirm={onConfirm}
-              use24HourClock={false}
-            />
-            {/* <MessageDialog
-            visible={dialogVisible}
-            close={() => {
-              submitDataToDatabase();
-              navigation.goBack();
-            }}
-            title="Report Successful!"
-            content="The healthcare will reviewed it shortly."
-            buttonText="Back to Home Page"
-          /> */}
-          </View>
+            Report
+          </Button>
         </View>
-      </ScrollView>
-      <ReportedDialog
-        visible={dialogVisible}
-        close={() => {
-          setDialogVisible(false);
-          navigation.goBack();
-        }}
-      />
-    </>
+        {/* Modal for date picker and time picker */}
+        <View
+          style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+        >
+          <DatePickerModal
+            locale="en-GB"
+            mode="single"
+            visible={calendarOpen}
+            onDismiss={onDismissSingle}
+            date={date}
+            onConfirm={onConfirmSingle}
+            presentationStyle="pageSheet"
+          />
+          <TimePickerModal
+            locale="en-GB"
+            visible={timePickerOpen}
+            onDismiss={onDismiss}
+            onConfirm={onConfirm}
+            use24HourClock={false}
+          />
+        </View>
+      </View>
+    </ScrollView>
   );
 }
 
 export default ReportSideEffectScreen;
-
-const ReportedDialog = ({ visible, close }) => (
-  <Portal>
-    <Dialog onDismiss={close} visible={visible} dismissable={false}>
-      <Dialog.Title>Report Successful! </Dialog.Title>
-      <Dialog.Content>
-        <Text>The healthcare will reviewed it shortly.</Text>
-      </Dialog.Content>
-      <Dialog.Actions>
-        <Button onPress={close}>Back to Home Page</Button>
-      </Dialog.Actions>
-    </Dialog>
-  </Portal>
-);

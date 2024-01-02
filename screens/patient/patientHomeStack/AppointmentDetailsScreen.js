@@ -189,7 +189,9 @@ export default function AppointmentDetailsScreen() {
       <HorizontalCard
         profilePic={currentAppointment.healthcare_profile_picture}
         subject={capitalizeFirstLetter(
-          currentAppointment.healthcare_first_name
+          currentAppointment.healthcare_first_name === ""
+            ? "Awaiting Confirmation"
+            : currentAppointment.healthcare_first_name
         )}
         status={capitalizeFirstLetter(currentAppointment.appointment_status)}
         date={new Date(currentAppointment.scheduled_timestamp)
@@ -215,5 +217,3 @@ export default function AppointmentDetailsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});

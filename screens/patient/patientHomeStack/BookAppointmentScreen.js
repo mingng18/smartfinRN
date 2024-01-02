@@ -6,9 +6,9 @@ import { DatePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
 
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
-import MessageDialog from "../../../components/ui/MessageDialog";
 import { addDocument } from "../../../util/firestoreWR";
 import { Timestamp } from "firebase/firestore";
+import * as Haptics from "expo-haptics";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
@@ -17,12 +17,11 @@ export default function BookAppointmentScreen() {
 
   const [isReschedule, setIsReschedule] = React.useState(false);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [bookedDialogVisible, setBookedDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
-  const [submitDate, setSubmitDate] = React.useState(null);
-  //Time
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [submitDate, setSubmitDate] = React.useState(null); 
   const [time, setTime] = React.useState();
   const [items, setItems] = React.useState([
     { label: "2:00 pm", value: { hour: 2, minute: 0 } },
@@ -86,13 +85,14 @@ export default function BookAppointmentScreen() {
     ).filter((d) => !isValidDate(d)), // Disable all days except Saturdays
   };
 
-  //TODO Submit Appointment Request
   const handleAppointmentSubmission = async () => {
     const storedUid = await SecureStore.getItemAsync("uid");
     console.log(submitDate + " before set time");
     setSubmitDate(new Date().setDate(submitDate));
     console.log(submitDate + " before set time 2");
-    submitDate.setHours(time.hour, time.minute, 0);
+    submitDate.setHours(time.hour,time.minute, 0);
+    // submitDate.setMinutes(0);
+    // submitDate.setSeconds(0);
     console.log(submitDate + " after set time");
     addDocument("appointment", {
       patient_id: storedUid,
@@ -103,10 +103,7 @@ export default function BookAppointmentScreen() {
       scheduled_timestamp: submitDate,
     });
     // setBookedDialogVisible(true);
-    Alert.alert(
-      "Booked Successful!",
-      "Please wait for the healthcare to approve it."
-    );
+    Alert.alert("Booked Successful!", "Please wait for the healthcare to approve it.");
     navigation.goBack();
   };
 
@@ -154,7 +151,7 @@ export default function BookAppointmentScreen() {
         <Button
           mode="contained"
           onPress={() => {
-            handleAppointmentSubmission(); // TODO: Fix this Show the dialog to be able to function in ios as well
+            handleAppointmentSubmission();             // TODO: Fix this Show the dialog to be able to function in ios as well
           }}
         >
           Book

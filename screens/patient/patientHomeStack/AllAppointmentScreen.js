@@ -79,7 +79,11 @@ function AllAppointmentScreen() {
             <HorizontalCard
               key={appointment.id}
               profilePic={appointment.healthcare_profile_picture}
-              subject={capitalizeFirstLetter(appointment.healthcare_first_name)}
+              subject={capitalizeFirstLetter(
+                appointment.healthcare_first_name === ""
+                  ? "Awaiting Confirmation"
+                  : appointment.healthcare_first_name
+              )}
               status={capitalizeFirstLetter(appointment.appointment_status)}
               date={new Date(appointment.scheduled_timestamp)
                 .toISOString()
@@ -105,7 +109,11 @@ function AllAppointmentScreen() {
             <HorizontalCard
               key={appointment.id}
               profilePic={appointment.healthcare_profile_picture}
-              subject={capitalizeFirstLetter(appointment.healthcare_first_name)}
+              subject={capitalizeFirstLetter(
+                appointment.healthcare_first_name === ""
+                  ? "Awaiting Confirmation"
+                  : appointment.healthcare_first_name
+              )}
               status={capitalizeFirstLetter(appointment.appointment_status)}
               date={new Date(appointment.scheduled_timestamp)
                 .toISOString()

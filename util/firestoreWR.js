@@ -95,26 +95,40 @@ export async function fetchAppointmentsForPatient(patientId) {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.patient_id === patientId) {
-        const promise = fetchDocument("healthcare", data.healthcare_id)
-          .then((healthcareDoc) => {
-            appointments.push({
-              id: doc.id,
-              healthcare_profile_picture: healthcareDoc.profile_picture,
-              healthcare_first_name: healthcareDoc.first_name,
-              ...data,
+        if (data.healthcare_id) {
+          const promise = fetchDocument("healthcare", data.healthcare_id)
+            .then((healthcareDoc) => {
+              appointments.push({
+                id: doc.id,
+                healthcare_profile_picture: healthcareDoc.profile_picture
+                  ? healthcareDoc.profile_picture
+                  : "",
+                healthcare_first_name: healthcareDoc.first_name
+                  ? healthcareDoc.first_name
+                  : "",
+                ...data,
+              });
+            })
+            .catch((error) => {
+              console.error("Failed to fetch healthcare document:", error);
             });
-          })
-          .catch((error) => {
-            console.error("Failed to fetch healthcare document:", error);
-          });
 
-        promises.push(promise);
+          promises.push(promise);
+        } else {
+          // If healthcare_id doesn't exist, push an appointment with empty profile_picture and first_name
+          appointments.push({
+            id: doc.id,
+            healthcare_profile_picture: "", // Empty profile picture
+            healthcare_first_name: "", // Empty first name
+            ...data,
+          });
+        }
       }
     });
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    // console.log("appointments", appointments);
+    console.log("appointments", appointments);
     return appointments;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);

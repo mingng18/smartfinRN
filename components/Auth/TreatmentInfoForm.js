@@ -237,7 +237,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       "You can now use our app!",
       [
         {
-          text: "Go to home page",
+          text: "OK",
           onPress: () => {},
           style: "cancel",
         },
@@ -249,7 +249,13 @@ export default function TreatmentInfoForm({ isEditing }) {
   }
 
   return (
-    <>
+    <View
+      style={{
+        backgroundColor: theme.colors.background,
+        paddingHorizontal: 16,
+        // height: "100%",
+      }}
+    >
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
         My Diagnosis
       </Text>
@@ -338,6 +344,6 @@ export default function TreatmentInfoForm({ isEditing }) {
         onConfirm={onConfirmSingle}
         presentationStyle="pageSheet"
       />
-    </>
+    </View>
   );
 }
