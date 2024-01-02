@@ -2,7 +2,7 @@ Language: Javascript
 Framework: Expo React Native (Not Bare)
 State Mangement: Redux
 Navigation: React Navigation (supports iOS + Android)
-Node.js version: 16.14.0
+Node.js version: 20.10.0
 Server APIs: Firebase
 
 This React Native Project uses Expo Framework//Wrapper, if you met any problem, please refer to the expo documentation below:
