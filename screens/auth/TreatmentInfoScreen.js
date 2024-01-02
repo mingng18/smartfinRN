@@ -24,8 +24,9 @@ export default function TreatmentInfoScreen() {
         paddingHorizontal: 16,
       }}
     >
+      <ScrollView automaticallyAdjustKeyboardInsets={true}>
         <TreatmentInfoForm />
-
+      </ScrollView>
     </View>
   );
 }
