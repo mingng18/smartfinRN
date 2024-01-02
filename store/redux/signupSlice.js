@@ -14,7 +14,7 @@ const signupSlice = createSlice({
         dateOfDiagnosis: null,
         diagnosis: '',
         durationOfTreatment: 0,
-        currentTreatement: null,
+        currentTreatment: null,
         numberOfTablets: 0,
         password: '',
         profilePictureURI: null,

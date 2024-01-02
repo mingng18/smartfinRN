@@ -50,7 +50,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //Treatment Drop down
   const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState(null);
+  const [treatment, setTreatment] = React.useState();
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
   //Text inputs
@@ -89,28 +89,51 @@ export default function TreatmentInfoForm({ isEditing }) {
       setDiagnosisDate(formattedDate);
       setSubmitDate(params.date);
     },
-    [setCalendarOpen, setDiagnosisDate,setSubmitDate]
+    [setCalendarOpen, setDiagnosisDate, setSubmitDate]
   );
 
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
-    await addDocumentWithId(userType, userId, {
-      email: signupInfo.email,
-      first_name: signupInfo.firstName,
-      last_name: signupInfo.lastName,
-      phone_number: signupInfo.phoneNumber,
-      nric_passport: signupInfo.nric_passport,
-      age: signupInfo.age,
-      date_of_diagnosis: submitDate,
-      diagnosis: signupInfo.diagnosis,
-      treatment_duration_month: parseInt(signupInfo.durationOfTreatment),
-      treatment: signupInfo.currentTreatment,
-      number_of_tablets: parseInt(signupInfo.numberOfTablets),
-      profile_pic_url: profilePicUrl,
-      compliance_status: "Compliant",
-      gender: signupInfo.gender,
-      nationality: signupInfo.nationality,
-      notes: "",
-    });
+    //Debug use---------------------------------------------------------------
+    console.log(
+      "email : " + signupInfo.email,
+      "password : " + signupInfo.password,
+      "firstName : " + signupInfo.firstName,
+      "lastName : " + signupInfo.lastName,
+      "phoneNumber : " + signupInfo.phoneNumber,
+      "nric_passport : " + signupInfo.nric_passport,
+      "age : " + signupInfo.age,
+      "date_of_diagnosis : " + submitDate,
+      "diagnosis : " + signupInfo.diagnosis,
+      "diagnosis 2: " + diagnosis,
+      "treatment_duration_month : " + signupInfo.durationOfTreatment,
+      "treatment : " + signupInfo.currentTreatment,
+      "treatment 2: " + treatment,
+      "number_of_tablets : " + signupInfo.numberOfTablets,
+      "profilePictureURI : " + signupInfo.profilePictureURI
+    );
+    //Debug use---------------------------------------------------------------
+    try {
+      await addDocumentWithId(userType, userId, {
+        email: signupInfo.email,
+        first_name: signupInfo.firstName,
+        last_name: signupInfo.lastName,
+        phone_number: signupInfo.phoneNumber,
+        nric_passport: signupInfo.nric_passport,
+        age: signupInfo.age,
+        date_of_diagnosis: submitDate,
+        diagnosis: diagnosis,
+        treatment_duration_month: parseInt(durationOfTreatment),
+        treatment: treatment,
+        number_of_tablets: parseInt(numberOfTablets),
+        profile_pic_url: profilePicUrl,
+        compliance_status: "Compliant",
+        gender: signupInfo.gender,
+        nationality: signupInfo.nationality,
+        notes: "",
+      });
+    } catch (error) {
+      console.log(error + " error occured when saving user data to firestore");
+    }
   }
 
   async function uploadImage(uri, path, userId) {
@@ -168,8 +191,7 @@ export default function TreatmentInfoForm({ isEditing }) {
     ) {
       return Alert.alert("Invalid input", "Please check your entered details.");
     }
-
-    //Update redux store
+  try {
     dispatch(
       updateMedicalInformation({
         // dateOfDiagnosis: submitDate,
@@ -179,24 +201,10 @@ export default function TreatmentInfoForm({ isEditing }) {
         numberOfTablets: numberOfTablets,
       })
     );
-
-    //Debug use---------------------------------------------------------------
-    console.log(
-      "email : " + signupInfo.email,
-      "password : " + signupInfo.password,
-      "firstName : " + signupInfo.firstName,
-      "lastName : " + signupInfo.lastName,
-      "phoneNumber : " + signupInfo.phoneNumber,
-      "nric_passport : " + signupInfo.nric_passport,
-      "age : " + signupInfo.age,
-      "date_of_diagnosis : " + submitDate,
-      "diagnosis : " + signupInfo.diagnosis,
-      "treatment_duration_month : " + signupInfo.durationOfTreatment,
-      "treatment : " + signupInfo.currentTreatment,
-      "number_of_tablets : " + signupInfo.numberOfTablets,
-      "profilePictureURI : " + signupInfo.profilePictureURI
-    );
-    //Debug use---------------------------------------------------------------
+  } catch (error) {
+    console.log(error + " error occured when updating medical information");
+  }
+    //Update redux store
 
     //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
@@ -293,7 +301,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         open={treatmentOpen}
         setOpen={setTreatmentOpen}
         value={treatment}
-        setValue={(value) => setTreatment(value)}
+        setValue={setTreatment}
         items={treatmentData}
         setItems={setTreatmentData}
         placeholder="Treatment"
