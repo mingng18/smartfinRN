@@ -89,7 +89,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       setDiagnosisDate(formattedDate);
       setSubmitDate(params.date);
     },
-    [setCalendarOpen, setDiagnosisDate]
+    [setCalendarOpen, setDiagnosisDate,setSubmitDate]
   );
 
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {

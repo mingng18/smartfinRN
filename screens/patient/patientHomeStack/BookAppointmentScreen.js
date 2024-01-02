@@ -23,7 +23,7 @@ export default function BookAppointmentScreen() {
   const [bookedDialogVisible, setBookedDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
-  const [submitDate, setSubmitDate] = React.useState(undefined); 
+  const [submitDate, setSubmitDate] = React.useState(null); 
   const [time, setTime] = React.useState();
 
   React.useLayoutEffect(() => {
@@ -54,11 +54,11 @@ export default function BookAppointmentScreen() {
         .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
       // console.log(formattedDate);
       setDate(formattedDate);
-      setSubmitDate(new Date(params.date));
-      console.log(submitDate);
+      setSubmitDate(params.date);
+      console.log(submitDate + " submit Date");
       
     },
-    [setCalendarOpen, setDate]
+    [setCalendarOpen, setDate, setSubmitDate]
   );
 
   //Filter out the dates other than Monday, Wednesday and Friday
@@ -82,19 +82,24 @@ export default function BookAppointmentScreen() {
 
   //DropDown for time
   const [items, setItems] = React.useState([
-    { label: "2:00 pm", value: 200 },
-    { label: "2:30 pm", value: 230 },
-    { label: "3:00 pm", value: 300 },
-    { label: "3:30 pm", value: 330 },
-    { label: "4:00 pm", value: 400 },
-    { label: "4:30 pm", value: 430 },
+    { label: "2:00 pm", value: {hour:2,minute:0} },
+    { label: "2:30 pm", value: {hour:2,minute:30} },
+    { label: "3:00 pm", value: {hour:3,minute:0} },
+    { label: "3:30 pm", value: {hour:3,minute:30} },
+    { label: "4:00 pm", value: {hour:4,minute:0} },
+    { label: "4:30 pm", value: {hour:4,minute:30} },
   ]);
 
   //TODO Submit Appointment Request
   const handleAppointmentSubmission = async () => {
     const storedUid = await SecureStore.getItemAsync("uid");
-    submitDate.setTime(time);
-    console.log(submitDate);
+    console.log(submitDate + " before set time");
+    setSubmitDate(new Date().setDate(submitDate));
+    console.log(submitDate + " before set time 2");
+    submitDate.setHours(time.hour,time.minute, 0);
+    // submitDate.setMinutes(0);
+    // submitDate.setSeconds(0);
+    console.log(submitDate + " after set time");
     addDocument("appointment", {
       patient_id: storedUid,
       healthcare_id: null,
