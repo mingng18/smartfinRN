@@ -31,6 +31,7 @@ export default function PatientStackGroup() {
       screenOptions={{
         header: (props) => <CustomAppBar {...props} />,
       }}
+      initialRouteName="PatientBottomNavBar"
     >
       <PatientStack.Screen
         name="PatientBottomNavBar"
@@ -154,13 +155,13 @@ export default function PatientStackGroup() {
           headerShown: true,
         }}
       />
-      <PatientStack.Screen
+      {/* <PatientStack.Screen
         name="PreviewProfilePicScreen"
         component={PreviewProfilePicScreen}
         options={{
           headerShown: true,
         }}
-      />
+      /> */}
       <PatientStack.Screen
         name="TuberculosisMaterialsScreen"
         component={TuberculosisMaterialsScreen}

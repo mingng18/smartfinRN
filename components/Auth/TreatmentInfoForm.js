@@ -191,20 +191,16 @@ export default function TreatmentInfoForm({ isEditing }) {
     ) {
       return Alert.alert("Invalid input", "Please check your entered details.");
     }
-  try {
+
+    //Update redux store
     dispatch(
       updateMedicalInformation({
-        // dateOfDiagnosis: submitDate,
         diagnosis: diagnosis,
         durationOfTreatment: durationOfTreatment,
         currentTreatment: treatment,
         numberOfTablets: numberOfTablets,
       })
     );
-  } catch (error) {
-    console.log(error + " error occured when updating medical information");
-  }
-    //Update redux store
 
     //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
@@ -216,18 +212,19 @@ export default function TreatmentInfoForm({ isEditing }) {
       );
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
-
       dispatch(authenticateStoreNative(token.token, user.uid));
+
 
       //Upload profile picture
       const ppStorageRef = ref(storage, "patientProfilePicture/" + user.uid);
       setIsUploading(true);
-      const donwloadURL = await uploadImage(
+      uploadImage(
         signupInfo.profilePictureURI,
         ppStorageRef,
         user.uid
       );
       setIsUploading(false);
+      
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."

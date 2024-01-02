@@ -21,28 +21,35 @@ export default function Navigation() {
   const uid = useSelector((state) => state.authObject.uid);
   const dispatch = useDispatch();
 
-  if (authenticated) {
-    patientExist = fetchDocument("patients", uid);
-    healthCareExist = fetchDocument("healthcare", uid);
+  // if (authenticated) {
+  //   patientExist = fetchDocument("patients", uid);
+  //   healthCareExist = fetchDocument("healthcare", uid);
 
-    if (patientExist) {
-      dispatch(setFirstTimeLogin({ first_time_login: false }));
-    } else if (healthCareExist) {
-      dispatch(setFirstTimeLogin({ first_time_login: false }));
-    }
-  }
+  //   if (patientExist) {
+  //     dispatch(setFirstTimeLogin({ first_time_login: false }));
+  //   } else if (healthCareExist) {
+  //     dispatch(setFirstTimeLogin({ first_time_login: false }));
+  //   }
+  // }
 
   return (
     <NavigationContainer>
-      {authenticated ? (
-        first_time_login ? (
-          <AuthStack />
-        ) : (
-          <PatientStackGroup />
-        )
-      ) : (
-        <AuthStack />
-      )}
+      {authenticated ? <PatientStackGroup /> : <AuthStack />}
     </NavigationContainer>
   );
 }
+
+//   return (
+//     <NavigationContainer>
+//       {authenticated ? (
+//         first_time_login ? (
+//           <AuthStack />
+//         ) : (
+//           <PatientStackGroup />
+//         )
+//       ) : (
+//         <AuthStack />
+//       )}
+//     </NavigationContainer>
+//   );
+// }
