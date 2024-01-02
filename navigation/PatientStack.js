@@ -155,13 +155,13 @@ export default function PatientStackGroup() {
           headerShown: true,
         }}
       />
-      {/* <PatientStack.Screen
+      <PatientStack.Screen
         name="PreviewProfilePicScreen"
         component={PreviewProfilePicScreen}
         options={{
           headerShown: true,
         }}
-      /> */}
+      />
       <PatientStack.Screen
         name="TuberculosisMaterialsScreen"
         component={TuberculosisMaterialsScreen}
