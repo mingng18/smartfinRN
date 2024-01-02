@@ -176,7 +176,7 @@ export default function BookAppointmentScreen() {
           presentationStyle="pageSheet"
           validRange={validRange}
         />
-        //TODO DELETE THIS
+        {/* //TODO DELETE THIS */}
         {/* <MessageDialog
           visible={bookedDialogVisible}
           close={() => {
