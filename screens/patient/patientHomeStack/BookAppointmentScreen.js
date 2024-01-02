@@ -6,24 +6,21 @@ import { DatePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
 
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
-import MessageDialog from "../../../components/ui/MessageDialog";
 import { addDocument } from "../../../util/firestoreWR";
 import { Timestamp } from "firebase/firestore";
-
+import * as Haptics from "expo-haptics";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
-  
 
   const [isReschedule, setIsReschedule] = React.useState(false);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [bookedDialogVisible, setBookedDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
-  const [submitDate, setSubmitDate] = React.useState(null); 
+  const [submitDate, setSubmitDate] = React.useState(null);
   const [time, setTime] = React.useState();
 
   React.useLayoutEffect(() => {
@@ -46,7 +43,7 @@ export default function BookAppointmentScreen() {
 
       //Format iosDate to date
       const dateObject = new Date(params.date);
-      
+
       const formattedDate = `${dateObject.getFullYear()}-${(
         dateObject.getMonth() + 1
       )
@@ -56,7 +53,6 @@ export default function BookAppointmentScreen() {
       setDate(formattedDate);
       setSubmitDate(params.date);
       console.log(submitDate + " submit Date");
-      
     },
     [setCalendarOpen, setDate, setSubmitDate]
   );
@@ -82,35 +78,52 @@ export default function BookAppointmentScreen() {
 
   //DropDown for time
   const [items, setItems] = React.useState([
-    { label: "2:00 pm", value: {hour:2,minute:0} },
-    { label: "2:30 pm", value: {hour:2,minute:30} },
-    { label: "3:00 pm", value: {hour:3,minute:0} },
-    { label: "3:30 pm", value: {hour:3,minute:30} },
-    { label: "4:00 pm", value: {hour:4,minute:0} },
-    { label: "4:30 pm", value: {hour:4,minute:30} },
+    { label: "2:00 pm", value: { hour: 2, minute: 0 } },
+    { label: "2:30 pm", value: { hour: 2, minute: 30 } },
+    { label: "3:00 pm", value: { hour: 3, minute: 0 } },
+    { label: "3:30 pm", value: { hour: 3, minute: 30 } },
+    { label: "4:00 pm", value: { hour: 4, minute: 0 } },
+    { label: "4:30 pm", value: { hour: 4, minute: 30 } },
   ]);
 
-  //TODO Submit Appointment Request
   const handleAppointmentSubmission = async () => {
-    const storedUid = await SecureStore.getItemAsync("uid");
-    console.log(submitDate + " before set time");
-    setSubmitDate(new Date().setDate(submitDate));
-    console.log(submitDate + " before set time 2");
-    submitDate.setHours(time.hour,time.minute, 0);
-    // submitDate.setMinutes(0);
-    // submitDate.setSeconds(0);
-    console.log(submitDate + " after set time");
-    addDocument("appointment", {
-      patient_id: storedUid,
-      healthcare_id: null,
-      appointment_status: "pending",
-      created_timestamp: Timestamp.now(),
-      remarks: "",
-      scheduled_timestamp: submitDate,
-    });
-    // setBookedDialogVisible(true);
-    Alert.alert("Booked Successful!", "Please wait for the healthcare to approve it.");
-    navigation.goBack();
+    if (!submitDate || !time) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Error", "Please fill in all the details.");
+      return;
+    }
+
+    try {
+      const storedUid = await SecureStore.getItemAsync("uid");
+      const submitDate = new Date(); // Use new Date() directly
+
+      // Set the time for the submitDate
+      submitDate.setHours(time.hour, time.minute, 0, 0); // Set hours, minutes, seconds, and milliseconds
+
+      addDocument("appointment", {
+        patient_id: storedUid,
+        healthcare_id: null,
+        appointment_status: "pending",
+        created_timestamp: Timestamp.now(),
+        remarks: "",
+        scheduled_timestamp: submitDate,
+      });
+
+      // Notify user and navigate
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert(
+        "Booked Successful!",
+        "Please wait for the healthcare to approve it."
+      );
+      navigation.popToTop();
+    } catch (error) {
+      console.error("Error while submitting appointment:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(
+        "Error",
+        "An error occurred while submitting the appointment. Please try again later."
+      );
+    }
   };
 
   return (
@@ -157,7 +170,7 @@ export default function BookAppointmentScreen() {
         <Button
           mode="contained"
           onPress={() => {
-            handleAppointmentSubmission();             // TODO: Fix this Show the dialog to be able to function in ios as well
+            handleAppointmentSubmission();
           }}
         >
           Book

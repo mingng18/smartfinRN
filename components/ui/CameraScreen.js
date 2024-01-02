@@ -4,6 +4,7 @@ import React from "react";
 import { View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as Haptics from "expo-haptics";
 
 export default function CameraScreen() {
   const theme = useTheme();
@@ -37,10 +38,14 @@ export default function CameraScreen() {
   }, []);
 
   const takePicture = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        navigation.navigate("PreviewProfilePicScreen", { uri: data.uri, isEditing: isEditing });
+        navigation.navigate("PreviewProfilePicScreen", {
+          uri: data.uri,
+          isEditing: isEditing,
+        });
       } catch (e) {
         console.log(e);
       }
@@ -48,6 +53,7 @@ export default function CameraScreen() {
   };
 
   const takeVideo = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (cameraRef) {
       try {
         setIsRecording(true);

@@ -2,7 +2,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Video, ResizeMode } from "expo-av";
 import React from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { ActivityIndicator, Button, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Snackbar,
+  useTheme,
+} from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import {
   getDownloadURL,
@@ -15,6 +20,7 @@ import { useSelector } from "react-redux";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { addDocumentWithId } from "../../../util/firestoreWR";
 import { db } from "../../../util/firebaseConfig";
+import * as Haptics from "expo-haptics";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
@@ -22,7 +28,7 @@ function PreviewVideoScreen() {
   const theme = useTheme();
   const storageRef = getStorage();
   const uid = useSelector((state) => state.authObject.user_uid);
-  
+
   const { key, name, params, path } = route;
   const [video, setVideo] = React.useState("");
   const videoRef = React.useRef(null);
@@ -80,7 +86,10 @@ function PreviewVideoScreen() {
         );
         return;
       }
-      const videoRef = ref(storageRef, "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString());
+      const videoRef = ref(
+        storageRef,
+        "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString()
+      );
 
       uploadTask = uploadBytesResumable(videoRef, videoBlob);
       uploadTask.on(
@@ -119,13 +128,24 @@ function PreviewVideoScreen() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             getMetadata(videoRef)
               .then(async (metadata) => {
-                await saveVideoDataToFirestore("video", metadata.name, downloadURL);
-                navigation.navigate("PatientHomeScreen");
+                await saveVideoDataToFirestore(
+                  "video",
+                  metadata.name,
+                  downloadURL
+                );
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Success
+                );
+                Alert.alert("Success", "Video successfully uploaded.");
+                navigation.popToTop();
                 // Metadata now contains the metadata for 'images/forest.jpg'
               })
               .catch((error) => {
                 // Uh-oh, an error occurred!
-                console.log("Error while getting metadata and writing to firestore: " + error);
+                console.log(
+                  "Error while getting metadata and writing to firestore: " +
+                    error
+                );
                 Alert.alert("Error", "Error uploading video, please try again");
               });
             setIsLoading(false);

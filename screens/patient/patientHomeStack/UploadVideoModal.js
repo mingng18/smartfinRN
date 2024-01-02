@@ -5,6 +5,7 @@ import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
+import * as Haptics from "expo-haptics";
 
 export default function UploadVideoModal({ bottomSheetModalRef }) {
   const { navigate } = useNavigation();
@@ -24,6 +25,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
 
     if (!result.canceled) {
       let uri = result.assets[0].uri;
+      
       navigate("PreviewVideoScreen", uri);
     }
     setDialogVisible(false);

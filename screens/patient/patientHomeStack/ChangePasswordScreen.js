@@ -50,8 +50,8 @@ export default function ChangePasswordScreen() {
         variant="bodySmall"
         style={{ marginTop: 4, color: theme.colors.onSurface }}
       >
-        Your password should consist of a combination of alphabets, numbers, and
-        symbols.
+        Your password must contain a combination of letters, numbers, and
+        symbols, with at least 6 numbers included.
       </Text>
       <TextInput
         mode="outlined"

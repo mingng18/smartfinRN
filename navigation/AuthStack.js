@@ -9,6 +9,7 @@ import PreviewProfilePicScreen from "../screens/auth/PreviewProfilePicScreen";
 import CameraScreen from "../components/ui/CameraScreen";
 import TreatmentInfoScreen from "../screens/auth/TreatmentInfoScreen";
 import HealthcareInformationScreen from "../screens/auth/HealthcareInformationScreen";
+import { useTheme } from "react-native-paper";
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,7 @@ export default function AuthStack() {
     <Stack.Navigator
       screenOptions={{
         header: (props) => <CustomAppBar {...props} />,
+        contentStyle: { backgroundColor: useTheme().colors.background },
       }}
     >
       <Stack.Screen
