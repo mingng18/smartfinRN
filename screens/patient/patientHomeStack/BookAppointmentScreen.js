@@ -1,16 +1,21 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
+import * as SecureStore from "expo-secure-store";
 
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import MessageDialog from "../../../components/ui/MessageDialog";
+import { addDocument } from "../../../util/firestoreWR";
+import { Timestamp } from "firebase/firestore";
+
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
+  
 
   const [isReschedule, setIsReschedule] = React.useState(false);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
@@ -18,6 +23,7 @@ export default function BookAppointmentScreen() {
   const [bookedDialogVisible, setBookedDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
+  const [submitDate, setSubmitDate] = React.useState(undefined); 
   const [time, setTime] = React.useState();
 
   React.useLayoutEffect(() => {
@@ -40,6 +46,7 @@ export default function BookAppointmentScreen() {
 
       //Format iosDate to date
       const dateObject = new Date(params.date);
+      
       const formattedDate = `${dateObject.getFullYear()}-${(
         dateObject.getMonth() + 1
       )
@@ -47,6 +54,9 @@ export default function BookAppointmentScreen() {
         .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
       // console.log(formattedDate);
       setDate(formattedDate);
+      setSubmitDate(new Date(params.date));
+      console.log(submitDate);
+      
     },
     [setCalendarOpen, setDate]
   );
@@ -81,7 +91,22 @@ export default function BookAppointmentScreen() {
   ]);
 
   //TODO Submit Appointment Request
-  const handleAppointmentSubmission = () => {};
+  const handleAppointmentSubmission = async () => {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    submitDate.setTime(time);
+    console.log(submitDate);
+    addDocument("appointment", {
+      patient_id: storedUid,
+      healthcare_id: null,
+      appointment_status: "pending",
+      created_timestamp: Timestamp.now(),
+      remarks: "",
+      scheduled_timestamp: submitDate,
+    });
+    // setBookedDialogVisible(true);
+    Alert.alert("Booked Successful!", "Please wait for the healthcare to approve it.");
+    navigation.goBack();
+  };
 
   return (
     <View
@@ -127,8 +152,7 @@ export default function BookAppointmentScreen() {
         <Button
           mode="contained"
           onPress={() => {
-            handleAppointmentSubmission();
-            setBookedDialogVisible(true); // Show the dialog
+            handleAppointmentSubmission();             // TODO: Fix this Show the dialog to be able to function in ios as well
           }}
         >
           Book

@@ -118,8 +118,6 @@ function PreviewVideoScreen() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             getMetadata(videoRef)
               .then(async (metadata) => {
-                console.log(" video metadata: " + metadata.md5Hash);
-                console.log("File available at ", downloadURL);
                 await saveVideoDataToFirestore("video", metadata.name, downloadURL);
                 navigation.navigate("PatientHomeScreen");
                 // Metadata now contains the metadata for 'images/forest.jpg'
