@@ -176,7 +176,8 @@ export default function BookAppointmentScreen() {
           presentationStyle="pageSheet"
           validRange={validRange}
         />
-        <MessageDialog
+        //TODO DELETE THIS
+        {/* <MessageDialog
           visible={bookedDialogVisible}
           close={() => {
             setBookedDialogVisible(false);
@@ -185,7 +186,7 @@ export default function BookAppointmentScreen() {
           title="Book Successful! "
           content="Please wait for the healthcare to approve it."
           buttonText="Back to Home Page"
-        />
+        /> */}
       </View>
     </View>
   );
