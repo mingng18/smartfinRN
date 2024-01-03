@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import {
   authenticateStoreNative,
   fetchHealthcareData,
+  fetchPatientData,
 } from "../store/redux/authSlice";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
@@ -36,9 +37,8 @@ function LoginScreen() {
       );
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
-      const isPatient = await fetchDocument("patients", user.uid);
-      if (isPatient != null) {
-        dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
+      try {
+        const isPatient = await fetchDocument("patient", user.uid);
         dispatch(
           fetchPatientData({
             age: isPatient.age,
@@ -48,11 +48,12 @@ function LoginScreen() {
             email: isPatient.email,
             first_name: isPatient.first_name,
             last_name: isPatient.last_name,
-            profile_picture: isPatient.profile_picture,
+            profile_pic_url: isPatient.profile_pic_url,
             uid: isPatient.uid,
           })
         );
-      } else {
+        dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
+      } catch (error) {
         const isHealthcare = await fetchDocument("healthcare", user.uid);
         dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
         dispatch(
@@ -60,7 +61,7 @@ function LoginScreen() {
             email: isHealthcare.email,
             first_name: isHealthcare.first_name,
             last_name: isHealthcare.last_name,
-            profile_picture: isHealthcare.profile_picture,
+            profile_pic_url: isHealthcare.profile_pic_url,
             category: isHealthcare.category,
             role: isHealthcare.role,
             staff_id: isHealthcare.staff_id,
@@ -71,7 +72,6 @@ function LoginScreen() {
       Alert.alert(
         "Authentication failed! Please check your credentials or sign up a new account!"
       );
-      console.log(error); //Debug use
     }
     setIsAuthenticating(false);
   }

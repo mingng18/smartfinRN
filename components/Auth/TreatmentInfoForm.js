@@ -40,6 +40,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { DIAGNOSIS, TREATMENT } from "../../constants/constants";
+import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
 
 export default function TreatmentInfoForm({ isEditing }) {
   //TODO handle editing case
@@ -77,10 +78,6 @@ export default function TreatmentInfoForm({ isEditing }) {
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
 
-  React.useState(() => {
-    console.log("treatment change: " + treatment);
-  }, [treatment]);
-
   //Calendar
   const onDismissSingle = React.useCallback(() => {
     setCalendarOpen(false);
@@ -97,7 +94,6 @@ export default function TreatmentInfoForm({ isEditing }) {
       )
         .toString()
         .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
-      // console.log(formattedDate);
       setDiagnosisDate(formattedDate);
       setSubmitDate(params.date);
     },
@@ -106,23 +102,23 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
     //Debug use---------------------------------------------------------------
-    console.log(
-      "email : " + signupInfo.email,
-      "password : " + signupInfo.password,
-      "firstName : " + signupInfo.firstName,
-      "lastName : " + signupInfo.lastName,
-      "phoneNumber : " + signupInfo.phoneNumber,
-      "nric_passport : " + signupInfo.nric_passport,
-      "age : " + signupInfo.age,
-      "date_of_diagnosis : " + submitDate,
-      "diagnosis : " + signupInfo.diagnosis,
-      "diagnosis 2: " + diagnosis,
-      "treatment_duration_month : " + signupInfo.durationOfTreatment,
-      "treatment : " + signupInfo.currentTreatment,
-      "treatment 2: " + treatment,
-      "number_of_tablets : " + signupInfo.numberOfTablets,
-      "profilePictureURI : " + signupInfo.profilePictureURI
-    );
+    // console.log(
+    //   "email : " + signupInfo.email,
+    //   "password : " + signupInfo.password,
+    //   "firstName : " + signupInfo.firstName,
+    //   "lastName : " + signupInfo.lastName,
+    //   "phoneNumber : " + signupInfo.phoneNumber,
+    //   "nric_passport : " + signupInfo.nric_passport,
+    //   "age : " + signupInfo.age,
+    //   "date_of_diagnosis : " + submitDate,
+    //   "diagnosis : " + signupInfo.diagnosis,
+    //   "diagnosis 2: " + diagnosis,
+    //   "treatment_duration_month : " + signupInfo.durationOfTreatment,
+    //   "treatment : " + signupInfo.currentTreatment,
+    //   "treatment 2: " + treatment,
+    //   "number_of_tablets : " + signupInfo.numberOfTablets,
+    //   "profilePictureURI : " + signupInfo.profilePictureURI
+    // );
     //Debug use---------------------------------------------------------------
     try {
       await addDocumentWithId(userType, userId, {
@@ -144,13 +140,11 @@ export default function TreatmentInfoForm({ isEditing }) {
         notes: "",
       });
     } catch (error) {
-      console.log(error + " error occured when saving user data to firestore");
+      console.log(error + " error occured when saving user data to firestore"); //Debug use
     }
   }
 
   async function uploadImage(uri, path, userId, token) {
-    console.log("Uploading image to " + uri);
-    console.log("User is  " + userId);
     const imageData = await fetch(uri);
     const imageBlob = await imageData.blob();
 
@@ -188,7 +182,6 @@ export default function TreatmentInfoForm({ isEditing }) {
               treatment_duration_months: durationOfTreatment,
             })
           );
-          console.log("File available at ", downloadURL);
           setIsUploading(false);
           await saveUserDateToFirestore("patient", userId, downloadURL);
           // Alert.alert(
@@ -209,7 +202,8 @@ export default function TreatmentInfoForm({ isEditing }) {
       }
     );
 
-    dispatch(authenticateStoreNative(token, userId));
+    //Save userToken, userId and userType to redux
+    dispatch(authenticateStoreNative(token, userId, "patient"));
   }
 
   //Handle Submission Function : To be called when user clicks on the sign up button
@@ -275,7 +269,6 @@ export default function TreatmentInfoForm({ isEditing }) {
       Alert.alert(
         "Signup failed, please check your email and try again later."
       );
-      console.log(error); //Debug use
     }
   }
 
@@ -285,7 +278,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       //treatment
       setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
       setDiagnosis(user.diagnosis);
-      console.log(typeof Number(user.treatment_duration_month));
+      // console.log(typeof Number(user.treatment_duration_month)); // Debug use 
       setDurationOfTreatment(parseInt(user.treatment_duration_month));
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
@@ -307,11 +300,6 @@ export default function TreatmentInfoForm({ isEditing }) {
         My Diagnosis
       </Text>
       <Pressable onPress={() => setCalendarOpen(true)}>
-        {isUploading && ( // Show loading indicator only when isLoading is true
-          <View style={styles.activityIndicatorContainer}>
-            <ActivityIndicator color={theme.colors.primary} size={48} />
-          </View>
-        )}
         <View pointerEvents="none">
           <TextInput
             mode="outlined"
@@ -409,6 +397,12 @@ export default function TreatmentInfoForm({ isEditing }) {
         onDismiss={onDismissSingle}
         onConfirm={onConfirmSingle}
         presentationStyle="pageSheet"
+      />
+      <LoadingIndicatorDialog
+        visible={isUploading}
+        close={() => {
+          setDialogVisible(false);
+        }}
       />
     </View>
   );

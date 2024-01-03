@@ -62,56 +62,6 @@ const signupSlice = createSlice({
   },
 });
 
-export const updateAuthSlice = () => {
-return async (dispatch) => {
-    dispatch(setUserType({ user_type: state.signupMode }));
-    if (signupMode === "patient") {
-      console.log("updating patient authSlice")
-      dispatch(
-        fetchPatientData({
-          age: state.age,
-          compliance_status: state.compliance_status,
-          data_of_diagnosis: state.data_of_diagnosis,
-          diagnosis: state.diagnosis,
-          email: state.email,
-          first_name: state.first_name,
-          gender: state.gender,
-          last_name: state.last_name,
-          nationality: state.nationality,
-          notes: state.notes,
-          nric_passport: state.nric_passport,
-          number_of_tablets: state.number_of_tablets,
-          phone_number: state.phone_number,
-          profile_pic_url: state.profile_pic_url,
-          treatment: state.treatment,
-          treatment_duration_months: state.treatment_duration_months,
-        })
-        );
-      }
-      else {
-        console.log("updating healthcare authSlice")
-        dispatch(
-          fetchHealthcareData({
-            email: state.email,
-            first_name: state.first_name,
-            last_name: state.last_name,
-                profile_pic_url: state.profile_pic_url,
-                category: state.category,
-                role: state.role,
-                staff_id: state.staff_id,
-            })
-        );
-    }
-    try {
-        await SecureStore.setItemAsync("token", storedToken);
-        await SecureStore.setItemAsync("uid", userId);
-        await SecureStore.setItemAsync("user_type", userType);
-    } catch (error) {
-        console.log("error occured when storing token into secureStore in the updateAuthSlice") + error;
-    }
-};
-};
-
 export const updateSignupMode = signupSlice.actions.updateSignupMode;
 export const updateProfilePictureURI =
   signupSlice.actions.updateProfilePictureURI;

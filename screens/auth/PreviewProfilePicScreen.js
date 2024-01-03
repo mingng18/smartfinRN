@@ -4,9 +4,7 @@ import { Alert, Image, StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   Button,
-  ProgressBar,
   Text,
-  TextInput,
   useTheme,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +13,6 @@ import {
   getDownloadURL,
   getStorage,
   ref,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
@@ -25,6 +22,7 @@ import {
   setUserType,
 } from "../../store/redux/authSlice";
 import { addDocumentWithId } from "../../util/firestoreWR";
+import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 
 export default function PreviewProfilePicScreen() {
   const navigation = useNavigation();
@@ -33,7 +31,6 @@ export default function PreviewProfilePicScreen() {
   const dispatch = useDispatch();
   const storage = getStorage();
   const auth = getAuth();
-  const signupEmail = useSelector((state) => state.signupObject.email);
   const signupMode = useSelector((state) => state.signupObject.signupMode);
   const signupInfo = useSelector((state) => state.signupObject);
 
@@ -56,7 +53,7 @@ export default function PreviewProfilePicScreen() {
       category: signupInfo.category,
       role: signupInfo.role,
       staff_id: signupInfo.staffId,
-      profile_picture: profilePicUrl,
+      profile_pic_url: profilePicUrl,
     });
   }
 
@@ -94,8 +91,10 @@ export default function PreviewProfilePicScreen() {
               profile_pic_url: downloadURL,
             })
           );
+          //Save user data to firestore
           await saveUserDateToFirestore("healthcare", userId, downloadURL);
-          dispatch(authenticateStoreNative(token, userId));
+          //Save userToken, userId and userType to redux
+          dispatch(authenticateStoreNative(token, userId, "healthcare"));
           setIsUploading(false);
         });
       },
@@ -113,7 +112,7 @@ export default function PreviewProfilePicScreen() {
       "category: " + signupInfo.category,
       "role: " + signupInfo.role,
       "staff_id: " + signupInfo.staffId,
-      "profile_picture: " + signupInfo.profilePictureURI
+      "profile_pic_url: " + signupInfo.profilePictureURI
     );
 
     try {
@@ -136,15 +135,12 @@ export default function PreviewProfilePicScreen() {
         token.token
       );
 
-      //Add user data to firestore
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."
       );
       console.log(error); //Debug use
     }
-
-    //todo : signup healthcare here
   }
 
   async function nextButtonHandler() {
@@ -209,7 +205,14 @@ export default function PreviewProfilePicScreen() {
           Back
         </Button>
       </View>
+      <LoadingIndicatorDialog
+        visible={isUploading}
+        close={() => {
+          setDialogVisible(false);
+        }}
+      />
     </View>
+    
   );
 }
 

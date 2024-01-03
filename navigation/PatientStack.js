@@ -30,7 +30,7 @@ export default function PatientStackGroup() {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("Current screen:", navigation.getCurrentRoute().name);
+      // console.log("Current screen:", navigation.getCurrentRoute().name); //for debugging purposes only
     }, [navigation])
   );
 
