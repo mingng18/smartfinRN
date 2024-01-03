@@ -6,14 +6,25 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
+  StyleSheet,
 } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import { useDispatch, useSelector } from "react-redux";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
-import { authenticateStoreNative } from "../../store/redux/authSlice";
+import {
+  authenticateStoreNative,
+  fetchHealthcareData,
+  fetchPatientData,
+} from "../../store/redux/authSlice";
 import { addDocument, addDocumentWithId } from "../../util/firestoreWR";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -51,7 +62,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //Treatment Drop down
   const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState('akurit4');
+  const [treatment, setTreatment] = React.useState("akurit4");
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
   //Text inputs
@@ -127,7 +138,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         treatment: treatment,
         number_of_tablets: parseInt(numberOfTablets),
         profile_pic_url: profilePicUrl,
-        compliance_status: "Compliant",
+        compliance_status: "Good",
         gender: signupInfo.gender,
         nationality: signupInfo.nationality,
         notes: "",
@@ -137,7 +148,7 @@ export default function TreatmentInfoForm({ isEditing }) {
     }
   }
 
-  async function uploadImage(uri, path, userId) {
+  async function uploadImage(uri, path, userId, token) {
     console.log("Uploading image to " + uri);
     console.log("User is  " + userId);
     const imageData = await fetch(uri);
@@ -157,11 +168,48 @@ export default function TreatmentInfoForm({ isEditing }) {
       (error) => {},
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          dispatch(
+            fetchPatientData({
+              age: signupInfo.age,
+              compliance_status: "Good",
+              data_of_diagnosis: submitDate.toString(),
+              diagnosis: diagnosis,
+              email: signupInfo.email,
+              first_name: signupInfo.firstName,
+              gender: signupInfo.gender,
+              last_name: signupInfo.lastName,
+              nationality: signupInfo.nationality,
+              notes: "",
+              nric_passport: signupInfo.nric_passport,
+              number_of_tablets: numberOfTablets,
+              phone_number: signupInfo.phoneNumber,
+              profile_pic_url: downloadURL,
+              treatment: treatment,
+              treatment_duration_months: durationOfTreatment,
+            })
+          );
           console.log("File available at ", downloadURL);
+          setIsUploading(false);
           await saveUserDateToFirestore("patient", userId, downloadURL);
+          // Alert.alert(
+          //   "Sign Up Successful!",
+          //   "You can now use our app!",
+          //   [
+          //     {
+          //       text: "OK",
+          //       onPress: () => {},
+          //       style: "cancel",
+          //     },
+          //   ],
+          //   {
+          //     cancelable: false,
+          //   }
+          // );
         });
       }
     );
+
+    dispatch(authenticateStoreNative(token, userId));
   }
 
   //Handle Submission Function : To be called when user clicks on the sign up button
@@ -193,15 +241,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       return Alert.alert("Invalid input", "Please check your entered details.");
     }
 
-    //Update redux store
-    dispatch(
-      updateMedicalInformation({
-        diagnosis: diagnosis,
-        durationOfTreatment: durationOfTreatment,
-        currentTreatment: treatment,
-        numberOfTablets: numberOfTablets,
-      })
-    );
+    // Update redux store
 
     //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
@@ -213,36 +253,30 @@ export default function TreatmentInfoForm({ isEditing }) {
       );
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
-      dispatch(authenticateStoreNative(token.token, user.uid));
-      
-      updateAuthSlice();
+      dispatch(
+        updateMedicalInformation({
+          diagnosis: diagnosis,
+          durationOfTreatment: durationOfTreatment,
+          currentTreatment: treatment,
+          numberOfTablets: numberOfTablets,
+        })
+      );
 
       //Upload profile picture
       const ppStorageRef = ref(storage, "patientProfilePicture/" + user.uid);
       setIsUploading(true);
-      uploadImage(signupInfo.profilePictureURI, ppStorageRef, user.uid);
-      setIsUploading(false);
+      await uploadImage(
+        signupInfo.profilePictureURI,
+        ppStorageRef,
+        user.uid,
+        token.token
+      );
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."
       );
       console.log(error); //Debug use
     }
-
-    Alert.alert(
-      "Sign Up Successful!",
-      "You can now use our app!",
-      [
-        {
-          text: "OK",
-          onPress: () => {},
-          style: "cancel",
-        },
-      ],
-      {
-        cancelable: false,
-      }
-    );
   }
 
   const user = useSelector((state) => state.authObject);
@@ -251,7 +285,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       //treatment
       setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
       setDiagnosis(user.diagnosis);
-      console.log(typeof Number(user.treatment_duration_month))
+      console.log(typeof Number(user.treatment_duration_month));
       setDurationOfTreatment(parseInt(user.treatment_duration_month));
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
@@ -259,9 +293,7 @@ export default function TreatmentInfoForm({ isEditing }) {
   }, [isEditing]);
 
   //TODO add update treatment
-  function handleUpdateTreatment(){
-
-  }
+  function handleUpdateTreatment() {}
 
   return (
     <View
@@ -275,6 +307,11 @@ export default function TreatmentInfoForm({ isEditing }) {
         My Diagnosis
       </Text>
       <Pressable onPress={() => setCalendarOpen(true)}>
+        {isUploading && ( // Show loading indicator only when isLoading is true
+          <View style={styles.activityIndicatorContainer}>
+            <ActivityIndicator color={theme.colors.primary} size={48} />
+          </View>
+        )}
         <View pointerEvents="none">
           <TextInput
             mode="outlined"
@@ -376,3 +413,17 @@ export default function TreatmentInfoForm({ isEditing }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  video: {
+    alignSelf: "center",
+    height: "100%",
+    aspectRatio: 9 / 16,
+  },
+  activityIndicatorContainer: {
+    ...StyleSheet.absoluteFillObject, // Position the container absolutely to cover the entire video area
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for the loading overlay
+  },
+});

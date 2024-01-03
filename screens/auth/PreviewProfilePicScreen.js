@@ -1,7 +1,8 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { Alert, Image, View } from "react-native";
+import { Alert, Image, StyleSheet, View } from "react-native";
 import {
+  ActivityIndicator,
   Button,
   ProgressBar,
   Text,
@@ -18,7 +19,11 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { authenticateStoreNative } from "../../store/redux/authSlice";
+import {
+  authenticateStoreNative,
+  fetchHealthcareData,
+  setUserType,
+} from "../../store/redux/authSlice";
 import { addDocumentWithId } from "../../util/firestoreWR";
 
 export default function PreviewProfilePicScreen() {
@@ -55,7 +60,7 @@ export default function PreviewProfilePicScreen() {
     });
   }
 
-  async function uploadImage(uri, path, userId) {
+  async function uploadImage(uri, path, userId, token) {
     setIsUploading(true);
     console.log("Uploading image to " + uri);
     console.log("User is  " + userId);
@@ -77,12 +82,24 @@ export default function PreviewProfilePicScreen() {
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
           console.log("File available at ", downloadURL);
+          dispatch(setUserType({ user_type: signupInfo.signupMode }));
+          dispatch(
+            fetchHealthcareData({
+              category: signupInfo.category,
+              email: signupInfo.email,
+              first_name: signupInfo.firstName,
+              last_name: signupInfo.lastName,
+              role: signupInfo.role,
+              staff_id: signupInfo.staffId,
+              profile_pic_url: downloadURL,
+            })
+          );
           await saveUserDateToFirestore("healthcare", userId, downloadURL);
+          dispatch(authenticateStoreNative(token, userId));
+          setIsUploading(false);
         });
       },
-      () => {
-        setIsUploading(false);
-      }
+      () => {}
     );
   }
 
@@ -109,17 +126,15 @@ export default function PreviewProfilePicScreen() {
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
 
-      dispatch(authenticateStoreNative(token.token, user.uid));
-
       //Upload profile picture
       const ppStorageRef = ref(storage, "healthcareProfilePicture/" + user.uid);
       setIsUploading(true);
       const donwloadURL = await uploadImage(
         signupInfo.profilePictureURI,
         ppStorageRef,
-        user.uid
+        user.uid,
+        token.token
       );
-      setIsUploading(false);
 
       //Add user data to firestore
     } catch (error) {
@@ -140,9 +155,9 @@ export default function PreviewProfilePicScreen() {
     } catch (error) {
       return Alert.alert("Upload failed, please try again later.");
     } finally {
-      setIsUploading(false);
       if (signupMode === "patient") {
         navigation.navigate("TreatmentInfoScreen");
+        setIsUploading(false);
       } else {
         signupHealthcare();
         //todo : signup healthcare here
@@ -170,6 +185,11 @@ export default function PreviewProfilePicScreen() {
           alignSelf: "center",
         }}
       />
+      {isUploading && ( // Show loading indicator only when isLoading is true
+        <View style={styles.activityIndicatorContainer}>
+          <ActivityIndicator color={theme.colors.primary} size={48} />
+        </View>
+      )}
       <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
         <Button
           mode="contained"
@@ -192,3 +212,17 @@ export default function PreviewProfilePicScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  video: {
+    alignSelf: "center",
+    height: "100%",
+    aspectRatio: 9 / 16,
+  },
+  activityIndicatorContainer: {
+    ...StyleSheet.absoluteFillObject, // Position the container absolutely to cover the entire video area
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for the loading overlay
+  },
+});

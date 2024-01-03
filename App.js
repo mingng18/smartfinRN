@@ -104,7 +104,6 @@ function Root() {
             })
           );
         }
-        Alert.alert("Welcome back!", "You have been logged in automatically.");
       }
       setIsTryingLogin(false);
     }

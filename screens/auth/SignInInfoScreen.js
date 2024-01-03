@@ -11,6 +11,7 @@ import {
   updateSignInCredentials,
   updateSignupMode,
 } from "../../store/redux/signupSlice";
+import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
 
 export default function SignInInfoScreen({ route }) {
   const { signUpMode } = route.params;
@@ -18,6 +19,7 @@ export default function SignInInfoScreen({ route }) {
   const theme = useTheme();
   const { params } = useRoute();
   const dispatch = useDispatch();
+  const auth = getAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,9 +33,15 @@ export default function SignInInfoScreen({ route }) {
 
   async function nextButtonHandler() {
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
-    const emailIsValid = email.includes("@");
     const passwordIsValid = passwordRegex.test(password);
+    
+    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+    const emailIsValid = email.includes("@") && signInMethods.length === 0;
 
+    if (signInMethods.length > 0) {
+      Alert.alert("Email already exists", "Please use another email address or request to reset password in the login page.");
+      return setIsAuthenticating(false);
+    }
     const confirmPasswordIsValid = password === confirmPassword;
     if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
       setCredentialsInvalid({
@@ -46,7 +54,11 @@ export default function SignInInfoScreen({ route }) {
         "Please check your entered credentials."
       );
     }
+
+    
     setIsAuthenticating(true);
+
+
     try {
       dispatch(updateSignInCredentials({ email: email, password: password }));
       dispatch(updateSignupMode({ signupMode: signUpMode }));

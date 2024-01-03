@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
-import { updatePersonalInformation } from "../../store/redux/signupSlice";
+import { updateAuthSlice, updatePersonalInformation } from "../../store/redux/signupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { GENDER, NATIONALITY } from "../../constants/constants";
 
@@ -24,7 +24,7 @@ export default function PersonalInfoForm({ isEditing }) {
   const [lastName, setLastName] = React.useState("");
 
   const [genderOpen, setGenderOpen] = React.useState(false);
-  const [gender, setGender] = React.useState(0);
+  const [gender, setGender] = React.useState("male");
   const [genderData, setGenderData] = React.useState(GENDER);
 
   const [phoneNumber, setPhoneNumber] = React.useState("");

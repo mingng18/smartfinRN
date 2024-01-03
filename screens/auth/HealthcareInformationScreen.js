@@ -62,10 +62,16 @@ export default function HealthcareInformationScreen() {
       });
       return Alert.alert("Invalid input", "Please check your entered input.");
     }
-
+    
     // Update redux store
     dispatch(
-      
+      updateHealthcareInformation({
+        firstName: firstName,
+        lastName: lastName,
+        staffId: staffId,
+        role: role,
+        category: category,
+      })  
     );
 
     navigation.navigate("UploadProfilePicScreen");
