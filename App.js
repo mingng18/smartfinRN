@@ -70,7 +70,7 @@ function Root() {
           dispatch(fetchPatientData({
             age: user.age,
             compliance_status: user.compliance_status,
-            data_of_diagnosis: user.data_of_diagnosis,
+            date_of_diagnosis: user.date_of_diagnosis.toDate().toISOString(),
             diagnosis: user.diagnosis,
             email: user.email,
             first_name: user.first_name,
@@ -83,10 +83,10 @@ function Root() {
             phone_number: user.phone_number,
             profile_pic_url: user.profile_pic_url,
             treatment: user.treatment,
-            treatment_duration_months: user.treatment_duration_months,
+            treatment_duration_month: user.treatment_duration_month,
           }));
         });
-        Alert.alert("Welcome back!", "You have been logged in automatically.");
+        // Alert.alert("Welcome back!", "You have been logged in automatically.");
       }
       setIsTryingLogin(false);
     }

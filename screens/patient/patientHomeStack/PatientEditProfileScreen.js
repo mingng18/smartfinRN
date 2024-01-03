@@ -7,10 +7,12 @@ import { Timestamp } from "firebase/firestore";
 import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
 import TreatmentInfoForm from "../../../components/Auth/TreatmentInfoForm";
 import UploadProfilePicModal from "./UploadProfilePicModal";
+import { useSelector } from "react-redux";
 
 function PatientEditProfileScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const user = useSelector((state) => state.authObject);
 
   // modal ref
   const bottomSheetModalRef = useRef(null);
@@ -36,7 +38,11 @@ function PatientEditProfileScreen() {
         <View style={{ marginTop: 16, alignItems: "center" }}>
           {/* TODO Change the patients image */}
           <Image
-            source={require("../../../assets/blank-profile-pic.png")}
+            source={
+              user.profile_pic_url
+                ? { uri: user.profile_pic_url }
+                : BLANK_PROFILE_PIC
+            }
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <Button onPress={() => bottomSheetModalRef.current?.present()}>
@@ -51,7 +57,7 @@ function PatientEditProfileScreen() {
           mode="outlined"
           label="Email"
           placeholder="Type your email"
-          value={profileData.email}
+          value={user.email}
           maxLength={100}
           style={{ marginTop: 16 }}
           disabled
@@ -73,9 +79,9 @@ function PatientEditProfileScreen() {
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
           Personal Information
         </Text>
-        <PersonalInfoForm isEditing />
+        <PersonalInfoForm isEditing={true} />
         <View style={{ marginTop: 32 }} />
-        <TreatmentInfoForm isEditing />
+        <TreatmentInfoForm isEditing={true} />
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
       <UploadProfilePicModal bottomSheetModalRef={bottomSheetModalRef} />

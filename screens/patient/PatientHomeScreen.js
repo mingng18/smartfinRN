@@ -51,7 +51,7 @@ function PatientHomeScreen() {
 
   React.useEffect(() => {
     console.log("the user : " + user.first_name + " " + user.last_name);
-    console.log("the profile pic : " + BLANK_PROFILE_PIC);
+    console.log("the profile pic : " + user.profile_pic_url);
     //Check the count of the pending appointment
     const calculatePendingAppointmentsCount = () => {
       const appointmentData = appointments.filter(
@@ -104,7 +104,9 @@ function PatientHomeScreen() {
         <View style={[styles.homeHeader]}>
           <Image
             source={
-              user.profile_pic_url ? user.profile_pic_url : BLANK_PROFILE_PIC
+              user.profile_pic_url
+                ? { uri: user.profile_pic_url }
+                : BLANK_PROFILE_PIC
             }
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
@@ -181,17 +183,6 @@ function PatientHomeScreen() {
                       onPressedCallback={() => {}}
                     />
                   )}
-                  <ToDoCard
-                    title={"Video Rejected"}
-                    icon="play"
-                    count={rejectedVideosCount}
-                    onPressedCallback={() => {
-                      Haptics.impactAsync(
-                        Haptics.ImpactFeedbackStyle.Heavy
-                      );
-                    }}
-                  />
-
                   {/* TODO Video Call Missed */}
                   {/* <ToDoCard
                   title="Video Call Missed"

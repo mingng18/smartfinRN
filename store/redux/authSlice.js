@@ -11,7 +11,7 @@ const authSlice = createSlice({
         //patient data below:
         age: null,
         compliance_status: null,
-        data_of_diagnosis: null,
+        date_of_diagnosis: null,
         diagnosis: null,
         email: null,
         first_name: null,
@@ -24,7 +24,7 @@ const authSlice = createSlice({
         phone_number: null,
         profile_pic_url: null,
         treatment: null,
-        treatment_duration_months: null,
+        treatment_duration_month: null,
     },
     reducers: {
         authenticate: (state, action) => {
@@ -42,7 +42,7 @@ const authSlice = createSlice({
         fetchPatientData: (state, action) => {
             state.age = action.payload.age;
             state.compliance_status = action.payload.compliance_status;
-            state.data_of_diagnosis = action.payload.data_of_diagnosis;
+            state.date_of_diagnosis = action.payload.date_of_diagnosis;
             state.diagnosis = action.payload.diagnosis;
             state.email = action.payload.email;
             state.first_name = action.payload.first_name;
@@ -55,7 +55,7 @@ const authSlice = createSlice({
             state.phone_number = action.payload.phone_number;
             state.profile_pic_url = action.payload.profile_pic_url;
             state.treatment = action.payload.treatment;
-            state.treatment_duration_months = action.payload.treatment_duration_months;
+            state.treatment_duration_month = action.payload.treatment_duration_month;
         }
     },
 });

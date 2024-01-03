@@ -17,6 +17,7 @@ function PatientProfileScreen() {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const user = useSelector((state) => state.authObject);
+  const videos = useSelector((state) => state.videoObject.videos);
 
   // React.useLayoutEffect(() => {
   //   navigate("PatientEditProfileScreen");
@@ -38,6 +39,75 @@ function PatientProfileScreen() {
       });
   }
 
+  function calculateProgress() {
+    const diagnosisDate = new Date(user.date_of_diagnosis);
+    const duration = user.treatment_duration_month; // Assuming user.treatment_duration_month is a number representing months
+
+    // Get the current date
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+
+    // Calculate the diagnosis end date by adding the duration of treatment to the diagnosis date
+    const diagnosisEndDate = new Date(
+      diagnosisDate.getFullYear(),
+      diagnosisDate.getMonth() + duration,
+      diagnosisDate.getDate()
+    );
+
+    // Check if the diagnosis end date is in the current month
+    if (
+      diagnosisEndDate.getFullYear() === currentYear &&
+      diagnosisEndDate.getMonth() === currentMonth
+    ) {
+      // Calculate the remaining days in the current month
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const remainingDays = daysInMonth - currentDate.getDate();
+
+      // Calculate the percentage based on videos submitted and remaining days
+      const videosSubmittedThisMonth = videos.filter((video) => {
+        const uploadedDate = new Date(video.uploaded_timestamp);
+        return (
+          uploadedDate.getMonth() === currentMonth &&
+          uploadedDate.getFullYear() === currentYear
+        );
+      });
+
+      const percentageSubmitted = Math.round(
+        (videosSubmittedThisMonth.length / remainingDays) * 100
+      );
+
+      return percentageSubmitted;
+    } else {
+      // If the diagnosis end date is not in the current month,
+      // calculate progress based on days of month
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const videosSubmittedThisMonth = videos.filter((video) => {
+        const uploadedDate = new Date(video.uploaded_timestamp);
+        return (
+          uploadedDate.getMonth() === currentMonth &&
+          uploadedDate.getFullYear() === currentYear
+        );
+      });
+
+      const percentageSubmitted = Math.round(
+        (videosSubmittedThisMonth.length / daysInMonth) * 100
+      );
+
+      return percentageSubmitted;
+    }
+  }
+
+  function monthsSinceDiagnosis() {
+    const today = new Date();
+    const diagnosis = new Date(user.date_of_diagnosis);
+    const months =
+      (today.getFullYear() - diagnosis.getFullYear()) * 12 +
+      today.getMonth() -
+      diagnosis.getMonth();
+    return months + 1;
+  }
+
   return (
     <View
       style={{
@@ -52,7 +122,9 @@ function PatientProfileScreen() {
         {/* TODO Change the name to the patients image */}
         <Image
           source={
-            user.profile_pic_url ? user.profile_pic_url : BLANK_PROFILE_PIC
+            user.profile_pic_url
+              ? { uri: user.profile_pic_url }
+              : BLANK_PROFILE_PIC
           }
           style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
         />
@@ -90,27 +162,27 @@ function PatientProfileScreen() {
           icon="gender-male-female"
           style={{ marginRight: 8, marginBottom: 8 }}
         >
-          Male
+          {capitalizeFirstLetter(user.gender)}
         </Chip>
         <Chip
           selected
           icon="card-account-details"
           style={{ marginRight: 8, marginBottom: 8 }}
         >
-          173629073234
+          {capitalizeFirstLetter(user.nric_passport)}
         </Chip>
         <Chip
           selected
           icon="face-man"
           style={{ marginRight: 8, marginBottom: 8 }}
         >
-          21
+          {user.age}
         </Chip>
         <Chip selected icon="flag" style={{ marginRight: 8, marginBottom: 8 }}>
-          Malaysia
+          {capitalizeFirstLetter(user.nationality)}
         </Chip>
         <Chip selected icon="phone" style={{ marginRight: 8, marginBottom: 8 }}>
-          +6011 74232381
+          {user.phone_number}
         </Chip>
       </View>
       {/* ======================= Progress Tracker =================== */}
@@ -134,8 +206,8 @@ function PatientProfileScreen() {
         <AnimatedCircularProgress
           size={280}
           width={15}
-          prefill={50}
-          fill={50} // The percentage of the progress is put here
+          prefill={calculateProgress()}
+          fill={calculateProgress()}
           tintColor={theme.colors.primary}
           backgroundColor={theme.colors.primaryContainer}
           arcSweepAngle={180}
@@ -145,19 +217,21 @@ function PatientProfileScreen() {
             <>
               <Text variant="headlineLarge">{fill}%</Text>
               <Text variant="titleMedium">Progress Completion</Text>
-              <Text variant="labelLarge">1st Month</Text>
-              <Text variant="labelLarge" style={{ opacity: 0 }}>
-                1st Month
+              <Text variant="labelLarge">
+                {monthsSinceDiagnosis()}
+                {monthsSinceDiagnosis() === 1
+                  ? "st"
+                  : monthsSinceDiagnosis() === 2
+                  ? "nd"
+                  : monthsSinceDiagnosis() === 3
+                  ? "rd"
+                  : "th"}
+                {` month`}
               </Text>
-              <Text variant="labelLarge" style={{ opacity: 0 }}>
-                1st Month
-              </Text>
-              <Text variant="labelLarge" style={{ opacity: 0 }}>
-                1st Month
-              </Text>
-              <Text variant="labelLarge" style={{ opacity: 0 }}>
-                1st Month
-              </Text>
+              <Text variant="labelLarge" style={{ opacity: 0 }} />
+              <Text variant="labelLarge" style={{ opacity: 0 }} />
+              <Text variant="labelLarge" style={{ opacity: 0 }} />
+              <Text variant="labelLarge" style={{ opacity: 0 }} />
             </>
           )}
         </AnimatedCircularProgress>

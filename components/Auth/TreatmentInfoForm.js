@@ -50,7 +50,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //Treatment Drop down
   const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState('akurit4');
+  const [treatment, setTreatment] = React.useState("akurit4");
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
   //Text inputs
@@ -242,11 +242,29 @@ export default function TreatmentInfoForm({ isEditing }) {
     );
   }
 
+  const user = useSelector((state) => state.authObject);
+  React.useEffect(() => {
+    if (isEditing) {
+      //treatment
+      setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
+      setDiagnosis(user.diagnosis);
+      console.log(typeof Number(user.treatment_duration_month))
+      setDurationOfTreatment(parseInt(user.treatment_duration_month));
+      setTreatment(user.treatment);
+      setNumberOfTablets(parseInt(user.number_of_tablets));
+    }
+  }, [isEditing]);
+
+  //TODO add update treatment
+  function handleUpdateTreatment(){
+
+  }
+
   return (
     <View
       style={{
         backgroundColor: theme.colors.background,
-        paddingHorizontal: 16,
+        // paddingHorizontal: 16,
         // height: "100%",
       }}
     >
@@ -315,23 +333,35 @@ export default function TreatmentInfoForm({ isEditing }) {
         onChangeText={(text) => setNumberOfTablets(text)}
         error={credentialsInvalid.numberOfTablets}
       />
-      <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-        <Button
-          mode="contained"
-          onPress={() => handleFinishSignUpSubmission()}
-          style={{ marginLeft: 16 }}
-        >
-          Sign Up
-        </Button>
-        <Button
-          mode="contained-tonal"
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
-          Back
-        </Button>
-      </View>
+      {isEditing ? (
+        <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
+          <Button
+            mode="contained"
+            onPress={() => handleUpdateTreatment()}
+            style={{ marginLeft: 16 }}
+          >
+            Update
+          </Button>
+        </View>
+      ) : (
+        <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
+          <Button
+            mode="contained"
+            onPress={() => handleFinishSignUpSubmission()}
+            style={{ marginLeft: 16 }}
+          >
+            Sign Up
+          </Button>
+          <Button
+            mode="contained-tonal"
+            onPress={() => {
+              navigation.goBack();
+            }}
+          >
+            Back
+          </Button>
+        </View>
+      )}
       <DatePickerModal
         locale="en-GB"
         mode="single"

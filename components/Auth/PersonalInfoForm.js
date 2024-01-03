@@ -10,11 +10,11 @@ import {
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
 import { updatePersonalInformation } from "../../store/redux/signupSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { GENDER, NATIONALITY } from "../../constants/constants";
 
 export default function PersonalInfoForm({ isEditing }) {
-  //TODO handle isEditing case
+  //TODO handle update personal info case
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -52,6 +52,21 @@ export default function PersonalInfoForm({ isEditing }) {
     });
   });
 
+  const user = useSelector((state) => state.authObject);
+  React.useEffect(() => {
+    if (isEditing) {
+      //Personal Info
+      setFirstName(user.first_name);
+      setLastName(user.last_name);
+      setGender(user.gender);
+      setPhoneNumber(user.phone_number);
+      setNationality(user.nationality);
+      setNric(user.nric_passport);
+      setPassport(user.nric_passport);
+      setAge(user.age);
+    }
+  }, [isEditing]);
+
   function handlerForAgeInputChange(value) {
     setNric(value);
     if (nric !== null) {
@@ -61,6 +76,7 @@ export default function PersonalInfoForm({ isEditing }) {
   }
 
   async function nextButtonHandler() {
+    // TODO add update xisting value
     // Input validation logic
     const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
     const phoneRegex = /^\+[0-9]{10,13}$/; //+60123456789
@@ -264,7 +280,7 @@ export default function PersonalInfoForm({ isEditing }) {
 
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
           <Button mode="contained" onPress={() => nextButtonHandler()}>
-            Next
+            {isEditing ? "Update" : "Next"}
           </Button>
         </View>
       </View>
