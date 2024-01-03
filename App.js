@@ -16,7 +16,10 @@ import { enGB, registerTranslation } from "react-native-paper-dates";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/redux/store";
-import { authenticateStoreNative, fetchPatientData } from "./store/redux/authSlice";
+import {
+  authenticateStoreNative,
+  fetchPatientData,
+} from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
 import { fetchDocument } from "./util/firestoreWR";
 import { Alert } from "react-native";
@@ -65,27 +68,42 @@ function Root() {
         const storedUid = await SecureStore.getItemAsync("uid");
         console.log("Initialized uid:" + storedUid);
         dispatch(authenticateStoreNative(storedToken, storedUid));
-        const user = await fetchDocument("patient", storedUid).then((user) => {
-          console.log(user + " is the user");
-          dispatch(fetchPatientData({
-            age: user.age,
-            compliance_status: user.compliance_status,
-            data_of_diagnosis: user.data_of_diagnosis,
-            diagnosis: user.diagnosis,
-            email: user.email,
-            first_name: user.first_name,
-            gender: user.gender,
-            last_name: user.last_name,
-            nationality: user.nationality,
-            notes: user.notes,
-            nric_passport: user.nric_passport,
-            number_of_tablets: user.number_of_tablets,
-            phone_number: user.phone_number,
-            profile_pic_url: user.profile_pic_url,
-            treatment: user.treatment,
-            treatment_duration_months: user.treatment_duration_months,
-          }));
-        });
+        const patientUser = await fetchDocument("patient", storedUid);
+        if (patientUser != null) {
+          dispatch(
+            fetchPatientData({
+              age: patientUser.age,
+              compliance_status: patientUser.compliance_status,
+              data_of_diagnosis: patientUser.data_of_diagnosis,
+              diagnosis: patientUser.diagnosis,
+              email: patientUser.email,
+              first_name: patientUser.first_name,
+              gender: patientUser.gender,
+              last_name: patientUser.last_name,
+              nationality: patientUser.nationality,
+              notes: patientUser.notes,
+              nric_passport: patientUser.nric_passport,
+              number_of_tablets: patientUser.number_of_tablets,
+              phone_number: patientUser.phone_number,
+              profile_pic_url: patientUser.profile_pic_url,
+              treatment: patientUser.treatment,
+              treatment_duration_months: patientUser.treatment_duration_months,
+            })
+          );
+        }else{
+          const healthcareUser = await fetchDocument("healthcare", storedUid);
+          dispatch(
+            fetchPatientData({
+              email: healthcareUser.email,
+              first_name: healthcareUser.first_name,
+              last_name: healthcareUser.last_name,
+              profile_pic_url: healthcareUser.profile_pic_url,
+              category: healthcareUser.category,
+              role: healthcareUser.role,
+              staff_id: healthcareUser.staff_id,
+            })
+          );
+        }
         Alert.alert("Welcome back!", "You have been logged in automatically.");
       }
       setIsTryingLogin(false);

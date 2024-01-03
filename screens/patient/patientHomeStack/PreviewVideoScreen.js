@@ -5,6 +5,7 @@ import { View, StyleSheet, Alert } from "react-native";
 import {
   ActivityIndicator,
   Button,
+  ProgressBar,
   Snackbar,
   useTheme,
 } from "react-native-paper";
@@ -34,6 +35,7 @@ function PreviewVideoScreen() {
   const videoRef = React.useRef(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
+  const [isUploading, setIsUploading] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -74,6 +76,7 @@ function PreviewVideoScreen() {
   //Upload video to firestore
   //TODO : more specific error handling
   const handleVideoSubmit = async () => {
+    setIsUploading(true);
     try {
       setIsLoading(true);
       const videoData = await fetch(video);
@@ -86,11 +89,11 @@ function PreviewVideoScreen() {
         );
         return;
       }
+
       const videoRef = ref(
         storageRef,
         "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString()
       );
-
       uploadTask = uploadBytesResumable(videoRef, videoBlob);
       uploadTask.on(
         "state_changed",
@@ -98,7 +101,7 @@ function PreviewVideoScreen() {
           const progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log("Video upload is " + progress + "% done");
-          setUploadProgress(progress.toFixed(2));
+          setUploadProgress(progress.toFixed());
         },
         (error) => {
           switch (error.code) {
@@ -138,7 +141,6 @@ function PreviewVideoScreen() {
                 );
                 Alert.alert("Success", "Video successfully uploaded.");
                 navigation.popToTop();
-                // Metadata now contains the metadata for 'images/forest.jpg'
               })
               .catch((error) => {
                 // Uh-oh, an error occurred!
@@ -148,9 +150,10 @@ function PreviewVideoScreen() {
                 );
                 Alert.alert("Error", "Error uploading video, please try again");
               });
-            setIsLoading(false);
-            console.log("Video uploaded successfully!");
           });
+        },
+        () => {
+          setIsLoading(false);
         }
       );
     } catch (error) {
@@ -193,6 +196,19 @@ function PreviewVideoScreen() {
           </View>
         )}
       </View>
+      {isLoading ? (
+        <View
+          style={{
+            marginTop: 16,
+            marginBottom: 16,
+            alignSelf: "center",
+            width: "100%",
+            height: 16,
+          }}
+        >
+          <ProgressBar progress={uploadProgress}></ProgressBar>
+        </View>
+      ) : null}
       <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
         <Button mode="contained" onPress={handleVideoSubmit}>
           Upload

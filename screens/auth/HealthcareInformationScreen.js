@@ -65,13 +65,7 @@ export default function HealthcareInformationScreen() {
 
     // Update redux store
     dispatch(
-      updateHealthcareInformation({
-        firstName: firstName,
-        lastName: lastName,
-        staffId: staffId,
-        role: role,
-        category: category,
-      })
+      
     );
 
     navigation.navigate("UploadProfilePicScreen");

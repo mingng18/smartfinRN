@@ -30,8 +30,10 @@ export default function SignInInfoScreen({ route }) {
   });
 
   async function nextButtonHandler() {
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
     const emailIsValid = email.includes("@");
-    const passwordIsValid = password.length > 6;
+    const passwordIsValid = passwordRegex.test(password);
+
     const confirmPasswordIsValid = password === confirmPassword;
     if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
       setCredentialsInvalid({

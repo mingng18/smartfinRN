@@ -31,15 +31,17 @@ function AuthContentSignup({ isLogin, onAuthenticate }) {
     });
   });
 
-  function submitHandler(credentials) {
+  function submitHandler() {
     let { email, confirmEmail, password, confirmPassword } = credentials;
 
     email = email.trim();
     password = password.trim();
 
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
+
     const emailIsValid = email.includes("@");
-    const passwordIsValid = password.length > 6;
     const emailsAreEqual = email === confirmEmail;
+    const passwordIsValid = passwordRegex.test(password);
     const passwordsAreEqual = password === confirmPassword;
 
     if (

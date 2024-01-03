@@ -17,6 +17,7 @@ import { authenticateStoreNative } from "../../store/redux/authSlice";
 import { addDocument, addDocumentWithId } from "../../util/firestoreWR";
 import { ScrollView } from "react-native-gesture-handler";
 import {
+  updateAuthSlice,
   updateMedicalInformation,
   updateProfilePictureURI,
 } from "../../store/redux/signupSlice";
@@ -50,7 +51,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //Treatment Drop down
   const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState();
+  const [treatment, setTreatment] = React.useState('akurit4');
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
   //Text inputs
@@ -213,7 +214,8 @@ export default function TreatmentInfoForm({ isEditing }) {
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
       dispatch(authenticateStoreNative(token.token, user.uid));
-
+      
+      updateAuthSlice();
 
       //Upload profile picture
       const ppStorageRef = ref(storage, "patientProfilePicture/" + user.uid);

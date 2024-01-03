@@ -1,7 +1,13 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import { Alert, Image, View } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import {
+  Button,
+  ProgressBar,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProfilePictureURI } from "../../store/redux/signupSlice";
 import {
@@ -53,6 +59,7 @@ export default function PreviewProfilePicScreen() {
   }
 
   async function uploadImage(uri, path, userId) {
+    setIsUploading(true);
     console.log("Uploading image to " + uri);
     console.log("User is  " + userId);
     const imageData = await fetch(uri);
@@ -75,6 +82,9 @@ export default function PreviewProfilePicScreen() {
           console.log("File available at ", downloadURL);
           await saveUserDateToFirestore("healthcare", userId, downloadURL);
         });
+      },
+      () => {
+        setIsUploading(false);
       }
     );
   }
