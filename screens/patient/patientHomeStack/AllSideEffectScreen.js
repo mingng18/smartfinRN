@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import {} from "../../../assets/blank-profile-pic.png";
 import {
   BLANK_PROFILE_PIC,
@@ -67,27 +67,31 @@ function AllSideEffectScreen() {
     >
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 16 }} />
-        {sideEffects.map((sideEffect, i) => (
-          <HorizontalCard
-            key={i}
-            //   profilePic={"lol"}
-            subject={capitalizeFirstLetter(sideEffect.severity)}
-            date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
-            time={new Date(
-              sideEffect.side_effect_occuring_timestamp
-            ).toLocaleTimeString("en-US", {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: true,
-            })}
-            color={containerColor(sideEffect)}
-            onPressedCallback={() => {
-              navigation.navigate("SideEffectDetailsScreen", {
-                sideEffect: sideEffect,
-              });
-            }}
-          />
-        ))}
+        {sideEffects.length > 0 ? (
+          sideEffects.map((sideEffect, i) => (
+            <HorizontalCard
+              key={i}
+              //   profilePic={"lol"}
+              subject={capitalizeFirstLetter(sideEffect.severity)}
+              date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
+              time={new Date(
+                sideEffect.side_effect_occuring_timestamp
+              ).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })}
+              color={containerColor(sideEffect)}
+              onPressedCallback={() => {
+                navigation.navigate("SideEffectDetailsScreen", {
+                  sideEffect: sideEffect,
+                });
+              }}
+            />
+          ))
+        ) : (
+          <Text>You don't have any side effects reported yet</Text>
+        )}
       </ScrollView>
       <View style={{ marginBottom: 38 }} />
     </View>

@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import PreviewVideoScreen from "../screens/patient/patientHomeStack/PreviewVideoScreen";
 import PatientBottomNavBar from "./PatientBottomNavBar";
-import { useTheme } from "react-native-paper";
 import CustomAppBar from "../components/ui/CustomAppBar";
 import ReportSideEffectScreen from "../screens/patient/patientHomeStack/ReportSideEffectScreen";
 import AllAppointmentScreen from "../screens/patient/patientHomeStack/AllAppointmentScreen";
@@ -20,11 +19,20 @@ import PatientEditProfileScreen from "../screens/patient/patientHomeStack/Patien
 import ChangePasswordScreen from "../screens/patient/patientHomeStack/ChangePasswordScreen";
 import PreviewProfilePicScreen from "../screens/auth/PreviewProfilePicScreen";
 import TuberculosisMaterialsScreen from "../screens/patient/patientHomeStack/TuberculosisMaterialsScreen";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import React from "react";
+import PatientPreviewProfilePicScreen from "../screens/patient/patientHomeStack/PatientPreviewProfile";
 
 const PatientStack = createNativeStackNavigator();
 
 export default function PatientStackGroup() {
-  const theme = useTheme();
+  const navigation = useNavigation();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log("Current screen:", navigation.getCurrentRoute().name);
+    }, [navigation])
+  );
 
   return (
     <PatientStack.Navigator
@@ -156,8 +164,8 @@ export default function PatientStackGroup() {
         }}
       />
       <PatientStack.Screen
-        name="PreviewProfilePicScreen"
-        component={PreviewProfilePicScreen}
+        name="PatientPreviewProfilePicScreen"
+        component={PatientPreviewProfilePicScreen}
         options={{
           headerShown: true,
         }}

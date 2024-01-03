@@ -98,7 +98,7 @@ export default function ProgressTracker() {
         >
           <Legend
             color={theme.colors.primaryFixedDim}
-            text={"Video Submitted"}
+            text={"Video Accepted"}
           />
           <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
           <Legend
