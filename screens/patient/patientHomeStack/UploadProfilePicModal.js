@@ -23,7 +23,7 @@ export default function UploadProfilePicModal({ bottomSheetModalRef }) {
 
     if (!result.canceled) {
       let uri = result.assets[0].uri;
-      navigate("PreviewProfilePicScreen", { uri: uri, isEditing: true });
+      navigate("PatientPreviewProfilePicScreen", { uri: uri });
     }
   };
 
@@ -81,12 +81,6 @@ export default function UploadProfilePicModal({ bottomSheetModalRef }) {
           </Button>
         </View>
       </BottomSheetModal>
-      {/* <LoadingIndicatorDialog
-        visible={dialogVisible}
-        close={() => {
-          setDialogVisible(false);
-        }}
-      /> */}
     </>
   );
 }

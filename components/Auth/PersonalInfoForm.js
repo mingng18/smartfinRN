@@ -233,6 +233,7 @@ export default function PersonalInfoForm({ isEditing }) {
             label="NRIC"
             placeholder="Type without spacing and -"
             maxLength={12}
+            keyboardType="numeric"
             value={nric}
             onChangeText={(value) => handlerForAgeInputChange(value)}
             error={credentialsInvalid.nric}
@@ -252,6 +253,7 @@ export default function PersonalInfoForm({ isEditing }) {
               mode="outlined"
               style={{ marginTop: 16 }}
               label="Age"
+              keyboardType="numeric"
               maxLength={3}
               value={age}
               onChangeText={(value) => setAge(value)}

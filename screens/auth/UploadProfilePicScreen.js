@@ -23,7 +23,9 @@ export default function UploadProfilePicScreen() {
 
     if (!result.canceled) {
       let uri = result.assets[0].uri;
-      navigation.navigate("PreviewProfilePicScreen", {uri: uri});
+      navigation.navigate("PreviewProfilePicScreen", {
+        uri: uri,
+      });
     }
   };
 
@@ -54,7 +56,7 @@ export default function UploadProfilePicScreen() {
         <Button
           mode="contained-tonal"
           onPress={() => {
-            navigation.navigate("CameraScreen");
+            navigation.navigate("CameraScreen", { isEditing: false });
           }}
           style={{ marginLeft: 16 }}
         >

@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "73133667345",
+    "project_id": "mytbcompanion",
+    "storage_bucket": "mytbcompanion.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73133667345:android:b20b966439cccfe794edb0",
+        "android_client_info": {
+          "package_name": "com.example.mytbcompanion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73133667345-gqbbb15i8lt8u1pdjb6cdqhkg6ls44kv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mytbcompanion",
+            "certificate_hash": "55df70e458921b446a0beea2be7204a866b5689f"
+          }
+        },
+        {
+          "client_id": "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1mcKv55Tr_bBKg2k4o9XuU0PdIO3yo_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "73133667345-cdhd2hp3p81m2d3ssse199spafj1ik5v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mytbcompanion.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73133667345:android:e2ffe88300d7e3de94edb0",
+        "android_client_info": {
+          "package_name": "com.fylix.mytbcompanion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73133667345-5uaf93rgiseqrgnmh6c8mohgjpse0bcr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fylix.mytbcompanion",
+            "certificate_hash": "8f8ee279174cb4cb0eb130515f34c99a4fb8e564"
+          }
+        },
+        {
+          "client_id": "73133667345-ul6mh54uufa1ekin3biei3id0vmqnt8s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fylix.mytbcompanion",
+            "certificate_hash": "10f01ef1883dfeb7fb7ee2cb0c2b71801433f4c2"
+          }
+        },
+        {
+          "client_id": "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1mcKv55Tr_bBKg2k4o9XuU0PdIO3yo_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "73133667345-cdhd2hp3p81m2d3ssse199spafj1ik5v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mytbcompanion.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

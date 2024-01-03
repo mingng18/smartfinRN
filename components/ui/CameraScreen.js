@@ -23,6 +23,7 @@ export default function CameraScreen() {
   const cameraRef = React.useRef();
 
   React.useLayoutEffect(() => {
+    console.log("isEditing ? : " + params.isEditing);
     setIsRecordingPage(params.isVideo);
     setIsEditing(params.isEditing);
   });
@@ -42,10 +43,12 @@ export default function CameraScreen() {
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        navigation.navigate("PreviewProfilePicScreen", {
-          uri: data.uri,
-          isEditing: isEditing,
-        });
+        navigation.navigate(
+          isEditing ? "PatientPreviewProfilePicScreen" : "PreviewProfilePicScreen",
+          {
+            uri: data.uri,
+          }
+        );
       } catch (e) {
         console.log(e);
       }

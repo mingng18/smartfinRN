@@ -50,7 +50,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //Treatment Drop down
   const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState();
+  const [treatment, setTreatment] = React.useState('akurit4');
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
   //Text inputs
@@ -214,17 +214,11 @@ export default function TreatmentInfoForm({ isEditing }) {
       const token = await user.getIdTokenResult();
       dispatch(authenticateStoreNative(token.token, user.uid));
 
-
       //Upload profile picture
       const ppStorageRef = ref(storage, "patientProfilePicture/" + user.uid);
       setIsUploading(true);
-      uploadImage(
-        signupInfo.profilePictureURI,
-        ppStorageRef,
-        user.uid
-      );
+      uploadImage(signupInfo.profilePictureURI, ppStorageRef, user.uid);
       setIsUploading(false);
-      
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."
@@ -294,6 +288,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         placeholder="2"
         maxLength={2}
         value={durationOfTreatment}
+        keyboardType="numeric"
         onChangeText={(text) => setDurationOfTreatment(text)}
         error={credentialsInvalid.durationOfTreatment}
       />
@@ -315,6 +310,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         style={{ marginTop: 16 }}
         placeholder="5"
         maxLength={2}
+        keyboardType="numeric"
         value={numberOfTablets}
         onChangeText={(text) => setNumberOfTablets(text)}
         error={credentialsInvalid.numberOfTablets}
