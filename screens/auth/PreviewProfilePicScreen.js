@@ -210,6 +210,8 @@ export default function PreviewProfilePicScreen() {
         close={() => {
           setIsUploading(false);
         }}
+        title = {"Signing up"}
+        bodyText={"Please wait patiently while we sign you up."}
       />
     </View>
     

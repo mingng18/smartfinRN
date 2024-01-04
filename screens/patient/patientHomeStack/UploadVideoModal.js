@@ -90,6 +90,8 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
         close={() => {
           setDialogVisible(false);
         }}
+        title={"Uploading Video"}
+        bodyText={"Please wait while we upload your video"}
       />
     </>
   );

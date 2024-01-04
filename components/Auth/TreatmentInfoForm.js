@@ -410,6 +410,8 @@ export default function TreatmentInfoForm({ isEditing }) {
         close={() => {
           setIsUploading(false);
         }}
+        title={"Signing Up"}
+        bodyText={"Please wait patiently while we sign you up."}
       />
     </View>
   );
