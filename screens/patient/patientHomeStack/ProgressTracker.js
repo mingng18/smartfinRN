@@ -5,14 +5,23 @@ import React, { useState, useMemo } from "react";
 import { Timestamp } from "firebase/firestore";
 import { VIDEO_STATUS } from "../../../constants/constants";
 import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 export default function ProgressTracker() {
   const theme = useTheme();
   const videos = useSelector((state) => state.videoObject.videos);
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
-
-  const startDate = new Date("2023-12-01");
+  const navigation = useNavigation();
   const today = new Date();
+  const user = useSelector((state) => state.authObject);
+  const startDate = new Date(user.date_of_diagnosis);
+  console.log('startDate ' + user.date_of_diagnosis)
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Progress Tracker",
+    });
+  });
 
   React.useEffect(() => {
     //Check if the patient has ate medicine today

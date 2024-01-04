@@ -19,35 +19,6 @@ function AllSideEffectScreen() {
     (state) => state.sideEffectObject.sideEffects
   );
 
-  React.useLayoutEffect(() => {
-    //Query for all appointment, and seperate into
-    // pending accpeted
-    // past appointment
-    //order by time
-    // setCompleteAppointment(appointmentData);
-    // setIncompleteAppointment(appointmentData);
-  });
-
-  // const sideEffects = [
-  //   {
-  //     side_effect_occuring_timestamp: Timestamp.fromDate(
-  //       new Date("2023-12-21")
-  //     ),
-  //     severity: "severe",
-  //     se_status: "pending",
-  //     symptoms: ["cough", "blood"],
-  //   },
-  //   {
-  //     side_effect_occuring_timestamp: Timestamp.fromDate(
-  //       new Date("2023-12-21")
-  //     ),
-  //     severity: "moderate",
-  //     se_status: "reviewed",
-  //     symptoms: ["cough", "nausea"],
-  //     remarks: "Drink more water",
-  //   },
-  // ];
-
   //Determine the container color
   function containerColor(appointment) {
     return appointment.severity === SIDE_EFFECT_SEVERITY.SEVERE
@@ -90,7 +61,7 @@ function AllSideEffectScreen() {
             />
           ))
         ) : (
-          <Text>You don't have any side effects reported yet</Text>
+          <Text variant="bodyLarge">You don't have any reported side effects</Text>
         )}
       </ScrollView>
       <View style={{ marginBottom: 38 }} />

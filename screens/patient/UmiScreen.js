@@ -76,13 +76,16 @@ const ChatBubble = ({ isUser, content }) => {
         flexDirection: "row",
         marginVertical: 8,
         justifyContent: isUser ? "flex-end" : "flex-start",
+        borderRadius: 8,
       }}
     >
       <Text
         variant="bodyLarge"
         style={{
           padding: 8,
+          paddingHorizontal: 16,
           borderRadius: 8,
+          overflow: "hidden",
           backgroundColor: isUser
             ? theme.colors.primaryContainer
             : theme.colors.surfaceContainerHigh,

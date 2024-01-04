@@ -148,7 +148,6 @@ export default function CameraScreen() {
             </>
           ) : (
             <>
-              <Text>WTF</Text>
               <IconButton
                 icon="circle-slice-8"
                 iconColor="white"
