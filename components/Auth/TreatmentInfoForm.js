@@ -130,7 +130,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         age: signupInfo.age,
         date_of_diagnosis: submitDate,
         diagnosis: diagnosis,
-        treatment_duration_month: parseInt(durationOfTreatment),
+        treatment_duration_months: parseInt(durationOfTreatment),
         treatment: treatment,
         number_of_tablets: parseInt(numberOfTablets),
         profile_pic_url: profilePicUrl,
@@ -162,11 +162,16 @@ export default function TreatmentInfoForm({ isEditing }) {
       (error) => {},
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+          console.log("timestamp is: " + submitDate.toString());
+          console.log("number of tablets is: " + parseInt(numberOfTablets));
+          console.log(
+            "duration of treatment is: " + parseInt(durationOfTreatment)
+          );
           dispatch(
             fetchPatientData({
               age: signupInfo.age,
               compliance_status: "Good",
-              data_of_diagnosis: submitDate.toString(),
+              date_of_diagnosis: submitDate.toString(),
               diagnosis: diagnosis,
               email: signupInfo.email,
               first_name: signupInfo.firstName,
@@ -175,11 +180,11 @@ export default function TreatmentInfoForm({ isEditing }) {
               nationality: signupInfo.nationality,
               notes: "",
               nric_passport: signupInfo.nric_passport,
-              number_of_tablets: numberOfTablets,
+              number_of_tablets: parseInt(numberOfTablets),
               phone_number: signupInfo.phoneNumber,
               profile_pic_url: downloadURL,
               treatment: treatment,
-              treatment_duration_months: durationOfTreatment,
+              treatment_duration_months: parseInt(durationOfTreatment),
             })
           );
           setIsUploading(false);
@@ -198,12 +203,11 @@ export default function TreatmentInfoForm({ isEditing }) {
           //     cancelable: false,
           //   }
           // );
+          //Save userToken, userId and userType to redux
+          dispatch(authenticateStoreNative(token, userId, "patient"));
         });
       }
     );
-
-    //Save userToken, userId and userType to redux
-    dispatch(authenticateStoreNative(token, userId, "patient"));
   }
 
   //Handle Submission Function : To be called when user clicks on the sign up button
@@ -274,12 +278,14 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   const user = useSelector((state) => state.authObject);
   React.useEffect(() => {
+    console.log("number of taabnles: " + user.numberOfTablets);
+    console.log("date_ofdiagnosis: " + user.date_of_diagnosis);
     if (isEditing) {
       //treatment
-      setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
+      // setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
       setDiagnosis(user.diagnosis);
-      // console.log(typeof Number(user.treatment_duration_month)); // Debug use 
-      setDurationOfTreatment(parseInt(user.treatment_duration_month));
+      // console.log(typeof Number(user.treatment_duration_month)); // Debug use
+      setDurationOfTreatment(parseInt(user.treatment_duration_months));
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
     }

@@ -12,7 +12,7 @@ const authSlice = createSlice({
     //patient data below:
     age: null,
     compliance_status: null,
-    data_of_diagnosis: null,
+    date_of_diagnosis: null,
     diagnosis: null,
     email: null,
     first_name: null,
@@ -51,7 +51,7 @@ const authSlice = createSlice({
     fetchPatientData: (state, action) => {
       state.age = action.payload.age;
       state.compliance_status = action.payload.compliance_status;
-      state.data_of_diagnosis = action.payload.data_of_diagnosis;
+      state.date_of_diagnosis = action.payload.date_of_diagnosis;
       state.diagnosis = action.payload.diagnosis;
       state.email = action.payload.email;
       state.first_name = action.payload.first_name;
