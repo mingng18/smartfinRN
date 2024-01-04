@@ -132,6 +132,19 @@ function ReportSideEffectScreen() {
     }
   }
 
+  const today = new Date();
+  const validRange = {
+    startDate: undefined,
+    endDate: today,
+    disabledDates: Array.from(
+      { length: 365 },
+      (_, i) => {
+        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+        return date <= today ? null : date;
+      }
+    ).filter((disabledDate) => disabledDate !== null), // Disable all days after today
+  };
+
   return (
     <ScrollView
       automaticallyAdjustKeyboardInsets={true}
@@ -220,9 +233,10 @@ function ReportSideEffectScreen() {
             mode="single"
             visible={calendarOpen}
             onDismiss={onDismissSingle}
-            date={date}
+            // date={date}
             onConfirm={onConfirmSingle}
             presentationStyle="pageSheet"
+            validRange={validRange}
           />
           <TimePickerModal
             locale="en-GB"
