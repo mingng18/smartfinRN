@@ -18,6 +18,8 @@ import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import { SIDE_EFFECT_SEVERITY } from "../../../constants/constants";
+import { useDispatch } from "react-redux";
+import { fetchSideEffects } from "../../../store/redux/sideEffectSlice";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -31,6 +33,7 @@ function ReportSideEffectScreen() {
   const [hour, setHour] = React.useState("");
   const [minute, setMinute] = React.useState("");
   const [symptoms, setSymptoms] = React.useState([]);
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -128,6 +131,8 @@ function ReportSideEffectScreen() {
     } finally {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert("Success", "Side Effects successfully reported.");
+      const storedUid = await SecureStore.getItemAsync("uid");
+      dispatch(fetchSideEffects(storedUid));
       navigation.popToTop();
     }
   }

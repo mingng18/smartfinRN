@@ -31,6 +31,9 @@ function PatientCalendarScreen() {
 
   //Refresh the calendar when there is new data
   React.useEffect(() => {
+    console.log("Appointment " + appointments);
+    console.log("videos  " + videos);
+    console.log("sideEffects " + sideEffects);
     if (videos || appointments || sideEffects) {
       setHighlightedDates(combinedDates(videos, appointments, sideEffects));
     }
@@ -99,12 +102,14 @@ function PatientCalendarScreen() {
   //The Horizontal Card for side effect
   //including severe, moderate, mild
   const SideEffectHorizontalCard = () => {
-    const matchedSideEffects = sideEffects.filter(
-      (item) =>
+    const matchedSideEffects = sideEffects.filter((item) => {
+      // console.log(item.side_effect_occuring_timestamp)
+      return (
         new Date(item.side_effect_occuring_timestamp)
           .toISOString()
           .slice(0, 10) === selectedDate
-    );
+      );
+    });
 
     if (matchedSideEffects.length > 0) {
       return (
