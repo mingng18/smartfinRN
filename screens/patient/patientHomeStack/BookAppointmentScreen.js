@@ -9,6 +9,8 @@ import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { addDocument } from "../../../util/firestoreWR";
 import { Timestamp } from "firebase/firestore";
 import * as Haptics from "expo-haptics";
+import { useDispatch } from "react-redux";
+import { fetchAppointments } from "../../../store/redux/appointmentSlice";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
@@ -18,7 +20,6 @@ export default function BookAppointmentScreen() {
   const [isReschedule, setIsReschedule] = React.useState(false);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
-  const [bookedDialogVisible, setBookedDialogVisible] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
   const [submitDate, setSubmitDate] = React.useState(null); 
@@ -31,6 +32,7 @@ export default function BookAppointmentScreen() {
     { label: "4:00 pm", value: { hour: 4, minute: 0 } },
     { label: "4:30 pm", value: { hour: 4, minute: 30 } },
   ]);
+  const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -104,6 +106,7 @@ export default function BookAppointmentScreen() {
     });
     // setBookedDialogVisible(true);
     Alert.alert("Booked Successful!", "Please wait for the healthcare to approve it.");
+    dispatch(fetchAppointments(storedUid));
     navigation.goBack();
   };
 

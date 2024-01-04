@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   Button,
   ProgressBar,
-  Snackbar,
   useTheme,
 } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
@@ -17,11 +16,12 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { addDocumentWithId } from "../../../util/firestoreWR";
 import { db } from "../../../util/firebaseConfig";
 import * as Haptics from "expo-haptics";
+import * as SecureStore from "expo-secure-store";
+import { fetchVideos } from "../../../store/redux/videoSlice";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
@@ -36,6 +36,7 @@ function PreviewVideoScreen() {
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [isUploading, setIsUploading] = React.useState(false);
+  const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -140,6 +141,8 @@ function PreviewVideoScreen() {
                   Haptics.NotificationFeedbackType.Success
                 );
                 Alert.alert("Success", "Video successfully uploaded.");
+                const storedUid = await SecureStore.getItemAsync("uid");
+                dispatch(fetchVideos(storedUid));
                 navigation.popToTop();
               })
               .catch((error) => {

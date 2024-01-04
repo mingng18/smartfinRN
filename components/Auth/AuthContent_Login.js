@@ -8,6 +8,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
+  Image,
 } from "react-native";
 import {
   Text,
@@ -18,6 +19,7 @@ import {
   Modal,
   TextInput,
 } from "react-native-paper";
+import { WHITETBLOGO } from "../../assets/TBLogoWhite.png";
 
 import AuthForm from "./AuthForm";
 import { useNavigation } from "@react-navigation/native";
@@ -105,7 +107,7 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
 
   return (
     <>
-      <SafeAreaView style={{ backgroundColor: theme.colors.primary, flex: 1 }}>
+      <View style={{ backgroundColor: theme.colors.primary, flex: 1 }}>
         {/* <ScrollView automaticallyAdjustKeyboardInsets={true}> */}
         <KeyboardAvoidingView>
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -155,20 +157,17 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                   </View>
                 </Modal>
               </Portal>
-              <View style={[styles.header]}>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Text
                   style={[styles.titleText, { color: theme.colors.onPrimary }]}
                   variant="headlineLarge"
                 >
                   Welcome to
                 </Text>
-
-                <Text
-                  style={[styles.titleText2, { color: theme.colors.onPrimary }]}
-                  variant="displayLarge"
-                >
-                  My TB Companion
-                </Text>
+                <Image
+                  source={require("../../assets/TBLogoWhite.png")}
+                  style={{ width: 150, height: 150 }}
+                />
               </View>
               <View
                 style={[
@@ -226,14 +225,14 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                 >
                   <Button
                     mode="contained-tonal"
-                    onPress={()=>switchAuthModeHandler("patient")}
+                    onPress={() => switchAuthModeHandler("patient")}
                     style={[styles.button, { flex: 1, marginRight: 8 }]}
                   >
                     Patient Sign Up
                   </Button>
                   <Button
                     mode="contained-tonal"
-                    onPress={()=>switchAuthModeHandler("healthcare")}
+                    onPress={() => switchAuthModeHandler("healthcare")}
                     style={[styles.button, { flex: 1, marginLeft: 8 }]}
                   >
                     Healthcare Sign Up
@@ -260,7 +259,7 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
             </View>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </View>
       <SafeAreaView
         style={{ flex: 0, backgroundColor: theme.colors.background }}
       />

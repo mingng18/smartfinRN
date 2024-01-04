@@ -18,6 +18,8 @@ import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import { SIDE_EFFECT_SEVERITY } from "../../../constants/constants";
+import { useDispatch } from "react-redux";
+import { fetchSideEffects } from "../../../store/redux/sideEffectSlice";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -31,6 +33,7 @@ function ReportSideEffectScreen() {
   const [hour, setHour] = React.useState("");
   const [minute, setMinute] = React.useState("");
   const [symptoms, setSymptoms] = React.useState([]);
+  const dispatch = useDispatch();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -128,9 +131,24 @@ function ReportSideEffectScreen() {
     } finally {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert("Success", "Side Effects successfully reported.");
+      const storedUid = await SecureStore.getItemAsync("uid");
+      dispatch(fetchSideEffects(storedUid));
       navigation.popToTop();
     }
   }
+
+  const today = new Date();
+  const validRange = {
+    startDate: undefined,
+    endDate: today,
+    disabledDates: Array.from(
+      { length: 365 },
+      (_, i) => {
+        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
+        return date <= today ? null : date;
+      }
+    ).filter((disabledDate) => disabledDate !== null), // Disable all days after today
+  };
 
   return (
     <ScrollView
@@ -220,9 +238,10 @@ function ReportSideEffectScreen() {
             mode="single"
             visible={calendarOpen}
             onDismiss={onDismissSingle}
-            date={date}
+            // date={date}
             onConfirm={onConfirmSingle}
             presentationStyle="pageSheet"
+            validRange={validRange}
           />
           <TimePickerModal
             locale="en-GB"
