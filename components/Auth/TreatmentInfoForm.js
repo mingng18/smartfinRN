@@ -113,7 +113,7 @@ export default function TreatmentInfoForm({ isEditing }) {
     //   "date_of_diagnosis : " + submitDate,
     //   "diagnosis : " + signupInfo.diagnosis,
     //   "diagnosis 2: " + diagnosis,
-    //   "treatment_duration_month : " + signupInfo.durationOfTreatment,
+    //   "treatment_duration_months : " + signupInfo.durationOfTreatment,
     //   "treatment : " + signupInfo.currentTreatment,
     //   "treatment 2: " + treatment,
     //   "number_of_tablets : " + signupInfo.numberOfTablets,
@@ -171,7 +171,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             fetchPatientData({
               age: signupInfo.age,
               compliance_status: "Good",
-              date_of_diagnosis: submitDate.toISOString(),
+              date_of_diagnosis: submitDate,
               diagnosis: diagnosis,
               email: signupInfo.email,
               first_name: signupInfo.firstName,
@@ -189,22 +189,20 @@ export default function TreatmentInfoForm({ isEditing }) {
           );
           setIsUploading(false);
           await saveUserDateToFirestore("patient", userId, downloadURL);
-          // Alert.alert(
-          //   "Sign Up Successful!",
-          //   "You can now use our app!",
-          //   [
-          //     {
-          //       text: "OK",
-          //       onPress: () => {},
-          //       style: "cancel",
-          //     },
-          //   ],
-          //   {
-          //     cancelable: false,
-          //   }
-          // );
-          //Save userToken, userId and userType to redux
-          dispatch(authenticateStoreNative(token, userId, "patient"));
+          Alert.alert(
+            "Sign Up Successful!",
+            "Thanks for signing up!",
+            [
+              {
+                text: "OK",
+                onPress: () => {},
+                style: "cancel",
+              },
+            ],
+            {
+              cancelable: false,
+            }
+          );
         });
       }
     );
@@ -284,7 +282,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       //treatment
       // setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
       setDiagnosis(user.diagnosis);
-      // console.log(typeof Number(user.treatment_duration_month)); // Debug use
+      // console.log(typeof Number(user.treatment_duration_months)); // Debug use 
       setDurationOfTreatment(parseInt(user.treatment_duration_months));
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
