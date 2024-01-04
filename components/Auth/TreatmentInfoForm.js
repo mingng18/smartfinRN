@@ -162,7 +162,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       (error) => {},
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("timestamp is: " + submitDate.toISOString());
+          console.log("timestamp is: " + new Date(submitDate).toISOString().toString());
           console.log("number of tablets is: " + parseInt(numberOfTablets));
           console.log(
             "duration of treatment is: " + parseInt(durationOfTreatment)
@@ -171,7 +171,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             fetchPatientData({
               age: signupInfo.age,
               compliance_status: "Good",
-              date_of_diagnosis: submitDate,
+              date_of_diagnosis: new Date(submitDate).toISOString().toString(),
               diagnosis: diagnosis,
               email: signupInfo.email,
               first_name: signupInfo.firstName,
@@ -189,6 +189,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           );
           setIsUploading(false);
           await saveUserDateToFirestore("patient", userId, downloadURL);
+          dispatch(authenticateStoreNative(token, userId, "healthcare"));
           Alert.alert(
             "Sign Up Successful!",
             "Thanks for signing up!",
@@ -211,7 +212,7 @@ export default function TreatmentInfoForm({ isEditing }) {
   //Handle Submission Function : To be called when user clicks on the sign up button
   async function handleFinishSignUpSubmission() {
     //format date to firebase format
-    setSubmitDate(new Date().setDate(submitDate));
+    // setSubmitDate(new Date().setDate(submitDate));
 
     //Validate input
     const durationOfTreatmentRegex = /^[0-9]{1,3}$/; //1-3 digits
@@ -276,7 +277,9 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   const user = useSelector((state) => state.authObject);
   React.useEffect(() => {
-    console.log("number of taabnles: " + user.numberOfTablets);
+    console.log("first name: " + user.first_name);
+    console.log("diagnosis: " + user.diagnosis);
+    console.log("number of taabnles: " + user.number_of_tablets);
     console.log("date_ofdiagnosis: " + user.date_of_diagnosis);
     if (isEditing) {
       //treatment
@@ -335,7 +338,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         mode="outlined"
         label="Duration of Diagnosis (months)"
         style={{ marginTop: 16 }}
-        placeholder="2"
+        placeholder= {durationOfTreatment? durationOfTreatment.toString() : "5"}
         maxLength={2}
         value={durationOfTreatment}
         keyboardType="numeric"
@@ -358,7 +361,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         mode="outlined"
         label="Number of Tablets"
         style={{ marginTop: 16 }}
-        placeholder="5"
+        placeholder={numberOfTablets? numberOfTablets.toString(): "5"}
         maxLength={2}
         keyboardType="numeric"
         value={numberOfTablets}
@@ -405,7 +408,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       <LoadingIndicatorDialog
         visible={isUploading}
         close={() => {
-          setDialogVisible(false);
+          setIsUploading(false);
         }}
       />
     </View>

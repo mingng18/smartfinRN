@@ -208,7 +208,7 @@ export default function PreviewProfilePicScreen() {
       <LoadingIndicatorDialog
         visible={isUploading}
         close={() => {
-          setDialogVisible(false);
+          setIsUploading(false);
         }}
       />
     </View>

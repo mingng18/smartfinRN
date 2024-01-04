@@ -99,15 +99,15 @@ function PatientProfileScreen() {
   }
 
   function monthsSinceDiagnosis() {
-    const today = new Date();
-    const diagnosis = user.date_of_diagnosis.toDate();
-console.log(diagnosis)
+//     const today = new Date();
+//     // const diagnosis = user.date_of_diagnosis.toDate();
+// // console.log(diagnosis)
 
-    const months =
-      (today.getFullYear() - diagnosis.getFullYear()) * 12 +
-      today.getMonth() -
-      diagnosis.getMonth();
-    return months + 1;
+//     // const months =
+//       // (today.getFullYear() - diagnosis.getFullYear()) * 12 +
+//       // today.getMonth() -
+//       // diagnosis.getMonth();
+//     // return months + 1;
   }
 
   return (
