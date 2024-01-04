@@ -75,6 +75,7 @@ function ReportSideEffectScreen() {
       // Pad the hours and minutes with leading zeros if necessary
       const paddedHour = String(hours).padStart(2, "0");
       const paddedMinute = String(minutes).padStart(2, "0");
+      console.log(`${paddedHour}:${paddedMinute}`);
       setHour(paddedHour);
       setMinute(paddedMinute);
     },
@@ -106,8 +107,8 @@ function ReportSideEffectScreen() {
     }
     try {
       const storedUid = await SecureStore.getItemAsync("uid");
-      submitDate.setMinutes(hour);
-      submitDate.setHours(minute);
+      submitDate.setMinutes(minute);
+      submitDate.setHours(hour);
       submitDate.setSeconds(0);
 
       const newSideEffect = {
