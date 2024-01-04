@@ -162,7 +162,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       (error) => {},
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("timestamp is: " + submitDate.toString());
+          console.log("timestamp is: " + submitDate.toISOString());
           console.log("number of tablets is: " + parseInt(numberOfTablets));
           console.log(
             "duration of treatment is: " + parseInt(durationOfTreatment)
@@ -171,7 +171,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             fetchPatientData({
               age: signupInfo.age,
               compliance_status: "Good",
-              date_of_diagnosis: submitDate.toString(),
+              date_of_diagnosis: submitDate.toISOString(),
               diagnosis: diagnosis,
               email: signupInfo.email,
               first_name: signupInfo.firstName,
@@ -180,11 +180,11 @@ export default function TreatmentInfoForm({ isEditing }) {
               nationality: signupInfo.nationality,
               notes: "",
               nric_passport: signupInfo.nric_passport,
-              number_of_tablets: parseInt(numberOfTablets),
+              number_of_tablets: numberOfTablets,
               phone_number: signupInfo.phoneNumber,
               profile_pic_url: downloadURL,
               treatment: treatment,
-              treatment_duration_months: parseInt(durationOfTreatment),
+              treatment_duration_months: durationOfTreatment,
             })
           );
           setIsUploading(false);
