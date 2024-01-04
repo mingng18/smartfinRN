@@ -74,7 +74,7 @@ function Root() {
             fetchPatientData({
               age: patientUser.age,
               compliance_status: patientUser.compliance_status,
-              data_of_diagnosis: patientUser.data_of_diagnosis,
+              date_of_diagnosis: patientUser.date_of_diagnosis,
               diagnosis: patientUser.diagnosis,
               email: patientUser.email,
               first_name: patientUser.first_name,

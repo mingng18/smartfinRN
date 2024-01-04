@@ -41,7 +41,7 @@ function PatientProfileScreen() {
 
   function calculateProgress() {
     const diagnosisDate = new Date(user.date_of_diagnosis);
-    const duration = user.treatment_duration_month; // Assuming user.treatment_duration_month is a number representing months
+    const duration = user.treatment_duration_months; // Assuming user.treatment_duration_months is a number representing months
 
     // Get the current date
     const currentDate = new Date();
@@ -100,7 +100,9 @@ function PatientProfileScreen() {
 
   function monthsSinceDiagnosis() {
     const today = new Date();
-    const diagnosis = new Date(user.date_of_diagnosis);
+    const diagnosis = user.date_of_diagnosis.toDate();
+console.log(diagnosis)
+
     const months =
       (today.getFullYear() - diagnosis.getFullYear()) * 12 +
       today.getMonth() -
@@ -218,6 +220,7 @@ function PatientProfileScreen() {
               <Text variant="headlineLarge">{fill}%</Text>
               <Text variant="titleMedium">Progress Completion</Text>
               <Text variant="labelLarge">
+                {/* {console.log(monthsSinceDiagnosis())} */}
                 {monthsSinceDiagnosis()}
                 {monthsSinceDiagnosis() === 1
                   ? "st"

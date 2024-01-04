@@ -90,22 +90,3 @@ function PatientEditProfileScreen() {
 }
 
 export default PatientEditProfileScreen;
-
-const profileData = {
-  age: 21,
-  compliance_status: "Compliant",
-  date_of_diagnosis: Timestamp.fromDate(new Date("2023-12-20")),
-  diagnosis: "SPPTB",
-  email: "hahahahah@gmail.com",
-  first_name: "Arul",
-  last_name: "Zaidi",
-  gender: 0,
-  nationality: "malaysian",
-  notes: "this is notes",
-  nric_passport: "0205124423132",
-  number_of_tablets: "3",
-  phone_number: "+60194645296",
-  profile_pic_url: "",
-  treatment: 0,
-  treatment_duration_month: 3,
-};

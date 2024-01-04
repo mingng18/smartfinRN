@@ -43,7 +43,7 @@ function LoginScreen() {
           fetchPatientData({
             age: isPatient.age,
             compliance_status: isPatient.compliance_status,
-            data_of_diagnosis: isPatient.data_of_diagnosis,
+            date_of_diagnosis: isPatient.date_of_diagnosis,
             diagnosis: isPatient.diagnosis,
             email: isPatient.email,
             first_name: isPatient.first_name,

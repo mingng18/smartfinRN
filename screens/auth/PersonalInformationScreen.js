@@ -1,4 +1,4 @@
-import { useNavigation, useTheme } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Keyboard,
@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import PersonalInfoForm from "../../components/Auth/PersonalInfoForm";
+import { useTheme } from "react-native-paper";
 
 export default function PersonalInformationScreen() {
   const navigation = useNavigation();
