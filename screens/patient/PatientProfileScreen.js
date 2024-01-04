@@ -100,7 +100,7 @@ function PatientProfileScreen() {
 
   function monthsSinceDiagnosis() {
     const today = new Date();
-    const diagnosis = user.date_of_diagnosis.toDate();
+    const diagnosis = new Date(user.date_of_diagnosis);
     console.log(diagnosis);
 
     const months =

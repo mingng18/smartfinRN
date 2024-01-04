@@ -25,7 +25,11 @@ import {
   fetchHealthcareData,
   fetchPatientData,
 } from "../../store/redux/authSlice";
-import { addDocument, addDocumentWithId } from "../../util/firestoreWR";
+import {
+  addDocument,
+  addDocumentWithId,
+  editDocument,
+} from "../../util/firestoreWR";
 import { ScrollView } from "react-native-gesture-handler";
 import {
   updateAuthSlice,
@@ -51,6 +55,7 @@ export default function TreatmentInfoForm({ isEditing }) {
   const auth = getAuth();
   const signupInfo = useSelector((state) => state.signupObject);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.authObject);
   const storage = getStorage();
 
   const [calendarOpen, setCalendarOpen] = React.useState(false);
@@ -162,7 +167,9 @@ export default function TreatmentInfoForm({ isEditing }) {
       (error) => {},
       (snapshot) => {
         getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("timestamp is: " + new Date(submitDate).toISOString().toString());
+          console.log(
+            "timestamp is: " + new Date(submitDate).toISOString().toString()
+          );
           console.log("number of tablets is: " + parseInt(numberOfTablets));
           console.log(
             "duration of treatment is: " + parseInt(durationOfTreatment)
@@ -189,7 +196,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           );
           setIsUploading(false);
           await saveUserDateToFirestore("patient", userId, downloadURL);
-          dispatch(authenticateStoreNative(token, userId, "healthcare"));
+          dispatch(authenticateStoreNative(token, userId, "patient"));
           Alert.alert(
             "Sign Up Successful!",
             "Thanks for signing up!",
@@ -275,7 +282,6 @@ export default function TreatmentInfoForm({ isEditing }) {
     }
   }
 
-  const user = useSelector((state) => state.authObject);
   React.useEffect(() => {
     console.log("first name: " + user.first_name);
     console.log("diagnosis: " + user.diagnosis);
@@ -285,15 +291,71 @@ export default function TreatmentInfoForm({ isEditing }) {
       //treatment
       // setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
       setDiagnosis(user.diagnosis);
-      // console.log(typeof Number(user.treatment_duration_months)); // Debug use 
+      // console.log(typeof Number(user.treatment_duration_months)); // Debug use
       setDurationOfTreatment(parseInt(user.treatment_duration_months));
+      setDiagnosisDate(
+        new Date(user.date_of_diagnosis).toISOString().slice(0, 10)
+      );
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
     }
   }, [isEditing]);
 
-  //TODO add update treatment
-  function handleUpdateTreatment() {}
+  //TODO healthcare update profile
+  async function handleUpdateTreatment() {
+    if (user.user_type == "patient") {
+      console.log("user first name: " + user.first_name);
+      try {
+        await editDocument("patient", user.user_uid, {
+          //unchanged part
+          first_name: user.first_name,
+          last_name: user.last_name,
+          gender: user.gender,
+          phone_number: user.phone_number,
+          nationality: user.nationality,
+          nric_passport: user.nric_passport,
+          age: user.age,
+          compliance_status: user.compliance_status,
+          email: user.email,
+          notes: user.notes,
+          profile_pic_url: user.profile_pic_url,
+          //changed part
+          date_of_diagnosis: submitDate,
+          diagnosis: diagnosis,
+          treatment_duration_months: durationOfTreatment,
+          treatment: treatment,
+          number_of_tablets: numberOfTablets,
+        });
+        dispatch(
+          fetchPatientData({
+            //unchanged part
+            first_name: user.first_name,
+            last_name: user.last_name,
+            gender: user.gender,
+            phone_number: user.phone_number,
+            nationality: user.nationality,
+            nric_passport: user.nric_passport,
+            age: user.age,
+            compliance_status: user.compliance_status,
+            email: user.email,
+            notes: user.notes,
+            profile_pic_url: user.profile_pic_url,
+            //changed part
+            date_of_diagnosis: new Date(submitDate).toISOString().toString(),
+            diagnosis: diagnosis,
+            treatment_duration_months: durationOfTreatment,
+            treatment: treatment,
+            number_of_tablets: numberOfTablets,
+          })
+        );
+        Alert.alert("Update successful", "Your information has been updated.");
+        navigation.goBack();
+      } catch (error) {
+        Alert.alert("Update failed", "Something went wrong, please try again.");
+        console.log(error);
+      }
+    }
+  }
 
   return (
     <View
@@ -338,7 +400,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         mode="outlined"
         label="Duration of Diagnosis (months)"
         style={{ marginTop: 16 }}
-        placeholder= {durationOfTreatment? durationOfTreatment.toString() : "5"}
+        placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
         maxLength={2}
         value={durationOfTreatment}
         keyboardType="numeric"
@@ -361,7 +423,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         mode="outlined"
         label="Number of Tablets"
         style={{ marginTop: 16 }}
-        placeholder={numberOfTablets? numberOfTablets.toString(): "5"}
+        placeholder={numberOfTablets ? numberOfTablets.toString() : "5"}
         maxLength={2}
         keyboardType="numeric"
         value={numberOfTablets}

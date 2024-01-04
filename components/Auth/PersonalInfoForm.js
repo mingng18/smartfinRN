@@ -15,12 +15,15 @@ import {
 } from "../../store/redux/signupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { GENDER, NATIONALITY } from "../../constants/constants";
+import { fetchPatientData } from "../../store/redux/authSlice";
+import { editDocument } from "../../util/firestoreWR";
 
 export default function PersonalInfoForm({ isEditing }) {
   //TODO handle update personal info case
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.authObject);
   const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
 
   const [firstName, setFirstName] = React.useState("");
@@ -55,7 +58,6 @@ export default function PersonalInfoForm({ isEditing }) {
     });
   });
 
-  const user = useSelector((state) => state.authObject);
   React.useEffect(() => {
     if (isEditing) {
       //Personal Info
@@ -75,6 +77,58 @@ export default function PersonalInfoForm({ isEditing }) {
     if (nric !== null) {
       // Calculate age based on nric
       setAge(new Date().getFullYear() - value.slice(0, 2) - millennium);
+    }
+  }
+
+  async function updateButtonHandler() {
+    // {TODO : add update for healthcare}
+    if (user.user_type == "patient") {
+      try {
+        await editDocument("patient", user.user_uid, {
+          first_name: firstName,
+          last_name: lastName,
+          gender: gender,
+          phone_number: phoneNumber,
+          nationality: nationality,
+          nric_passport: nric,
+          //unchanged part
+          age: user.age,
+          compliance_status: user.compliance_status,
+          date_of_diagnosis: user.date_of_diagnosis,
+          diagnosis: user.diagnosis,
+          email: user.email,
+          notes: user.notes,
+          number_of_tablets: user.number_of_tablets,
+          treatment: user.treatment,
+          treatment_duration_months: user.treatment_duration_months,
+          profile_pic_url: user.profile_pic_url,
+        });
+        dispatch(
+          fetchPatientData({
+            first_name: firstName,
+            last_name: lastName,
+            gender: gender,
+            phone_number: phoneNumber,
+            nationality: nationality,
+            nric_passport: nric,
+            age: user.age,
+            compliance_status: user.compliance_status,
+            date_of_diagnosis: user.date_of_diagnosis,
+            diagnosis: user.diagnosis,
+            email: user.email,
+            notes: user.notes,
+            number_of_tablets: user.number_of_tablets,
+            treatment: user.treatment,
+            treatment_duration_months: user.treatment_duration_months,
+            profile_pic_url: user.profile_pic_url,
+          })
+        );
+        Alert.alert("Update successful", "Your information has been updated.");
+        navigation.goBack();
+      } catch (error) {
+        Alert.alert("Update failed", "Something went wrong, please try again.");
+        console.log(error);
+      }
     }
   }
 
@@ -282,7 +336,14 @@ export default function PersonalInfoForm({ isEditing }) {
         )}
 
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-          <Button mode="contained" onPress={() => nextButtonHandler()}>
+          <Button
+            mode="contained"
+            onPress={
+              isEditing
+                ? () => updateButtonHandler()
+                : () => nextButtonHandler()
+            }
+          >
             {isEditing ? "Update" : "Next"}
           </Button>
         </View>

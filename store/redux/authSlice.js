@@ -68,14 +68,14 @@ const authSlice = createSlice({
         action.payload.treatment_duration_months;
     },
     fetchHealthcareData: (state, action) => {
-        state.email = action.payload.email;
-        state.first_name = action.payload.first_name;
-        state.last_name = action.payload.last_name;
-        state.profile_pic_url = action.payload.profile_pic_url;
-        state.category = action.payload.category;
-        state.role = action.payload.role;
-        state.staff_id = action.payload.staff_id;
-    }
+      state.email = action.payload.email;
+      state.first_name = action.payload.first_name;
+      state.last_name = action.payload.last_name;
+      state.profile_pic_url = action.payload.profile_pic_url;
+      state.category = action.payload.category;
+      state.role = action.payload.role;
+      state.staff_id = action.payload.staff_id;
+    },
   },
 });
 

@@ -50,6 +50,7 @@ function PatientHomeScreen() {
   }, [dispatch]);
 
   React.useEffect(() => {
+    console.log("the diagnosis date: " + user.date_of_diagnosis)
     console.log("the user : " + user.first_name + " " + user.last_name);
     console.log("the profile pic : " + user.profile_pic_url);
     //Check the count of the pending appointment

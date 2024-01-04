@@ -45,7 +45,6 @@ function Root() {
           async (user) => {
             const token = await user.getIdTokenResult().token;
             console.log("Starting token: " + token);
-            dispatch(authenticateStoreNative(token, user.uid));
           };
           // console.log("Display name: " + user.getIdTokenResult());
           // dispatch(authenticateStoreNative(await user.getIdTokenResult()), user.uid);
@@ -57,7 +56,6 @@ function Root() {
           async (user) => {
             const token = await user.getIdTokenResult().token;
             console.log("Starting token: " + token);
-            dispatch(authenticateStoreNative(token, user.uid));
           };
           // console.log("Display name: " + user.getIdTokenResult());
         }
@@ -67,14 +65,20 @@ function Root() {
       if (storedToken != "" && storedToken != null) {
         const storedUid = await SecureStore.getItemAsync("uid");
         console.log("Initialized uid:" + storedUid);
-        dispatch(authenticateStoreNative(storedToken, storedUid));
         const patientUser = await fetchDocument("patient", storedUid);
         if (patientUser != null) {
+          dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
+          console.log(
+            "date from firebase is: " +
+              new Date(patientUser.date_of_diagnosis.toDate()).toISOString()
+          );
           dispatch(
             fetchPatientData({
               age: patientUser.age,
               compliance_status: patientUser.compliance_status,
-              date_of_diagnosis: patientUser.date_of_diagnosis,
+              date_of_diagnosis: new Date(
+                patientUser.date_of_diagnosis.toDate()
+              ).toISOString(),
               diagnosis: patientUser.diagnosis,
               email: patientUser.email,
               first_name: patientUser.first_name,
@@ -90,8 +94,11 @@ function Root() {
               treatment_duration_months: patientUser.treatment_duration_months,
             })
           );
-        }else{
+        } else {
           const healthcareUser = await fetchDocument("healthcare", storedUid);
+          dispatch(
+            authenticateStoreNative(storedToken, storedUid, "healthcare")
+          );
           dispatch(
             fetchPatientData({
               email: healthcareUser.email,
