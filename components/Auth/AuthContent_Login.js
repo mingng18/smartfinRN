@@ -7,7 +7,6 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView,
   Image,
 } from "react-native";
 import {
@@ -19,9 +18,6 @@ import {
   Modal,
   TextInput,
 } from "react-native-paper";
-import { WHITETBLOGO } from "../../assets/TBLogoWhite.png";
-
-import AuthForm from "./AuthForm";
 import { useNavigation } from "@react-navigation/native";
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
 

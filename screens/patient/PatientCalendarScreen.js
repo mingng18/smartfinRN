@@ -96,6 +96,21 @@ function PatientCalendarScreen() {
           )}
         </Pressable>
       );
+    } else {
+      return (
+        <View
+          style={{
+            backgroundColor: theme.colors.surfaceContainerHigh,
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 16,
+          }}
+        >
+          <Text variant="labelLarge">
+            You haven't upload any video for this day
+          </Text>
+        </View>
+      );
     }
   };
 
@@ -144,7 +159,7 @@ function PatientCalendarScreen() {
   //The Horizontal Card for appointment effect
   //including pending, approved, completed, cancelled
   const AppointmentHorizontalCard = () => {
-    console.log(appointments);
+    // console.log(appointments);
     const matchedAppointment = appointments.filter(
       (item) =>
         new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
@@ -218,7 +233,7 @@ function PatientCalendarScreen() {
         style={{ paddingTop: 32, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        <Button
+        {/* <Button
           mode="contained"
           icon="calendar"
           labelStyle={{ color: theme.colors.onSurface }}
@@ -229,7 +244,7 @@ function PatientCalendarScreen() {
           onPress={() => navigate("BookAppointmentScreen")}
         >
           Book an appointment
-        </Button>
+        </Button> */}
         {isVideo && VideoHorizontalCard()}
         {isSideEffect && SideEffectHorizontalCard()}
         {isAppointment && AppointmentHorizontalCard()}

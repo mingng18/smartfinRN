@@ -77,7 +77,7 @@ function AllAppointmentScreen() {
         {acceptedAppointment.map((appointment) => {
           return (
             <HorizontalCard
-              key={appointment.id}
+              key={`accepted-${appointment.id}`}
               profilePic={appointment.healthcare_profile_picture}
               subject={capitalizeFirstLetter(
                 appointment.healthcare_first_name === ""
@@ -107,7 +107,7 @@ function AllAppointmentScreen() {
         {pendingAppointment.map((appointment) => {
           return (
             <HorizontalCard
-              key={appointment.id}
+              key={`pending-${appointment.id}`}
               profilePic={appointment.healthcare_profile_picture}
               subject={capitalizeFirstLetter(
                 appointment.healthcare_first_name === ""
@@ -146,7 +146,7 @@ function AllAppointmentScreen() {
           completedAppointment.map((appointment) => {
             return (
               <HorizontalCard
-                key={appointment.id}
+                key={`completed-${appointment.id}`}
                 profilePic={appointment.healthcare_profile_picture}
                 subject={capitalizeFirstLetter(
                   appointment.healthcare_first_name

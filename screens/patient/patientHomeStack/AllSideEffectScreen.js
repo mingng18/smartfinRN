@@ -8,7 +8,6 @@ import {
   SIDE_EFFECT_SEVERITY,
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { Timestamp } from "firebase/firestore";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
 import { useSelector } from "react-redux";
 
@@ -17,7 +16,14 @@ function AllSideEffectScreen() {
   const theme = useTheme();
   const sideEffects = useSelector(
     (state) => state.sideEffectObject.sideEffects
-  );
+  ).sort((a, b) => {});
+
+  const sortedSideEffects = [...sideEffects].sort((a, b) => {
+    const timestampA = new Date(a.side_effect_occuring_timestamp);
+    const timestampB = new Date(b.side_effect_occuring_timestamp);
+
+    return timestampA < timestampB ? 1 : timestampA > timestampB ? -1 : 0;
+  });
 
   //Determine the container color
   function containerColor(appointment) {
@@ -39,7 +45,7 @@ function AllSideEffectScreen() {
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <View style={{ marginTop: 16 }} />
         {sideEffects.length > 0 ? (
-          sideEffects.map((sideEffect, i) => (
+          sortedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
               //   profilePic={"lol"}
@@ -61,7 +67,9 @@ function AllSideEffectScreen() {
             />
           ))
         ) : (
-          <Text variant="bodyLarge">You don't have any reported side effects</Text>
+          <Text variant="bodyLarge">
+            You don't have any reported side effects
+          </Text>
         )}
       </ScrollView>
       <View style={{ marginBottom: 38 }} />

@@ -26,7 +26,7 @@ export default function SideEffectDetailsScreen() {
 
   function PendingSideEffectCard() {
     return (
-      <Text variant="bodyLarge" style={{ marginTop: 32 }}>
+      <Text variant="bodyLarge" style={{ marginTop: 24 }}>
         Please wait patiently as your report is currently under reviewed by the
         healthcare.
       </Text>
@@ -36,7 +36,7 @@ export default function SideEffectDetailsScreen() {
   function ReviewedSideEffectCard() {
     return (
       <View>
-        <Text variant="titleLarge" style={{ marginTop: 32 }}>
+        <Text variant="titleLarge" style={{ marginTop: 24 }}>
           Remarks
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
@@ -83,8 +83,19 @@ export default function SideEffectDetailsScreen() {
       <View style={{ marginTop: 8, flexDirection: "row", flexWrap: "wrap" }}>
         {currentSideEffect.symptoms.map((symptom, i) => {
           return (
-            <Chip style={{ marginRight: 16 }}>
-              {capitalizeFirstLetter(symptom)}
+            <Chip
+              style={{
+                marginRight: 8,
+                marginBottom: 8,
+                backgroundColor:
+                  symptom.grade > 1
+                    ? theme.colors.errorContainer
+                    : theme.colors.secondaryContainer,
+              }}
+            >
+              {capitalizeFirstLetter(symptom.label)}
+              {` : `}
+              {symptom.grade}
             </Chip>
           );
         })}
@@ -96,4 +107,3 @@ export default function SideEffectDetailsScreen() {
     </View>
   );
 }
-

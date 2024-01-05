@@ -1,10 +1,20 @@
 {
-    "tuberculosisSymptoms": [
-      "Cough",
-      "Chest Pain",
-      "Coughing up Blood",
-      "Fatigue",
-      "Weight Loss",
-      "Fever"
-    ]
-  }
+  "tuberculosisSymptoms": [
+    "Eyesight Worsening",
+    "Yellowing of Eyes",
+    "Ringing Sound",
+    "Tingling Sensation",
+    "Bruises",
+    "Bleeding",
+    "Joint Pains",
+    "Rashes",
+    "Mood Worsening/Changes",
+    "Weight Loss",
+    "Tiredness",
+    "Seizures",
+    "Itchiness",
+    "Dark Urine",
+    "Orange Urine",
+    "Stomach Pain (Particularly Right Upper Area)"
+  ]
+}

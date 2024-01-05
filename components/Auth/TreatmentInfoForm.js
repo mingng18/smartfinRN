@@ -402,7 +402,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         style={{ marginTop: 16 }}
         placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
         maxLength={2}
-        value={durationOfTreatment}
+        value={`${durationOfTreatment}`}
         keyboardType="numeric"
         onChangeText={(text) => setDurationOfTreatment(text)}
         error={credentialsInvalid.durationOfTreatment}
@@ -426,7 +426,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         placeholder={numberOfTablets ? numberOfTablets.toString() : "5"}
         maxLength={2}
         keyboardType="numeric"
-        value={numberOfTablets}
+        value={`${numberOfTablets}`}
         onChangeText={(text) => setNumberOfTablets(text)}
         error={credentialsInvalid.numberOfTablets}
       />

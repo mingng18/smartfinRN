@@ -34,7 +34,7 @@ function PatientEditProfileScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}  automaticallyAdjustKeyboardInsets>
         <View style={{ marginTop: 16, alignItems: "center" }}>
           {/* TODO Change the patients image */}
           <Image

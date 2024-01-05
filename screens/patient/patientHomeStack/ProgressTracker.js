@@ -15,7 +15,7 @@ export default function ProgressTracker() {
   const today = new Date();
   const user = useSelector((state) => state.authObject);
   const startDate = new Date(user.date_of_diagnosis);
-  console.log('startDate ' + user.date_of_diagnosis)
+  console.log("startDate " + user.date_of_diagnosis);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -53,18 +53,21 @@ export default function ProgressTracker() {
             selected: true,
             selectedColor: theme.colors.errorContainer,
             selectedTextColor: theme.colors.onBackground,
+            disableTouchEvent: true,
           };
         } else if (video.status === VIDEO_STATUS.PENDING) {
           markedDates[dateString] = {
             selected: true,
             selectedColor: theme.colors.surfaceContainerHigh,
             selectedTextColor: theme.colors.onBackground,
+            disableTouchEvent: true,
           };
         } else {
           markedDates[dateString] = {
             selected: true,
             selectedColor: theme.colors.primaryFixedDim,
             selectedTextColor: theme.colors.onBackground,
+            disableTouchEvent: true,
           };
         }
       }
@@ -95,6 +98,7 @@ export default function ProgressTracker() {
               selectedDayTextColor: theme.colors.onPrimary,
             }}
             markedDates={marked}
+            // disabledByDefault
           />
         </View>
         <View

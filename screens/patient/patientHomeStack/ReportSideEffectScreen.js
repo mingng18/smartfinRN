@@ -1,13 +1,15 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useLayoutEffect } from "react";
-import { Alert, Pressable, TouchableOpacity, View } from "react-native";
+import { Alert, Modal, Pressable, View } from "react-native";
 import {
   Button,
   Checkbox,
-  Dialog,
+  IconButton,
   Portal,
+  RadioButton,
   Text,
   TextInput,
+  Tooltip,
   useTheme,
 } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
@@ -17,7 +19,10 @@ import * as Haptics from "expo-haptics";
 import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
-import { SIDE_EFFECT_SEVERITY } from "../../../constants/constants";
+import {
+  SIDE_EFFECT_GRADE,
+  SIDE_EFFECT_SEVERITY,
+} from "../../../constants/constants";
 import { useDispatch } from "react-redux";
 import { fetchSideEffects } from "../../../store/redux/sideEffectSlice";
 
@@ -33,7 +38,15 @@ function ReportSideEffectScreen() {
   const [hour, setHour] = React.useState("");
   const [minute, setMinute] = React.useState("");
   const [symptoms, setSymptoms] = React.useState([]);
+  // [{ label: "cough", grade: 1 }];
   const dispatch = useDispatch();
+  const [visible, setVisible] = React.useState(false);
+
+  const showModal = () => {
+    setVisible(true);
+    console.log(visible);
+  };
+  const hideModal = () => setVisible(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -84,21 +97,68 @@ function ReportSideEffectScreen() {
 
   //Symptoms Checkbox
   const handleCheckboxChange = (value) => {
-    let newArray = [...symptoms];
-    if (newArray.includes(value)) {
-      newArray = newArray.filter((oldValue) => oldValue !== value);
+    console.log("symptom now is " + value);
+    const isSymptomSelected = symptoms.some((item) => item.label === value);
+
+    if (isSymptomSelected) {
+      // If the symptom is already selected, remove it from the array
+      console.log("removing symptom");
+      const updatedSymptoms = symptoms.filter((item) => item.label !== value);
+      console.log(
+        "symptoms are " +
+          updatedSymptoms.map((symptom) => {
+            return `${symptom.label}: ${symptom.grade}`;
+          })
+      );
+      setSymptoms(updatedSymptoms);
     } else {
-      newArray.push(value);
+      console.log("adding symptom");
+      const updatedSymptoms = [...symptoms, { label: value, grade: 1 }];
+      console.log(
+        "symptoms are " +
+          updatedSymptoms.map((symptom) => {
+            return `${symptom.label}: ${symptom.grade}`;
+          })
+      );
+      setSymptoms(updatedSymptoms);
     }
-    setSymptoms(newArray);
+  };
+
+  const handleGradeChange = (symptomName, newGrade) => {
+    const symptomIndex = symptoms.findIndex((s) => s.label === symptomName);
+
+    if (symptomIndex !== -1) {
+      // If the symptom is found in the array, update its grade
+      const updatedSymptoms = [...symptoms];
+      updatedSymptoms[symptomIndex] = {
+        ...updatedSymptoms[symptomIndex],
+        grade: newGrade,
+      };
+      console.log(
+        "updated grade are " +
+          updatedSymptoms.map((symptom) => {
+            return `${symptom.label}: ${symptom.grade}`;
+          })
+      );
+
+      // Update the state with the new array of symptoms
+      setSymptoms(updatedSymptoms);
+    } else {
+      // If the symptom is not found, log an error message or handle as per your requirement
+      console.log(`Symptom "${symptomName}" not found in symptoms array.`);
+    }
   };
 
   //TODO calculate severity
   function calculateSeverity() {
-    return SIDE_EFFECT_SEVERITY.SEVERE;
+    return symptoms.some((s) => s.grade == 2)
+      ? SIDE_EFFECT_SEVERITY.MODERATE
+      : symptoms.some((s) => s.grade == 3)
+      ? SIDE_EFFECT_SEVERITY.SEVERE
+      : SIDE_EFFECT_SEVERITY.MILD;
   }
 
-  //TODO update date, hour, minute and symptoms to firebase
+  //Update date, hour, minute and symptoms to firebase
   async function submitDataToDatabase() {
     if (!submitDate || hour === "" || minute === "" || symptoms.length == 0) {
       Alert.alert("Error", "Please fill in all the details");
@@ -131,7 +191,14 @@ function ReportSideEffectScreen() {
       // Handle the error here (e.g., show an error message to the user)
     } finally {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Success", "Side Effects successfully reported.");
+      if (symptoms.some((s) => s.grade > 1)) {
+        Alert.alert(
+          "Successfully submited",
+          "Please seek medical assistance at the hospital immediately."
+        );
+      } else {
+        Alert.alert("Success", "Side Effects successfully reported.");
+      }
       const storedUid = await SecureStore.getItemAsync("uid");
       dispatch(fetchSideEffects(storedUid));
       navigation.popToTop();
@@ -142,118 +209,248 @@ function ReportSideEffectScreen() {
   const validRange = {
     startDate: undefined,
     endDate: today,
-    disabledDates: Array.from(
-      { length: 365 },
-      (_, i) => {
-        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
-        return date <= today ? null : date;
-      }
-    ).filter((disabledDate) => disabledDate !== null), // Disable all days after today
+    disabledDates: Array.from({ length: 365 }, (_, i) => {
+      const date = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() + i
+      );
+      return date <= today ? null : date;
+    }).filter((disabledDate) => disabledDate !== null), // Disable all days after today
   };
 
   return (
-    <ScrollView
-      automaticallyAdjustKeyboardInsets={true}
-      style={{
-        backgroundColor: theme.colors.background,
-      }}
-    >
-      <View
+    <>
+      <ScrollView
+        automaticallyAdjustKeyboardInsets={true}
         style={{
-          paddingHorizontal: 16,
-          paddingTop: 16,
           backgroundColor: theme.colors.background,
-          flex: 1,
         }}
       >
-        <Text variant="titleLarge">When did these symptoms start?</Text>
-        <Pressable onPress={() => setCalendarOpen(true)}>
-          <View pointerEvents="none">
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Date"
-              placeholder="Starting date of the symptoms"
-              value={date}
-              onChangeText={(value) => setDate(value)}
-              right={
-                <TextInput.Icon
-                  icon="calendar-blank"
-                  color={theme.colors.onBackground}
-                />
-              }
-              maxLength={100}
-            />
-          </View>
-        </Pressable>
-        <Pressable onPress={() => setTimePickerOpen(true)}>
-          <View pointerEvents="none">
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Time"
-              placeholder="Starting date of the symptoms"
-              value={hour == "" ? `` : `${hour} : ${minute}`}
-              onChangeText={(value) => setDate(value)}
-              right={
-                <TextInput.Icon
-                  icon="clock"
-                  color={theme.colors.onBackground}
-                />
-              }
-              maxLength={100}
-            />
-          </View>
-        </Pressable>
-        <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
-          Symptoms experienced
-        </Text>
-        {tuberculosisSymptoms.map((symptom, i) => (
-          <Checkbox.Item
-            key={symptom}
-            label={symptom}
-            accessibilityLabel={symptom}
-            mode="android"
-            status={symptoms.includes(symptom) ? "checked" : "unchecked"}
-            onPress={() => handleCheckboxChange(symptom)}
-            style={{ justifyContent: "flex-start" }}
-            labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
-            position="leading"
-          />
-        ))}
-        <View style={{ alignItems: "flex-end" }}>
-          <Button
-            mode="contained"
-            style={{ marginTop: 40, marginBottom: 56 }}
-            onPress={() => submitDataToDatabase()}
-          >
-            Report
-          </Button>
-        </View>
-        {/* Modal for date picker and time picker */}
         <View
-          style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 16,
+            backgroundColor: theme.colors.background,
+            // flex: 1,
+            height: "100%",
+          }}
         >
-          <DatePickerModal
-            locale="en-GB"
-            mode="single"
-            visible={calendarOpen}
-            onDismiss={onDismissSingle}
-            // date={date}
-            onConfirm={onConfirmSingle}
-            presentationStyle="pageSheet"
-            validRange={validRange}
-          />
-          <TimePickerModal
-            locale="en-GB"
-            visible={timePickerOpen}
-            onDismiss={onDismiss}
-            onConfirm={onConfirm}
-            use24HourClock={false}
-          />
+          <Text variant="titleLarge">When did these symptoms start?</Text>
+          <Pressable onPress={() => setCalendarOpen(true)}>
+            <View pointerEvents="none">
+              <TextInput
+                mode="outlined"
+                style={{ marginTop: 16 }}
+                label="Date"
+                placeholder="Starting date of the symptoms"
+                value={date}
+                onChangeText={(value) => setDate(value)}
+                right={
+                  <TextInput.Icon
+                    icon="calendar-blank"
+                    color={theme.colors.onBackground}
+                  />
+                }
+                maxLength={100}
+              />
+            </View>
+          </Pressable>
+          <Pressable onPress={() => setTimePickerOpen(true)}>
+            <View pointerEvents="none">
+              <TextInput
+                mode="outlined"
+                style={{ marginTop: 16 }}
+                label="Time"
+                placeholder="Starting date of the symptoms"
+                value={hour == "" ? `` : `${hour} : ${minute}`}
+                onChangeText={(value) => setDate(value)}
+                right={
+                  <TextInput.Icon
+                    icon="clock"
+                    color={theme.colors.onBackground}
+                  />
+                }
+                maxLength={100}
+              />
+            </View>
+          </Pressable>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: 32,
+              // marginBottom: 8,
+            }}
+          >
+            <Text variant="titleLarge" style={{}}>
+              Symptoms experienced
+            </Text>
+            <IconButton
+              icon="information-outline"
+              size={24}
+              onPress={() =>
+                Alert.alert(
+                  "Grade Classification",
+                  "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
+                )
+              }
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              marginBottom: 16,
+            }}
+          >
+            <Text variant="labelSmall">Grade 1 : Mild</Text>
+            <Text variant="labelSmall">Grade 2 : Moderate</Text>
+            <Text variant="labelSmall">Grade 3 : Serious</Text>
+          </View>
+          {tuberculosisSymptoms.map((symptom, i) => {
+            const [checked, setChecked] = React.useState(1);
+            return (
+              <>
+                <Checkbox.Item
+                  key={`checkbox-${i}`}
+                  label={symptom}
+                  accessibilityLabel={symptom}
+                  mode="android"
+                  status={
+                    symptoms.some((s) => s.label === symptom)
+                      ? "checked"
+                      : "unchecked"
+                  }
+                  onPress={() => handleCheckboxChange(symptom)}
+                  style={{ justifyContent: "flex-start" }}
+                  labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
+                  position="leading"
+                />
+                {symptoms.some((s) => s.label === symptom) && (
+                  <View
+                    key={`view-${i}`}
+                    style={[
+                      {
+                        flexDirection: "row",
+                        alignItems: "flex-end",
+                        justifyContent: "flex-end",
+                        width: "100%",
+                      },
+                    ]}
+                  >
+                    {SIDE_EFFECT_GRADE.map((grade, j) => {
+                      const isLast = j === SIDE_EFFECT_GRADE.length - 1;
+                      const isFirst = j === 0;
+                      return (
+                        <Pressable
+                          key={`pressable-${j}`}
+                          style={[
+                            {
+                              flexDirection: "row",
+                              alignItems: "center",
+                              backgroundColor: theme.colors.secondaryContainer,
+                              paddingLeft: 16,
+                              paddingRight: isLast ? 16 : 0,
+                              paddingVertical: 4,
+                              borderTopRightRadius: isLast ? 16 : 0,
+                              borderBottomRightRadius: isLast ? 16 : 0,
+                              borderBottomLeftRadius: isFirst ? 16 : 0,
+                            },
+                          ]}
+                          onPress={() => {
+                            setChecked(grade.value);
+                            handleGradeChange(symptom, grade.value);
+                          }}
+                        >
+                          <RadioButton.Android
+                            value={grade.value}
+                            status={
+                              checked === grade.value ? "checked" : "unchecked"
+                            }
+                            pointerEvents="none"
+                          />
+
+                          <Text variant="labelSmall">{grade.label}</Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                )}
+              </>
+            );
+          })}
+          <View style={{ alignItems: "flex-end" }}>
+            <Button
+              mode="contained"
+              style={{ marginTop: 40, marginBottom: 56 }}
+              onPress={() => submitDataToDatabase()}
+            >
+              Report
+            </Button>
+          </View>
+          {/* Modal for date picker and time picker */}
+          <View
+            style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
+          >
+            <DatePickerModal
+              locale="en-GB"
+              mode="single"
+              visible={calendarOpen}
+              onDismiss={onDismissSingle}
+              // date={date}
+              onConfirm={onConfirmSingle}
+              presentationStyle="pageSheet"
+              validRange={validRange}
+            />
+            <TimePickerModal
+              locale="en-GB"
+              visible={timePickerOpen}
+              onDismiss={onDismiss}
+              onConfirm={onConfirm}
+              use24HourClock={false}
+            />
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+      {/* <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={{
+            backgroundColor: theme.colors.background,
+            padding: 16,
+            paddingVertical: 40,
+            marginHorizontal: 16,
+            borderRadius: 16,
+            justifyContent: "flex-start",
+          }}
+        >
+          
+          <Text variant="labelSmall">
+            Grade 1 : Effects mild and generally not bothersome
+          </Text>
+          <Text variant="labelSmall">
+            Grade 2 : Effects are bothersome and may interfere with doing some
+            activities but are not dangerous
+          </Text>
+          <Text variant="labelSmall">
+            Grade 3 : Effects are serious and interfere with a person’s ability
+            to do basic things like eat or get dressed
+          </Text>
+          <View style={{ flexDirection: "row-reverse" }}>
+            <Button
+              mode="contained-tonal"
+              onPress={hideModal}
+              style={{ marginRight: 16 }}
+            >
+              Close
+            </Button>
+          </View>
+        </Modal>
+      </Portal> */}
+    </>
   );
 }
 
