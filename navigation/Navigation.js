@@ -1,12 +1,10 @@
 import { NavigationContainer } from "@react-navigation/native";
 
-// import { AuthContext } from "../store/auth-context";
-import { useContext } from "react";
 import AuthStack from "./AuthStack";
 import PatientStackGroup from "./PatientStack";
+import HealthcareStackGroup from "./HealthcareStack";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDocument } from "../util/firestoreWR";
-import { setFirstTimeLogin } from "../store/redux/authSlice";
+import React from "react";
 
 //A function component to choose the Entry Point for user based on the log in status
 //TODO determine healthcare login status
@@ -18,9 +16,16 @@ export default function Navigation() {
   const first_time_login = useSelector(
     (state) => state.authObject.first_time_login
   );
+  const user_type = useSelector(
+    (state) => state.authObject.user_type
+  );
   const uid = useSelector((state) => state.authObject.uid);
   const dispatch = useDispatch();
 
+
+  React.useState(() => {
+    console.log("user type: " + user_type);
+  }, [authenticated]);
   // if (authenticated) {
   //   patientExist = fetchDocument("patients", uid);
   //   healthCareExist = fetchDocument("healthcare", uid);
@@ -32,24 +37,28 @@ export default function Navigation() {
   //   }
   // }
 
-  return (
-    <NavigationContainer>
-      {authenticated ? <PatientStackGroup /> : <AuthStack />}
-    </NavigationContainer>
-  );
-}
-
 //   return (
 //     <NavigationContainer>
-//       {authenticated ? (
-//         first_time_login ? (
-//           <AuthStack />
-//         ) : (
-//           <PatientStackGroup />
-//         )
-//       ) : (
-//         <AuthStack />
-//       )}
+//       {authenticated ? <PatientStackGroup /> : <AuthStack />}
 //     </NavigationContainer>
 //   );
 // }
+
+  return (
+    <NavigationContainer>
+      {authenticated ? (
+        first_time_login ? (
+          <AuthStack />
+        ) : (
+          user_type === "patient" ? (
+            <PatientStackGroup />
+          ) : (
+            <HealthcareStackGroup />
+          )
+        )
+      ) : (
+        <AuthStack />
+      )}
+    </NavigationContainer>
+  );
+}

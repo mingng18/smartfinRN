@@ -18,6 +18,7 @@ import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/redux/store";
 import {
   authenticateStoreNative,
+  fetchHealthcareData,
   fetchPatientData,
 } from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
@@ -65,8 +66,9 @@ function Root() {
       if (storedToken != "" && storedToken != null) {
         const storedUid = await SecureStore.getItemAsync("uid");
         console.log("Initialized uid:" + storedUid);
-        const patientUser = await fetchDocument("patient", storedUid);
-        if (patientUser != null) {
+        try {
+          const patientUser = await fetchDocument("patient", storedUid);
+
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
           console.log(
             "date from firebase is: " +
@@ -94,13 +96,16 @@ function Root() {
               treatment_duration_months: patientUser.treatment_duration_months,
             })
           );
-        } else {
+        } catch (error) {
           const healthcareUser = await fetchDocument("healthcare", storedUid);
+          console.log(
+            "healthcare email from firebase is: " + healthcareUser.email
+          );
           dispatch(
             authenticateStoreNative(storedToken, storedUid, "healthcare")
           );
           dispatch(
-            fetchPatientData({
+            fetchHealthcareData({
               email: healthcareUser.email,
               first_name: healthcareUser.first_name,
               last_name: healthcareUser.last_name,

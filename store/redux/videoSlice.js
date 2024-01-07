@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchVideosForPatient } from "../../util/firestoreWR"; // You should replace this with the actual function to fetch video data
+import { fetchVideosForPatient, fetchVideosToBeReviewedForHealthcare } from "../../util/firestoreWR"; // You should replace this with the actual function to fetch video data
 
 const initialState = {
   videos: [],
@@ -9,9 +9,14 @@ const initialState = {
 
 export const fetchVideos = createAsyncThunk(
   "videos/fetchVideos",
-  async (patientId, thunkAPI) => {
+  async (userId, userType, thunkAPI) => {
+    let videos = [];
     try {
-      let videos = await fetchVideosForPatient(patientId); // Fetch video data from Firestore or any other source
+      if (userType === "patient") {
+        videos = await fetchVideosForPatient(userId); // Fetch video data from Firestore or any other source for patient
+      } else {
+        videos = await fetchVideosToBeReviewedForHealthcare(userId); // Fetch video data from Firestore or any other source for healthcare
+      }
 
       // Convert non-serializable values to serializable ones if needed
       videos = videos.map((video) => {
@@ -29,6 +34,7 @@ export const fetchVideos = createAsyncThunk(
 
       return videos;
     } catch (error) {
+      console.log("Error fetching videos: " + error.message);
       return thunkAPI.rejectWithValue(error.message);
     }
   }

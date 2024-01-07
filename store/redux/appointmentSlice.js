@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchAppointmentsForPatient } from "../../util/firestoreWR";
+import { fetchAppointmentsForHealthcare, fetchAppointmentsForPatient } from "../../util/firestoreWR";
 
 const initialState = {
   appointments: [],
@@ -9,9 +9,16 @@ const initialState = {
 
 export const fetchAppointments = createAsyncThunk(
   "appointments/fetchAppointments",
-  async (patientId, thunkAPI) => {
+  async (patientId,userType, thunkAPI) => {
     try {
-      let appointments = await fetchAppointmentsForPatient(patientId);
+      let appointments = [];
+      if (userType === "patient") {
+        appointments = await fetchAppointmentsForPatient(patientId);
+        
+      } else {
+        appointments = await fetchAppointmentsForHealthcare(patientId);
+        
+      }
 
       // Convert non-serializable values to serializable ones and handle null cases
       appointments = appointments.map((appointment) => {

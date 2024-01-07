@@ -1,19 +1,19 @@
 import React, { useContext, useState } from "react";
 import { Alert } from "react-native";
 
-import AuthContentLogin from "../components/Auth/AuthContent_Login";
-import LoadingOverlay from "../components/ui/LoadingOverlay";
-import { login } from "../util/firebaseAuth";
+import AuthContentLogin from "../../components/Auth/AuthContent_Login";
+import LoadingOverlay from "../../components/ui/LoadingOverlay";
+import { login } from "../../util/firebaseAuth";
 // import { AuthContext } from "../store/auth-context";
 import { useDispatch } from "react-redux";
 import {
   authenticateStoreNative,
   fetchHealthcareData,
   fetchPatientData,
-} from "../store/redux/authSlice";
+} from "../../store/redux/authSlice";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { fetchDocument } from "../util/firestoreWR";
+import { fetchDocument } from "../../util/firestoreWR";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();

@@ -3,7 +3,7 @@ import { useTheme } from "react-native-paper";
 import { useSelector } from "react-redux";
 
 import CustomAppBar from "../components/ui/CustomAppBar";
-import LoginScreen from "../screens/LoginScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
 import PersonalInformationScreen from "../screens/auth/PersonalInformationScreen";
 import SignInInfoScreen from "../screens/auth/SignInInfoScreen";
 import SignupScreen from "../screens/auth/SignupScreen";

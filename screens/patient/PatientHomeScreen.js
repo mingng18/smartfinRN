@@ -6,6 +6,8 @@ import {
   ScrollView,
 } from "react-native-gesture-handler";
 import React, { useRef } from "react";
+import * as SecureStore from "expo-secure-store";
+import { useDispatch, useSelector } from "react-redux";
 
 import ToDoCard from "../../components/ui/ToDoCard";
 import CTAButton from "../../components/ui/CTAButton";
@@ -15,8 +17,6 @@ import {
   BLANK_PROFILE_PIC,
   VIDEO_STATUS,
 } from "../../constants/constants";
-import { useDispatch, useSelector } from "react-redux";
-import * as SecureStore from "expo-secure-store";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
@@ -41,16 +41,16 @@ function PatientHomeScreen() {
   React.useEffect(() => {
     const fetchDataForPatient = async () => {
       const storedUid = await SecureStore.getItemAsync("uid");
-      dispatch(fetchAppointments(storedUid));
+      dispatch(fetchAppointments(storedUid, "patient"));
       dispatch(fetchSideEffects(storedUid));
-      dispatch(fetchVideos(storedUid));
+      dispatch(fetchVideos(storedUid, "patient"));
     };
 
     fetchDataForPatient();
   }, [dispatch]);
 
   React.useEffect(() => {
-    console.log("the diagnosis date: " + user.date_of_diagnosis)
+    console.log("the diagnosis date: " + user.date_of_diagnosis);
     console.log("the user : " + user.first_name + " " + user.last_name);
     console.log("the profile pic : " + user.profile_pic_url);
     //Check the count of the pending appointment

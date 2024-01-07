@@ -7,7 +7,7 @@ const authSlice = createSlice({
     token: "",
     isAuthenticated: false,
     user_uid: "",
-    first_time_login: true,
+    first_time_login: false,
     user_type: null,
     //patient data below:
     age: null,
