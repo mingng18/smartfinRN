@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { GENDER, NATIONALITY } from "../../constants/constants";
 import { fetchPatientData } from "../../store/redux/authSlice";
 import { editDocument } from "../../util/firestoreWR";
+import * as Haptics from "expo-haptics";
 
 export default function PersonalInfoForm({ isEditing }) {
   //TODO handle update personal info case
@@ -81,7 +82,6 @@ export default function PersonalInfoForm({ isEditing }) {
   }
 
   async function updateButtonHandler() {
-    // {TODO : add update for healthcare}
     if (user.user_type == "patient") {
       try {
         await editDocument("patient", user.user_uid, {
@@ -123,9 +123,11 @@ export default function PersonalInfoForm({ isEditing }) {
             profile_pic_url: user.profile_pic_url,
           })
         );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert("Update successful", "Your information has been updated.");
         navigation.goBack();
       } catch (error) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         Alert.alert("Update failed", "Something went wrong, please try again.");
         console.log(error);
       }

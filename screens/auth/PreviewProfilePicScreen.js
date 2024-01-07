@@ -138,8 +138,9 @@ export default function PreviewProfilePicScreen() {
     } catch (error) {
       Alert.alert(
         "Signup failed, please check your email and try again later."
-      );
-      console.log(error); //Debug use
+        );
+        console.log(error); //Debug use
+        setIsUploading(false);
     }
   }
 
@@ -211,7 +212,7 @@ export default function PreviewProfilePicScreen() {
           setIsUploading(false);
         }}
         title = {"Signing up"}
-        bodyText={"Please wait patiently while we sign you up."}
+        bodyText={"Please wait patiently"}
       />
     </View>
     

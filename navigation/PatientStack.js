@@ -11,17 +11,17 @@ import VideoDetailsScreen from "../screens/patient/patientHomeStack/VideoDetails
 import SideEffectDetailsScreen from "../screens/patient/patientHomeStack/SideEffectDetailsScreen";
 import ProgressTracker from "../screens/patient/patientHomeStack/ProgressTracker";
 import PatientSettingsScreen from "../screens/patient/patientHomeStack/PatientSettingsScreen";
-import LanguageScreen from "../screens/patient/patientHomeStack/LanguageScreen";
 import PatientHistoryScreen from "../screens/patient/patientHomeStack/PatientHistoryScreen";
 import ReminderScreen from "../screens/patient/patientHomeStack/ReminderScreen";
 import PatientHistoryTab from "./PatientHistoryTab";
 import PatientEditProfileScreen from "../screens/patient/patientHomeStack/PatientEditProfileScreen";
-import ChangePasswordScreen from "../screens/patient/patientHomeStack/ChangePasswordScreen";
 import PreviewProfilePicScreen from "../screens/auth/PreviewProfilePicScreen";
 import TuberculosisMaterialsScreen from "../screens/patient/patientHomeStack/TuberculosisMaterialsScreen";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React from "react";
 import PatientPreviewProfilePicScreen from "../screens/patient/patientHomeStack/PatientPreviewProfile";
+import LanguageScreen from "../screens/common/LanguageScreen";
+import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
 
 const PatientStack = createNativeStackNavigator();
 

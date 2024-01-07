@@ -2,6 +2,9 @@ import * as React from "react";
 import { useTheme, Icon } from "react-native-paper";
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation";
 import HealthcareHomeScreen from "../screens/healthcare/HealthcareHomeScreen";
+import HealthcareAppointmentScreen from "../screens/healthcare/HealthcareAppointmentScreen";
+import HealthcareProfileScreen from "../screens/healthcare/HealthcareProfileScreen";
+import HealthcareReviewScreen from "../screens/healthcare/HealthcareReviewScreen";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -19,37 +22,29 @@ const HealthcareBottomNavBar = () => {
       unfocusedIcon: "home-outline",
     },
     {
-        index: 1,
-        key: "healthcareReview",
-        title: "Review",
-        focusedIcon: "calendar-blank",
-        component: HealthcareHomeScreen,
-        unfocusedIcon: "calendar-blank-outline",
+      index: 1,
+      key: "healthcareReview",
+      title: "Review",
+      focusedIcon: "eye",
+      component: HealthcareReviewScreen,
+      unfocusedIcon: "eye-outline",
     },
-    //   {
-    //     index: 1,
-    //     key: "patientCalendar",
-    //     title: "My Calendar",
-    //     focusedIcon: "calendar-blank",
-    //     component: PatientCalendarScreen,
-    //     unfocusedIcon: "calendar-blank-outline",
-    //   },
-    //   {
-    //     index: 2,
-    //     key: "umi",
-    //     title: "Umi",
-    //     focusedIcon: "robot",
-    //     component: UmiScreen,
-    //     unfocusedIcon: "robot-outline",
-    //   },
-    //   {
-    //     index: 3,
-    //     key: "patientProfile",
-    //     title: "Profile",
-    //     focusedIcon: "account",
-    //     component: PatientProfileScreen,
-    //     unfocusedIcon: "account-outline",
-    //   },
+    {
+      index: 2,
+      key: "healthcareAppointment",
+      title: "Appointment",
+      focusedIcon: "calendar-blank",
+      component: HealthcareAppointmentScreen,
+      unfocusedIcon: "calendar-blank-outline",
+    },
+    {
+      index: 3,
+      key: "healthcareProfile",
+      title: "Profile",
+      focusedIcon: "account",
+      component: HealthcareProfileScreen,
+      unfocusedIcon: "account-outline",
+    },
   ]);
 
   return (
@@ -60,7 +55,7 @@ const HealthcareBottomNavBar = () => {
       barStyle={{ backgroundColor: theme.colors.primary }}
       activeColor={theme.colors.onPrimary}
       inactiveColor={theme.colors.primaryContainer}
-      initialRouteName="Home"
+      initialRouteName="healthcareReview"
       backBehavior="none"
     >
       {routes.map((route) => (
@@ -69,15 +64,12 @@ const HealthcareBottomNavBar = () => {
           name={route.key}
           component={route.component}
           options={{
+            headerShown: false,
             tabBarLabel: route.title,
-            tabBarIcon: ({ focused }) => (
+            tabBarIcon: ({ color, focused }) => (
               <Icon
-                name={focused ? route.focusedIcon : route.unfocusedIcon}
-                color={
-                  focused
-                    ? theme.colors.onPrimary
-                    : theme.colors.primaryContainer
-                }
+                source={focused ? route.focusedIcon : route.unfocusedIcon} // Use route.focusedIcon for focused state
+                color={color}
                 size={24}
               />
             ),

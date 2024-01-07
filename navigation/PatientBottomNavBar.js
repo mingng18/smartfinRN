@@ -58,7 +58,7 @@ const PatientBottomNavBar = () => {
       inactiveColor={theme.colors.primaryContainer}
       initialRouteName="Home"
       backBehavior="none"
-      style={{margin: 0, padding: 0}}
+      style={{ margin: 0, padding: 0 }}
     >
       {routes.map((route) => (
         <Tab.Screen

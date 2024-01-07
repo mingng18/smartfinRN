@@ -1,18 +1,12 @@
 import { db } from "./firebaseConfig";
-import { setError } from "../store/redux/application_state/errorStateSlice";
 import {
-  removePendingState,
-  setInPendingState,
-} from "../store/redux/application_state/pendingStateSlice";
-import { useDispatch } from "react-redux";
-import {
-  getFirestore,
   collection,
   getDocs,
   setDoc,
   doc,
   addDoc,
   getDoc,
+  updateDoc
 } from "firebase/firestore";
 
 export async function fetchDocument(collectionName, documentId) {
@@ -78,8 +72,21 @@ export async function editDocument(collectionName, documentId, updatedData) {
   try {
     const docRef = doc(db, collectionName, documentId);
     await setDoc(docRef, updatedData);
+    console.log("Edit Successful!");
   } catch (error) {
-    throw new Error("Failed to edit document: " + error.message);
+    console.error("Failed to edit document: " + error.message);
+    throw error;
+  }
+}
+
+export async function updateDocument(collectionName, documentId, updatedData) {
+  try {
+    const docRef = doc(db, collectionName, documentId);
+    await updateDoc(docRef, updatedData);
+    console.log("Update Successful!");
+  } catch (error) {
+    console.error("Failed to update document: " + error.message);
+    throw error;
   }
 }
 
@@ -173,20 +180,43 @@ export async function fetchVideosForPatient(patientId) {
   }
 }
 
-export async function fetchVideosToBeReviewedForHealthcare(healthcareId) {
+export async function fetchVideosToBeReviewedForHealthcare() {
   try {
     const collectionRef = collection(db, "video");
     const querySnapshot = await getDocs(collectionRef);
 
     const videos = [];
+    const promises = [];
+
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       console.log("reviewer: " + data.reviewer_id);
       if (data.reviewer_id === "" || data.reviewer_id === null) {
         console.log("pushing video");
-        videos.push({ id: doc.id, ...data });
+        const promise = fetchDocument("patient", data.submitter_id)
+          .then((patientDoc) => {
+            videos.push({
+              id: doc.id,
+              patient_profile_picture: patientDoc.profile_pic_url
+                ? patientDoc.profile_pic_url
+                : "",
+              patient_first_name: patientDoc.first_name
+                ? patientDoc.first_name
+                : "",
+              ...data,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to fetch patient document:", error);
+            console.log("this id got error" + data.submitter_id);
+          });
+
+        promises.push(promise);
       }
     });
+    await Promise.all(promises);
+
+    console.log("review Videos", videos);
 
     return videos;
   } catch (error) {

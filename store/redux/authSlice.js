@@ -76,6 +76,13 @@ const authSlice = createSlice({
       state.role = action.payload.role;
       state.staff_id = action.payload.staff_id;
     },
+    editHealthcareInfo: (state, action) => {
+      state.first_name = action.payload.first_name;
+      state.last_name = action.payload.last_name;
+      state.staff_id = action.payload.staff_id;
+      state.role = action.payload.role;
+      state.category = action.payload.category;
+    },
   },
 });
 
@@ -111,4 +118,5 @@ export const fetchPatientData = authSlice.actions.fetchPatientData;
 export const setFirstTimeLogin = authSlice.actions.setFirstTimeLogin;
 export const authenticate = authSlice.actions.authenticate;
 export const logout = authSlice.actions.logout;
+export const editHealthcareInfo = authSlice.actions.editHealthcareInfo;
 export default authSlice.reducer;

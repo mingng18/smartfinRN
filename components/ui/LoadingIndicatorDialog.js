@@ -14,7 +14,7 @@ export default function LoadingIndicatorDialog ({ visible, close ,title, bodyTex
                 size={48}
                 style={{ marginRight: 16 }}
               />
-              <Text>{bodyText}</Text>
+              <Text variant="bodyLarge">{bodyText}</Text>
             </View>
           </Dialog.Content>
         </Dialog>

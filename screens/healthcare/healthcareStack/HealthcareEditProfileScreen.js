@@ -1,24 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useRef } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Image, View } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-import { BLANK_PROFILE_PIC } from "../../../constants/constants";
-import { Timestamp } from "firebase/firestore";
-import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
-import TreatmentInfoForm from "../../../components/Auth/TreatmentInfoForm";
-import UploadProfilePicModal from "./UploadProfilePicModal";
 import { useSelector } from "react-redux";
+import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
+import HealthcareInfoForm from "../../../components/Auth/HealthcareInfoForm";
 
-function PatientEditProfileScreen() {
+export default function HealthcareEditProfileScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const user = useSelector((state) => state.authObject);
 
   // modal ref
   const bottomSheetModalRef = useRef(null);
-
-  // modal callbacks
-  const handlePresentModalPress = () => bottomSheetModalRef.current?.present();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -34,7 +29,11 @@ function PatientEditProfileScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}  automaticallyAdjustKeyboardInsets>
+      <ScrollView
+        style={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets
+      >
         <View style={{ marginTop: 16, alignItems: "center" }}>
           <Image
             source={
@@ -78,14 +77,9 @@ function PatientEditProfileScreen() {
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
           Personal Information
         </Text>
-        <PersonalInfoForm isEditing={true} />
+        <HealthcareInfoForm isEditing={true} />
         <View style={{ marginTop: 32 }} />
-        <TreatmentInfoForm isEditing={true} />
-        <View style={{ marginBottom: 54 }} />
       </ScrollView>
-      <UploadProfilePicModal bottomSheetModalRef={bottomSheetModalRef} />
     </View>
   );
 }
-
-export default PatientEditProfileScreen;

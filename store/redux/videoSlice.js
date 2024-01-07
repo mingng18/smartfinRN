@@ -84,6 +84,7 @@ export const videoSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { createVideo, deleteVideo, updateVideo } = videoSlice.actions;
+export const { createVideo, deleteVideo } = videoSlice.actions;
+export const updateVideo = videoSlice.actions.updateVideo;
 
 export default videoSlice.reducer;

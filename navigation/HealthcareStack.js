@@ -3,6 +3,11 @@ import React from "react";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HealthcareBottomNavBar from "./HealthcareBottomNavBar";
+import ReviewVideoDetailsScreen from "../screens/healthcare/healthcareStack/ReviewVideoDetailsScreen";
+import CustomAppBar from "../components/ui/CustomAppBar";
+import LanguageScreen from "../screens/common/LanguageScreen";
+import HealthcareEditProfileScreen from "../screens/healthcare/healthcareStack/HealthcareEditProfileScreen";
+import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
 
 const HealthcareStack = createNativeStackNavigator();
 
@@ -27,70 +32,26 @@ export default function HealthcareStackGroup() {
         component={HealthcareBottomNavBar}
         options={{ headerShown: false }}
       />
-      {/* <HealthcareStackGroup.Screen
-                name="HealthcareProfileScreen"
-                component={HealthcareProfileScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcareAppointmentScreen"
-                component={HealthcareAppointmentScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcareAppointmentDetailsScreen"
-                component={HealthcareAppointmentDetailsScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcarePatientsScreen"
-                component={HealthcarePatientsScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcarePatientDetailsScreen"
-                component={HealthcarePatientDetailsScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcareVideosScreen"
-                component={HealthcareVideosScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcareVideoDetailsScreen"
-                component={HealthcareVideoDetailsScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            />
-            <HealthcareStackGroup.Screen
-                name="HealthcareSideEffectsScreen"
-                component={HealthcareSideEffectsScreen}
-                options={{
-                    headerShown: true,
-                    presentation: "fullScreenModal",
-                }}
-            /> */}
+      <HealthcareStack.Screen
+        name="ReviewVideoDetailsScreen"
+        component={ReviewVideoDetailsScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="LanguageScreen"
+        component={LanguageScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="HealthcareEditProfileScreen"
+        component={HealthcareEditProfileScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="ChangePasswordScreen"
+        component={ChangePasswordScreen}
+        options={{ headerShown: true }}
+      />
     </HealthcareStack.Navigator>
   );
 }

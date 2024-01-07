@@ -1,9 +1,9 @@
 import { Alert, KeyboardAvoidingView, StyleSheet, View } from "react-native";
 import { Button, RadioButton, Text, useTheme } from "react-native-paper";
 import React, { useState, useMemo } from "react";
-import TextListButton from "../../../components/ui/TextListButton";
+import TextListButton from "../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
-import { LANGUAGE } from "../../../constants/constants";
+import { LANGUAGE } from "../../constants/constants";
 
 export default function LanguageScreen() {
   const theme = useTheme();
