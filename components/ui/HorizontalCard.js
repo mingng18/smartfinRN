@@ -10,6 +10,7 @@ export default function HorizontalCard({
   time,
   color,
   onPressedCallback,
+  cardType,
 }) {
   const theme = useTheme();
 
@@ -35,13 +36,22 @@ export default function HorizontalCard({
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>
-            <Text variant="labelMedium">{status}</Text>
           </View>
-          <View style={[styles.textContainer, { paddingTop: 0 }]}>
-            <Text variant="bodyMedium">{date}</Text>
-            <Text variant="bodyMedium">{time}</Text>
-          </View>
+          {cardType == "video" ? (
+            <View style={[styles.textContainer, { paddingTop: 0 }]}>
+              <Text variant="bodyMedium">{date}</Text>
+              <Text variant="bodyMedium">{time}</Text>
+            </View>
+          ) : (
+            <View style={[styles.sideEffectTextContainer, { paddingTop: 0 }]}>
+              <Text variant="bodyMedium">{date + " "}</Text>
+              <Text variant="bodyMedium">{time}</Text>
+            </View>
+          )}
         </View>
+        <Text variant="labelLarge" style={{ fontWeight: "600" }}>
+          {status}
+        </Text>
       </Pressable>
     </View>
   );
@@ -69,6 +79,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "baseline",
+  },
+  sideEffectTextContainer: {
+    flex: 1,
+    flexDirection: "row",
+    // justifyContent: "space-between",
     alignItems: "baseline",
   },
 });

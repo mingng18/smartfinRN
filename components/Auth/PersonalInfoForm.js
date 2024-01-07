@@ -92,16 +92,16 @@ export default function PersonalInfoForm({ isEditing }) {
           nationality: nationality,
           nric_passport: nric,
           //unchanged part
-          age: user.age,
-          compliance_status: user.compliance_status,
-          date_of_diagnosis: user.date_of_diagnosis,
-          diagnosis: user.diagnosis,
-          email: user.email,
-          notes: user.notes,
-          number_of_tablets: user.number_of_tablets,
-          treatment: user.treatment,
-          treatment_duration_months: user.treatment_duration_months,
-          profile_pic_url: user.profile_pic_url,
+          // age: user.age,
+          // compliance_status: user.compliance_status,
+          // date_of_diagnosis: user.date_of_diagnosis,
+          // diagnosis: user.diagnosis,
+          // email: user.email,
+          // notes: user.notes,
+          // number_of_tablets: user.number_of_tablets,
+          // treatment: user.treatment,
+          // treatment_duration_months: user.treatment_duration_months,
+          // profile_pic_url: user.profile_pic_url,
         });
         dispatch(
           fetchPatientData({

@@ -42,7 +42,7 @@ function PatientHomeScreen() {
     const fetchDataForPatient = async () => {
       const storedUid = await SecureStore.getItemAsync("uid");
       dispatch(fetchAppointments(storedUid, "patient"));
-      dispatch(fetchSideEffects(storedUid));
+      dispatch(fetchSideEffects(storedUid, "patient"));
       dispatch(fetchVideos(storedUid, "patient"));
     };
 

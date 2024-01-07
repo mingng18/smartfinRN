@@ -28,9 +28,11 @@ function HealthcareHomeScreen() {
   const patients = useSelector((state) => state.patientDataObject.patients);
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
+  const sideEffects = useSelector((state) => state.sideEffectObject.sideEffects);
   const [appointmentsCount, setAppointmentsCount] = React.useState(0);
   const [patientAmount, setPatientAmount] = React.useState(0);
   const [videosToBeReviewedCount, setVideosToBeReviewedCount] = React.useState(0);
+  const [sideEffectsAlertCount, setSideEffectsAlertCount] = React.useState(0);
 
 
   //Load all data with userId on the home page
@@ -40,7 +42,7 @@ function HealthcareHomeScreen() {
       console.log("the uid: " + storedUid);
       dispatch(fetchPatientCollectionData());
       dispatch(fetchAppointments(storedUid, "healthcare"));
-      dispatch(fetchSideEffects(storedUid));
+      dispatch(fetchSideEffects(storedUid, "healthcare"));
       dispatch(fetchVideos(storedUid, "healthcare"));
     };
 
@@ -61,12 +63,21 @@ function HealthcareHomeScreen() {
     };
     const calculateVideosToBeReviewedCount = () => {
       console.log("videos: ", videos.length);
+      if (videos.length === 0 || videos === undefined || videos === null) {
+        setVideosToBeReviewedCount(0);
+        return;
+      }
       setVideosToBeReviewedCount(parseInt(videos.length));
     };
+    const calculateSideEffectsAlertCount = () => {
+      console.log("side effects: ", sideEffects.length);
+      setSideEffectsAlertCount(parseInt(sideEffects.length));
+    }
     calculatePatientCount();
     calculateAppointmentCount();
     calculateVideosToBeReviewedCount();
-  }, [appointments, videos, patients]);
+    calculateSideEffectsAlertCount();
+  }, [appointments, videos, patients, sideEffects]);
 
   //modal ref
   const bottomSheetModalRef = useRef(null);
@@ -141,10 +152,10 @@ function HealthcareHomeScreen() {
             }
             {
               /*pendingAppointmentsCount > 0 &&*/ <HealthcareToDoCard
-                title={"Vidoes to Review"}
+                title={"Videos to Review"}
                 icon="video"
                   count={videosToBeReviewedCount}
-                onPressedCallback={() => {}}
+                onPressedCallback={() => navigate("ReviewVideoScreen")}
               />
             }
             <View style={{ marginRight: 16 }} />
@@ -171,8 +182,8 @@ function HealthcareHomeScreen() {
               /*pendingAppointmentsCount > 0 &&*/ <HealthcareToDoCard
                 title={"Side Effect Alert"}
                 icon="emoticon-sick-outline"
-                //   count={pendingAppointmentsCount}
-                onPressedCallback={() => {}}
+                  count={sideEffectsAlertCount}
+                onPressedCallback={() => navigate("ReviewSideEffectScreen")}
               />
             }
             <View style={{ marginRight: 16 }} />
@@ -204,7 +215,7 @@ function HealthcareHomeScreen() {
                 title="Review Side Effect"
                 color={theme.colors.secondary}
                 onPressedCallback={() => {
-                  navigate("ReportSideEffectScreen");
+                  navigate("ReviewSideEffectScreen");
                 }}
               />
               <CTAButton

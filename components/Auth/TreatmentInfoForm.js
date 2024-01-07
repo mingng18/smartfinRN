@@ -308,17 +308,17 @@ export default function TreatmentInfoForm({ isEditing }) {
       try {
         await editDocument("patient", user.user_uid, {
           //unchanged part
-          first_name: user.first_name,
-          last_name: user.last_name,
-          gender: user.gender,
-          phone_number: user.phone_number,
-          nationality: user.nationality,
-          nric_passport: user.nric_passport,
-          age: user.age,
-          compliance_status: user.compliance_status,
-          email: user.email,
-          notes: user.notes,
-          profile_pic_url: user.profile_pic_url,
+          // first_name: user.first_name,
+          // last_name: user.last_name,
+          // gender: user.gender,
+          // phone_number: user.phone_number,
+          // nationality: user.nationality,
+          // nric_passport: user.nric_passport,
+          // age: user.age,
+          // compliance_status: user.compliance_status,
+          // email: user.email,
+          // notes: user.notes,
+          // profile_pic_url: user.profile_pic_url,
           //changed part
           date_of_diagnosis: submitDate,
           diagnosis: diagnosis,

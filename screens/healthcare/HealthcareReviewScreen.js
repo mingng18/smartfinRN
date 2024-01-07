@@ -28,6 +28,7 @@ export default function HealthcareReviewScreen() {
             return (
               <HorizontalCard
                 key={`review-${i}`}
+                cardType={"video"}
                 profilePic={video.patient_profile_picture}
                 subject={capitalizeFirstLetter(video.patient_first_name)}
                 status=""

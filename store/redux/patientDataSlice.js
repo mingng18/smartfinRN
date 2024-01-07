@@ -12,7 +12,7 @@ export const fetchPatientCollectionData = createAsyncThunk(
   async (thunkAPI) => {
     try {
       let patients = await fetchCollection("patient");
-        console.log("fetching patient " + patients[0].date_of_diagnosis.toDate().toISOString())
+        // console.log("fetching patient " + patients[0].date_of_diagnosis.toDate().toISOString())
         patients = patients.map((patient) => {
             const updatedPatient = {
                 ...patient,

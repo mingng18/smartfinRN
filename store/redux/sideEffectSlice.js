@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchSideEffectsForPatient } from "../../util/firestoreWR";
+import {
+  fetchSideEffectsAlertHealthcare,
+  fetchSideEffectsForPatient,
+} from "../../util/firestoreWR";
 
 const initialState = {
   sideEffects: [],
@@ -9,13 +12,21 @@ const initialState = {
 
 export const fetchSideEffects = createAsyncThunk(
   "sideEffects/fetchSideEffects",
-  async (patientId, thunkAPI) => {
+  async (userId, userType, thunkAPI) => {
     try {
-      let sideEffects = await fetchSideEffectsForPatient(patientId);
-
+      let sideEffects = [];
+      if (userType === "patient") {
+        sideEffects = await fetchSideEffectsForPatient(userId);
+      } else {
+        sideEffects = await fetchSideEffectsAlertHealthcare(userId);
+      }
+      
       // Convert non-serializable values to serializable ones and handle null cases
       sideEffects = sideEffects.map((sideEffect) => {
-        console.log("fetching side effect " + sideEffect.side_effect_occuring_timestamp.toDate().toISOString())
+        console.log(
+          "fetching side effect " +
+            sideEffect.side_effect_occuring_timestamp.toDate().toISOString()
+        );
         const updatedSideEffect = {
           ...sideEffect,
           created_timestamp: sideEffect.created_timestamp

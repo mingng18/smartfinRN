@@ -6,7 +6,7 @@ import {
   doc,
   addDoc,
   getDoc,
-  updateDoc
+  updateDoc,
 } from "firebase/firestore";
 
 export async function fetchDocument(collectionName, documentId) {
@@ -71,7 +71,8 @@ export async function addDocumentWithId(
 export async function editDocument(collectionName, documentId, updatedData) {
   try {
     const docRef = doc(db, collectionName, documentId);
-    await setDoc(docRef, updatedData);
+    await updateDoc(docRef, updatedData);
+    // await setDoc(docRef, updatedData);
     console.log("Edit Successful!");
   } catch (error) {
     console.error("Failed to edit document: " + error.message);
@@ -270,6 +271,52 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
 
     console.log("appointments", appointments);
     return appointments;
+  } catch (error) {
+    throw new Error("Failed to fetch appointments: " + error.message);
+  }
+}
+
+export async function fetchSideEffectsAlertHealthcare(healthcareId) {
+  try {
+    const collectionRef = collection(db, "side_effect");
+    const querySnapshot = await getDocs(collectionRef);
+
+    const sideEffects = [];
+    const promises = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.healthcare_id === "" || data.healthcare_id === null) {
+        const promise = fetchDocument("patient", data.patient_id)
+          .then((patientDoc) => {
+            sideEffects.push({
+              id: doc.id,
+              patient_profile_picture: patientDoc.profile_pic_url
+                ? patientDoc.profile_pic_url
+                : "",
+              patient_first_name: patientDoc.first_name
+                ? patientDoc.first_name
+                : "",
+              cardColor:
+                data.severity === "mild"
+                  ? "#DBE1FF"
+                  : data.severity === "moderate"
+                  ? "#FFDCC4"
+                  : "#FFDAD6",
+              ...data,
+            });
+          })
+          .catch((error) => {
+            console.error("Failed to fetch patient document:", error);
+          });
+
+        promises.push(promise);
+        // sideEffects.push({ id: doc.id, ...data });
+      }
+    });
+    await Promise.all(promises);
+
+    return sideEffects;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
   }

@@ -9,18 +9,19 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
-import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { Alert, StyleSheet, View } from "react-native";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
-import { ResizeMode, Video } from "expo-av";
-import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
-import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
-import { editDocument } from "../../../util/firestoreWR";
+import { ResizeMode, Video } from "expo-av";
+import { Alert, StyleSheet, View } from "react-native";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
 import { useDispatch } from "react-redux";
+
+import HorizontalCard from "../../../components/ui/HorizontalCard";
+import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
+import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
+import { editDocument } from "../../../util/firestoreWR";
 
 export default function ReviewVideoDetailsScreen() {
   const navigation = useNavigation();
@@ -132,6 +133,7 @@ export default function ReviewVideoDetailsScreen() {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <HorizontalCard
+          cardType={"video"}
           profilePic={currentVideo.patient_profile_picture}
           subject={capitalizeFirstLetter(currentVideo.patient_first_name)}
           status=""

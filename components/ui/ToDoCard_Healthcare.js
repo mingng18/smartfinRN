@@ -1,11 +1,20 @@
 import { Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text, TouchableRipple, useTheme } from "react-native-paper";
 
-export default function HealthcareToDoCard({ icon, title, count, onPressedCallback }) {
+export default function HealthcareToDoCard({
+  icon,
+  title,
+  count,
+  onPressedCallback,
+}) {
   const theme = useTheme();
 
   return (
-    <View style={[{ borderRadius: 8, overflow: "hidden", marginLeft: 16, width: 164}]}>
+    <View
+      style={[
+        { borderRadius: 8, overflow: "hidden", marginLeft: 16, width: 170},
+      ]}
+    >
       <Pressable
         onPress={onPressedCallback}
         android_ripple={{ color: theme.colors.onBackground, borderless: true }}
@@ -22,14 +31,14 @@ export default function HealthcareToDoCard({ icon, title, count, onPressedCallba
             >
               {title}
             </Text>
-            {count != 0 && (
+            {
               <Text
                 variant="labelLargeProminent"
                 style={{ color: theme.colors.yellow }}
               >
                 {count}
               </Text>
-            )}
+            }
           </View>
         </View>
       </Pressable>
@@ -41,9 +50,11 @@ const styles = StyleSheet.create({
   todoCard: {
     flexDirection: "row",
     padding: 8,
+    
+    // paddingRight: 8,
     // paddingBottom: 0,
     borderRadius: 8,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "right",
   },
 });

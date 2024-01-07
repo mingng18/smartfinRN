@@ -8,6 +8,8 @@ import CustomAppBar from "../components/ui/CustomAppBar";
 import LanguageScreen from "../screens/common/LanguageScreen";
 import HealthcareEditProfileScreen from "../screens/healthcare/healthcareStack/HealthcareEditProfileScreen";
 import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
+import ReviewSideEffectScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectScreen";
+import ReviewSideEffectDetailScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectDetailScreen";
 
 const HealthcareStack = createNativeStackNavigator();
 
@@ -36,6 +38,16 @@ export default function HealthcareStackGroup() {
         name="ReviewVideoDetailsScreen"
         component={ReviewVideoDetailsScreen}
         options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="ReviewSideEffectScreen"
+        component={ReviewSideEffectScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name = "ReviewSideEffectDetailsScreen"
+        component = {ReviewSideEffectDetailScreen}
+        options = {{headerShown: true}}
       />
       <HealthcareStack.Screen
         name="LanguageScreen"
