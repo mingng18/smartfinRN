@@ -12,6 +12,8 @@ import ReviewSideEffectScreen from "../screens/healthcare/healthcareStack/Review
 import ReviewSideEffectDetailScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectDetailScreen";
 import AllAppointmentRequestScreen from "../screens/healthcare/healthcareStack/AllAppointmentRequestScreen";
 import HealthcareAppointmentDetailsScreen from "../screens/healthcare/healthcareStack/HealthcareAppointmentDetailsScreen";
+import AllPatientScreen from "../screens/healthcare/healthcareStack/AllPatientScreen";
+import PatientDetailsScreen from "../screens/healthcare/healthcareStack/PatientDetailsScreen";
 
 const HealthcareStack = createNativeStackNavigator();
 
@@ -47,9 +49,9 @@ export default function HealthcareStackGroup() {
         options={{ headerShown: true }}
       />
       <HealthcareStack.Screen
-        name = "ReviewSideEffectDetailsScreen"
-        component = {ReviewSideEffectDetailScreen}
-        options = {{headerShown: true}}
+        name="ReviewSideEffectDetailsScreen"
+        component={ReviewSideEffectDetailScreen}
+        options={{ headerShown: true }}
       />
       <HealthcareStack.Screen
         name="LanguageScreen"
@@ -74,6 +76,16 @@ export default function HealthcareStackGroup() {
       <HealthcareStack.Screen
         name="HealthcareAppointmentDetailsScreen"
         component={HealthcareAppointmentDetailsScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="AllPatientScreen"
+        component={AllPatientScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="PatientDetailsScreen"
+        component={PatientDetailsScreen}
         options={{ headerShown: true }}
       />
     </HealthcareStack.Navigator>

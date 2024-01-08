@@ -52,6 +52,7 @@ export const DIAGNOSIS = [
   { label: "Extrapulmonary tuberculosis (EXPTB)", value: "EXPTB" },
   { label: "Latent TB infection (LTBI)", value: "LTBI" },
 ];
+export const NOTES = { VOTS: "Continue VOTS", DOTS: "Switch to DOTS" };
 
 export const SIDE_EFFECT_GRADE = [
   { label: "Grade 1", value: 1 },
@@ -60,6 +61,13 @@ export const SIDE_EFFECT_GRADE = [
 ];
 
 export const HORIZONTAL_CARD_TYPE = {
-  DEFAULT: 'default',
+  DEFAULT: "default",
   VIDEO_CALL_APPOINTMENT: "video-call-appointment",
+  PATIENT: "patient",
+};
+
+export const COMPLIANCE_STATUS = {
+  GOOD: "good",
+  MODERATE: "moderate",
+  SEVERE: "severe",
 };
