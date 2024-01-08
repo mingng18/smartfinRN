@@ -14,7 +14,7 @@ import {
   updatePersonalInformation,
 } from "../../store/redux/signupSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { GENDER, NATIONALITY } from "../../constants/constants";
+import { FIREBASE_COLLECTION, GENDER, NATIONALITY } from "../../constants/constants";
 import { fetchPatientData } from "../../store/redux/authSlice";
 import { editDocument } from "../../util/firestoreWR";
 import * as Haptics from "expo-haptics";
@@ -73,18 +73,19 @@ export default function PersonalInfoForm({ isEditing }) {
     }
   }, [isEditing]);
 
+  //Calculate the age based on nric, triggered when nric is changed
   function handlerForAgeInputChange(value) {
     setNric(value);
     if (nric !== null) {
-      // Calculate age based on nric
       setAge(new Date().getFullYear() - value.slice(0, 2) - millennium);
     }
   }
 
+  //Update personal info, triggered when update button is pressed in profile page
   async function updateButtonHandler() {
     if (user.user_type == "patient") {
       try {
-        await editDocument("patient", user.user_uid, {
+        await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
           first_name: firstName,
           last_name: lastName,
           gender: gender,
@@ -123,8 +124,8 @@ export default function PersonalInfoForm({ isEditing }) {
     }
   }
 
+  //Next button handler, triggered when next button is pressed in signup page, will be substituted by update button handler in profile page
   async function nextButtonHandler() {
-    // TODO add update xisting value
     // Input validation logic
     const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
     const phoneRegex = /^\+[0-9]{10,13}$/; //+60123456789
@@ -171,6 +172,7 @@ export default function PersonalInfoForm({ isEditing }) {
     );
     //Debug use---------------------------------------------------------------
 
+    //client side input validation, if any of the input is invalid, return an alert
     if (
       !isFirstNameValid ||
       !isLastNameValid ||
@@ -211,14 +213,14 @@ export default function PersonalInfoForm({ isEditing }) {
               })
             );
       }
+      setIsAuthenticating(false);
       navigation.navigate("UploadProfilePicScreen");
     } catch (error) {
+      setIsAuthenticating(false);
       Alert.alert(
         "Something went wrong, please check your input and try again later."
-      );
+        );
       console.log(error); //Debug use
-    } finally {
-      setIsAuthenticating(false);
     }
   }
 

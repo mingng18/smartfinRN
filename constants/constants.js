@@ -71,3 +71,11 @@ export const COMPLIANCE_STATUS = {
   MODERATE: "moderate",
   SEVERE: "severe",
 };
+
+export const FIREBASE_COLLECTION = {
+  APPOINTMENT: "appointment",
+  HEALTHCARE: "healthcare",
+  PATIENT: "patient",
+  SIDE_EFFECT: "side_effect",
+  VIDEO: "video",
+};

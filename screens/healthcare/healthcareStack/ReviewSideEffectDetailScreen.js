@@ -20,7 +20,7 @@ import { useDispatch } from "react-redux";
 
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
-import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
+import { FIREBASE_COLLECTION, TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";
 import { deleteSideEffect, updateSideEffect } from "../../../store/redux/sideEffectSlice";
@@ -52,7 +52,7 @@ export default function ReviewSideEffectDetailScreen() {
   async function handleSideEffectReviewSubmission() {
     const storedUid = await SecureStore.getItemAsync("uid");
     try {
-      await editDocument("side_effect", currentSideEffect.id, {
+      await editDocument(FIREBASE_COLLECTION.SIDE_EFFECT, currentSideEffect.id, {
         remarks: remarks,
         healthcare_id: storedUid,
         reviewed_timestamp: serverTimestamp(),

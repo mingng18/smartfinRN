@@ -14,12 +14,12 @@ import {
 import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
 
 export default function SignInInfoScreen({ route }) {
-  const { signUpMode } = route.params;
   const navigation = useNavigation();
   const theme = useTheme();
-  const { params } = useRoute();
   const dispatch = useDispatch();
   const auth = getAuth();
+  const { params } = useRoute();
+  const signupMode = params.signupMode;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,46 +30,70 @@ export default function SignInInfoScreen({ route }) {
     password: false,
     confirmPassword: false,
   });
+  const [errorTitle, setErrorTitle] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function nextButtonHandler() {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
-    const passwordIsValid = passwordRegex.test(password);
-    
-    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-    const emailIsValid = email.includes("@") && signInMethods.length === 0;
+    setIsAuthenticating(true);
 
+    //Check if email already exists
+    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
     if (signInMethods.length > 0) {
-      Alert.alert("Email already exists", "Please use another email address or request to reset password in the login page.");
+      Alert.alert(
+        "Email already exists",
+        "Please use another email address or request to reset password in the login page."
+      );
       return setIsAuthenticating(false);
     }
+
+    //Client side validation
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
+    const passwordIsValid = passwordRegex.test(password);
+    const emailIsValid = email.includes("@") && signInMethods.length === 0;
     const confirmPasswordIsValid = password === confirmPassword;
+
     if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
+      if (!emailIsValid && !passwordIsValid) {
+        setErrorTitle("Invalid email and password");
+        setErrorMessage("Please enter a valid email address and password.");
+      } else if (!emailIsValid) {
+        setErrorTitle("Invalid email");
+        setErrorMessage("Please enter a valid email address.");
+      } else if (!passwordIsValid) {
+        setErrorTitle("Invalid password");
+        setErrorMessage(
+          "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
+        );
+      } else if (!confirmPasswordIsValid) {
+        setErrorTitle("Invalid confirm password");
+        setErrorMessage("Confirm password must match password.");
+      } else {
+        setErrorTitle("Invalid input");
+        setErrorMessage("Please check your entered credentials.");
+      }
+
       setCredentialsInvalid({
         email: !emailIsValid,
         password: !passwordIsValid,
         confirmPassword: !confirmPasswordIsValid,
       });
-      return Alert.alert(
-        "Invalid input",
-        "Please check your entered credentials."
-      );
+
+      setIsAuthenticating(false);
+      return Alert.alert(errorTitle, errorMessage);
     }
 
-    
-    setIsAuthenticating(true);
-
-
+    //Local state update and error handling
     try {
       dispatch(updateSignInCredentials({ email: email, password: password }));
-      dispatch(updateSignupMode({ signupMode: signUpMode }));
-      if (signUpMode === "patient") {
+      dispatch(updateSignupMode({ signupMode: signupMode }));
+      if (signupMode === "patient") {
         navigation.navigate("PersonalInformationScreen");
       } else {
         navigation.navigate("HealthcareInformationScreen");
       }
     } catch (error) {
       Alert.alert(
-        "Signup failed, please check your input and try again later."
+        "Something went wrong", "Please check your input and try again later."
       );
       console.log(error); //Debug use
     } finally {

@@ -1,3 +1,4 @@
+import { FIREBASE_COLLECTION } from "../constants/constants";
 import { db } from "./firebaseConfig";
 import {
   collection,
@@ -82,7 +83,7 @@ export async function editDocument(collectionName, documentId, updatedData) {
 //Appointment
 export async function fetchAppointmentsForPatient(patientId) {
   try {
-    const collectionRef = collection(db, "appointment");
+    const collectionRef = collection(db, FIREBASE_COLLECTION.APPOINTMENT);
     const querySnapshot = await getDocs(collectionRef);
 
     const appointments = [];
@@ -92,7 +93,7 @@ export async function fetchAppointmentsForPatient(patientId) {
       const data = doc.data();
       if (data.patient_id === patientId) {
         if (data.healthcare_id) {
-          const promise = fetchDocument("healthcare", data.healthcare_id)
+          const promise = fetchDocument(FIREBASE_COLLECTION.HEALTHCARE, data.healthcare_id)
             .then((healthcareDoc) => {
               appointments.push({
                 id: doc.id,
@@ -133,7 +134,7 @@ export async function fetchAppointmentsForPatient(patientId) {
 
 export async function fetchSideEffectsForPatient(patientId) {
   try {
-    const collectionRef = collection(db, "side_effect");
+    const collectionRef = collection(db, FIREBASE_COLLECTION.SIDE_EFFECT);
     const querySnapshot = await getDocs(collectionRef);
 
     const sideEffects = [];
@@ -152,7 +153,7 @@ export async function fetchSideEffectsForPatient(patientId) {
 
 export async function fetchVideosForPatient(patientId) {
   try {
-    const collectionRef = collection(db, "video");
+    const collectionRef = collection(db, FIREBASE_COLLECTION.VIDEO);
     const querySnapshot = await getDocs(collectionRef);
 
     const videos = [];
@@ -171,7 +172,7 @@ export async function fetchVideosForPatient(patientId) {
 
 export async function fetchVideosToBeReviewedForHealthcare() {
   try {
-    const collectionRef = collection(db, "video");
+    const collectionRef = collection(db, FIREBASE_COLLECTION.VIDEO);
     const querySnapshot = await getDocs(collectionRef);
 
     const videos = [];
@@ -182,7 +183,7 @@ export async function fetchVideosToBeReviewedForHealthcare() {
       console.log("reviewer: " + data.reviewer_id);
       if (data.reviewer_id === "" || data.reviewer_id === null) {
         console.log("pushing video");
-        const promise = fetchDocument("patient", data.submitter_id)
+        const promise = fetchDocument(FIREBASE_COLLECTION.PATIENT, data.submitter_id)
           .then((patientDoc) => {
             videos.push({
               id: doc.id,
@@ -215,7 +216,7 @@ export async function fetchVideosToBeReviewedForHealthcare() {
 
 export async function fetchAppointmentsForHealthcare(healthcareId) {
   try {
-    const collectionRef = collection(db, "appointment");
+    const collectionRef = collection(db, FIREBASE_COLLECTION.APPOINTMENT);
     const querySnapshot = await getDocs(collectionRef);
 
     const appointments = [];
@@ -229,7 +230,7 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
         data.healthcare_id === "" ||
         data.healthcare_id == null
       ) {
-        const promise = fetchDocument("patient", data.patient_id)
+        const promise = fetchDocument(FIREBASE_COLLECTION.PATIENT, data.patient_id)
           .then((patientDoc) => {
             if (data.healthcare_id === healthcareId) {
               appointments.push({
@@ -265,7 +266,7 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
 
 export async function fetchSideEffectsAlertHealthcare(healthcareId) {
   try {
-    const collectionRef = collection(db, "side_effect");
+    const collectionRef = collection(db, FIREBASE_COLLECTION.SIDE_EFFECT);
     const querySnapshot = await getDocs(collectionRef);
 
     const sideEffects = [];
@@ -274,7 +275,7 @@ export async function fetchSideEffectsAlertHealthcare(healthcareId) {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.healthcare_id === "" || data.healthcare_id === null) {
-        const promise = fetchDocument("patient", data.patient_id)
+        const promise = fetchDocument(FIREBASE_COLLECTION.PATIENT, data.patient_id)
           .then((patientDoc) => {
             sideEffects.push({
               id: doc.id,

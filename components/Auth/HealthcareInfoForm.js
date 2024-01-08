@@ -8,6 +8,7 @@ import * as Haptics from "expo-haptics";
 import { editDocument } from "../../util/firestoreWR";
 import { useNavigation } from "@react-navigation/native";
 import { editHealthcareInfo } from "../../store/redux/authSlice";
+import { FIREBASE_COLLECTION } from "../../constants/constants";
 
 export default function HealthcareInfoForm({ isEditing }) {
   const dispatch = useDispatch();
@@ -71,7 +72,7 @@ export default function HealthcareInfoForm({ isEditing }) {
 
     //Update new data into firebase
     try {
-      await editDocument("healthcare", user.user_uid, {
+      await editDocument(FIREBASE_COLLECTION.HEALTHCARE, user.user_uid, {
         first_name: firstName,
         last_name: lastName,
         role: role,

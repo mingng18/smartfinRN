@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { fetchCollection } from "../../util/firestoreWR";
+import { FIREBASE_COLLECTION } from "../../constants/constants";
 
 const initialState = {
   patients: [],
@@ -11,7 +12,7 @@ export const fetchPatientCollectionData = createAsyncThunk(
   "patients/fetchPatientData",
   async (thunkAPI) => {
     try {
-      let patients = await fetchCollection("patient");
+      let patients = await fetchCollection(FIREBASE_COLLECTION.PATIENT);
       // console.log("fetching patient " + patients[0].date_of_diagnosis.toDate().toISOString())
       patients = patients.map((patient) => {
         const updatedPatient = {

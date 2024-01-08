@@ -24,6 +24,7 @@ import {
 import * as SplashScreen from "expo-splash-screen";
 import { fetchDocument } from "./util/firestoreWR";
 import { Alert } from "react-native";
+import { FIREBASE_COLLECTION } from "./constants/constants";
 // import { AuthContext } from "./store/auth-context";
 
 //Open SplashScreen for loading
@@ -67,7 +68,7 @@ function Root() {
         const storedUid = await SecureStore.getItemAsync("uid");
         console.log("Initialized uid:" + storedUid);
         try {
-          const patientUser = await fetchDocument("patient", storedUid);
+          const patientUser = await fetchDocument(FIREBASE_COLLECTION.PATIENT, storedUid);
 
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
           console.log(
@@ -97,7 +98,7 @@ function Root() {
             })
           );
         } catch (error) {
-          const healthcareUser = await fetchDocument("healthcare", storedUid);
+          const healthcareUser = await fetchDocument(FIREBASE_COLLECTION.HEALTHCARE, storedUid);
           console.log(
             "healthcare email from firebase is: " + healthcareUser.email
           );

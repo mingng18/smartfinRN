@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { APPOINTMENT_STATUS, TREATMENT } from "../../../constants/constants";
+import { APPOINTMENT_STATUS, FIREBASE_COLLECTION, TREATMENT } from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
 import InformationChip from "../../../components/ui/InformationChip";
 import * as Haptics from "expo-haptics";
@@ -59,7 +59,7 @@ export default function HealthcareAppointmentDetailsScreen() {
       };
 
       await editDocument(
-        "appointment",
+        FIREBASE_COLLECTION.APPOINTMENT,
         currentAppointment.id,
         updatedAppointment
       );
@@ -94,7 +94,7 @@ export default function HealthcareAppointmentDetailsScreen() {
         appointment_status: APPOINTMENT_STATUS.CANCELLED,
       };
       await editDocument(
-        "appointment",
+        FIREBASE_COLLECTION.APPOINTMENT,
         currentAppointment.id,
         updatedAppointment
       );

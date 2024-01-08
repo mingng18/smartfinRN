@@ -77,7 +77,7 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
 
   function switchAuthModeHandler(mode) {
     if (isLogin) {
-      navigation.navigate("SignInInfoScreen", { signUpMode: mode });
+      navigation.navigate("SignInInfoScreen", { signupMode: mode });
     } else {
       navigation.replace("Login");
     }
@@ -91,10 +91,13 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
     const passwordIsValid = password.length > 6;
 
     if (!emailIsValid || !passwordIsValid) {
-      if (!emailIsValid) {
+      if(!emailIsValid && !passwordIsValid) {
+        Alert.alert("Email and password input are invalid", "Please check your email and password format.");
+      }
+      else if (!emailIsValid) {
         Alert.alert("Email input is invalid", "Please check your email format.");
       }
-      if (!passwordIsValid) {
+      else if (!passwordIsValid) {
         Alert.alert("Password input is invalid", "Please check your password format.");
       }
       

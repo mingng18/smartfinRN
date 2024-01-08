@@ -20,6 +20,7 @@ import {
 } from "firebase/auth";
 import { fetchDocument } from "../../util/firestoreWR";
 import { FirebaseError } from "firebase/app";
+import { FIREBASE_COLLECTION } from "../../constants/constants";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
@@ -44,7 +45,7 @@ function LoginScreen() {
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
       try {
-        const isPatient = await fetchDocument("patient", user.uid);
+        const isPatient = await fetchDocument(FIREBASE_COLLECTION.PATIENT, user.uid);
         dispatch(
           fetchPatientData({
             age: isPatient.age,
@@ -106,25 +107,10 @@ function LoginScreen() {
           }
           break;
         case "auth/user-not-found": //the user account was not found. This could happen if the user account has been deleted.
-          Alert.alert(
-            "User not found",
-            "Please kindly sign up a new account."
-          );
-          break;
-        case "FIRAuthErrorCodeNetworkError": //Indicates a network error occurred during the operation.
-          Alert.alert(
-            "Network error",
-            "Please kindly check your internet connection and try again later."
-          );
-          break;
-        case "FIRAuthErrorCodeTooManyRequests": //Indicates that the request has been blocked after an abnormal number of requests have been made from the caller device to the Firebase Authentication servers. Retry again after some time.
-          Alert.alert(
-            "Too many requests",
-            "You have tried to login on the same device too many times. Please try again after some time."
-          );
+          Alert.alert("User not found", "Please kindly sign up a new account.");
           break;
         //Sign In Method Error (Email or Google)
-        case "FIRAuthErrorCodeInvalidEmail": //Indicates the email address is malformed.
+        case "auth/invalid-email": //Indicates the email address is malformed.
           Alert.alert(
             "Invalid email address",
             "Please check your email address and try again."
@@ -146,12 +132,6 @@ function LoginScreen() {
           Alert.alert(
             "Invalid credential",
             "Your login might be expired or malformed. Please try again later."
-          );
-          break;
-        case "FIRAuthErrorCodeEmailAlreadyInUse": //Indicates the email asserted by the credential  is already in use by an existing account.
-          Alert.alert(
-            "Email already in use",
-            "Please check your email and try again."
           );
           break;
 

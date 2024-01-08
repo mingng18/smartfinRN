@@ -17,7 +17,11 @@ import {
 } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import { useDispatch, useSelector } from "react-redux";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  deleteUser,
+} from "firebase/auth";
 
 import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
 import {
@@ -43,7 +47,12 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
-import { COMPLIANCE_STATUS, DIAGNOSIS, TREATMENT } from "../../constants/constants";
+import {
+  COMPLIANCE_STATUS,
+  DIAGNOSIS,
+  FIREBASE_COLLECTION,
+  TREATMENT,
+} from "../../constants/constants";
 import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
 
 export default function TreatmentInfoForm({ isEditing }) {
@@ -145,82 +154,92 @@ export default function TreatmentInfoForm({ isEditing }) {
         notes: "",
       });
     } catch (error) {
-      console.log(error + " error occured when saving user data to firestore"); //Debug use
+      return Alert.alert(
+        "Error when saving user data to database",
+        "Please try again later."
+      );
     }
   }
 
   async function uploadImage(uri, path, userId, token) {
-    const imageData = await fetch(uri);
-    const imageBlob = await imageData.blob();
+    try {
+      const imageData = await fetch(uri);
+      const imageBlob = await imageData.blob();
 
-    // Compress the image
-    // const compressedImage = await compressImage(imageBlob);
-    uploadTask = uploadBytesResumable(path, imageBlob);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        setUploadProgress(progress.toFixed(2));
-      },
-      (error) => {},
-      (snapshot) => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log(
-            "timestamp is: " + new Date(submitDate).toISOString().toString()
-          );
-          console.log("number of tablets is: " + parseInt(numberOfTablets));
-          console.log(
-            "duration of treatment is: " + parseInt(durationOfTreatment)
-          );
-          dispatch(
-            fetchPatientData({
-              age: signupInfo.age,
-              compliance_status: COMPLIANCE_STATUS.GOOD,
-              date_of_diagnosis: new Date(submitDate).toISOString().toString(),
-              diagnosis: diagnosis,
-              email: signupInfo.email,
-              first_name: signupInfo.firstName,
-              gender: signupInfo.gender,
-              last_name: signupInfo.lastName,
-              nationality: signupInfo.nationality,
-              notes: "",
-              nric_passport: signupInfo.nric_passport,
-              number_of_tablets: numberOfTablets,
-              phone_number: signupInfo.phoneNumber,
-              profile_pic_url: downloadURL,
-              treatment: treatment,
-              treatment_duration_months: durationOfTreatment,
-            })
-          );
-          setIsUploading(false);
-          await saveUserDateToFirestore("patient", userId, downloadURL);
-          dispatch(authenticateStoreNative(token, userId, "patient"));
-          Alert.alert(
-            "Sign Up Successful!",
-            "Thanks for signing up!",
-            [
+      uploadTask = uploadBytesResumable(path, imageBlob);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          setUploadProgress(progress.toFixed(2));
+        },
+        (snapshot) => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            // console.log(
+            //   "timestamp is: " + new Date(submitDate).toISOString().toString()
+            // );
+            // console.log("number of tablets is: " + parseInt(numberOfTablets));
+            // console.log(
+            //   "duration of treatment is: " + parseInt(durationOfTreatment)
+            // );
+
+            //Update redux store
+            dispatch(
+              fetchPatientData({
+                age: signupInfo.age,
+                compliance_status: COMPLIANCE_STATUS.GOOD,
+                date_of_diagnosis: new Date(submitDate)
+                  .toISOString()
+                  .toString(),
+                diagnosis: diagnosis,
+                email: signupInfo.email,
+                first_name: signupInfo.firstName,
+                gender: signupInfo.gender,
+                last_name: signupInfo.lastName,
+                nationality: signupInfo.nationality,
+                notes: "",
+                nric_passport: signupInfo.nric_passport,
+                number_of_tablets: numberOfTablets,
+                phone_number: signupInfo.phoneNumber,
+                profile_pic_url: downloadURL,
+                treatment: treatment,
+                treatment_duration_months: durationOfTreatment,
+              })
+            );
+
+            setIsUploading(false);
+            await saveUserDateToFirestore("patient", userId, downloadURL);
+
+            Alert.alert(
+              "Sign Up Successful!",
+              "Thanks for signing up!",
+              [
+                {
+                  text: "OK",
+                  onPress: () =>
+                    dispatch(authenticateStoreNative(token, userId, "patient")),
+                  style: "cancel",
+                },
+              ],
               {
-                text: "OK",
-                onPress: () => {},
-                style: "cancel",
-              },
-            ],
-            {
-              cancelable: false,
-            }
-          );
-        });
-      }
-    );
+                cancelable: false,
+              }
+            );
+          });
+        }
+      );
+    } catch (error) {
+      return Alert.alert(
+        "Profile Picture Upload Failed",
+        "Please try again later."
+      );
+    }
   }
 
   //Handle Submission Function : To be called when user clicks on the sign up button
   async function handleFinishSignUpSubmission() {
-    //format date to firebase format
-    // setSubmitDate(new Date().setDate(submitDate));
-
     //Validate input
     const durationOfTreatmentRegex = /^[0-9]{1,3}$/; //1-3 digits
     const numberOfTabletsRegex = /^(?!0\d)\d{1,2}$/; //1-2 digits, cannot start with 0
@@ -244,8 +263,6 @@ export default function TreatmentInfoForm({ isEditing }) {
     ) {
       return Alert.alert("Invalid input", "Please check your entered details.");
     }
-
-    // Update redux store
 
     //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
@@ -276,10 +293,33 @@ export default function TreatmentInfoForm({ isEditing }) {
         token.token
       );
     } catch (error) {
-      Alert.alert(
-        "Signup failed, please check your email and try again later."
-      );
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          return Alert.alert(
+            "Email already exists",
+            "Please use another email address or request to reset password in the login page."
+          );
+        case "auth/invalid-email":
+          return Alert.alert(
+            "Invalid email",
+            "Please enter a valid email address."
+          );
+        case "auth/weak-password":
+          return Alert.alert(
+            "Weak password",
+            "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
+          );
+        default:
+          console.log("Unknown error occured" + error);
+          //Delete user created just now if sign up fails because of other reasons
+          // await deleteUser(user.uid);
+          return Alert.alert(
+            "Unknown error occured",
+            "Please try again later."
+          );
+      }
     }
+    setIsUploading(false);
   }
 
   React.useEffect(() => {
@@ -306,7 +346,7 @@ export default function TreatmentInfoForm({ isEditing }) {
     if (user.user_type == "patient") {
       console.log("user first name: " + user.first_name);
       try {
-        await editDocument("patient", user.user_uid, {
+        await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
           //unchanged part
           // first_name: user.first_name,
           // last_name: user.last_name,
@@ -472,8 +512,8 @@ export default function TreatmentInfoForm({ isEditing }) {
         close={() => {
           setIsUploading(false);
         }}
-        title={"Signing Up"}
-        bodyText={"Please wait patiently while we sign you up."}
+        title={"Please wait"}
+        bodyText={"Signing you up."}
       />
     </View>
   );
