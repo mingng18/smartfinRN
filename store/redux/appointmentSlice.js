@@ -1,23 +1,27 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchAppointmentsForHealthcare, fetchAppointmentsForPatient } from "../../util/firestoreWR";
+import {
+  fetchAppointmentsForHealthcare,
+  fetchAppointmentsForPatient,
+} from "../../util/firestoreWR";
 
 const initialState = {
   appointments: [],
+  pendingAppointments: [],
   status: "idle",
   error: null,
 };
 
 export const fetchAppointments = createAsyncThunk(
   "appointments/fetchAppointments",
-  async (patientId,userType, thunkAPI) => {
+  async ({ patientId, userType }, thunkAPI) => {
     try {
       let appointments = [];
+      let pendingAppointments = [];
       if (userType === "patient") {
         appointments = await fetchAppointmentsForPatient(patientId);
-        
       } else {
-        appointments = await fetchAppointmentsForHealthcare(patientId);
-        
+        [appointments, pendingAppointments] =
+          await fetchAppointmentsForHealthcare(patientId);
       }
 
       // Convert non-serializable values to serializable ones and handle null cases
@@ -30,11 +34,45 @@ export const fetchAppointments = createAsyncThunk(
           scheduled_timestamp: appointment.scheduled_timestamp
             ? appointment.scheduled_timestamp.toDate().toISOString()
             : "",
+          patient_data: {
+            ...appointment.patient_data,
+            date_of_diagnosis: appointment.patient_data.date_of_diagnosis
+              ? appointment.patient_data.date_of_diagnosis
+                  .toDate()
+                  .toISOString()
+              : "",
+          },
         };
         return updatedAppointment;
       });
 
-      return appointments;
+      if (userType !== "patient") {
+        pendingAppointments = pendingAppointments.map((appointment) => {
+          const updatedAppointment = {
+            ...appointment,
+            created_timestamp: appointment.created_timestamp
+              ? appointment.created_timestamp.toDate().toISOString()
+              : "",
+            scheduled_timestamp: appointment.scheduled_timestamp
+              ? appointment.scheduled_timestamp.toDate().toISOString()
+              : "",
+            patient_data: {
+              ...appointment.patient_data,
+              date_of_diagnosis: appointment.patient_data.date_of_diagnosis
+                ? appointment.patient_data.date_of_diagnosis
+                    .toDate()
+                    .toISOString()
+                : "",
+            },
+          };
+          return updatedAppointment;
+        });
+      }
+
+      console.log("appointments ", appointments);
+      console.log("pendingAppointments ", pendingAppointments);
+
+      return { appointments, pendingAppointments };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }
@@ -75,7 +113,8 @@ export const appointmentSlice = createSlice({
       })
       .addCase(fetchAppointments.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.appointments = action.payload;
+        state.appointments = action.payload.appointments;
+        state.pendingAppointments = action.payload.pendingAppointments;
       })
       .addCase(fetchAppointments.rejected, (state, action) => {
         state.status = "failed";

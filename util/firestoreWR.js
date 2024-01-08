@@ -231,46 +231,45 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
     const querySnapshot = await getDocs(collectionRef);
 
     const appointments = [];
+    const pendingAppointments = [];
     const promises = [];
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      if (data.healthcare_id === healthcareId) {
-        if (data.healthcare_id) {
-          const promise = fetchDocument("healthcare", data.healthcare_id)
-            .then((healthcareDoc) => {
+      if (
+        data.healthcare_id === healthcareId ||
+        data.healthcare_id === "" ||
+        data.healthcare_id == null
+      ) {
+        const promise = fetchDocument("patient", data.patient_id)
+          .then((patientDoc) => {
+            if (data.healthcare_id === healthcareId) {
               appointments.push({
                 id: doc.id,
-                healthcare_profile_picture: healthcareDoc.profile_picture
-                  ? healthcareDoc.profile_picture
-                  : "",
-                healthcare_first_name: healthcareDoc.first_name
-                  ? healthcareDoc.first_name
-                  : "",
+                patient_data: patientDoc,
                 ...data,
               });
-            })
-            .catch((error) => {
-              console.error("Failed to fetch healthcare document:", error);
-            });
-
-          promises.push(promise);
-        } else {
-          // If healthcare_id doesn't exist, push an appointment with empty profile_picture and first_name
-          appointments.push({
-            id: doc.id,
-            healthcare_profile_picture: "", // Empty profile picture
-            healthcare_first_name: "", // Empty first name
-            ...data,
+            } else {
+              pendingAppointments.push({
+                id: doc.id,
+                patient_data: patientDoc,
+                ...data,
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Failed to fetch healthcare document:", error);
           });
-        }
+
+        promises.push(promise);
       }
     });
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    console.log("appointments", appointments);
-    return appointments;
+    console.log("appointments firebase ", appointments);
+    console.log("pendingAppointments firebase ", pendingAppointments);
+    return [appointments, pendingAppointments];
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
   }

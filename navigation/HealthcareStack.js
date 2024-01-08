@@ -10,6 +10,8 @@ import HealthcareEditProfileScreen from "../screens/healthcare/healthcareStack/H
 import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
 import ReviewSideEffectScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectScreen";
 import ReviewSideEffectDetailScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectDetailScreen";
+import AllAppointmentRequestScreen from "../screens/healthcare/healthcareStack/AllAppointmentRequestScreen";
+import HealthcareAppointmentDetailsScreen from "../screens/healthcare/healthcareStack/HealthcareAppointmentDetailsScreen";
 
 const HealthcareStack = createNativeStackNavigator();
 
@@ -62,6 +64,16 @@ export default function HealthcareStackGroup() {
       <HealthcareStack.Screen
         name="ChangePasswordScreen"
         component={ChangePasswordScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="AllAppointmentRequestScreen"
+        component={AllAppointmentRequestScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="HealthcareAppointmentDetailsScreen"
+        component={HealthcareAppointmentDetailsScreen}
         options={{ headerShown: true }}
       />
     </HealthcareStack.Navigator>

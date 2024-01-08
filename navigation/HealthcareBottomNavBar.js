@@ -55,7 +55,7 @@ const HealthcareBottomNavBar = () => {
       barStyle={{ backgroundColor: theme.colors.primary }}
       activeColor={theme.colors.onPrimary}
       inactiveColor={theme.colors.primaryContainer}
-      initialRouteName="healthcareReview"
+      initialRouteName="healthcareAppointment"
       backBehavior="none"
     >
       {routes.map((route) => (

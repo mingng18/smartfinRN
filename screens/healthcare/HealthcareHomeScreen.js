@@ -25,15 +25,18 @@ function HealthcareHomeScreen() {
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
+  const pendingAppointments = useSelector(
+    (state) => state.appointmentObject.pendingAppointments
+  );
   const patients = useSelector((state) => state.patientDataObject.patients);
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
   const sideEffects = useSelector((state) => state.sideEffectObject.sideEffects);
   const [appointmentsCount, setAppointmentsCount] = React.useState(0);
   const [patientAmount, setPatientAmount] = React.useState(0);
-  const [videosToBeReviewedCount, setVideosToBeReviewedCount] = React.useState(0);
+  const [videosToBeReviewedCount, setVideosToBeReviewedCount] =
+    React.useState(0);
   const [sideEffectsAlertCount, setSideEffectsAlertCount] = React.useState(0);
-
 
   //Load all data with userId on the home page
   React.useEffect(() => {
@@ -41,9 +44,11 @@ function HealthcareHomeScreen() {
       const storedUid = await SecureStore.getItemAsync("uid");
       console.log("the uid: " + storedUid);
       dispatch(fetchPatientCollectionData());
-      dispatch(fetchAppointments(storedUid, "healthcare"));
+      dispatch(
+        fetchAppointments({ patientId: storedUid, userType: "healthcare" })
+      );
       dispatch(fetchSideEffects(storedUid, "healthcare"));
-      dispatch(fetchVideos(storedUid, "healthcare"));
+      dispatch(fetchVideos({ userId: storedUid, userType: "healthcare" }));
     };
 
     fetchDataForHealthcare();
@@ -59,6 +64,7 @@ function HealthcareHomeScreen() {
     };
     const calculateAppointmentCount = () => {
       console.log("appointments: ", appointments.length);
+      console.log("pendingAppointments: ", pendingAppointments.length);
       setAppointmentsCount(parseInt(appointments.length));
     };
     const calculateVideosToBeReviewedCount = () => {

@@ -1,5 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchVideosForPatient, fetchVideosToBeReviewedForHealthcare } from "../../util/firestoreWR"; // You should replace this with the actual function to fetch video data
+import {
+  fetchVideosForPatient,
+  fetchVideosToBeReviewedForHealthcare,
+} from "../../util/firestoreWR"; // You should replace this with the actual function to fetch video data
 
 const initialState = {
   videos: [],
@@ -9,7 +12,7 @@ const initialState = {
 
 export const fetchVideos = createAsyncThunk(
   "videos/fetchVideos",
-  async (userId, userType, thunkAPI) => {
+  async ({ userId, userType }, thunkAPI) => {
     let videos = [];
     try {
       if (userType === "patient") {

@@ -10,6 +10,7 @@ import { logoutDeleteNative } from "../../store/redux/authSlice";
 import React from "react";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import InformationChip from "../../components/ui/InformationChip";
 
 function PatientProfileScreen() {
   const theme = useTheme();
@@ -159,33 +160,17 @@ function PatientProfileScreen() {
       {/* ========================PERSONAL INFO======================= */}
       {/* TODO change the personal information */}
       <View style={{ marginTop: 16, flexDirection: "row", flexWrap: "wrap" }}>
-        <Chip
-          selected
-          icon="gender-male-female"
-          style={{ marginRight: 8, marginBottom: 8 }}
-        >
-          {capitalizeFirstLetter(user.gender)}
-        </Chip>
-        <Chip
-          selected
-          icon="card-account-details"
-          style={{ marginRight: 8, marginBottom: 8 }}
-        >
-          {capitalizeFirstLetter(user.nric_passport)}
-        </Chip>
-        <Chip
-          selected
-          icon="face-man"
-          style={{ marginRight: 8, marginBottom: 8 }}
-        >
-          {user.age}
-        </Chip>
-        <Chip selected icon="flag" style={{ marginRight: 8, marginBottom: 8 }}>
-          {capitalizeFirstLetter(user.nationality)}
-        </Chip>
-        <Chip selected icon="phone" style={{ marginRight: 8, marginBottom: 8 }}>
-          {user.phone_number}
-        </Chip>
+        <InformationChip
+          text={capitalizeFirstLetter(user.gender)}
+          icon={"gender-male-female"}
+        />
+        <InformationChip
+          text={user.nric_passport}
+          icon={"card-account-details"}
+        />
+        <InformationChip text={user.age} icon={"face-man"} />
+        <InformationChip text={user.nationality} icon={"flag"} />
+        <InformationChip text={user.phone_number} icon={"phone"} />
       </View>
       {/* ======================= Progress Tracker =================== */}
       <View
