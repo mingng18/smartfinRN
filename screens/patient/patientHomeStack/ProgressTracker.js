@@ -6,6 +6,7 @@ import { Timestamp } from "firebase/firestore";
 import { VIDEO_STATUS } from "../../../constants/constants";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import Legend from "../../../components/ui/Legend";
 
 export default function ProgressTracker() {
   const theme = useTheme();
@@ -130,15 +131,3 @@ export default function ProgressTracker() {
   );
 }
 
-const Legend = ({ color, text }) => {
-  return (
-    <View
-      style={{ marginLeft: 16, marginBottom: 16, flexDirection: "row-reverse" }}
-    >
-      <Text variant="labelMedium" style={{ marginLeft: 4 }}>
-        {text}
-      </Text>
-      <Icon source="circle" color={color} size={16} />
-    </View>
-  );
-};

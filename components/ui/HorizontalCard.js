@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet, View } from "react-native";
-import { IconButton, Text, useTheme } from "react-native-paper";
+import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import {
   BLANK_PROFILE_PIC,
   HORIZONTAL_CARD_TYPE,
@@ -63,6 +63,11 @@ export default function HorizontalCard({
             size={32}
             onPress={iconOnPressedCallBack}
           />
+        )}
+        {cardType == HORIZONTAL_CARD_TYPE.PATIENT && (
+          <Button mode="outlined" onPress={iconOnPressedCallBack}>
+            Manage
+          </Button>
         )}
       </Pressable>
     </View>

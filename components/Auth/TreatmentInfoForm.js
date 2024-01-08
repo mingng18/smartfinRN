@@ -43,7 +43,7 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
-import { DIAGNOSIS, TREATMENT } from "../../constants/constants";
+import { COMPLIANCE_STATUS, DIAGNOSIS, TREATMENT } from "../../constants/constants";
 import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
 
 export default function TreatmentInfoForm({ isEditing }) {
@@ -139,7 +139,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         treatment: treatment,
         number_of_tablets: parseInt(numberOfTablets),
         profile_pic_url: profilePicUrl,
-        compliance_status: "Good",
+        compliance_status: COMPLIANCE_STATUS.GOOD,
         gender: signupInfo.gender,
         nationality: signupInfo.nationality,
         notes: "",
@@ -177,7 +177,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           dispatch(
             fetchPatientData({
               age: signupInfo.age,
-              compliance_status: "Good",
+              compliance_status: COMPLIANCE_STATUS.GOOD,
               date_of_diagnosis: new Date(submitDate).toISOString().toString(),
               diagnosis: diagnosis,
               email: signupInfo.email,

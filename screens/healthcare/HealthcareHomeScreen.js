@@ -19,7 +19,8 @@ import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 
 function HealthcareHomeScreen() {
-  const { navigate } = useNavigation();
+  const navigation = useNavigation();
+  const { navigate } = navigation;
   const theme = useTheme();
   const dispatch = useDispatch();
   const appointments = useSelector(
@@ -39,6 +40,11 @@ function HealthcareHomeScreen() {
   const [videosToBeReviewedCount, setVideosToBeReviewedCount] =
     React.useState(0);
   const [sideEffectsAlertCount, setSideEffectsAlertCount] = React.useState(0);
+
+
+  React.useLayoutEffect(() => {
+    navigation.navigate('AllPatientScreen')
+  });
 
   //Load all data with userId on the home page
   React.useEffect(() => {
@@ -153,7 +159,7 @@ function HealthcareHomeScreen() {
                 title={"Total Patient"}
                 icon="account-outline"
                 count={patientAmount}
-                // onPressedCallback={() => bottomSheetModalRef.current?.present()}
+                onPressedCallback={() => navigate("AllPatientScreen")}
               />
             }
             {
@@ -161,7 +167,7 @@ function HealthcareHomeScreen() {
                 title={"Videos to Review"}
                 icon="video"
                 count={videosToBeReviewedCount}
-                onPressedCallback={() => navigate("ReviewVideoScreen")}
+                onPressedCallback={() => navigation.jumpTo("healthcareReview")}
               />
             }
             <View style={{ marginRight: 16 }} />
@@ -181,7 +187,9 @@ function HealthcareHomeScreen() {
                 title={"Appointment"}
                 icon="calendar"
                 count={appointmentsCount}
-                // onPressedCallback={() => bottomSheetModalRef.current?.present()}
+                onPressedCallback={() =>
+                  navigation.jumpTo("healthcareAppointment")
+                }
               />
             }
             {
@@ -214,7 +222,7 @@ function HealthcareHomeScreen() {
                 icon="video"
                 title="Review Video"
                 color={theme.colors.primary}
-                onPressedCallback={handlePresentModalPress}
+                onPressedCallback={() => navigation.jumpTo("healthcareReview")}
               />
               <CTAButton
                 icon="emoticon-sick"
@@ -226,9 +234,9 @@ function HealthcareHomeScreen() {
               />
               <CTAButton
                 icon="calendar-blank"
-                title="Make Appointment"
+                title="Review Appointment"
                 color={theme.colors.tertiary}
-                onPressedCallback={() => navigate("BookAppointmentScreen")}
+                onPressedCallback={() => navigate("healthcareAppointment")}
                 isLastItem={true}
               />
             </View>
