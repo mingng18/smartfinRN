@@ -24,6 +24,7 @@ import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";
 import { deleteSideEffect, updateSideEffect } from "../../../store/redux/sideEffectSlice";
+import InformationChip from "../../../components/ui/InformationChip";
 
 export default function ReviewSideEffectDetailScreen() {
   const navigation = useNavigation();
@@ -55,13 +56,15 @@ export default function ReviewSideEffectDetailScreen() {
         remarks: remarks,
         healthcare_id: storedUid,
         reviewed_timestamp: serverTimestamp(),
+        se_status: "reviewed",
       }).then(() => {
         console.log("Side Effect Review Submission Success");
         navigation.goBack();
       });
-      dispatch(updateSideEffect( {id: currentSideEffect.id, changes: currentSideEffect} ))
-      dispatch(deleteSideEffect( {id: currentSideEffect.id} ))
+    dispatch(updateSideEffect({ id: currentSideEffect.id, changes: currentSideEffect }));
+    dispatch(deleteSideEffect(currentSideEffect.id));
     } catch (error) {
+        console.log(error + " occured when editing side Effect")
       Alert.alert(
         "Submit Error",
         "Something went wrong. Please try again later."
@@ -105,15 +108,18 @@ export default function ReviewSideEffectDetailScreen() {
           {currentSideEffect.symptoms.length > 0
             ? currentSideEffect.symptoms.map((symptom, i) => {
                 return (
-                  <Chip
-                    style={{
-                      marginVertical: 8,
-                      marginRight: 8,
-                      paddingVertical: 6,
-                    }}
-                  >
-                    {symptom.label}
-                  </Chip>
+                    <InformationChip
+                        text = {symptom.label}
+                    ></InformationChip>
+                //   <Chip
+                //     style={{
+                //       marginVertical: 8,
+                //       marginRight: 8,
+                //       paddingVertical: 6,
+                //     }}
+                //   >
+                //     {symptom.label}
+                //   </Chip>
                 );
               })
             : null}

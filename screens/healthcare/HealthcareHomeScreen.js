@@ -46,9 +46,7 @@ function HealthcareHomeScreen() {
       const storedUid = await SecureStore.getItemAsync("uid");
       console.log("the uid: " + storedUid);
       dispatch(fetchPatientCollectionData());
-      dispatch(
-        fetchAppointments({ patientId: storedUid, userType: "healthcare" })
-      );
+      dispatch(fetchAppointments({ patientId: storedUid, userType: "healthcare" }));
       dispatch(fetchSideEffects({ userId: storedUid, userType: "healthcare" }));
       dispatch(fetchVideos({ userId: storedUid, userType: "healthcare" }));
     };

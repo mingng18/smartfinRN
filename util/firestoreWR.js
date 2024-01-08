@@ -72,7 +72,6 @@ export async function editDocument(collectionName, documentId, updatedData) {
   try {
     const docRef = doc(db, collectionName, documentId);
     await updateDoc(docRef, updatedData);
-    // await setDoc(docRef, updatedData);
     console.log("Edit Successful!");
   } catch (error) {
     console.error("Failed to edit document: " + error.message);

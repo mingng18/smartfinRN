@@ -11,7 +11,9 @@ export default function InformationChip({ isBlur = false, text, icon }) {
 
   return (
     <Pressable onPress={() => setIsBlurring(!isBlurring)}>
-      <Chip selected icon={icon} style={{ marginRight: 8, marginBottom: 8 }}>
+      {icon ? 
+      //Chip with Icon
+      (<Chip selected icon={icon} style={{ marginRight: 8, marginBottom: 8 }}>
         {isDisableBlur ? (
           <Text>{text}</Text>
         ) : (
@@ -19,7 +21,18 @@ export default function InformationChip({ isBlur = false, text, icon }) {
             {text}
           </Text>
         )}
-      </Chip>
+      </Chip>) : ( 
+        //Chip without Icon
+        (<Chip style={{ marginRight: 8, marginBottom: 8 }}>
+          {isDisableBlur ? (
+            <Text>{text}</Text>
+          ) : (
+            <Text style={isBlurring ? styles.blurring : styles.noBlurred}>
+              {text}
+            </Text>
+          )}
+        </Chip>) 
+      )}
     </Pressable>
   );
 }
