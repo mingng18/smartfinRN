@@ -12,8 +12,14 @@ import {
   fetchPatientData,
 } from "../../store/redux/authSlice";
 import { useNavigation } from "@react-navigation/native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  fetchSignInMethodsForEmail,
+  getAuth,
+  signInWithEmailAndPassword,
+  linkWithCredential,
+} from "firebase/auth";
 import { fetchDocument } from "../../util/firestoreWR";
+import { FirebaseError } from "firebase/app";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
@@ -69,9 +75,94 @@ function LoginScreen() {
         );
       }
     } catch (error) {
-      Alert.alert(
-        "Authentication failed! Please check your credentials or sign up a new account!"
-      );
+      switch (error.code) {
+        //General Error
+        case "auth/account-exists-with-different-credential": //The account already exists with a different credential
+          // Fetch a list of what sign-in methods exist for the conflicting user
+          userSignInMethods = await fetchSignInMethodsForEmail(auth, email);
+
+          // If the user has several sign-in methods,
+          // the first method in the list will be the "recommended" method to use.
+          if (userSignInMethods[0] === "password") {
+            //Sign in with email and password
+            const userCredential = await signInWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+          } else if (userSignInMethods[0] === "google.com") {
+            //Sign in with google
+            const provider = new GoogleAuthProvider();
+            const userCredential = await signInWithPopup(auth, provider);
+            const user = credential.user;
+            //Link with email and password
+            const credential = EmailAuthProvider.credential(email, password);
+            await linkWithCredential(user, credential);
+          } else {
+            Alert.alert(
+              "Authentication failed!",
+              "We have found your account with a different sign in method. Please sign in with the correct sign in method."
+            );
+          }
+          break;
+        case "auth/user-not-found": //the user account was not found. This could happen if the user account has been deleted.
+          Alert.alert(
+            "User not found",
+            "Please kindly sign up a new account."
+          );
+          break;
+        case "FIRAuthErrorCodeNetworkError": //Indicates a network error occurred during the operation.
+          Alert.alert(
+            "Network error",
+            "Please kindly check your internet connection and try again later."
+          );
+          break;
+        case "FIRAuthErrorCodeTooManyRequests": //Indicates that the request has been blocked after an abnormal number of requests have been made from the caller device to the Firebase Authentication servers. Retry again after some time.
+          Alert.alert(
+            "Too many requests",
+            "You have tried to login on the same device too many times. Please try again after some time."
+          );
+          break;
+        //Sign In Method Error (Email or Google)
+        case "FIRAuthErrorCodeInvalidEmail": //Indicates the email address is malformed.
+          Alert.alert(
+            "Invalid email address",
+            "Please check your email address and try again."
+          );
+          break;
+        case "auth/user-disabled": //	Indicates the user's account is disabled.
+          Alert.alert(
+            "Your account has been disabled.",
+            "Please contact the administrator for more information."
+          );
+          break;
+        case "auth/wrong-password": //	Indicates the user attempted sign in with a wrong password.
+          Alert.alert(
+            "Wrong password",
+            "Please check your password and try again."
+          );
+          break;
+        case "auth/invalid-credential": //Indicates the supplied credential is invalid. This could happen if it has expired or it is malformed.
+          Alert.alert(
+            "Invalid credential",
+            "Your login might be expired or malformed. Please try again later."
+          );
+          break;
+        case "FIRAuthErrorCodeEmailAlreadyInUse": //Indicates the email asserted by the credential  is already in use by an existing account.
+          Alert.alert(
+            "Email already in use",
+            "Please check your email and try again."
+          );
+          break;
+
+        default: //Other error
+          console.log(error.code);
+          Alert.alert(
+            "Unknown error occured",
+            "Please check your credentials and try again later"
+          );
+          break;
+      }
     }
     setIsAuthenticating(false);
   }
