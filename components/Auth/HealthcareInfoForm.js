@@ -5,7 +5,7 @@ import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
 import { useDispatch, useSelector } from "react-redux";
 import { updateHealthcareInformation } from "../../store/redux/signupSlice";
 import * as Haptics from "expo-haptics";
-import { updateDocument } from "../../util/firestoreWR";
+import { editDocument } from "../../util/firestoreWR";
 import { useNavigation } from "@react-navigation/native";
 import { editHealthcareInfo } from "../../store/redux/authSlice";
 
@@ -71,7 +71,7 @@ export default function HealthcareInfoForm({ isEditing }) {
 
     //Update new data into firebase
     try {
-      await updateDocument("healthcare", user.user_uid, {
+      await editDocument("healthcare", user.user_uid, {
         first_name: firstName,
         last_name: lastName,
         role: role,

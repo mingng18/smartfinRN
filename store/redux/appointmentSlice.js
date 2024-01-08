@@ -95,14 +95,30 @@ export const appointmentSlice = createSlice({
       );
     },
     updateAppointment: (state, action) => {
-      const index = state.appointments.findIndex(
-        (appointment) => appointment.id === action.payload.id
-      );
+      const index = state.appointments.findIndex((appointment) => {
+        return appointment.id === action.payload.id;
+      });
       if (index !== -1) {
         state.appointments[index] = {
           ...state.appointments[index],
           ...action.payload.changes,
         };
+      }
+    },
+    updatePendingAppointment: (state, action) => {
+      const index = state.pendingAppointments.findIndex((appointment) => {
+        return appointment.id === action.payload.id;
+      });
+      if (index !== -1) {
+        const currentAppointment = {
+          ...state.pendingAppointments[index],
+          ...action.payload.changes,
+        };
+        //Delete from pending and add to appointment
+        state.pendingAppointments = state.pendingAppointments.filter(
+          (appointment) => appointment.id !== action.payload.id
+        );
+        state.appointments.push(currentAppointment);
       }
     },
   },
@@ -124,7 +140,11 @@ export const appointmentSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { createAppointment, deleteAppointment, updateAppointment } =
-  appointmentSlice.actions;
+export const {
+  createAppointment,
+  deleteAppointment,
+  updateAppointment,
+  updatePendingAppointment,
+} = appointmentSlice.actions;
 
 export default appointmentSlice.reducer;

@@ -58,8 +58,8 @@ export const SIDE_EFFECT_GRADE = [
   { label: "Grade 2", value: 2 },
   { label: "Grade 3", value: 3 },
 ];
-// export const SIDE_EFFECT_GRADE = [
-//   { label: "Grade 1 (Effects mild and generally not bothersome)", value: 1 },
-//   { label: "Grade 2 (Effects are bothersome and may interfere with doing some activities but are not dangerous)", value: 2 },
-//   { label: "Grade 3 (Effects are serious and interfere with a person’s ability to do basic things like eat or get dressed)", value: 3 },
-// ];
+
+export const HORIZONTAL_CARD_TYPE = {
+  DEFAULT: 'default',
+  VIDEO_CALL_APPOINTMENT: "video-call-appointment",
+};

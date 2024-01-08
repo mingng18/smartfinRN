@@ -16,12 +16,12 @@ import { Alert, StyleSheet, View } from "react-native";
 import { deleteObject, getStorage, ref } from "firebase/storage";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
 import { useDispatch } from "react-redux";
-
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
 import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";
+import { updateVideo } from "../../../store/redux/videoSlice";
 
 export default function ReviewVideoDetailsScreen() {
   const navigation = useNavigation();
@@ -55,7 +55,7 @@ export default function ReviewVideoDetailsScreen() {
     const storedUid = await SecureStore.getItemAsync("uid");
     try {
       if (isAccepted) {
-        await editDocument("video", currentVideo.id, {
+        const updatedVideo = {
           medical_checklist: treatment,
           rejected_reason: "",
           reviewed_timestamp: serverTimestamp(),
@@ -66,7 +66,9 @@ export default function ReviewVideoDetailsScreen() {
             new Date(currentVideo.uploaded_timestamp)
           ),
           video_url: "",
-        });
+        };
+
+        await editDocument("video", currentVideo.id, updatedVideo);
 
         // Delete the video file from firebase storage
         deleteVideo(currentVideo.id);
@@ -83,7 +85,7 @@ export default function ReviewVideoDetailsScreen() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
           Alert.alert("Error occured", "Please fill in reason");
         } else {
-          await editDocument("video", currentVideo.id, {
+          const updatedVideo = {
             medical_checklist: treatment,
             rejected_reason: reason,
             reviewed_timestamp: serverTimestamp(),
@@ -94,7 +96,8 @@ export default function ReviewVideoDetailsScreen() {
               new Date(currentVideo.uploaded_timestamp)
             ),
             video_url: "",
-          });
+          };
+          await editDocument("video", currentVideo.id, updatedVideo);
 
           // Delete the video file from firebase storage
           deleteVideo(currentVideo.id);

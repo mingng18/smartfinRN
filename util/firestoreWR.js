@@ -80,17 +80,6 @@ export async function editDocument(collectionName, documentId, updatedData) {
   }
 }
 
-export async function updateDocument(collectionName, documentId, updatedData) {
-  try {
-    const docRef = doc(db, collectionName, documentId);
-    await updateDoc(docRef, updatedData);
-    console.log("Update Successful!");
-  } catch (error) {
-    console.error("Failed to update document: " + error.message);
-    throw error;
-  }
-}
-
 //Appointment
 export async function fetchAppointmentsForPatient(patientId) {
   try {

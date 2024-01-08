@@ -12,7 +12,7 @@ const initialState = {
 
 export const fetchSideEffects = createAsyncThunk(
   "sideEffects/fetchSideEffects",
-  async (userId, userType, thunkAPI) => {
+  async ({ userId, userType }, thunkAPI) => {
     try {
       let sideEffects = [];
       if (userType === "patient") {
@@ -20,7 +20,7 @@ export const fetchSideEffects = createAsyncThunk(
       } else {
         sideEffects = await fetchSideEffectsAlertHealthcare(userId);
       }
-      
+
       // Convert non-serializable values to serializable ones and handle null cases
       sideEffects = sideEffects.map((sideEffect) => {
         console.log(

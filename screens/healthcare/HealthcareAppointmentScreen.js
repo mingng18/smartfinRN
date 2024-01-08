@@ -5,7 +5,10 @@ import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import { Divider, Text, useTheme } from "react-native-paper";
 import { useSelector } from "react-redux";
-import { APPOINTMENT_STATUS } from "../../constants/constants";
+import {
+  APPOINTMENT_STATUS,
+  HORIZONTAL_CARD_TYPE,
+} from "../../constants/constants";
 import TextListButton from "../../components/ui/TextListButton";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../util/capsFirstWord";
@@ -58,7 +61,9 @@ export default function HealthcareAppointmentScreen() {
     const matchedAppointment = chosenAppointment.filter(
       (item) =>
         new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
-        selectedDate
+          selectedDate &&
+        (item.appointment_status === APPOINTMENT_STATUS.ACCEPTED ||
+          item.appointment_status === APPOINTMENT_STATUS.PENDING)
     );
 
     if (matchedAppointment.length > 0) {
@@ -69,7 +74,9 @@ export default function HealthcareAppointmentScreen() {
               <HorizontalCard
                 key={i}
                 profilePic={appointment.patient_data.profile_pic_url}
-                subject={capitalizeFirstLetter(appointment.patient_data.first_name)}
+                subject={capitalizeFirstLetter(
+                  appointment.patient_data.first_name
+                )}
                 status={capitalizeFirstLetter(appointment.appointment_status)}
                 date={new Date(appointment.scheduled_timestamp)
                   .toISOString()
@@ -81,11 +88,23 @@ export default function HealthcareAppointmentScreen() {
                   minute: "numeric",
                   hour12: true,
                 })}
-                color={theme.colors.secondaryContainer}
+                color={
+                  isPending
+                    ? theme.colors.primaryContainer
+                    : theme.colors.secondaryContainer
+                }
                 onPressedCallback={() => {
                   navigate("HealthcareAppointmentDetailsScreen", {
                     appointment: appointment,
                   });
+                }}
+                cardType={
+                  isPending
+                    ? HORIZONTAL_CARD_TYPE.DEFAULT
+                    : HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT
+                }
+                iconOnPressedCallBack={() => {
+                  console.log("video calling");
                 }}
               />
             );

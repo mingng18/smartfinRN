@@ -1,6 +1,9 @@
 import { Image, Pressable, StyleSheet, View } from "react-native";
-import { Text, useTheme } from "react-native-paper";
-import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { IconButton, Text, useTheme } from "react-native-paper";
+import {
+  BLANK_PROFILE_PIC,
+  HORIZONTAL_CARD_TYPE,
+} from "../../constants/constants";
 
 export default function HorizontalCard({
   profilePic,
@@ -11,6 +14,7 @@ export default function HorizontalCard({
   color,
   onPressedCallback,
   cardType,
+  iconOnPressedCallBack,
 }) {
   const theme = useTheme();
 
@@ -36,22 +40,30 @@ export default function HorizontalCard({
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>
+            {cardType !== HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT && (
+              <Text variant="labelLarge">{status}</Text>
+            )}
           </View>
-          {cardType == "video" ? (
-            <View style={[styles.textContainer, { paddingTop: 0 }]}>
-              <Text variant="bodyMedium">{date}</Text>
-              <Text variant="bodyMedium">{time}</Text>
-            </View>
-          ) : (
-            <View style={[styles.sideEffectTextContainer, { paddingTop: 0 }]}>
-              <Text variant="bodyMedium">{date + " "}</Text>
-              <Text variant="bodyMedium">{time}</Text>
-            </View>
-          )}
+          <View style={[styles.textContainer, { paddingTop: 0 }]}>
+            {cardType !== HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT ? (
+              <>
+                <Text variant="bodyMedium">{date}</Text>
+                <Text variant="bodyMedium">{time}</Text>
+              </>
+            ) : (
+              <>
+                <Text variant="bodyMedium">{time}</Text>
+              </>
+            )}
+          </View>
         </View>
-        <Text variant="labelLarge" style={{ fontWeight: "600" }}>
-          {status}
-        </Text>
+        {cardType == HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT && (
+          <IconButton
+            icon="video-outline"
+            size={32}
+            onPress={iconOnPressedCallBack}
+          />
+        )}
       </Pressable>
     </View>
   );
@@ -79,12 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "baseline",
-  },
-  sideEffectTextContainer: {
-    flex: 1,
-    flexDirection: "row",
-    // justifyContent: "space-between",
     alignItems: "baseline",
   },
 });

@@ -31,7 +31,9 @@ function HealthcareHomeScreen() {
   const patients = useSelector((state) => state.patientDataObject.patients);
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
-  const sideEffects = useSelector((state) => state.sideEffectObject.sideEffects);
+  const sideEffects = useSelector(
+    (state) => state.sideEffectObject.sideEffects
+  );
   const [appointmentsCount, setAppointmentsCount] = React.useState(0);
   const [patientAmount, setPatientAmount] = React.useState(0);
   const [videosToBeReviewedCount, setVideosToBeReviewedCount] =
@@ -47,7 +49,7 @@ function HealthcareHomeScreen() {
       dispatch(
         fetchAppointments({ patientId: storedUid, userType: "healthcare" })
       );
-      dispatch(fetchSideEffects(storedUid, "healthcare"));
+      dispatch(fetchSideEffects({ userId: storedUid, userType: "healthcare" }));
       dispatch(fetchVideos({ userId: storedUid, userType: "healthcare" }));
     };
 
@@ -78,7 +80,7 @@ function HealthcareHomeScreen() {
     const calculateSideEffectsAlertCount = () => {
       console.log("side effects: ", sideEffects.length);
       setSideEffectsAlertCount(parseInt(sideEffects.length));
-    }
+    };
     calculatePatientCount();
     calculateAppointmentCount();
     calculateVideosToBeReviewedCount();
@@ -160,7 +162,7 @@ function HealthcareHomeScreen() {
               /*pendingAppointmentsCount > 0 &&*/ <HealthcareToDoCard
                 title={"Videos to Review"}
                 icon="video"
-                  count={videosToBeReviewedCount}
+                count={videosToBeReviewedCount}
                 onPressedCallback={() => navigate("ReviewVideoScreen")}
               />
             }
@@ -188,7 +190,7 @@ function HealthcareHomeScreen() {
               /*pendingAppointmentsCount > 0 &&*/ <HealthcareToDoCard
                 title={"Side Effect Alert"}
                 icon="emoticon-sick-outline"
-                  count={sideEffectsAlertCount}
+                count={sideEffectsAlertCount}
                 onPressedCallback={() => navigate("ReviewSideEffectScreen")}
               />
             }
