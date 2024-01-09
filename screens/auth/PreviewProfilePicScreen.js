@@ -52,7 +52,7 @@ export default function PreviewProfilePicScreen() {
       last_name: signupInfo.lastName,
       category: signupInfo.category,
       role: signupInfo.role,
-      staff_id: signupInfo.staffId,
+      mpm_id: signupInfo.mpmId,
       profile_pic_url: profilePicUrl,
     });
   }
@@ -87,7 +87,7 @@ export default function PreviewProfilePicScreen() {
               first_name: signupInfo.firstName,
               last_name: signupInfo.lastName,
               role: signupInfo.role,
-              staff_id: signupInfo.staffId,
+              mpm_Id: signupInfo.mpmId,
               profile_pic_url: downloadURL,
             })
           );
@@ -103,6 +103,7 @@ export default function PreviewProfilePicScreen() {
   }
 
   async function signupHealthcare() {
+    dispatch(updateProfilePictureURI(uri))
     //Debug use
     console.log(
       "email: " + signupInfo.email,
@@ -129,11 +130,12 @@ export default function PreviewProfilePicScreen() {
       const ppStorageRef = ref(storage, "healthcareProfilePicture/" + user.uid);
       setIsUploading(true);
       const donwloadURL = await uploadImage(
-        signupInfo.profilePictureURI,
+        uri,
         ppStorageRef,
         user.uid,
         token.token
       );
+      setIsUploading(false);
 
     } catch (error) {
       Alert.alert(

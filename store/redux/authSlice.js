@@ -29,7 +29,7 @@ const authSlice = createSlice({
     //healthcare data below:
     category: null,
     role: null,
-    staff_id: null,
+    mpm_id: null,
   },
   reducers: {
     authenticate: (state, action) => {
@@ -74,12 +74,12 @@ const authSlice = createSlice({
       state.profile_pic_url = action.payload.profile_pic_url;
       state.category = action.payload.category;
       state.role = action.payload.role;
-      state.staff_id = action.payload.staff_id;
+      state.mpm_id = action.payload.mpm_id;
     },
     editHealthcareInfo: (state, action) => {
       state.first_name = action.payload.first_name;
       state.last_name = action.payload.last_name;
-      state.staff_id = action.payload.staff_id;
+      state.mpm_id = action.payload.mpm_id;
       state.role = action.payload.role;
       state.category = action.payload.category;
     },

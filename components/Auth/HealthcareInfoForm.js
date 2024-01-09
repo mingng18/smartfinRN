@@ -31,12 +31,12 @@ export default function HealthcareInfoForm({ isEditing }) {
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
-  const [staffId, setStaffId] = React.useState("");
+  const [mpmId, setMpmId] = React.useState("");
 
   const [credentialsInvalid, setCredentialsInvalid] = React.useState({
     firstName: false,
     lastName: false,
-    staffId: false,
+    mpmId: false,
   });
 
   const user = useSelector((state) => state.authObject);
@@ -47,7 +47,7 @@ export default function HealthcareInfoForm({ isEditing }) {
       setRole(user.role);
       setFirstName(user.first_name);
       setLastName(user.last_name);
-      setStaffId(user.staff_id);
+      setMpmId(user.mpm_id);
     }
   }, [isEditing]);
 
@@ -58,7 +58,7 @@ export default function HealthcareInfoForm({ isEditing }) {
       updateHealthcareInformation({
         firstName: firstName,
         lastName: lastName,
-        staffId: staffId,
+        mpmId: mpmId,
         role: role,
         category: category,
       })
@@ -76,7 +76,7 @@ export default function HealthcareInfoForm({ isEditing }) {
         first_name: firstName,
         last_name: lastName,
         role: role,
-        staff_id: staffId,
+        mpm_id: mpmId,
         category: category,
       });
 
@@ -84,7 +84,7 @@ export default function HealthcareInfoForm({ isEditing }) {
         editHealthcareInfo({
           first_name: firstName,
           last_name: lastName,
-          staff_id: staffId,
+          mpm_id: mpmId,
           role: role,
           category: category,
         })
@@ -103,18 +103,18 @@ export default function HealthcareInfoForm({ isEditing }) {
   function inputCheck() {
     // Input validation using regex
     const nameRegex = /^[A-Za-z\s]+$/;
-    const staffIdRegex = /^[A-Za-z0-9]+$/;
+    const mpmIdRegex = /^[A-Za-z0-9]+$/;
 
     // Input validation logic
     const firstNameIsValid = nameRegex.test(firstName);
     const lastNameIsValid = nameRegex.test(lastName);
-    const staffIdIsValid = staffIdRegex.test(staffId);
+    const mpmIdIsValid = mpmIdRegex.test(mpmId);
 
-    if (!firstNameIsValid || !lastNameIsValid || !staffIdIsValid) {
+    if (!firstNameIsValid || !lastNameIsValid || !mpmIdIsValid) {
       setCredentialsInvalid({
         firstName: !firstNameIsValid,
         lastName: !lastNameIsValid,
-        staffId: !staffIdIsValid,
+        mpmId: !mpmIdIsValid,
       });
       return Alert.alert("Invalid input", "Please check your entered input.");
     }
@@ -162,11 +162,11 @@ export default function HealthcareInfoForm({ isEditing }) {
       <View style={{ marginTop: 16 }} />
       <TextInput
         mode="outlined"
-        label="Staff ID"
+        label="MPM ID"
         maxLength={10}
-        value={staffId}
-        onChangeText={(value) => setStaffId(value)}
-        error={credentialsInvalid.staffId}
+        value={mpmId}
+        onChangeText={(value) => setMpmId(value)}
+        error={credentialsInvalid.mpmId}
       />
       <View style={{ marginTop: 16 }} />
       <CustomDropDownPicker

@@ -69,13 +69,19 @@ function PreviewVideoScreen() {
       setIsLoading(true);
 
       if (uid === null || uid === undefined || uid === "") {
-        Alert.alert(
+        return Alert.alert(
           "Error",
           "Something wrong, please login again and try again"
         );
-        return;
+
       }
 
+      if(video === null || video === undefined || video === "") {
+        return Alert.alert(
+          "Video error",
+          "Please choose another video"
+        );
+      }
       const videoData = await fetch(video);
       const videoBlob = await videoData.blob();
 
@@ -166,6 +172,27 @@ function PreviewVideoScreen() {
         }
       );
     } catch (error) {
+      switch (error.code) {
+          case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              Alert.alert(
+                "Unauthorized",
+                "Error uploading video, please login again and try again"
+              );
+              break;
+
+            case "storage/canceled":
+              // User canceled the upload
+              Alert.alert("Cancelled", "Video upload cancelled");
+              break;
+
+            case "storage/unknown":
+              // Unknown error occurred, inspect error.serverResponse
+              Alert.alert("Error", "Error uploading video, please try again");
+              break;
+      }
+      
+          setIsLoading(false);
       setIsLoading(false);
       Alert.alert("Error", "Error uploading video, please try again");
       console.error("Error uploading video:", error);

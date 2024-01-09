@@ -21,7 +21,7 @@ const signupSlice = createSlice({
     profilePictureURI: null,
     age: 0,
     signupMode: "",
-    staffId: "",
+    mpmId: "",
     role: "",
     category: "",
   },
@@ -45,7 +45,7 @@ const signupSlice = createSlice({
     updateHealthcareInformation: (state, action) => {
       state.firstName = action.payload.firstName;
       state.lastName = action.payload.lastName;
-      state.staffId = action.payload.staffId;
+      state.mpmId = action.payload.mpmId;
       state.role = action.payload.role;
       state.category = action.payload.category;
     },
