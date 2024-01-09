@@ -20,6 +20,10 @@ export const fetchVideos = createAsyncThunk(
       } else {
         videos = await fetchVideosToBeReviewedForHealthcare(userId); // Fetch video data from Firestore or any other source for healthcare
       }
+      
+      if (videos === null || videos === undefined){
+        return null
+      }
 
       // Convert non-serializable values to serializable ones if needed
       videos = videos.map((video) => {
@@ -32,6 +36,7 @@ export const fetchVideos = createAsyncThunk(
             ? video.uploaded_timestamp.toDate().toISOString()
             : "",
         };
+
         return updatedVideo;
       });
 

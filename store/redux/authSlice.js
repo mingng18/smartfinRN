@@ -44,6 +44,31 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.user_uid = null;
+      state.user_type = null;
+
+      //patient data below:
+      state.age = null;
+      state.compliance_status = null;
+      state.date_of_diagnosis = null;
+      state.diagnosis = null;
+      state.email = null;
+      state.first_name = null;
+      state.gender = null;
+      state.last_name = null;
+      state.nationality = null;
+      state.notes = null;
+      state.nric_passport = null;
+      state.number_of_tablets = null;
+      state.phone_number = null;
+      state.profile_pic_url = null;
+      state.treatment = null;
+      state.treatment_duration_months = null;
+
+      //healthcare data below:
+      state.category = null;
+      state.role = null;
+      state.mpm_id = null;
+
     },
     setFirstTimeLogin: (state, action) => {
       state.first_time_login = action.payload.first_time_login;
