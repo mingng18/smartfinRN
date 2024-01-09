@@ -84,10 +84,9 @@ function PreviewVideoScreen() {
       }
       const videoData = await fetch(video);
       const videoBlob = await videoData.blob();
-
       const videoRef = ref(
         storageRef,
-        "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString()
+        "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString().slice(0, 10)
       );
       uploadTask = uploadBytesResumable(videoRef, videoBlob);
       uploadTask.on(
