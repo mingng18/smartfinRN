@@ -50,7 +50,8 @@ export default function VideoDetailsScreen() {
           }}
         >
           <Text variant="bodyLarge">
-            {currentVideo.reviewed_timestamp.slice(0, 10)}
+            {currentVideo.reviewed_timestamp &&
+              currentVideo.reviewed_timestamp.slice(0, 10)}
           </Text>
           <Text variant="bodyLarge">
             {new Date(currentVideo.reviewed_timestamp).toLocaleTimeString(
@@ -70,6 +71,17 @@ export default function VideoDetailsScreen() {
     );
   }
 
+  const isToday = () => {
+    const uploadedDate = new Date(currentVideo.uploaded_timestamp);
+    const today = new Date();
+
+    return (
+      uploadedDate.getFullYear() === today.getFullYear() &&
+      uploadedDate.getMonth() === today.getMonth() &&
+      uploadedDate.getDate() === today.getDate()
+    );
+  };
+
   function RejectedVideoCard() {
     return (
       <View>
@@ -81,11 +93,17 @@ export default function VideoDetailsScreen() {
             ? currentVideo.rejected_reason
             : "The healthcare didn't give any reason"}
         </Text>
-        <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
-          <Button mode="contained" onPress={handlePresentModalPress}>
-            Resubmit
-          </Button>
-        </View>
+        {isToday() ? (
+          <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
+            <Button mode="contained" onPress={handlePresentModalPress}>
+              Resubmit
+            </Button>
+          </View>
+        ) : (
+          <Text style={{ marginTop: 32 }}>
+            You have miss the time to resubmit
+          </Text>
+        )}
       </View>
     );
   }
@@ -114,7 +132,10 @@ export default function VideoDetailsScreen() {
           marginTop: 8,
         }}
       >
-        <Text>{currentVideo.uploaded_timestamp.slice(0, 10)}</Text>
+        <Text>
+          {currentVideo.uploaded_timestamp &&
+            currentVideo.uploaded_timestamp.slice(0, 10)}
+        </Text>
         <Text>
           {new Date(currentVideo.uploaded_timestamp).toLocaleTimeString(
             "en-US",

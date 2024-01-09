@@ -85,6 +85,7 @@ function PatientCalendarScreen() {
             marginBottom: 16,
           }}
           onPress={() => {
+            console.log(JSON.stringify(matchedVideo));
             navigate("VideoDetailsScreen", { video: matchedVideo });
           }}
         >

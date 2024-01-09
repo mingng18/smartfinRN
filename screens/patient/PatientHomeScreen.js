@@ -45,7 +45,7 @@ function PatientHomeScreen() {
   const videos = useSelector((state) => state.videoObject.videos);
   const [pendingAppointmentsCount, setPendingAppointmentsCount] =
     React.useState(0);
-  const [rejectedVideosCount, setRejectedVideosCount] = React.useState(0);
+  const [rejectedVideo, setRejectedVideo] = React.useState(null);
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -83,12 +83,20 @@ function PatientHomeScreen() {
       setPendingAppointmentsCount(appointmentData.length);
     };
 
-    //Check the count of the rejected video
+    //Check whether video today has been rejected
     const calculateRejectedVideosCount = () => {
-      const vid = videos.filter(
-        (video) => video.status === VIDEO_STATUS.REJECTED
-      );
-      setRejectedVideosCount(vid.length);
+      const vid = videos.find((video) => {
+        const uploadedDate = new Date(video.uploaded_timestamp);
+        const today = new Date();
+
+        const isToday =
+          uploadedDate.getFullYear() === today.getFullYear() &&
+          uploadedDate.getMonth() === today.getMonth() &&
+          uploadedDate.getDate() === today.getDate();
+
+        return video.status === VIDEO_STATUS.REJECTED && isToday;
+      });
+      setRejectedVideo(vid);
     };
 
     //Check if the patient has ate medicine today
@@ -174,7 +182,7 @@ function PatientHomeScreen() {
             <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
               {hasAteMedicine &&
               pendingAppointmentsCount == 0 &&
-              rejectedVideosCount == 0 ? (
+              rejectedVideo == 0 ? (
                 <Text
                   variant="bodyLarge"
                   style={{
@@ -209,12 +217,19 @@ function PatientHomeScreen() {
                       onPressedCallback={() => navigate("AllAppointmentScreen")}
                     />
                   )}
-                  {rejectedVideosCount > 0 && (
+                  {rejectedVideo != null && (
                     <ToDoCard
                       title={"Video Rejected"}
                       icon="play"
-                      count={rejectedVideosCount}
-                      onPressedCallback={() => {}}
+                      count={1}
+                      onPressedCallback={() => {
+                        // Assuming rejectedVideo is a Map object
+                        console.log(JSON.stringify(rejectedVideo));
+
+                        navigate("VideoDetailsScreen", {
+                          video: rejectedVideo,
+                        });
+                      }}
                     />
                   )}
                   {/* TODO Video Call Missed */}

@@ -58,7 +58,7 @@ export default function ReviewVideoDetailsScreen() {
         const updatedVideo = {
           medical_checklist: treatment,
           rejected_reason: "",
-          reviewed_timestamp: serverTimestamp(),
+          reviewed_timestamp: new Date(),
           reviewer_id: storedUid,
           status: VIDEO_STATUS.ACCEPTED,
           submitter_id: currentVideo.submitter_id,
@@ -74,7 +74,21 @@ export default function ReviewVideoDetailsScreen() {
         deleteVideo(currentVideo.id);
 
         // Dispatch the updateVideo action to update the Redux state
-        dispatch(updateVideo({ id: currentVideo.id, changes: updatedVideo }));
+        dispatch(
+          updateVideo({
+            id: currentVideo.id,
+            changes: {
+              medical_checklist: treatment,
+              rejected_reason: "",
+              reviewed_timestamp: new Date().toISOString(),
+              reviewer_id: storedUid,
+              status: VIDEO_STATUS.ACCEPTED,
+              submitter_id: currentVideo.submitter_id,
+              uploaded_timestamp: currentVideo.uploaded_timestamp,
+              video_url: "",
+            },
+          })
+        );
 
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert("Success", "Video successfully accepted.");
