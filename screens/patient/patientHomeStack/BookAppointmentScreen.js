@@ -15,7 +15,6 @@ export default function BookAppointmentScreen() {
   const theme = useTheme();
   const { params } = useRoute();
 
-  const [isReschedule, setIsReschedule] = React.useState(false);
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
@@ -34,18 +33,9 @@ export default function BookAppointmentScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: params.isReschedule
-        ? "Reschedule Appointment"
-        : "Book Appointment",
+      headerTitle: "Book Appointment"
     });
-    if (params != null) {
-      setIsReschedule(true);
-    }
   });
-
-  React.useEffect(() => {
-    
-  }, [isReschedule]);
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {
