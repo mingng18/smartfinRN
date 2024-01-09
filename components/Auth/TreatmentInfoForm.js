@@ -48,6 +48,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import {
+  BLANK_PROFILE_PIC,
   COMPLIANCE_STATUS,
   DIAGNOSIS,
   FIREBASE_COLLECTION,
@@ -163,7 +164,13 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   async function uploadImage(uri, path, userId, token) {
     try {
-      const imageData = await fetch(uri);
+      console.log("image is " + uri);
+      let imageData = "";
+      if (uri == "" || uri == null) {
+        imageData = await fetch(BLANK_PROFILE_PIC);
+      } else {
+        imageData = await fetch(uri);
+      }
       const imageBlob = await imageData.blob();
 
       uploadTask = uploadBytesResumable(path, imageBlob);
@@ -175,7 +182,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           console.log("Upload is " + progress + "% done");
           setUploadProgress(progress.toFixed(2));
         },
-        (error) =>  {},
+        (error) => {},
         (snapshot) => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
             // console.log(
@@ -213,14 +220,13 @@ export default function TreatmentInfoForm({ isEditing }) {
             setIsUploading(false);
             dispatch(authenticateStoreNative(token, userId, "patient")),
             await saveUserDateToFirestore("patient", userId, downloadURL);
-
             Alert.alert(
               "Sign Up Successful!",
               "Thanks for signing up!",
               [
                 {
                   text: "OK",
-                  onPress: () =>{} ,
+                  onPress: () => {},
                   style: "cancel",
                 },
               ],
@@ -232,7 +238,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         }
       );
     } catch (error) {
-      console.log(error)
+      console.log(error);
       return Alert.alert(
         "Profile Picture Upload Failed",
         "Please try again later."

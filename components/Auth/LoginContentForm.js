@@ -76,7 +76,7 @@ function LoginContentForm({ onAuthenticate }) {
   }
 
   function switchAuthModeHandler(mode) {
-    navigation.navigate("SignInInfoScreen", { signUpMode: mode });
+    navigation.navigate("SignInInfoScreen", { signupMode: mode });
   }
 
   function submitHandler() {
