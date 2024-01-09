@@ -303,13 +303,13 @@ function ReportSideEffectScreen() {
             <IconButton
               icon="information-outline"
               size={24}
-              // onPress={() =>
-              //   Alert.alert(
-              //     "Grade Classification",
-              //     "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
-              //   )
-              // }
-              onPress={showModal}
+              onPress={() =>
+                Alert.alert(
+                  "Grade Classification",
+                  "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
+                )
+              }
+              // onPress={showModal}
             />
           </View>
           <View
