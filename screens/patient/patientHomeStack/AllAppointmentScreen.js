@@ -9,7 +9,7 @@ import {
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { Timestamp } from "firebase/firestore";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { useSelector } from "react-redux";
 import { fetchDocument } from "../../../util/firestoreWR";
 

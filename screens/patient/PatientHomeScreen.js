@@ -26,7 +26,10 @@ import {
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import {
+  capitalizeFirstLetter,
+  getLastTenCharacters,
+} from "../../util/wordUtil";
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
@@ -134,12 +137,14 @@ function PatientHomeScreen() {
             { backgroundColor: theme.colors.secondaryContainer },
           ]}
         >
-          <CachedImage
-            source={{ uri: user.profile_pic_url }}
-            cacheKey={`${user.profile_pic_url}-thumb`}
-            defaultSource={BLANK_PROFILE_PIC}
-            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-          />
+          {user.profile_pic_url && (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          )}
           <View style={[styles.headerText]}>
             <Text variant="bodyLarge">Hello</Text>
             <Text variant="headlineLarge">

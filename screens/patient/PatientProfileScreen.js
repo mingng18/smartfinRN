@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
 import React from "react";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import { capitalizeFirstLetter, getLastTenCharacters } from "../../util/wordUtil";
 import InformationChip from "../../components/ui/InformationChip";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
@@ -125,12 +125,14 @@ function PatientProfileScreen() {
       {/* ===================HEADER==================== */}
       <View style={[styles.homeHeader]}>
         {/* TODO Change the name to the patients image */}
-        <CachedImage
-          source={{ uri: user.profile_pic_url }}
-          cacheKey={`${user.profile_pic_url}-thumb`}
-          defaultSource={BLANK_PROFILE_PIC}
-          style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-        />
+        {user.profile_pic_url && (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          )}
         <View style={[styles.headerText]}>
           {/* TODO Change the name to the patients name */}
           <View style={{ flexDirection: "row" }}>

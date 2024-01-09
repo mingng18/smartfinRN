@@ -34,12 +34,18 @@ export default function BookAppointmentScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: params == null ? "Book Appointment" : "Request Appointment",
+      headerTitle: params.isReschedule
+        ? "Reschedule Appointment"
+        : "Book Appointment",
     });
     if (params != null) {
       setIsReschedule(true);
     }
   });
+
+  React.useEffect(() => {
+    
+  }, [isReschedule]);
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {

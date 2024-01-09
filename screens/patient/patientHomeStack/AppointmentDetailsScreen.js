@@ -7,13 +7,18 @@ import {
   APPOINTMENT_STATUS,
   HORIZONTAL_CARD_TYPE,
 } from "../../../constants/constants";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
+import { editDocument } from "../../../util/firestoreWR";
+import { useDispatch } from "react-redux";
+import { updateAppointment } from "../../../store/redux/appointmentSlice";
+import * as Haptics from "expo-haptics";
 
 export default function AppointmentDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
   const currentAppointment = params.appointment;
+  const dispatch = useDispatch();
   // const [dialogVisible, setDialogVisible] = React.useState(false);
 
   //Set the Appointment Status to change layout
@@ -47,13 +52,13 @@ export default function AppointmentDetailsScreen() {
             flexWrap: "wrap",
           }}
         >
-          <Button
+          {/* <Button
             mode="contained"
-            onPress={rescheduleAppointment()}
+            onPress={rescheduleAppointment}
             style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Reschedule
-          </Button>
+          </Button> */}
           <Button
             mode="contained-tonal"
             style={{ marginLeft: 16, marginBottom: 16 }}
@@ -180,10 +185,40 @@ export default function AppointmentDetailsScreen() {
   const handleVideoCall = () => {};
 
   //TODO Reschedule Appointment
-  const rescheduleAppointment = () => {};
+  const rescheduleAppointment = () => {
+    navigation.navigate("BookAppointmentScreen", { isReschedule: true });
+  };
 
-  //TODO Cancel Appointment
-  const cancelAppointment = () => {};
+  const cancelAppointment = async () => {
+    const updatedAppointment = {
+      appointment_status: APPOINTMENT_STATUS.CANCELLED,
+    };
+    await editDocument("appointment", currentAppointment.id, updatedAppointment)
+      .then(() => {
+        dispatch(
+          updateAppointment({
+            id: currentAppointment.id,
+            changes: updatedAppointment,
+          })
+        );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert("Error cancelling", "Please try again later");
+        console.log("Error cancelling" + error);
+      });
+  };
+
+  const determineCardType = (status) => {
+    if (status === APPOINTMENT_STATUS.CANCELLED) {
+      return HORIZONTAL_CARD_TYPE.NO_PIC;
+    }
+    if (status === APPOINTMENT_STATUS.PENDING) {
+      return HORIZONTAL_CARD_TYPE.NO_PIC;
+    }
+  };
 
   return (
     <View
@@ -212,10 +247,7 @@ export default function AppointmentDetailsScreen() {
           hour12: true,
         })}
         color={containerColor(currentAppointment)}
-        cardType={
-          currentAppointment.appointment_status ===
-            APPOINTMENT_STATUS.PENDING && HORIZONTAL_CARD_TYPE.NO_PIC
-        }
+        cardType={determineCardType(currentAppointment.appointment_status)}
       />
       {currentAppointment.appointment_status === APPOINTMENT_STATUS.PENDING &&
         PendingCard()}

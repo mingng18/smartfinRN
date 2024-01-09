@@ -6,7 +6,7 @@ import CustomCalendar from "../../components/ui/CustomCalendar";
 import { ScrollView } from "react-native-gesture-handler";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { Pressable, View } from "react-native";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { useSelector } from "react-redux";
 import {
   APPOINTMENT_STATUS,
@@ -33,7 +33,6 @@ function PatientCalendarScreen() {
     (state) => state.sideEffectObject.sideEffects
   );
   const videos = useSelector((state) => state.videoObject.videos);
-
 
   //Refresh the calendar when there is new data
   React.useEffect(() => {
@@ -119,20 +118,19 @@ function PatientCalendarScreen() {
       } else if (today.getDate() === new Date(selectedDate).getDate()) {
         return (
           <Pressable onPress={() => bottomSheetModalRef.current?.present()}>
-
-          <View
-            style={{
-              backgroundColor: theme.colors.surfaceContainerHigh,
-              borderRadius: 8,
-              padding: 16,
-              marginBottom: 16,
-            }}
+            <View
+              style={{
+                backgroundColor: theme.colors.surfaceContainerHigh,
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16,
+              }}
             >
-            <Text variant="labelLarge">
-              You haven't upload any video for this day
-            </Text>
-          </View>
-            </Pressable>
+              <Text variant="labelLarge">
+                You haven't upload any video for this day
+              </Text>
+            </View>
+          </Pressable>
         );
       } else {
         return (
@@ -215,8 +213,9 @@ function PatientCalendarScreen() {
                 key={i}
                 profilePic={appointment.healthcare_profile_picture}
                 subject={capitalizeFirstLetter(
-                  appointment.appointment_status === APPOINTMENT_STATUS.PENDING
-                    ? "Awaiting Confirmation"
+                  appointment.healthcare_first_name === "" ||
+                    appointment.healthcare_first_name === null
+                    ? "Appointment"
                     : appointment.healthcare_first_name
                 )}
                 status={capitalizeFirstLetter(appointment.appointment_status)}

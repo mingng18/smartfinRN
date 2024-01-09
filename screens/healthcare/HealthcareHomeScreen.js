@@ -13,7 +13,10 @@ import {
   Platform,
 } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import {
+  capitalizeFirstLetter,
+  getLastTenCharacters,
+} from "../../util/wordUtil";
 import ToDoCard from "../../components/ui/ToDoCard";
 import { BLANK_PROFILE_PIC, USER_TYPE } from "../../constants/constants";
 import HealthcareToDoCard from "../../components/ui/ToDoCard_Healthcare";
@@ -24,6 +27,7 @@ import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import CachedImage from "expo-cached-image";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
@@ -129,14 +133,14 @@ function HealthcareHomeScreen() {
       >
         {/* ================ HomeHeader =============== */}
         <View style={[styles.homeHeader]}>
-          <Image
-            source={
-              user.profile_pic_url
-                ? { uri: user.profile_pic_url }
-                : BLANK_PROFILE_PIC
-            }
-            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-          />
+          {user.profile_pic_url && (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          )}
           <View style={[styles.headerText]}>
             <Text variant="bodyLarge">Hello</Text>
             <Text variant="headlineLarge">

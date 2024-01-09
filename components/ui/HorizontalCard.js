@@ -39,24 +39,25 @@ export default function HorizontalCard({
         android_ripple={{ color: theme.colors.onBackground, borderless: false }}
         style={[styles.cardContainer]}
       >
-        {cardType !== HORIZONTAL_CARD_TYPE.NO_PIC && (
-          <CachedImage
-            source={{ uri: profilePic }}
-            cacheKey={`${profilePic}-thumb`}
-            defaultSource={BLANK_PROFILE_PIC}
-            style={styles.profilePicStyle}
-            placeholderContent={
-              <ActivityIndicator
-                color={theme.colors.primary}
-                size="small"
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                }}
-              />
-            }
-          />
-        )}
+        {cardType === HORIZONTAL_CARD_TYPE.NO_PIC ||
+          profilePic === null ||
+          (profilePic === "" ? (
+            <></>
+          ) : (
+            <CachedImage
+              source={{ uri: profilePic }}
+              cacheKey={`${profilePic}-thumb`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={styles.profilePicStyle}
+              placeholderContent={
+                <ActivityIndicator
+                  color={theme.colors.primary}
+                  size="small"
+                  style={styles.profilePicStyle}
+                />
+              }
+            />
+          ))}
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>

@@ -17,7 +17,7 @@ import { deleteObject, getStorage, ref } from "firebase/storage";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";

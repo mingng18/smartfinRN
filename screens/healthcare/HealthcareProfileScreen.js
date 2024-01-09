@@ -3,7 +3,10 @@ import { getAuth, signOut } from "firebase/auth";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import {
+  capitalizeFirstLetter,
+  getLastTenCharacters,
+} from "../../util/wordUtil";
 import TextListButton from "../../components/ui/TextListButton";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
 import CachedImage from "expo-cached-image";
@@ -41,12 +44,14 @@ export default function HealthcareProfileScreen() {
       }}
     >
       <View style={[styles.homeHeader]}>
-        <CachedImage
-          source={{ uri: user.profile_pic_url }}
-          cacheKey={`${user.profile_pic_url}-thumb`}
-          defaultSource={BLANK_PROFILE_PIC}
-          style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-        />
+        {user.profile_pic_url && (
+          <CachedImage
+            source={{ uri: user.profile_pic_url }}
+            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+            defaultSource={BLANK_PROFILE_PIC}
+            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+          />
+        )}
         <View style={{ flex: 1, justifyContent: "center" }}>
           <Text
             numberOfLines={2}
