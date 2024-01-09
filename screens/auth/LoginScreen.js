@@ -19,6 +19,10 @@ import {
 import { fetchDocument } from "../../util/firestoreWR";
 import { USER_TYPE } from "../../constants/constants";
 import { FIREBASE_COLLECTION } from "../../constants/constants";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
+import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
