@@ -175,6 +175,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           console.log("Upload is " + progress + "% done");
           setUploadProgress(progress.toFixed(2));
         },
+        (error) =>  {},
         (snapshot) => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
             // console.log(
@@ -210,6 +211,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             );
 
             setIsUploading(false);
+            dispatch(authenticateStoreNative(token, userId, "patient")),
             await saveUserDateToFirestore("patient", userId, downloadURL);
 
             Alert.alert(
@@ -218,8 +220,7 @@ export default function TreatmentInfoForm({ isEditing }) {
               [
                 {
                   text: "OK",
-                  onPress: () =>
-                    dispatch(authenticateStoreNative(token, userId, "patient")),
+                  onPress: () =>{} ,
                   style: "cancel",
                 },
               ],
@@ -231,6 +232,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         }
       );
     } catch (error) {
+      console.log(error)
       return Alert.alert(
         "Profile Picture Upload Failed",
         "Please try again later."
