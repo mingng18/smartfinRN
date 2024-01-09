@@ -41,6 +41,7 @@ export const fetchSideEffects = createAsyncThunk(
 
       return sideEffects;
     } catch (error) {
+      console.log("error in appointmentSlice", error);
       return thunkAPI.rejectWithValue(error.message);
     }
   }

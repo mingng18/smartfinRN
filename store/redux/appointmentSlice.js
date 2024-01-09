@@ -94,6 +94,7 @@ export const fetchAppointments = createAsyncThunk(
 
       return { appointments, pendingAppointments };
     } catch (error) {
+      console.log("error in appointmentSlice", error);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
