@@ -5,6 +5,7 @@ import { Text, useTheme } from "react-native-paper";
 import {} from "../../../assets/blank-profile-pic.png";
 import {
   BLANK_PROFILE_PIC,
+  HORIZONTAL_CARD_TYPE,
   SIDE_EFFECT_SEVERITY,
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
@@ -16,7 +17,7 @@ function AllSideEffectScreen() {
   const theme = useTheme();
   const sideEffects = useSelector(
     (state) => state.sideEffectObject.sideEffects
-  ).sort((a, b) => {});
+  );
 
   const sortedSideEffects = [...sideEffects].sort((a, b) => {
     const timestampA = new Date(a.side_effect_occuring_timestamp);
@@ -48,7 +49,6 @@ function AllSideEffectScreen() {
           sortedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              //   profilePic={"lol"}
               subject={capitalizeFirstLetter(sideEffect.severity)}
               date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
               time={new Date(
@@ -64,6 +64,7 @@ function AllSideEffectScreen() {
                   sideEffect: sideEffect,
                 });
               }}
+              cardType={HORIZONTAL_CARD_TYPE.NO_PIC}
             />
           ))
         ) : (

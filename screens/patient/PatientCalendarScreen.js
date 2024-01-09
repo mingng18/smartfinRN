@@ -85,6 +85,7 @@ function PatientCalendarScreen() {
             marginBottom: 16,
           }}
           onPress={() => {
+            console.log(JSON.stringify(matchedVideo));
             navigate("VideoDetailsScreen", { video: matchedVideo });
           }}
         >
@@ -208,6 +209,7 @@ function PatientCalendarScreen() {
       return (
         <>
           {matchedAppointment.map((appointment, i) => {
+            // console.log('card name' + appointment.healthcare_first_name);
             return (
               <HorizontalCard
                 key={i}

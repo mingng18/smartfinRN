@@ -10,6 +10,8 @@ import {
 import TextListButton from "../../components/ui/TextListButton";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
 import CachedImage from "expo-cached-image";
+import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HealthcareProfileScreen() {
   const theme = useTheme();
@@ -35,7 +37,7 @@ export default function HealthcareProfileScreen() {
   }
 
   return (
-    <View
+    <SafeAreaView
       style={{
         backgroundColor: theme.colors.background,
         height: "100%",
@@ -83,7 +85,7 @@ export default function HealthcareProfileScreen() {
       >
         Sign Out
       </Button>
-    </View>
+    </SafeAreaView>
   );
 }
 

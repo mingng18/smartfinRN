@@ -89,7 +89,7 @@ export default function BookAppointmentScreen() {
     }
     const storedUid = await SecureStore.getItemAsync("uid");
     setSubmitDate(new Date(submitDate));
-    submitDate.setHours(time.hour, time.minute, 0);
+    submitDate.setHours(time.hour + 12, time.minute, 0);
     // console.log("Final submit date: " + submitDate);
 
     console.log("the date is " + new Date().toISOString());
