@@ -164,7 +164,6 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   async function uploadImage(uri, path, userId, token) {
     try {
-      console.log("image is " + uri);
       let imageData = "";
       if (uri == "" || uri == null) {
         imageData = await fetch(BLANK_PROFILE_PIC);
@@ -185,13 +184,6 @@ export default function TreatmentInfoForm({ isEditing }) {
         (error) => {},
         (snapshot) => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            // console.log(
-            //   "timestamp is: " + new Date(submitDate).toISOString().toString()
-            // );
-            // console.log("number of tablets is: " + parseInt(numberOfTablets));
-            // console.log(
-            //   "duration of treatment is: " + parseInt(durationOfTreatment)
-            // );
 
             //Update redux store
             dispatch(
