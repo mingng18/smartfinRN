@@ -3,7 +3,10 @@ import React from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { APPOINTMENT_STATUS } from "../../../constants/constants";
+import {
+  APPOINTMENT_STATUS,
+  HORIZONTAL_CARD_TYPE,
+} from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
 
 export default function AppointmentDetailsScreen() {
@@ -47,12 +50,13 @@ export default function AppointmentDetailsScreen() {
           <Button
             mode="contained"
             onPress={rescheduleAppointment()}
-            style={{ marginLeft: 16 }}
+            style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Reschedule
           </Button>
           <Button
             mode="contained-tonal"
+            style={{ marginLeft: 16, marginBottom: 16 }}
             onPress={() => {
               Alert.alert(
                 "Cancel Appointment?",
@@ -98,12 +102,13 @@ export default function AppointmentDetailsScreen() {
           <Button
             mode="contained"
             onPress={handleVideoCall()}
-            style={{ marginLeft: 16 }}
+            style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Video Call
           </Button>
           <Button
             mode="contained-tonal"
+            style={{ marginLeft: 16, marginBottom: 16 }}
             onPress={() => {
               Alert.alert(
                 "Cancel Appointment?",
@@ -145,8 +150,9 @@ export default function AppointmentDetailsScreen() {
           Remarks/Notes
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-          If you cannot make it, please request a cancellation or you can
-          reschedule it.
+          {currentAppointment.remarks === ""
+            ? "No remarks"
+            : currentAppointment.remarks}
         </Text>
       </View>
     );
@@ -162,8 +168,9 @@ export default function AppointmentDetailsScreen() {
           Cancellation Reasons
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-          If you cannot make it, please request a cancellation or you can
-          reschedule it.
+          {currentAppointment.remarks === ""
+            ? "No remarks"
+            : currentAppointment.remarks}
         </Text>
       </View>
     );
@@ -205,6 +212,10 @@ export default function AppointmentDetailsScreen() {
           hour12: true,
         })}
         color={containerColor(currentAppointment)}
+        cardType={
+          currentAppointment.appointment_status ===
+            APPOINTMENT_STATUS.PENDING && HORIZONTAL_CARD_TYPE.NO_PIC
+        }
       />
       {currentAppointment.appointment_status === APPOINTMENT_STATUS.PENDING &&
         PendingCard()}

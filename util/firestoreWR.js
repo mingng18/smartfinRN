@@ -72,7 +72,6 @@ export async function editDocument(collectionName, documentId, updatedData) {
   try {
     const docRef = doc(db, collectionName, documentId);
     await updateDoc(docRef, updatedData);
-    console.log("Edit Successful!");
   } catch (error) {
     console.error("Failed to edit document: " + error.message);
     throw error;
@@ -124,7 +123,7 @@ export async function fetchAppointmentsForPatient(patientId) {
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    console.log("appointments", appointments);
+    console.log("firebase appointments", appointments);
     return appointments;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
@@ -263,7 +262,7 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
   }
 }
 
-export async function fetchSideEffectsAlertHealthcare(healthcareId) {
+export async function fetchSideEffectsAlertHealthcare() {
   try {
     const collectionRef = collection(db, "side_effect");
     const querySnapshot = await getDocs(collectionRef);

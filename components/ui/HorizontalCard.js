@@ -1,9 +1,16 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
-import { Button, IconButton, Text, useTheme } from "react-native-paper";
+import { Pressable, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  IconButton,
+  Text,
+  useTheme,
+} from "react-native-paper";
 import {
   BLANK_PROFILE_PIC,
   HORIZONTAL_CARD_TYPE,
 } from "../../constants/constants";
+import CachedImage from "expo-cached-image";
 
 export default function HorizontalCard({
   profilePic,
@@ -32,11 +39,24 @@ export default function HorizontalCard({
         android_ripple={{ color: theme.colors.onBackground, borderless: false }}
         style={[styles.cardContainer]}
       >
-        <Image
-          source={{ uri: profilePic }}
-          defaultSource={BLANK_PROFILE_PIC}
-          style={styles.profilePicStyle}
-        />
+        {cardType !== HORIZONTAL_CARD_TYPE.NO_PIC && (
+          <CachedImage
+            source={{ uri: profilePic }}
+            cacheKey={`${profilePic}-thumb`}
+            defaultSource={BLANK_PROFILE_PIC}
+            style={styles.profilePicStyle}
+            placeholderContent={
+              <ActivityIndicator
+                color={theme.colors.primary}
+                size="small"
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                }}
+              />
+            }
+          />
+        )}
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>

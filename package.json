@@ -21,6 +21,7 @@
     "axios": "^1.6.2",
     "expo": "^49.0.21",
     "expo-av": "~13.4.1",
+    "expo-cached-image": "^49.0.2",
     "expo-camera": "~13.4.4",
     "expo-font": "~11.4.0",
     "expo-haptics": "~12.4.0",
@@ -52,6 +53,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/lodash": "^4.14.202",
     "babel-plugin-module-resolver": "^5.0.0"
   },
   "private": true

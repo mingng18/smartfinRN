@@ -23,8 +23,10 @@ import {
 } from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
 import { fetchDocument } from "./util/firestoreWR";
-import { Alert } from "react-native";
-// import { AuthContext } from "./store/auth-context";
+import { fetchAppointments } from "./store/redux/appointmentSlice";
+import { fetchSideEffects } from "./store/redux/sideEffectSlice";
+import { fetchVideos } from "./store/redux/videoSlice";
+import { USER_TYPE } from "./constants/constants";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();
@@ -68,52 +70,52 @@ function Root() {
         console.log("Initialized uid:" + storedUid);
         try {
           const patientUser = await fetchDocument("patient", storedUid);
-
+          console.log("Fetching patient");
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
-          console.log(
-            "date from firebase is: " +
-              new Date(patientUser.date_of_diagnosis.toDate()).toISOString()
-          );
           dispatch(
             fetchPatientData({
-              age: patientUser.age,
-              compliance_status: patientUser.compliance_status,
-              date_of_diagnosis: new Date(
-                patientUser.date_of_diagnosis.toDate()
-              ).toISOString(),
-              diagnosis: patientUser.diagnosis,
-              email: patientUser.email,
-              first_name: patientUser.first_name,
-              gender: patientUser.gender,
-              last_name: patientUser.last_name,
-              nationality: patientUser.nationality,
-              notes: patientUser.notes,
-              nric_passport: patientUser.nric_passport,
-              number_of_tablets: patientUser.number_of_tablets,
-              phone_number: patientUser.phone_number,
-              profile_pic_url: patientUser.profile_pic_url,
-              treatment: patientUser.treatment,
-              treatment_duration_months: patientUser.treatment_duration_months,
+              ...patientUser,
+              date_of_diagnosis: patientUser.date_of_diagnosis
+                .toDate()
+                .toISOString(),
             })
           );
-        } catch (error) {
-          const healthcareUser = await fetchDocument("healthcare", storedUid);
-          console.log(
-            "healthcare email from firebase is: " + healthcareUser.email
+          dispatch(
+            fetchAppointments({
+              userId: storedUid,
+              userType: USER_TYPE.PATIENT,
+            })
           );
+          dispatch(
+            fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
+          );
+          dispatch(
+            fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
+          );
+        } catch (error) {
+          console.log("got error? " + error);
+          const healthcareUser = await fetchDocument("healthcare", storedUid);
+          console.log("Fetching healthcare");
+
           dispatch(
             authenticateStoreNative(storedToken, storedUid, "healthcare")
           );
+          dispatch(fetchHealthcareData({ ...healthcareUser }));
+          dispatch(fetchPatientCollectionData());
           dispatch(
-            fetchHealthcareData({
-              email: healthcareUser.email,
-              first_name: healthcareUser.first_name,
-              last_name: healthcareUser.last_name,
-              profile_pic_url: healthcareUser.profile_pic_url,
-              category: healthcareUser.category,
-              role: healthcareUser.role,
-              staff_id: healthcareUser.staff_id,
+            fetchAppointments({
+              userId: storedUid,
+              userType: USER_TYPE.HEALTHCARE,
             })
+          );
+          dispatch(
+            fetchSideEffects({
+              userId: storedUid,
+              userType: USER_TYPE.HEALTHCARE,
+            })
+          );
+          dispatch(
+            fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
           );
         }
       }

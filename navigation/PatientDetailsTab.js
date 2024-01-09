@@ -92,7 +92,9 @@ const PatientDetailsTab = ({ patient }) => {
             );
           })
         ) : (
-          <Text>This patient hasn't booked any appointment.</Text>
+          <Text variant="bodyLarge" style={{ paddingHorizontal: 24 }}>
+            This patient hasn't booked any appointment.
+          </Text>
         )}
       </ScrollView>
     );
@@ -147,7 +149,9 @@ const PatientDetailsTab = ({ patient }) => {
             );
           })
         ) : (
-          <Text>This patient hasn't reported any side effects.</Text>
+          <Text variant="bodyLarge" style={{ paddingHorizontal: 24 }}>
+            This patient hasn't reported any side effects.
+          </Text>
         )}
       </ScrollView>
     );

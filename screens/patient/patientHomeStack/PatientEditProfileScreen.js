@@ -34,14 +34,16 @@ function PatientEditProfileScreen() {
         paddingHorizontal: 16,
       }}
     >
-      <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}  automaticallyAdjustKeyboardInsets>
+      <ScrollView
+        style={{ flexGrow: 1 }}
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets
+      >
         <View style={{ marginTop: 16, alignItems: "center" }}>
           <Image
-            source={
-              user.profile_pic_url
-                ? { uri: user.profile_pic_url }
-                : BLANK_PROFILE_PIC
-            }
+            source={{ uri: user.profile_pic_url }}
+            cacheKey={`${user.profile_pic_url}-thumb`}
+            defaultSource={BLANK_PROFILE_PIC}
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <Button onPress={() => bottomSheetModalRef.current?.present()}>

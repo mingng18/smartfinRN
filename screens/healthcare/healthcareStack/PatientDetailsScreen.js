@@ -7,7 +7,7 @@ import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
 import { DIAGNOSIS, NOTES, TREATMENT } from "../../../constants/constants";
 import InformationChip from "../../../components/ui/InformationChip";
 import PatientDetailsTab from "../../../navigation/PatientDetailsTab";
-// import { debounce } from "lodash";
+import { debounce } from "lodash";
 import { editDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updatePatientData } from "../../../store/redux/patientDataSlice";
@@ -17,7 +17,6 @@ export default function PatientDetailsScreen() {
   const theme = useTheme();
   const { params } = useRoute();
   const currentPatient = params.patient;
-  const [notes, setNotes] = React.useState(NOTES.VOTS);
   const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
@@ -26,31 +25,35 @@ export default function PatientDetailsScreen() {
     });
   });
 
-  React.useEffect(() => {
-    if (currentPatient.notes !== "") {
-      setNotes(currentPatient.notes);
+  // React.useEffect(() => {
+  //   if (currentPatient.notes !== "") {
+  //     setNotes(currentPatient.notes);
+  //   }
+  // }, [currentPatient]);
+
+  const updateNotes = async (note) => {
+    console.log("clicked");
+    const updatedData = {
+      notes: note,
+    };
+    try {
+      await editDocument("patient", currentPatient.id, updatedData);
+      dispatch(
+        updatePatientData({ id: currentPatient.id, changes: updatedData })
+      );
+      console.log("success");
+    } catch (error) {
+      console.log("error " + error);
     }
-  }, [currentPatient]);
+  };
+
+  const debouncedUpdateNotes = React.useCallback(debounce(updateNotes, 1000), [
+    currentPatient.notes,
+  ]);
 
   function handleNotesChange(note) {
-    setNotes(note);
-    // debouncedUpdateNotes();
+    debouncedUpdateNotes(note);
   }
-
-  // const debouncedUpdateNotes = React.useCallback(
-  //   debounce(updateNotes, 1000),
-  //   []
-  // );
-
-  // const updateNotes = async () => {
-  //   const updatedData = {
-  //     notes: notes,
-  //   };
-  //   await editDocument("patient", currentPatient.id, updatedData);
-  //   dispatch(
-  //     updatePatientData({ id: currentPatient.id, changes: updatedData })
-  //   );
-  // };
 
   return (
     <View
@@ -129,16 +132,16 @@ export default function PatientDetailsScreen() {
           >{`On ${currentPatient.date_of_diagnosis.slice(0, 10)}`}</Text>
           <View
             style={{
-              marginTop: 23,
+              marginTop: 32,
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
             }}
           >
             <Text variant="titleLarge">Treatment Information</Text>
-            <IconButton icon="pencil" size={24} onPress={() => {}} />
+            {/* <IconButton icon="pencil" size={24} onPress={() => {}} /> */}
           </View>
-          <Text variant="bodyLarge">
+          <Text variant="bodyLarge" style={{ marginTop: 8 }}>
             {
               TREATMENT.find(
                 (treatment) => treatment.value === currentPatient.treatment
@@ -163,7 +166,10 @@ export default function PatientDetailsScreen() {
             >
               <RadioButton.Android
                 value={NOTES.VOTS}
-                status={notes === NOTES.VOTS ? "checked" : "unchecked"}
+                status={
+                  currentPatient.notes === NOTES.VOTS ? "checked" : "unchecked"
+                }
+                onPress={() => handleNotesChange(NOTES.VOTS)}
               />
               <Text variant="labelLarge">{NOTES.VOTS}</Text>
             </Pressable>
@@ -177,7 +183,10 @@ export default function PatientDetailsScreen() {
             >
               <RadioButton.Android
                 value={NOTES.DOTS}
-                status={notes === NOTES.DOTS ? "checked" : "unchecked"}
+                status={
+                  currentPatient.notes === NOTES.DOTS ? "checked" : "unchecked"
+                }
+                onPress={() => handleNotesChange(NOTES.DOTS)}
               />
               <Text variant="labelLarge">{NOTES.DOTS}</Text>
             </Pressable>
@@ -194,6 +203,7 @@ export default function PatientDetailsScreen() {
 const styles = StyleSheet.create({
   homeHeader: {
     flexDirection: "row",
+    alignItems: "center",
   },
   headerText: {
     marginLeft: 16,

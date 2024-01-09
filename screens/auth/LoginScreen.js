@@ -1,31 +1,21 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Alert } from "react-native";
-
-import AuthContentLogin from "../../components/Auth/AuthContent_Login";
+import LoginContentForm from "../../components/Auth/LoginContentForm";
 import LoadingOverlay from "../../components/ui/LoadingOverlay";
-import { login } from "../../util/firebaseAuth";
-// import { AuthContext } from "../store/auth-context";
 import { useDispatch } from "react-redux";
 import {
   authenticateStoreNative,
   fetchHealthcareData,
   fetchPatientData,
 } from "../../store/redux/authSlice";
-import { useNavigation } from "@react-navigation/native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { fetchDocument } from "../../util/firestoreWR";
+import { USER_TYPE } from "../../constants/constants";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
-  const { navigate } = useNavigation();
-
-  // const authCtx = useContext(AuthContext);
   const dispatch = useDispatch();
   const auth = getAuth();
-
-  // React.useLayoutEffect(() => {
-  //   navigate("HealthcareInformationScreen");
-  // });
 
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
@@ -39,33 +29,46 @@ function LoginScreen() {
       const token = await user.getIdTokenResult();
       try {
         const isPatient = await fetchDocument("patient", user.uid);
+        dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
         dispatch(
           fetchPatientData({
-            age: isPatient.age,
-            compliance_status: isPatient.compliance_status,
-            date_of_diagnosis: isPatient.date_of_diagnosis,
-            diagnosis: isPatient.diagnosis,
-            email: isPatient.email,
-            first_name: isPatient.first_name,
-            last_name: isPatient.last_name,
-            profile_pic_url: isPatient.profile_pic_url,
-            uid: isPatient.uid,
+            ...isPatient,
+            date_of_diagnosis: isPatient.date_of_diagnosis
+              .toDate()
+              .toISOString(),
           })
         );
-        dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
+        dispatch(
+          fetchAppointments({
+            userId: user.uid,
+            userType: USER_TYPE.PATIENT,
+          })
+        );
+        dispatch(
+          fetchSideEffects({ userId: user.uid, userType: USER_TYPE.PATIENT })
+        );
+        dispatch(
+          fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
+        );
       } catch (error) {
         const isHealthcare = await fetchDocument("healthcare", user.uid);
         dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
+        dispatch(fetchHealthcareData({ ...isHealthcare }));
+        dispatch(fetchPatientCollectionData());
         dispatch(
-          fetchHealthcareData({
-            email: isHealthcare.email,
-            first_name: isHealthcare.first_name,
-            last_name: isHealthcare.last_name,
-            profile_pic_url: isHealthcare.profile_pic_url,
-            category: isHealthcare.category,
-            role: isHealthcare.role,
-            staff_id: isHealthcare.staff_id,
+          fetchAppointments({
+            userId: user.uid,
+            userType: USER_TYPE.HEALTHCARE,
           })
+        );
+        dispatch(
+          fetchSideEffects({
+            userId: user.uid,
+            userType: USER_TYPE.HEALTHCARE,
+          })
+        );
+        dispatch(
+          fetchVideos({ userId: user.uid, userType: USER_TYPE.HEALTHCARE })
         );
       }
     } catch (error) {
@@ -80,7 +83,7 @@ function LoginScreen() {
     return <LoadingOverlay message="Logging in..." />;
   }
 
-  return <AuthContentLogin isLogin onAuthenticate={loginHandler} />;
+  return <LoginContentForm onAuthenticate={loginHandler} />;
 }
 
 export default LoginScreen;

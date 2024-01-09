@@ -11,6 +11,8 @@ import React from "react";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import { capitalizeFirstLetter } from "../../util/capsFirstWord";
 import InformationChip from "../../components/ui/InformationChip";
+import { SafeAreaView } from "react-native-safe-area-context";
+import CachedImage from "expo-cached-image";
 
 function PatientProfileScreen() {
   const theme = useTheme();
@@ -99,7 +101,7 @@ function PatientProfileScreen() {
     }
   }
 
-  function monthsSinceDiagnosis() {
+  const monthsSinceDiagnosis = React.useMemo(() => {
     const today = new Date();
     const diagnosis = new Date(user.date_of_diagnosis);
     console.log(diagnosis);
@@ -109,33 +111,28 @@ function PatientProfileScreen() {
       today.getMonth() -
       diagnosis.getMonth();
     return months + 1;
-  }
+  });
 
   return (
-    <View
+    <SafeAreaView
       style={{
         backgroundColor: theme.colors.background,
         height: "100%",
         paddingHorizontal: 16,
-        paddingTop: 56,
+        paddingTop: 8,
       }}
     >
       {/* ===================HEADER==================== */}
       <View style={[styles.homeHeader]}>
         {/* TODO Change the name to the patients image */}
-        <Image
-          source={
-            user.profile_pic_url
-              ? { uri: user.profile_pic_url }
-              : BLANK_PROFILE_PIC
-          }
+        <CachedImage
+          source={{ uri: user.profile_pic_url }}
+          cacheKey={`${user.profile_pic_url}-thumb`}
+          defaultSource={BLANK_PROFILE_PIC}
           style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
         />
         <View style={[styles.headerText]}>
           {/* TODO Change the name to the patients name */}
-          <Text variant="headlineLarge">
-            {capitalizeFirstLetter(user.first_name)}
-          </Text>
           <View style={{ flexDirection: "row" }}>
             <Text variant="bodyLarge">You are doing </Text>
             <Text
@@ -148,6 +145,9 @@ function PatientProfileScreen() {
             </Text>
             <Text variant="bodyLarge"> !</Text>
           </View>
+          <Text variant="headlineLarge">
+            {capitalizeFirstLetter(user.first_name)}
+          </Text>
         </View>
         <IconButton
           icon="pencil"
@@ -205,12 +205,12 @@ function PatientProfileScreen() {
               <Text variant="headlineLarge">{fill}%</Text>
               <Text variant="titleMedium">Progress Completion</Text>
               <Text variant="labelLarge">
-                {monthsSinceDiagnosis()}
-                {monthsSinceDiagnosis() === 1
+                {monthsSinceDiagnosis}
+                {monthsSinceDiagnosis === 1
                   ? "st"
-                  : monthsSinceDiagnosis() === 2
+                  : monthsSinceDiagnosis === 2
                   ? "nd"
-                  : monthsSinceDiagnosis() === 3
+                  : monthsSinceDiagnosis === 3
                   ? "rd"
                   : "th"}
                 {` month`}
@@ -239,7 +239,7 @@ function PatientProfileScreen() {
       >
         Sign Out
       </Button>
-    </View>
+    </SafeAreaView>
   );
 }
 

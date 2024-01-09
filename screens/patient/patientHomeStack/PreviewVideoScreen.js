@@ -21,7 +21,9 @@ import { Timestamp, doc, setDoc } from "firebase/firestore";
 import { db } from "../../../util/firebaseConfig";
 import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
-import { fetchVideos } from "../../../store/redux/videoSlice";
+import { createVideo } from "../../../store/redux/videoSlice";
+import { addDocumentWithId } from "../../../util/firestoreWR";
+import { VIDEO_STATUS } from "../../../constants/constants";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
@@ -29,21 +31,20 @@ function PreviewVideoScreen() {
   const theme = useTheme();
   const storageRef = getStorage();
   const uid = useSelector((state) => state.authObject.user_uid);
-
-  const { key, name, params, path } = route;
-  const [video, setVideo] = React.useState("");
   const videoRef = React.useRef(null);
+  const dispatch = useDispatch();
+  const { key, name, params, path } = route;
+
+  const [video, setVideo] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
-  const [isUploading, setIsUploading] = React.useState(false);
-  const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Upload Video",
     });
-    setVideo(params);
-    console.log(video);
+    setVideo(params.uri);
+    // console.log(video);
   });
 
   const pickImage = async () => {
@@ -61,27 +62,11 @@ function PreviewVideoScreen() {
     setIsLoading(false);
   };
 
-  async function saveVideoDataToFirestore(documentType, videoId, videoUrl) {
-    await setDoc(doc(db, documentType, videoId), {
-      medical_checklist: "",
-      rejected_reason: null,
-      reviewed_timestamp: null,
-      reviewer_id: null,
-      status: "pending",
-      submitter_id: uid,
-      uploaded_timestamp: Timestamp.now(),
-      video_url: videoUrl,
-    });
-  }
-
   //Upload video to firestore
   //TODO : more specific error handling
   const handleVideoSubmit = async () => {
-    setIsUploading(true);
     try {
       setIsLoading(true);
-      const videoData = await fetch(video);
-      const videoBlob = await videoData.blob();
 
       if (uid === null || uid === undefined || uid === "") {
         Alert.alert(
@@ -90,6 +75,9 @@ function PreviewVideoScreen() {
         );
         return;
       }
+
+      const videoData = await fetch(video);
+      const videoBlob = await videoData.blob();
 
       const videoRef = ref(
         storageRef,
@@ -112,14 +100,12 @@ function PreviewVideoScreen() {
                 "Unauthorized",
                 "Error uploading video, please login again and try again"
               );
-
               break;
+
             case "storage/canceled":
               // User canceled the upload
               Alert.alert("Cancelled", "Video upload cancelled");
               break;
-
-            // ...
 
             case "storage/unknown":
               // Unknown error occurred, inspect error.serverResponse
@@ -132,24 +118,44 @@ function PreviewVideoScreen() {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             getMetadata(videoRef)
               .then(async (metadata) => {
-                await saveVideoDataToFirestore(
-                  "video",
-                  metadata.name,
-                  downloadURL
-                );
-                Haptics.notificationAsync(
-                  Haptics.NotificationFeedbackType.Success
-                );
-                Alert.alert("Success", "Video successfully uploaded.");
                 const storedUid = await SecureStore.getItemAsync("uid");
-                dispatch(fetchVideos(storedUid));
-                navigation.popToTop();
+                addDocumentWithId("video", metadata.name, {
+                  medical_checklist: "",
+                  rejected_reason: null,
+                  reviewed_timestamp: null,
+                  reviewer_id: null,
+                  status: VIDEO_STATUS.PENDING,
+                  submitter_id: uid,
+                  uploaded_timestamp: Timestamp.now(),
+                  video_url: downloadURL,
+                })
+                  .then(() => {
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Success
+                    );
+                    Alert.alert("Success", "Video successfully uploaded.");
+                    dispatch(
+                      createVideo({
+                        medical_checklist: "",
+                        rejected_reason: null,
+                        reviewed_timestamp: null,
+                        reviewer_id: null,
+                        status: VIDEO_STATUS.PENDING,
+                        submitter_id: uid,
+                        uploaded_timestamp: new Date().toISOString(),
+                        video_url: downloadURL,
+                      })
+                    );
+                    navigation.popToTop();
+                  })
+                  .catch((error) => {
+                    throw error;
+                  });
               })
               .catch((error) => {
                 // Uh-oh, an error occurred!
                 console.log(
-                  "Error while getting metadata and writing to firestore: " +
-                    error
+                  `Error while getting metadata and writing to firestore: ${error}`
                 );
                 Alert.alert("Error", "Error uploading video, please try again");
               });
@@ -206,20 +212,25 @@ function PreviewVideoScreen() {
             marginBottom: 16,
             alignSelf: "center",
             width: "100%",
-            height: 16,
+            height: 24,
           }}
         >
-          <ProgressBar progress={uploadProgress}></ProgressBar>
+          <ProgressBar progress={uploadProgress} />
         </View>
       ) : null}
       <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
-        <Button mode="contained" onPress={handleVideoSubmit}>
+        <Button
+          mode="contained"
+          onPress={handleVideoSubmit}
+          disabled={isLoading ? true : false}
+        >
           Upload
         </Button>
         <Button
           mode="contained-tonal"
           style={{ marginRight: 16 }}
           onPress={pickImage}
+          disabled={isLoading ? true : false}
         >
           Choose Another Video
         </Button>

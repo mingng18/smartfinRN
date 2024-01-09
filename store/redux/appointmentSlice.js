@@ -13,40 +13,60 @@ const initialState = {
 
 export const fetchAppointments = createAsyncThunk(
   "appointments/fetchAppointments",
-  async ({ patientId, userType }, thunkAPI) => {
+  async ({ userId, userType }, thunkAPI) => {
     try {
       let appointments = [];
       let pendingAppointments = [];
       if (userType === "patient") {
-        appointments = await fetchAppointmentsForPatient(patientId);
+        appointments = await fetchAppointmentsForPatient(userId);
       } else {
         [appointments, pendingAppointments] =
-          await fetchAppointmentsForHealthcare(patientId);
+          await fetchAppointmentsForHealthcare(userId);
       }
+      console.log("slice" + appointments);
 
       // Convert non-serializable values to serializable ones and handle null cases
-      appointments = appointments.map((appointment) => {
-        const updatedAppointment = {
-          ...appointment,
-          created_timestamp: appointment.created_timestamp
-            ? appointment.created_timestamp.toDate().toISOString()
-            : "",
-          scheduled_timestamp: appointment.scheduled_timestamp
-            ? appointment.scheduled_timestamp.toDate().toISOString()
-            : "",
-          patient_data: {
-            ...appointment.patient_data,
-            date_of_diagnosis: appointment.patient_data.date_of_diagnosis
-              ? appointment.patient_data.date_of_diagnosis
-                  .toDate()
-                  .toISOString()
-              : "",
-          },
-        };
-        return updatedAppointment;
-      });
 
-      if (userType !== "patient") {
+      if (userType === "patient") {
+        appointments = appointments.map((appointment) => {
+          console.log("current is " + appointment);
+          const updatedAppointment = {
+            ...appointment,
+            created_timestamp: appointment.created_timestamp
+              ? appointment.created_timestamp.toDate().toISOString()
+              : "",
+            scheduled_timestamp: appointment.scheduled_timestamp
+              ? appointment.scheduled_timestamp.toDate().toISOString()
+              : "",
+          };
+
+          return updatedAppointment;
+        });
+      }
+
+      if (userType === "healthcare") {
+        appointments = appointments.map((appointment) => {
+          console.log("current is " + appointment);
+          const updatedAppointment = {
+            ...appointment,
+            created_timestamp: appointment.created_timestamp
+              ? appointment.created_timestamp.toDate().toISOString()
+              : "",
+            scheduled_timestamp: appointment.scheduled_timestamp
+              ? appointment.scheduled_timestamp.toDate().toISOString()
+              : "",
+            patient_data: {
+              ...appointment.patient_data,
+              date_of_diagnosis: appointment.patient_data.date_of_diagnosis
+                ? appointment.patient_data.date_of_diagnosis
+                    .toDate()
+                    .toISOString()
+                : "",
+            },
+          };
+
+          return updatedAppointment;
+        });
         pendingAppointments = pendingAppointments.map((appointment) => {
           const updatedAppointment = {
             ...appointment,
@@ -98,10 +118,11 @@ export const appointmentSlice = createSlice({
       const index = state.appointments.findIndex((appointment) => {
         return appointment.id === action.payload.id;
       });
+      const changes = action.payload.changes;
       if (index !== -1) {
         state.appointments[index] = {
           ...state.appointments[index],
-          ...action.payload.changes,
+          ...changes,
         };
       }
     },

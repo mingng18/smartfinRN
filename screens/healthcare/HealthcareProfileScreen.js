@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { capitalizeFirstLetter } from "../../util/capsFirstWord";
 import TextListButton from "../../components/ui/TextListButton";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
+import CachedImage from "expo-cached-image";
 
 export default function HealthcareProfileScreen() {
   const theme = useTheme();
@@ -36,19 +37,17 @@ export default function HealthcareProfileScreen() {
         backgroundColor: theme.colors.background,
         height: "100%",
         paddingHorizontal: 16,
-        paddingTop: 56,
+        paddingTop: 8,
       }}
     >
       <View style={[styles.homeHeader]}>
-        <Image
-          source={
-            user.profile_pic_url
-              ? { uri: user.profile_pic_url }
-              : BLANK_PROFILE_PIC
-          }
+        <CachedImage
+          source={{ uri: user.profile_pic_url }}
+          cacheKey={`${user.profile_pic_url}-thumb`}
+          defaultSource={BLANK_PROFILE_PIC}
           style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
         />
-        <View style={{ flex: 1, justifyContent: 'center' }}>
+        <View style={{ flex: 1, justifyContent: "center" }}>
           <Text
             numberOfLines={2}
             ellipsizeMode="tail"
@@ -86,9 +85,10 @@ export default function HealthcareProfileScreen() {
 const styles = StyleSheet.create({
   homeHeader: {
     flexDirection: "row",
+    alignItems: "center",
   },
   headerText: {
-    alignSelf: "center",
+    marginLeft: 16,
     flexWrap: "wrap",
   },
 });

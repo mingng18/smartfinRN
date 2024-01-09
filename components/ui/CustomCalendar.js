@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Chip, useTheme } from "react-native-paper";
 import { Timestamp } from "firebase/firestore";
@@ -76,12 +76,13 @@ export default function CustomCalendar({
           flexDirection: "row",
           justifyContent: "center",
           marginBottom: 24,
+          overflow: "hidden"
         }}
       >
         <Chip
           mode={!isAppointment && "outlined"}
-          onPress={() => setIsAppointment(!isAppointment)}
           style={[styles.chip, styles.firstChip]}
+          onPress={() => setIsAppointment(!isAppointment)}
           theme={{
             colors: { secondaryContainer: theme.colors.secondaryContainer },
           }}

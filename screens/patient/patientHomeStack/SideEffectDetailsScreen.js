@@ -84,6 +84,7 @@ export default function SideEffectDetailsScreen() {
         {currentSideEffect.symptoms.map((symptom, i) => {
           return (
             <Chip
+              key={i}
               style={{
                 marginRight: 8,
                 marginBottom: 8,

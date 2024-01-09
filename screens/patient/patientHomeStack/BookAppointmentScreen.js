@@ -1,16 +1,14 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { Alert, Pressable, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
-
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { addDocument } from "../../../util/firestoreWR";
-import { Timestamp } from "firebase/firestore";
 import * as Haptics from "expo-haptics";
 import { useDispatch } from "react-redux";
-import { fetchAppointments } from "../../../store/redux/appointmentSlice";
+import { createAppointment } from "../../../store/redux/appointmentSlice";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
@@ -22,7 +20,7 @@ export default function BookAppointmentScreen() {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   const [date, setDate] = React.useState(undefined);
-  const [submitDate, setSubmitDate] = React.useState(null); 
+  const [submitDate, setSubmitDate] = React.useState(null);
   const [time, setTime] = React.useState();
   const [items, setItems] = React.useState([
     { label: "2:00 pm", value: { hour: 2, minute: 0 } },
@@ -55,6 +53,7 @@ export default function BookAppointmentScreen() {
       //Format iosDate to date
       const dateObject = new Date(params.date);
 
+      //in the format "YYYY-MM-DD"
       const formattedDate = `${dateObject.getFullYear()}-${(
         dateObject.getMonth() + 1
       )
@@ -88,25 +87,42 @@ export default function BookAppointmentScreen() {
   };
 
   const handleAppointmentSubmission = async () => {
+    if (date == undefined || time == null) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Invalid Input", "Please fill in all the input");
+    }
     const storedUid = await SecureStore.getItemAsync("uid");
-    console.log(submitDate + " before set time");
-    setSubmitDate(new Date().setDate(submitDate));
-    console.log(submitDate + " before set time 2");
-    submitDate.setHours(time.hour,time.minute, 0);
-    // submitDate.setMinutes(0);
-    // submitDate.setSeconds(0);
-    console.log(submitDate + " after set time");
-    addDocument("appointment", {
+    setSubmitDate(new Date(submitDate));
+    submitDate.setHours(time.hour, time.minute, 0);
+    // console.log("Final submit date: " + submitDate);
+
+    console.log("the date is " + new Date().toISOString());
+    const newAppointment = {
       patient_id: storedUid,
       healthcare_id: null,
       appointment_status: "pending",
-      created_timestamp: Timestamp.now(),
+      created_timestamp: new Date(),
       remarks: "",
       scheduled_timestamp: submitDate,
-    });
+    };
+
+    addDocument("appointment", newAppointment);
     // setBookedDialogVisible(true);
-    Alert.alert("Booked Successful!", "Please wait for the healthcare to approve it.");
-    dispatch(fetchAppointments(storedUid));
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert(
+      "Booked Successful!",
+      "Please wait for the healthcare to approve it."
+    );
+    dispatch(
+      createAppointment({
+        patient_id: storedUid,
+        healthcare_id: null,
+        appointment_status: "pending",
+        created_timestamp: new Date().toISOString(),
+        remarks: "",
+        scheduled_timestamp: submitDate.toISOString(),
+      })
+    );
     navigation.goBack();
   };
 
@@ -154,7 +170,7 @@ export default function BookAppointmentScreen() {
         <Button
           mode="contained"
           onPress={() => {
-            handleAppointmentSubmission();             // TODO: Fix this Show the dialog to be able to function in ios as well
+            handleAppointmentSubmission(); // TODO: Fix this Show the dialog to be able to function in ios as well
           }}
         >
           Book

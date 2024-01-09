@@ -21,7 +21,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
 
-function AuthContentLogin({ isLogin, onAuthenticate }) {
+function LoginContentForm({ onAuthenticate }) {
   const navigation = useNavigation();
   const theme = useTheme();
 
@@ -76,14 +76,10 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
   }
 
   function switchAuthModeHandler(mode) {
-    if (isLogin) {
-      navigation.navigate("SignInInfoScreen", { signUpMode: mode });
-    } else {
-      navigation.replace("Login");
-    }
+    navigation.navigate("SignInInfoScreen", { signUpMode: mode });
   }
 
-  function submitHandler(credentials) {
+  function submitHandler() {
     email = enteredEmail.trim();
     password = enteredPassword.trim();
 
@@ -212,45 +208,49 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
                 >
                   Log In
                 </Button>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    marginVertical: 16,
-                    width: "100%",
-                  }}
-                >
-                  <Button
-                    mode="contained-tonal"
-                    onPress={() => switchAuthModeHandler("patient")}
-                    style={[styles.button, { flex: 1, marginRight: 8 }]}
-                  >
-                    Patient Sign Up
-                  </Button>
-                  <Button
-                    mode="contained-tonal"
-                    onPress={() => switchAuthModeHandler("healthcare")}
-                    style={[styles.button, { flex: 1, marginLeft: 8 }]}
-                  >
-                    Healthcare Sign Up
-                  </Button>
-                </View>
-                <Divider style={{ height: 1 }} />
                 {/* TODO: To be Google Sign in */}
                 <Button
                   mode="contained-tonal"
                   icon="google"
                   onPress={() => {}}
                   style={[
-                    styles.button,
                     {
                       height: 40,
-                      marginTop: 16,
+                      marginVertical: 16,
                       backgroundColor: theme.colors.surfaceVariant,
                     },
                   ]}
                 >
                   Google Sign In
                 </Button>
+                <Divider style={{ height: 1 }} />
+                <Text
+                  variant="labelLarge"
+                  style={{ alignSelf: "center", marginTop: 8 }}
+                >
+                  Sign up as
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    marginTop: 8,
+                  }}
+                >
+                  <Button
+                    mode="contained-tonal"
+                    onPress={() => switchAuthModeHandler("patient")}
+                    style={[{ flex: 1, marginRight: 8 }]}
+                  >
+                    Patient
+                  </Button>
+                  <Button
+                    mode="contained-tonal"
+                    onPress={() => switchAuthModeHandler("healthcare")}
+                    style={[{ flex: 1, marginLeft: 8 }]}
+                  >
+                    Healthcare
+                  </Button>
+                </View>
               </View>
             </View>
           </TouchableWithoutFeedback>
@@ -263,7 +263,7 @@ function AuthContentLogin({ isLogin, onAuthenticate }) {
   );
 }
 
-export default AuthContentLogin;
+export default LoginContentForm;
 
 const styles = StyleSheet.create({
   titleText: {
@@ -284,8 +284,5 @@ const styles = StyleSheet.create({
   },
   buttons: {
     marginTop: 8,
-  },
-  baseText: {
-    fontFamily: "Cochin",
   },
 });
