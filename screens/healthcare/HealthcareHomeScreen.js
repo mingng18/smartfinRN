@@ -1,22 +1,33 @@
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import * as SecureStore from "expo-secure-store";
 import React, { useRef } from "react";
 import {
   GestureHandlerRootView,
   ScrollView,
 } from "react-native-gesture-handler";
-import { View, StyleSheet, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  RefreshControl,
+  Platform,
+} from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import {
+  capitalizeFirstLetter,
+  getLastTenCharacters,
+} from "../../util/wordUtil";
 import ToDoCard from "../../components/ui/ToDoCard";
-import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { BLANK_PROFILE_PIC, USER_TYPE } from "../../constants/constants";
 import HealthcareToDoCard from "../../components/ui/ToDoCard_Healthcare";
 import CTAButton from "../../components/ui/CTAButton";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as Haptics from "expo-haptics";
+import CachedImage from "expo-cached-image";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
@@ -40,25 +51,35 @@ function HealthcareHomeScreen() {
   const [videosToBeReviewedCount, setVideosToBeReviewedCount] =
     React.useState(0);
   const [sideEffectsAlertCount, setSideEffectsAlertCount] = React.useState(0);
+  const [refreshing, setRefreshing] = React.useState(false);
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchDataForHealthcare;
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
-  React.useLayoutEffect(() => {
-    navigation.navigate('AllPatientScreen')
-  });
+  // React.useLayoutEffect(() => {
+  //   navigation.navigate("AllPatientScreen");
+  // });
 
   //Load all data with userId on the home page
-  React.useEffect(() => {
-    const fetchDataForHealthcare = async () => {
-      const storedUid = await SecureStore.getItemAsync("uid");
-      console.log("the uid: " + storedUid);
-      dispatch(fetchPatientCollectionData());
-      dispatch(fetchAppointments({ patientId: storedUid, userType: "healthcare" }));
-      dispatch(fetchSideEffects({ userId: storedUid, userType: "healthcare" }));
-      dispatch(fetchVideos({ userId: storedUid, userType: "healthcare" }));
-    };
-
-    fetchDataForHealthcare();
-  }, [dispatch]);
+  const fetchDataForHealthcare = async () => {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    dispatch(fetchPatientCollectionData());
+    dispatch(
+      fetchAppointments({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+    dispatch(
+      fetchSideEffects({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+    dispatch(
+      fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+  };
 
   //Calculate total patients, videos to review, appointment, side effects alerts here
   React.useEffect(() => {
@@ -91,30 +112,35 @@ function HealthcareHomeScreen() {
     calculateSideEffectsAlertCount();
   }, [appointments, videos, patients, sideEffects]);
 
-  //modal ref
-  const bottomSheetModalRef = useRef(null);
-
-  //modal callbacks
-  const handlePresentModalPress = () => bottomSheetModalRef.current?.present();
-
   return (
     <GestureHandlerRootView>
-      <View
+      <SafeAreaView
+        edges={["right", "left", "top"]}
+        style={{ backgroundColor: theme.colors.secondaryContainer }}
+      />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         style={{
-          backgroundColor: theme.colors.secondaryContainer,
           height: "100%",
+          backgroundColor:
+            Platform.OS === "ios"
+              ? theme.colors.secondaryContainer
+              : theme.colors.background,
         }}
       >
         {/* ================ HomeHeader =============== */}
         <View style={[styles.homeHeader]}>
-          <Image
-            source={
-              user.profile_pic_url
-                ? { uri: user.profile_pic_url }
-                : BLANK_PROFILE_PIC
-            }
-            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-          />
+          {user.profile_pic_url && (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          )}
           <View style={[styles.headerText]}>
             <Text variant="bodyLarge">Hello</Text>
             <Text variant="headlineLarge">
@@ -254,7 +280,15 @@ function HealthcareHomeScreen() {
             </Text>
           </View>
         </View>
-      </View>
+        <View
+          style={[
+            {
+              backgroundColor: theme.colors.background,
+              height: "100%",
+            },
+          ]}
+        />
+      </ScrollView>
     </GestureHandlerRootView>
   );
 }
@@ -263,10 +297,10 @@ export default HealthcareHomeScreen;
 
 const styles = StyleSheet.create({
   homeHeader: {
-    marginHorizontal: 16,
-    marginTop: 56,
+    paddingHorizontal: 16,
     flexDirection: "row",
-    marginBottom: 32,
+    paddingBottom: 32,
+    paddingTop: 8,
   },
   headerText: {
     flexDirection: "column",

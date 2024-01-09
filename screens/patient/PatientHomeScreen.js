@@ -1,4 +1,10 @@
-import { View, StyleSheet, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  RefreshControl,
+  Platform,
+} from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -8,20 +14,25 @@ import {
 import React, { useRef } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
-
 import ToDoCard from "../../components/ui/ToDoCard";
 import CTAButton from "../../components/ui/CTAButton";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
+  USER_TYPE,
   VIDEO_STATUS,
 } from "../../constants/constants";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import {
+  capitalizeFirstLetter,
+  getLastTenCharacters,
+} from "../../util/wordUtil";
 import * as Haptics from "expo-haptics";
+import { SafeAreaView } from "react-native-safe-area-context";
+import CachedImage from "expo-cached-image";
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
@@ -36,18 +47,28 @@ function PatientHomeScreen() {
     React.useState(0);
   const [rejectedVideosCount, setRejectedVideosCount] = React.useState(0);
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false);
 
-  //Load all data with userId on the home page
-  React.useEffect(() => {
-    const fetchDataForPatient = async () => {
-      const storedUid = await SecureStore.getItemAsync("uid");
-      dispatch(fetchAppointments(storedUid, "patient"));
-      dispatch(fetchSideEffects(storedUid, "patient"));
-      dispatch(fetchVideos(storedUid, "patient"));
-    };
-
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
     fetchDataForPatient();
-  }, [dispatch]);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+  //Load all data with userId with pull to refresh
+  const fetchDataForPatient = async () => {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    dispatch(
+      fetchAppointments({ userId: storedUid, userType: USER_TYPE.PATIENT })
+    );
+    dispatch(
+      fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
+    );
+    dispatch(fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT }));
+  };
 
   React.useEffect(() => {
     console.log("the diagnosis date: " + user.date_of_diagnosis);
@@ -86,31 +107,44 @@ function PatientHomeScreen() {
     calculateHasAteMedicine();
   }, [appointments, videos]);
 
-  // modal ref
+  //Video Modal
   const bottomSheetModalRef = useRef(null);
-
-  // modal callbacks
   const handlePresentModalPress = () => bottomSheetModalRef.current?.present();
 
   return (
     <GestureHandlerRootView>
-      {/* <ScrollView automaticallyAdjustKeyboardInsets={true}> */}
-      <View
+      <SafeAreaView
+        edges={["right", "left", "top"]}
+        style={{ backgroundColor: theme.colors.secondaryContainer }}
+      />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         style={{
-          backgroundColor: theme.colors.secondaryContainer,
           height: "100%",
+          backgroundColor:
+            Platform.OS === "ios"
+              ? theme.colors.secondaryContainer
+              : theme.colors.background,
         }}
       >
         {/* ================ HomeHeader =============== */}
-        <View style={[styles.homeHeader]}>
-          <Image
-            source={
-              user.profile_pic_url
-                ? { uri: user.profile_pic_url }
-                : BLANK_PROFILE_PIC
-            }
-            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-          />
+        <View
+          style={[
+            styles.homeHeader,
+            { backgroundColor: theme.colors.secondaryContainer },
+          ]}
+        >
+          {user.profile_pic_url && (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          )}
           <View style={[styles.headerText]}>
             <Text variant="bodyLarge">Hello</Text>
             <Text variant="headlineLarge">
@@ -123,7 +157,6 @@ function PatientHomeScreen() {
           style={[
             {
               backgroundColor: theme.colors.background,
-              flexGrow: 1,
               borderTopLeftRadius: 16,
               borderTopRightRadius: 16,
             },
@@ -197,16 +230,10 @@ function PatientHomeScreen() {
             </View>
           </View>
           {/* ================== CTA buttons ============== */}
-          <View
-            style={[
-              {
-                paddingVertical: 16,
-              },
-            ]}
-          >
+          <View style={{ paddingVertical: 16 }}>
             <Text
               variant="titleLarge"
-              style={{ marginHorizontal: 16, marginTop: 16 }}
+              style={{ marginTop: 16, marginHorizontal: 16 }}
             >
               Are you up for something?
             </Text>
@@ -251,7 +278,6 @@ function PatientHomeScreen() {
             >
               Curious about tuberculosis?
             </Text>
-            {/* TODO TB Materials */}
             <Button
               mode="contained"
               onPress={() => navigate("TuberculosisMaterialsScreen")}
@@ -260,10 +286,17 @@ function PatientHomeScreen() {
               Learn more about TB
             </Button>
           </View>
+          <View
+            style={[
+              {
+                backgroundColor: theme.colors.background,
+                height: "100%",
+              },
+            ]}
+          />
         </View>
-      </View>
+      </ScrollView>
       <UploadVideoModal bottomSheetModalRef={bottomSheetModalRef} />
-      {/* </ScrollView> */}
     </GestureHandlerRootView>
   );
 }
@@ -272,10 +305,10 @@ export default PatientHomeScreen;
 
 const styles = StyleSheet.create({
   homeHeader: {
-    marginHorizontal: 16,
-    marginTop: 56,
+    paddingHorizontal: 16,
     flexDirection: "row",
-    marginBottom: 32,
+    paddingBottom: 32,
+    paddingTop: 8,
   },
   headerText: {
     flexDirection: "column",

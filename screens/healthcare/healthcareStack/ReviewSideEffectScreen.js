@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { useSelector } from "react-redux";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { ScrollView } from "react-native-gesture-handler";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 

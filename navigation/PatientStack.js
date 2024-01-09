@@ -59,7 +59,7 @@ export default function PatientStackGroup() {
         component={ReportSideEffectScreen}
         options={{
           headerShown: true,
-          presentation: "fullScreenModal",
+          presentation: "modal",
         }}
       />
       <PatientStack.Screen
@@ -83,7 +83,7 @@ export default function PatientStackGroup() {
         component={BookAppointmentScreen}
         options={{
           headerShown: true,
-          presentation: "fullScreenModal",
+          presentation: "modal",
         }}
       />
       <PatientStack.Screen

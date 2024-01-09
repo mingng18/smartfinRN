@@ -23,10 +23,6 @@ export const fetchSideEffects = createAsyncThunk(
 
       // Convert non-serializable values to serializable ones and handle null cases
       sideEffects = sideEffects.map((sideEffect) => {
-        console.log(
-          "fetching side effect " +
-            sideEffect.side_effect_occuring_timestamp.toDate().toISOString()
-        );
         const updatedSideEffect = {
           ...sideEffect,
           created_timestamp: sideEffect.created_timestamp

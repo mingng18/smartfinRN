@@ -3,14 +3,22 @@ import React from "react";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { APPOINTMENT_STATUS } from "../../../constants/constants";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import {
+  APPOINTMENT_STATUS,
+  HORIZONTAL_CARD_TYPE,
+} from "../../../constants/constants";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
+import { editDocument } from "../../../util/firestoreWR";
+import { useDispatch } from "react-redux";
+import { updateAppointment } from "../../../store/redux/appointmentSlice";
+import * as Haptics from "expo-haptics";
 
 export default function AppointmentDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
   const currentAppointment = params.appointment;
+  const dispatch = useDispatch();
   // const [dialogVisible, setDialogVisible] = React.useState(false);
 
   //Set the Appointment Status to change layout
@@ -44,15 +52,16 @@ export default function AppointmentDetailsScreen() {
             flexWrap: "wrap",
           }}
         >
-          <Button
+          {/* <Button
             mode="contained"
-            onPress={rescheduleAppointment()}
-            style={{ marginLeft: 16 }}
+            onPress={rescheduleAppointment}
+            style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Reschedule
-          </Button>
+          </Button> */}
           <Button
             mode="contained-tonal"
+            style={{ marginLeft: 16, marginBottom: 16 }}
             onPress={() => {
               Alert.alert(
                 "Cancel Appointment?",
@@ -98,12 +107,13 @@ export default function AppointmentDetailsScreen() {
           <Button
             mode="contained"
             onPress={handleVideoCall()}
-            style={{ marginLeft: 16 }}
+            style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Video Call
           </Button>
           <Button
             mode="contained-tonal"
+            style={{ marginLeft: 16, marginBottom: 16 }}
             onPress={() => {
               Alert.alert(
                 "Cancel Appointment?",
@@ -145,8 +155,9 @@ export default function AppointmentDetailsScreen() {
           Remarks/Notes
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-          If you cannot make it, please request a cancellation or you can
-          reschedule it.
+          {currentAppointment.remarks === ""
+            ? "No remarks"
+            : currentAppointment.remarks}
         </Text>
       </View>
     );
@@ -162,8 +173,9 @@ export default function AppointmentDetailsScreen() {
           Cancellation Reasons
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-          If you cannot make it, please request a cancellation or you can
-          reschedule it.
+          {currentAppointment.remarks === ""
+            ? "No remarks"
+            : currentAppointment.remarks}
         </Text>
       </View>
     );
@@ -173,10 +185,40 @@ export default function AppointmentDetailsScreen() {
   const handleVideoCall = () => {};
 
   //TODO Reschedule Appointment
-  const rescheduleAppointment = () => {};
+  const rescheduleAppointment = () => {
+    navigation.navigate("BookAppointmentScreen", { isReschedule: true });
+  };
 
-  //TODO Cancel Appointment
-  const cancelAppointment = () => {};
+  const cancelAppointment = async () => {
+    const updatedAppointment = {
+      appointment_status: APPOINTMENT_STATUS.CANCELLED,
+    };
+    await editDocument("appointment", currentAppointment.id, updatedAppointment)
+      .then(() => {
+        dispatch(
+          updateAppointment({
+            id: currentAppointment.id,
+            changes: updatedAppointment,
+          })
+        );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        navigation.goBack();
+      })
+      .catch((error) => {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert("Error cancelling", "Please try again later");
+        console.log("Error cancelling" + error);
+      });
+  };
+
+  const determineCardType = (status) => {
+    if (status === APPOINTMENT_STATUS.CANCELLED) {
+      return HORIZONTAL_CARD_TYPE.NO_PIC;
+    }
+    if (status === APPOINTMENT_STATUS.PENDING) {
+      return HORIZONTAL_CARD_TYPE.NO_PIC;
+    }
+  };
 
   return (
     <View
@@ -205,6 +247,7 @@ export default function AppointmentDetailsScreen() {
           hour12: true,
         })}
         color={containerColor(currentAppointment)}
+        cardType={determineCardType(currentAppointment.appointment_status)}
       />
       {currentAppointment.appointment_status === APPOINTMENT_STATUS.PENDING &&
         PendingCard()}

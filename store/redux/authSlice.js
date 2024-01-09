@@ -106,6 +106,7 @@ export const logoutDeleteNative = () => {
     try {
       await SecureStore.deleteItemAsync("token");
       await SecureStore.deleteItemAsync("uid");
+      await SecureStore.deleteItemAsync("user_type");
     } catch (error) {
       console.log("error occured when deleting token in secureStore");
     }

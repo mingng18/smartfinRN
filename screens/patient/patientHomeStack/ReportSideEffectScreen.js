@@ -22,9 +22,14 @@ import { serverTimestamp, Timestamp } from "firebase/firestore";
 import {
   SIDE_EFFECT_GRADE,
   SIDE_EFFECT_SEVERITY,
+  SIDE_EFFECT_STATUS,
 } from "../../../constants/constants";
 import { useDispatch } from "react-redux";
-import { fetchSideEffects } from "../../../store/redux/sideEffectSlice";
+import {
+  createSideEffect,
+  fetchSideEffects,
+  updateSideEffect,
+} from "../../../store/redux/sideEffectSlice";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -42,11 +47,9 @@ function ReportSideEffectScreen() {
   const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
 
-  const showModal = () => {
-    setVisible(true);
-    console.log(visible);
-  };
+  const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+  const containerStyle = { backgroundColor: "white", padding: 20 };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -177,19 +180,13 @@ function ReportSideEffectScreen() {
         reviewed_timestamp: null,
         healthcare_id: null,
         patient_id: storedUid,
-        se_status: "pending",
+        se_status: SIDE_EFFECT_STATUS.PENDING,
         symptoms: symptoms,
         remarks: null,
         severity: calculateSeverity(),
       };
 
       await addDocument("side_effect", newSideEffect);
-    } catch (error) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Error Submitting", "Please try again later");
-      console.error("Error submitting data to database:", error);
-      // Handle the error here (e.g., show an error message to the user)
-    } finally {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       if (symptoms.some((s) => s.grade > 1)) {
         Alert.alert(
@@ -199,9 +196,25 @@ function ReportSideEffectScreen() {
       } else {
         Alert.alert("Success", "Side Effects successfully reported.");
       }
-      const storedUid = await SecureStore.getItemAsync("uid");
-      dispatch(fetchSideEffects(storedUid));
+      dispatch(
+        createSideEffect({
+          created_timestamp: new Date().toISOString(),
+          side_effect_occuring_timestamp: submitDate.toISOString(),
+          reviewed_timestamp: null,
+          healthcare_id: null,
+          patient_id: storedUid,
+          se_status: SIDE_EFFECT_STATUS.PENDING,
+          symptoms: symptoms,
+          remarks: null,
+          severity: calculateSeverity(),
+        })
+      );
       navigation.popToTop();
+    } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert("Error Submitting", "Please try again later");
+      console.error("Error submitting data to database:", error);
+      // Handle the error here (e.g., show an error message to the user)
     }
   }
 
@@ -290,12 +303,13 @@ function ReportSideEffectScreen() {
             <IconButton
               icon="information-outline"
               size={24}
-              onPress={() =>
-                Alert.alert(
-                  "Grade Classification",
-                  "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
-                )
-              }
+              // onPress={() =>
+              //   Alert.alert(
+              //     "Grade Classification",
+              //     "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
+              //   )
+              // }
+              onPress={showModal}
             />
           </View>
           <View
@@ -312,9 +326,8 @@ function ReportSideEffectScreen() {
           {tuberculosisSymptoms.map((symptom, i) => {
             const [checked, setChecked] = React.useState(1);
             return (
-              <>
+              <View key={`checkbox-${i}`}>
                 <Checkbox.Item
-                  key={`checkbox-${i}`}
                   label={symptom}
                   accessibilityLabel={symptom}
                   mode="android"
@@ -378,7 +391,7 @@ function ReportSideEffectScreen() {
                     })}
                   </View>
                 )}
-              </>
+              </View>
             );
           })}
           <View style={{ alignItems: "flex-end" }}>
@@ -414,6 +427,15 @@ function ReportSideEffectScreen() {
           </View>
         </View>
       </ScrollView>
+      <Portal>
+        <Modal
+          visible={visible}
+          onDismiss={hideModal}
+          contentContainerStyle={containerStyle}
+        >
+          <Text>Example Modal. Click outside this area to dismiss.</Text>
+        </Modal>
+      </Portal>
       {/* <Portal>
         <Modal
           visible={visible}

@@ -11,7 +11,7 @@ import {
 } from "../../constants/constants";
 import TextListButton from "../../components/ui/TextListButton";
 import HorizontalCard from "../../components/ui/HorizontalCard";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../util/wordUtil";
 
 export default function HealthcareAppointmentScreen() {
   const { navigate } = useNavigation();

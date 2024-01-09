@@ -25,8 +25,8 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
 
     if (!result.canceled) {
       let uri = result.assets[0].uri;
-      
-      navigate("PreviewVideoScreen", uri);
+
+      navigate("PreviewVideoScreen", { uri: uri });
     }
     setDialogVisible(false);
   };
@@ -91,7 +91,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
           setDialogVisible(false);
         }}
         title={"Uploading Video"}
-        bodyText={"Please wait while we upload your video"}
+        bodyText={"Please wait while your video is being uploaded"}
       />
     </>
   );

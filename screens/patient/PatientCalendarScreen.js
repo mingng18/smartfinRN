@@ -1,21 +1,30 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
+import React, { useRef } from "react";
 import { useTheme, Text, Button, Divider } from "react-native-paper";
 import { Timestamp } from "firebase/firestore";
 import CustomCalendar from "../../components/ui/CustomCalendar";
 import { ScrollView } from "react-native-gesture-handler";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { Pressable, View } from "react-native";
-import { capitalizeFirstLetter } from "../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { useSelector } from "react-redux";
+import {
+  APPOINTMENT_STATUS,
+  HORIZONTAL_CARD_TYPE,
+} from "../../constants/constants";
+import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 
 function PatientCalendarScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
+  const bottomSheetModalRef = useRef(null);
 
   //Data state
   const [highlightedDates, setHighlightedDates] = React.useState([]);
   const [selectedDate, setSelectedDate] = React.useState("");
+  const [isVideo, setIsVideo] = React.useState(true);
+  const [isAppointment, setIsAppointment] = React.useState(true);
+  const [isSideEffect, setIsSideEffect] = React.useState(true);
 
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
@@ -25,13 +34,9 @@ function PatientCalendarScreen() {
   );
   const videos = useSelector((state) => state.videoObject.videos);
 
-  const [isVideo, setIsVideo] = React.useState(true);
-  const [isAppointment, setIsAppointment] = React.useState(true);
-  const [isSideEffect, setIsSideEffect] = React.useState(true);
-
   //Refresh the calendar when there is new data
   React.useEffect(() => {
-    console.log("Appointment " + appointments);
+    console.log("appointment " + appointments);
     console.log("videos  " + videos);
     console.log("sideEffects " + sideEffects);
     if (videos || appointments || sideEffects) {
@@ -65,7 +70,6 @@ function PatientCalendarScreen() {
         new Date(item.uploaded_timestamp).toISOString().slice(0, 10) ===
         selectedDate
     );
-
     if (matchedVideo) {
       return (
         <Pressable
@@ -97,20 +101,53 @@ function PatientCalendarScreen() {
         </Pressable>
       );
     } else {
-      return (
-        <View
-          style={{
-            backgroundColor: theme.colors.surfaceContainerHigh,
-            borderRadius: 8,
-            padding: 16,
-            marginBottom: 16,
-          }}
-        >
-          <Text variant="labelLarge">
-            You haven't upload any video for this day
-          </Text>
-        </View>
-      );
+      const today = new Date();
+      if (today > new Date(selectedDate)) {
+        return (
+          <View
+            style={{
+              backgroundColor: theme.colors.errorContainer,
+              borderRadius: 8,
+              padding: 16,
+              marginBottom: 16,
+            }}
+          >
+            <Text variant="labelLarge">You missed your medication!</Text>
+          </View>
+        );
+      } else if (today.getDate() === new Date(selectedDate).getDate()) {
+        return (
+          <Pressable onPress={() => bottomSheetModalRef.current?.present()}>
+            <View
+              style={{
+                backgroundColor: theme.colors.surfaceContainerHigh,
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16,
+              }}
+            >
+              <Text variant="labelLarge">
+                You haven't upload any video for this day
+              </Text>
+            </View>
+          </Pressable>
+        );
+      } else {
+        return (
+          <View
+            style={{
+              backgroundColor: theme.colors.surfaceContainerHigh,
+              borderRadius: 8,
+              padding: 16,
+              marginBottom: 16,
+            }}
+          >
+            <Text variant="labelLarge">
+              Come back later to upload your video!
+            </Text>
+          </View>
+        );
+      }
     }
   };
 
@@ -149,6 +186,7 @@ function PatientCalendarScreen() {
                   sideEffect: sideEffect,
                 });
               }}
+              cardType={HORIZONTAL_CARD_TYPE.NO_PIC}
             />
           ))}
         </>
@@ -175,8 +213,9 @@ function PatientCalendarScreen() {
                 key={i}
                 profilePic={appointment.healthcare_profile_picture}
                 subject={capitalizeFirstLetter(
-                  appointment.healthcare_first_name === ""
-                    ? "Awaiting Confirmation"
+                  appointment.healthcare_first_name === "" ||
+                    appointment.healthcare_first_name === null
+                    ? "Appointment"
                     : appointment.healthcare_first_name
                 )}
                 status={capitalizeFirstLetter(appointment.appointment_status)}
@@ -196,6 +235,10 @@ function PatientCalendarScreen() {
                     appointment: appointment,
                   });
                 }}
+                cardType={
+                  appointment.appointment_status ===
+                    APPOINTMENT_STATUS.PENDING && HORIZONTAL_CARD_TYPE.NO_PIC
+                }
               />
             );
           })}
@@ -233,23 +276,12 @@ function PatientCalendarScreen() {
         style={{ paddingTop: 32, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* <Button
-          mode="contained"
-          icon="calendar"
-          labelStyle={{ color: theme.colors.onSurface }}
-          style={{
-            backgroundColor: theme.colors.surfaceContainerHigh,
-            marginBottom: 16,
-          }}
-          onPress={() => navigate("BookAppointmentScreen")}
-        >
-          Book an appointment
-        </Button> */}
         {isVideo && VideoHorizontalCard()}
         {isSideEffect && SideEffectHorizontalCard()}
         {isAppointment && AppointmentHorizontalCard()}
         <View style={{ marginBottom: 54 }}></View>
       </ScrollView>
+      <UploadVideoModal bottomSheetModalRef={bottomSheetModalRef} />
     </View>
   );
 }

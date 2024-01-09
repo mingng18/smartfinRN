@@ -62,6 +62,7 @@ export const SIDE_EFFECT_GRADE = [
 
 export const HORIZONTAL_CARD_TYPE = {
   DEFAULT: "default",
+  NO_PIC: "no-pic",
   VIDEO_CALL_APPOINTMENT: "video-call-appointment",
   PATIENT: "patient",
 };
@@ -78,4 +79,9 @@ export const FIREBASE_COLLECTION = {
   PATIENT: "patient",
   SIDE_EFFECT: "side_effect",
   VIDEO: "video",
+};
+
+export const USER_TYPE = {
+  PATIENT: "patient",
+  HEALTHCARE: "healthcare",
 };

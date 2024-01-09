@@ -62,7 +62,7 @@ export default function CameraScreen() {
         setIsRecording(true);
         await cameraRef.current.recordAsync().then((data) => {
           console.log("Finish loading");
-          navigation.navigate("PreviewVideoScreen", data.uri);
+          navigation.navigate("PreviewVideoScreen", {uri :data.uri});
         });
       } catch (e) {
         console.log(e);

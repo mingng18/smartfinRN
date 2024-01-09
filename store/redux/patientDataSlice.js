@@ -46,16 +46,28 @@ export const patientDataSlice = createSlice({
     //         (appointment) => appointment.id !== action.payload
     //       );
     //     },
+    // updatePatientData: (state, action) => {
+    //   const index = state.patients.findIndex(
+    //     (patient) => patient.id === action.payload.id
+    //   );
+    //   if (index !== -1) {
+    //     state.patients[index] = {
+    //       ...state.patients[index],
+    //       ...action.payload.changes,
+    //     };
+    //   }
+    // },
     updatePatientData: (state, action) => {
-      const index = state.patients.findIndex(
-        (patient) => patient.id === action.payload.id
-      );
-      if (index !== -1) {
-        state.patients[index] = {
-          ...state.patients[index],
-          ...action.payload.changes,
-        };
-      }
+      const { id, changes } = action.payload;
+      state.patients = state.patients.map((patient) => {
+        if (patient.id === id) {
+          return {
+            ...patient,
+            ...changes,
+          };
+        }
+        return patient;
+      });
     },
   },
   extraReducers: (builder) => {

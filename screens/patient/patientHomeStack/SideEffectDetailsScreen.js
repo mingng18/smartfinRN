@@ -10,7 +10,7 @@ import {
   useTheme,
 } from "react-native-paper";
 import { SIDE_EFFECT_STATUS } from "../../../constants/constants";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 
 export default function SideEffectDetailsScreen() {
   const navigation = useNavigation();
@@ -84,6 +84,7 @@ export default function SideEffectDetailsScreen() {
         {currentSideEffect.symptoms.map((symptom, i) => {
           return (
             <Chip
+              key={i}
               style={{
                 marginRight: 8,
                 marginBottom: 8,

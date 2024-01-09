@@ -6,7 +6,6 @@ import CustomAppBar from "../components/ui/CustomAppBar";
 import LoginScreen from "../screens/auth/LoginScreen";
 import PersonalInformationScreen from "../screens/auth/PersonalInformationScreen";
 import SignInInfoScreen from "../screens/auth/SignInInfoScreen";
-import SignupScreen from "../screens/auth/SignupScreen";
 import UploadProfilePicScreen from "../screens/auth/UploadProfilePicScreen";
 import PreviewProfilePicScreen from "../screens/auth/PreviewProfilePicScreen";
 import CameraScreen from "../components/ui/CameraScreen";
@@ -32,11 +31,6 @@ export default function AuthStack() {
         name="Login"
         component={LoginScreen}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="Signup"
-        component={SignupScreen}
-        options={{ headerShown: true }}
       />
       <Stack.Screen
         name="SignInInfoScreen"

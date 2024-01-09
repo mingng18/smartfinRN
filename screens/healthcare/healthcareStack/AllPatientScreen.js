@@ -5,7 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Searchbar, useTheme } from "react-native-paper";
 import { useSelector } from "react-redux";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import {
   COMPLIANCE_STATUS,
   HORIZONTAL_CARD_TYPE,

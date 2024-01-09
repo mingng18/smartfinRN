@@ -16,7 +16,6 @@ export default function ProgressTracker() {
   const today = new Date();
   const user = useSelector((state) => state.authObject);
   const startDate = new Date(user.date_of_diagnosis);
-  console.log("startDate " + user.date_of_diagnosis);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -41,36 +40,44 @@ export default function ProgressTracker() {
 
   const marked = useMemo(() => {
     const markedDates = {};
-    while (startDate <= today) {
+
+    //Determine whether the patient has ended the treatment, thus stop tracking
+    const treatmentEndDate = new Date(startDate);
+    treatmentEndDate.setMonth(
+      treatmentEndDate.getMonth() + user.treatment_duration_months
+    );
+
+    //Plus 1 day to include today 
+    const endDate = today >= treatmentEndDate ? treatmentEndDate : today;
+    endDate.setDate(endDate.getDate() + 1);
+
+    while (startDate <= endDate) {
       const dateString = startDate.toISOString().slice(0, 10);
       const video = videos.find(
         (v) => v.uploaded_timestamp.slice(0, 10) === dateString
       );
 
-      //Excluide date other than today
-      if (startDate < today) {
-        if (!video || video.status === VIDEO_STATUS.REJECTED) {
-          markedDates[dateString] = {
-            selected: true,
-            selectedColor: theme.colors.errorContainer,
-            selectedTextColor: theme.colors.onBackground,
-            disableTouchEvent: true,
-          };
-        } else if (video.status === VIDEO_STATUS.PENDING) {
-          markedDates[dateString] = {
-            selected: true,
-            selectedColor: theme.colors.surfaceContainerHigh,
-            selectedTextColor: theme.colors.onBackground,
-            disableTouchEvent: true,
-          };
-        } else {
-          markedDates[dateString] = {
-            selected: true,
-            selectedColor: theme.colors.primaryFixedDim,
-            selectedTextColor: theme.colors.onBackground,
-            disableTouchEvent: true,
-          };
-        }
+      if (!video || video.status === VIDEO_STATUS.REJECTED) {
+        markedDates[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.errorContainer,
+          selectedTextColor: theme.colors.onBackground,
+          disableTouchEvent: true,
+        };
+      } else if (video.status === VIDEO_STATUS.PENDING) {
+        markedDates[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.surfaceContainerHigh,
+          selectedTextColor: theme.colors.onBackground,
+          disableTouchEvent: true,
+        };
+      } else {
+        markedDates[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.primaryFixedDim,
+          selectedTextColor: theme.colors.onBackground,
+          disableTouchEvent: true,
+        };
       }
       startDate.setDate(startDate.getDate() + 1); // Move to the next date
     }
@@ -130,4 +137,3 @@ export default function ProgressTracker() {
     </KeyboardAvoidingView>
   );
 }
-

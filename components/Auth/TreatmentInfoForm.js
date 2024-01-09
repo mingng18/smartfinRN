@@ -399,6 +399,20 @@ export default function TreatmentInfoForm({ isEditing }) {
     }
   }
 
+  const today = new Date();
+  const validRange = {
+    startDate: undefined,
+    endDate: today,
+    disabledDates: Array.from({ length: 365 }, (_, i) => {
+      const date = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate() + i
+      );
+      return date <= today ? null : date;
+    }).filter((disabledDate) => disabledDate !== null), // Disable all days after today
+  };
+
   return (
     <View
       style={{
@@ -508,6 +522,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         onDismiss={onDismissSingle}
         onConfirm={onConfirmSingle}
         presentationStyle="pageSheet"
+        validRange={validRange}
       />
       <LoadingIndicatorDialog
         visible={isUploading}

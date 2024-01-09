@@ -11,7 +11,7 @@ import {
 } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { APPOINTMENT_STATUS, FIREBASE_COLLECTION, TREATMENT } from "../../../constants/constants";
-import { capitalizeFirstLetter } from "../../../util/capsFirstWord";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import InformationChip from "../../../components/ui/InformationChip";
 import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
