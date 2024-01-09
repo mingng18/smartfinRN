@@ -6,6 +6,7 @@ import {} from "../../../assets/blank-profile-pic.png";
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
+  HORIZONTAL_CARD_TYPE,
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { Timestamp } from "firebase/firestore";
@@ -108,10 +109,10 @@ function AllAppointmentScreen() {
           return (
             <HorizontalCard
               key={`pending-${appointment.id}`}
-              profilePic={appointment.healthcare_profile_picture}
               subject={capitalizeFirstLetter(
-                appointment.healthcare_first_name === ""
-                  ? "Awaiting Confirmation"
+                appointment.healthcare_first_name === "" ||
+                  appointment.healthcare_first_name === null
+                  ? "Appointment"
                   : appointment.healthcare_first_name
               )}
               status={capitalizeFirstLetter(appointment.appointment_status)}
@@ -131,6 +132,7 @@ function AllAppointmentScreen() {
                   appointment: appointment,
                 });
               }}
+              cardType={HORIZONTAL_CARD_TYPE.NO_PIC}
             />
           );
         })}
