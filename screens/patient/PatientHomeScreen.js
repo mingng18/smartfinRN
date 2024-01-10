@@ -97,6 +97,10 @@ function PatientHomeScreen() {
         return video.status === VIDEO_STATUS.REJECTED && isToday;
       });
 
+      if(vid == null || vid == undefined){
+        setRejectedVideo(0);
+        return;
+      };
       setRejectedVideo(vid);
     };
 
@@ -226,11 +230,11 @@ function PatientHomeScreen() {
                       onPressedCallback={() => navigate("AllAppointmentScreen")}
                     />
                   )}
-                  {rejectedVideo != null && (
+                  {(rejectedVideo != null && rejectedVideo > 0) && (
                     <ToDoCard
                       title={"Video Rejected"}
                       icon="play"
-                      count={1}
+                      count={rejectedVideo}
                       onPressedCallback={() => {
                         // Assuming rejectedVideo is a Map object
                         console.log(JSON.stringify(rejectedVideo));
