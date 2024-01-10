@@ -84,12 +84,7 @@ function PatientHomeScreen() {
     };
 
     //Check whether video today has been rejected
-    const calculateRejectedVideosCount = () => {
-      if (videos.length === 0 || videos == null) {
-        setRejectedVideo(0);
-        return null;
-      }
-
+    const isVideoTodayRejected = () => {
       const vid = videos.find((video) => {
         const uploadedDate = new Date(video.uploaded_timestamp);
         const today = new Date();
@@ -102,10 +97,6 @@ function PatientHomeScreen() {
         return video.status === VIDEO_STATUS.REJECTED && isToday;
       });
 
-      if (vid == null || vid === undefined) {
-        setRejectedVideo(0);
-        return null;
-      }
       setRejectedVideo(vid);
     };
 
@@ -121,7 +112,7 @@ function PatientHomeScreen() {
     };
 
     calculatePendingAppointmentsCount();
-    calculateRejectedVideosCount();
+    isVideoTodayRejected();
     calculateHasAteMedicine();
     console.log("the rejected video: " + rejectedVideo);
     console.log("the has ate medicine: " + hasAteMedicine);

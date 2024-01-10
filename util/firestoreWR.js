@@ -96,8 +96,8 @@ export async function fetchAppointmentsForPatient(patientId) {
             .then((healthcareDoc) => {
               appointments.push({
                 id: doc.id,
-                healthcare_profile_picture: healthcareDoc.profile_picture
-                  ? healthcareDoc.profile_picture
+                healthcare_profile_picture: healthcareDoc.profile_pic_url
+                  ? healthcareDoc.profile_pic_url
                   : "",
                 healthcare_first_name: healthcareDoc.first_name
                   ? healthcareDoc.first_name

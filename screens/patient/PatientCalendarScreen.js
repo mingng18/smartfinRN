@@ -25,7 +25,7 @@ function PatientCalendarScreen() {
   const [isVideo, setIsVideo] = React.useState(true);
   const [isAppointment, setIsAppointment] = React.useState(true);
   const [isSideEffect, setIsSideEffect] = React.useState(true);
-
+  const user = useSelector((state) => state.authObject);
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
@@ -102,8 +102,17 @@ function PatientCalendarScreen() {
         </Pressable>
       );
     } else {
+      const startDate = new Date(user.date_of_diagnosis);
+      const treatmentEndDate = new Date(startDate);
+      treatmentEndDate.setMonth(
+        treatmentEndDate.getMonth() + user.treatment_duration_months
+      );
       const today = new Date();
-      if (today > new Date(selectedDate)) {
+      console.log(user.date_of_diagnosis);
+      if (
+        today > new Date(selectedDate) &&
+        new Date(selectedDate).getDate() >= startDate.getDate()
+      ) {
         return (
           <View
             style={{
@@ -133,7 +142,10 @@ function PatientCalendarScreen() {
             </View>
           </Pressable>
         );
-      } else {
+      } else if (
+        today <= new Date(selectedDate) &&
+        new Date(selectedDate).getDate() <= treatmentEndDate.getDate()
+      ) {
         return (
           <View
             style={{

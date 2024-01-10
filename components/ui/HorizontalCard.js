@@ -11,6 +11,7 @@ import {
   HORIZONTAL_CARD_TYPE,
 } from "../../constants/constants";
 import CachedImage from "expo-cached-image";
+import { getLastTenCharacters } from "../../util/wordUtil";
 
 export default function HorizontalCard({
   profilePic,
@@ -39,6 +40,7 @@ export default function HorizontalCard({
         android_ripple={{ color: theme.colors.onBackground, borderless: false }}
         style={[styles.cardContainer]}
       >
+        {/* {console.log(profilePic)} */}
         {cardType === HORIZONTAL_CARD_TYPE.NO_PIC ||
           profilePic === null ||
           (profilePic === "" ? (
@@ -46,7 +48,7 @@ export default function HorizontalCard({
           ) : (
             <CachedImage
               source={{ uri: profilePic }}
-              cacheKey={`${profilePic}-thumb`}
+              cacheKey={`${getLastTenCharacters(profilePic)}-thumb`}
               defaultSource={BLANK_PROFILE_PIC}
               style={styles.profilePicStyle}
               placeholderContent={

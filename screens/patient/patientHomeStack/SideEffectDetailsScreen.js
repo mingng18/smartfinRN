@@ -89,9 +89,11 @@ export default function SideEffectDetailsScreen() {
                 marginRight: 8,
                 marginBottom: 8,
                 backgroundColor:
-                  symptom.grade > 1
-                    ? theme.colors.errorContainer
-                    : theme.colors.secondaryContainer,
+                  symptom.grade == 1
+                    ? theme.colors.secondaryContainer
+                    : symptom.grade == 2
+                    ? theme.colors.yellowContainer
+                    : theme.colors.errorContainer,
               }}
             >
               {capitalizeFirstLetter(symptom.label)}

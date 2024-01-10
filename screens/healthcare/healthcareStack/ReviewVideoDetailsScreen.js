@@ -55,6 +55,7 @@ export default function ReviewVideoDetailsScreen() {
     const storedUid = await SecureStore.getItemAsync("uid");
     try {
       if (isAccepted) {
+        console.log("currently in 1");
         const updatedVideo = {
           medical_checklist: treatment,
           rejected_reason: "",
@@ -68,31 +69,36 @@ export default function ReviewVideoDetailsScreen() {
           video_url: "",
         };
 
+        console.log("currently in 2");
         await editDocument("video", currentVideo.id, updatedVideo);
+        console.log("currently in 3");
 
         // Delete the video file from firebase storage
         deleteVideo(currentVideo.id);
+        console.log("currently in 4");
 
         // Dispatch the updateVideo action to update the Redux state
-        dispatch(
-          updateVideo({
-            id: currentVideo.id,
-            changes: {
-              medical_checklist: treatment,
-              rejected_reason: "",
-              reviewed_timestamp: new Date().toISOString(),
-              reviewer_id: storedUid,
-              status: VIDEO_STATUS.ACCEPTED,
-              submitter_id: currentVideo.submitter_id,
-              uploaded_timestamp: currentVideo.uploaded_timestamp,
-              video_url: "",
-            },
-          })
-        );
-
+        // dispatch(
+        //   updateVideo({
+        //     id: currentVideo.id,
+        //     changes: {
+        //       medical_checklist: treatment,
+        //       rejected_reason: "",
+        //       reviewed_timestamp: new Date().toISOString(),
+        //       reviewer_id: storedUid,
+        //       status: VIDEO_STATUS.ACCEPTED,
+        //       submitter_id: currentVideo.submitter_id,
+        //       uploaded_timestamp: currentVideo.uploaded_timestamp,
+        //       video_url: "",
+        //     },
+        //   })
+        // );
+        console.log("currently in 5");
+        
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert("Success", "Video successfully accepted.");
         navigation.goBack();
+        console.log("currently in 6");
       } else {
         if (reason === "") {
           setReasonError(true);

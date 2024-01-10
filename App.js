@@ -28,6 +28,7 @@ import { FIREBASE_COLLECTION } from "./constants/constants";
 import { fetchSideEffects } from "./store/redux/sideEffectSlice";
 import { fetchVideos } from "./store/redux/videoSlice";
 import { USER_TYPE } from "./constants/constants";
+import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();

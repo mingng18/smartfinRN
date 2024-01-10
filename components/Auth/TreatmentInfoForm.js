@@ -211,7 +211,7 @@ export default function TreatmentInfoForm({ isEditing }) {
 
             setIsUploading(false);
             dispatch(authenticateStoreNative(token, userId, "patient")),
-            await saveUserDateToFirestore("patient", userId, downloadURL);
+              await saveUserDateToFirestore("patient", userId, downloadURL);
             Alert.alert(
               "Sign Up Successful!",
               "Thanks for signing up!",
@@ -336,6 +336,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       setDiagnosisDate(
         new Date(user.date_of_diagnosis).toISOString().slice(0, 10)
       );
+      setSubmitDate(new Date(user.date_of_diagnosis));
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
     }
