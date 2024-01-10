@@ -14,7 +14,11 @@ import {
   updatePersonalInformation,
 } from "../../store/redux/signupSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { FIREBASE_COLLECTION, GENDER, NATIONALITY } from "../../constants/constants";
+import {
+  FIREBASE_COLLECTION,
+  GENDER,
+  NATIONALITY,
+} from "../../constants/constants";
 import { fetchPatientData } from "../../store/redux/authSlice";
 import { editDocument } from "../../util/firestoreWR";
 import * as Haptics from "expo-haptics";
@@ -76,8 +80,15 @@ export default function PersonalInfoForm({ isEditing }) {
   //Calculate the age based on nric, triggered when nric is changed
   function handlerForAgeInputChange(value) {
     setNric(value);
+
     if (nric !== null) {
-      setAge(new Date().getFullYear() - value.slice(0, 2) - millennium);
+      const currentYear = new Date().getFullYear()
+      
+      if(value.slice(0, 2) > currentYear%100) {
+        setAge(currentYear - (1900 + parseInt(value.slice(0, 2))));
+      }else{
+        setAge(currentYear - (2000 + parseInt(value.slice(0, 2))));
+      }
     }
   }
 
@@ -219,7 +230,7 @@ export default function PersonalInfoForm({ isEditing }) {
       setIsAuthenticating(false);
       Alert.alert(
         "Something went wrong, please check your input and try again later."
-        );
+      );
       console.log(error); //Debug use
     }
   }
