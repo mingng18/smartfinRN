@@ -4,6 +4,7 @@ import {
   Image,
   RefreshControl,
   Platform,
+  Alert,
 } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -97,10 +98,10 @@ function PatientHomeScreen() {
         return video.status === VIDEO_STATUS.REJECTED && isToday;
       });
 
-      if(vid == null || vid == undefined){
+      if (vid == null || vid == undefined) {
         setRejectedVideo(0);
         return;
-      };
+      }
       setRejectedVideo(vid);
     };
 
@@ -125,7 +126,28 @@ function PatientHomeScreen() {
 
   //Video Modal
   const bottomSheetModalRef = useRef(null);
-  const handlePresentModalPress = () => bottomSheetModalRef.current?.present();
+  const handlePresentModalPress = () => {
+    if (rejectedVideo == 0 && hasAteMedicine) {
+      return Alert.alert(
+        "You have already uploaded today",
+        "You have already uploaded a video today. If you upload again, the previous video will be overwritten.",
+        [
+          {
+            text: "Continue",
+            onPress: () => bottomSheetModalRef.current?.present(),
+          },
+          {
+            text: "Cancel",
+            onPress: () => {
+              return;
+            },
+            style : "cancel"
+          },
+        ],
+      );
+    }
+    return bottomSheetModalRef.current?.present();
+  };
 
   return (
     <GestureHandlerRootView>
@@ -230,7 +252,7 @@ function PatientHomeScreen() {
                       onPressedCallback={() => navigate("AllAppointmentScreen")}
                     />
                   )}
-                  {(rejectedVideo != null && rejectedVideo > 0) && (
+                  {rejectedVideo != null && rejectedVideo > 0 && (
                     <ToDoCard
                       title={"Video Rejected"}
                       icon="play"
