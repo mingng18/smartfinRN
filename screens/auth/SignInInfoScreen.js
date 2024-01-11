@@ -32,6 +32,8 @@ export default function SignInInfoScreen({ route }) {
   });
   const [errorTitle, setErrorTitle] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [hidePassword, setHidePassword] = useState(true);
+  const [hideConfirmPassword, setHideConfirmPassword] = useState(true);
 
   async function nextButtonHandler() {
     setIsAuthenticating(true);
@@ -93,7 +95,8 @@ export default function SignInInfoScreen({ route }) {
       }
     } catch (error) {
       Alert.alert(
-        "Something went wrong", "Please check your input and try again later."
+        "Something went wrong",
+        "Please check your input and try again later."
       );
       console.log(error); //Debug use
     } finally {
@@ -135,7 +138,14 @@ export default function SignInInfoScreen({ route }) {
         placeholder="Type your password"
         value={password}
         onChangeText={(text) => setPassword(text)}
-        secureTextEntry
+        secureTextEntry={hidePassword}
+        right={
+          <TextInput.Icon
+            icon= {hidePassword? "eye":"eye-off"}
+            style={{ marginTop: 10 }}
+            onPress={() => setHidePassword(!hidePassword)}
+          />
+        }
         maxLength={100}
         error={credentialsInvalid.password}
       />
@@ -153,7 +163,14 @@ export default function SignInInfoScreen({ route }) {
         placeholder="Retype your password"
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
-        secureTextEntry
+        secureTextEntry={hideConfirmPassword}
+        right={
+          <TextInput.Icon
+            icon= {hideConfirmPassword? "eye":"eye-off"}
+            style={{ marginTop: 10 }}
+            onPress={() => setHideConfirmPassword(!hideConfirmPassword)}
+          />
+        }
         maxLength={100}
         error={credentialsInvalid.confirmPassword}
       />

@@ -37,6 +37,7 @@ function LoginContentForm({ onAuthenticate }) {
 
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
+  const [hidePassword, setHidePassword] = useState(true);
 
   function updateInputValueHandler(inputType, enteredValue) {
     switch (inputType) {
@@ -184,7 +185,14 @@ function LoginContentForm({ onAuthenticate }) {
                   placeholder="Type your password"
                   onChangeText={updateInputValueHandler.bind(this, "password")}
                   value={enteredPassword}
-                  secureTextEntry
+                  secureTextEntry={hidePassword}
+                  right={
+                    <TextInput.Icon
+                    icon= {hidePassword? "eye":"eye-off"}
+                      style={{ marginTop: 16 }}
+                      onPress={() => setHidePassword(!hidePassword)}
+                    />
+                  }
                   error={credentialsInvalid.password}
                 />
                 <Button
