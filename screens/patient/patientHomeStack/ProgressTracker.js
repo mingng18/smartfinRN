@@ -47,34 +47,34 @@ export default function ProgressTracker() {
       treatmentEndDate.getMonth() + user.treatment_duration_months
     );
 
-    //Plus 1 day to include today 
-    const endDate = today >= treatmentEndDate ? treatmentEndDate : today;
-    endDate.setDate(endDate.getDate() + 1);
+    //Plus 1 day to include today
+    // const endDate = today >= treatmentEndDate ? treatmentEndDate : today;
+    // endDate.setDate(endDate.getDate() + 1);
 
-    while (startDate <= endDate) {
+    while (startDate <= treatmentEndDate) {
       const dateString = startDate.toISOString().slice(0, 10);
       const video = videos.find(
         (v) => v.uploaded_timestamp.slice(0, 10) === dateString
       );
 
-      if (!video || video.status === VIDEO_STATUS.REJECTED) {
+      if (video) {
+        markedDates[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.greenContainer,
+          selectedTextColor: theme.colors.onBackground,
+          disableTouchEvent: true,
+        };
+      } else if (!video && startDate <= today) {
         markedDates[dateString] = {
           selected: true,
           selectedColor: theme.colors.errorContainer,
           selectedTextColor: theme.colors.onBackground,
           disableTouchEvent: true,
         };
-      } else if (video.status === VIDEO_STATUS.PENDING) {
-        markedDates[dateString] = {
-          selected: true,
-          selectedColor: theme.colors.surfaceContainerHigh,
-          selectedTextColor: theme.colors.onBackground,
-          disableTouchEvent: true,
-        };
       } else {
         markedDates[dateString] = {
           selected: true,
-          selectedColor: theme.colors.primaryFixedDim,
+          selectedColor: theme.colors.surfaceContainerHigh,
           selectedTextColor: theme.colors.onBackground,
           disableTouchEvent: true,
         };
@@ -93,22 +93,20 @@ export default function ProgressTracker() {
           paddingHorizontal: 16,
         }}
       >
-        <View>
-          <Calendar
-            theme={{
-              calendarBackground: theme.colors.background,
-              monthTextColor: theme.colors.onBackground,
-              textDayFontFamily: "DMSans-Regular",
-              textMonthFontFamily: "DMSans-Regular",
-              textDayHeaderFontFamily: "DMSans-Regular",
-              arrowColor: theme.colors.primary,
-              selectedDayBackgroundColor: theme.colors.primary,
-              selectedDayTextColor: theme.colors.onPrimary,
-            }}
-            markedDates={marked}
-            // disabledByDefault
-          />
-        </View>
+        <Calendar
+          theme={{
+            calendarBackground: theme.colors.background,
+            monthTextColor: theme.colors.onBackground,
+            textDayFontFamily: "DMSans-Regular",
+            textMonthFontFamily: "DMSans-Regular",
+            textDayHeaderFontFamily: "DMSans-Regular",
+            arrowColor: theme.colors.primary,
+            selectedDayBackgroundColor: theme.colors.primary,
+            selectedDayTextColor: theme.colors.onPrimary,
+          }}
+          markedDates={marked}
+          // disabledByDefault
+        />
         <View
           style={{
             flexDirection: "row-reverse",
@@ -118,14 +116,14 @@ export default function ProgressTracker() {
           }}
         >
           <Legend
-            color={theme.colors.primaryFixedDim}
-            text={"Video Accepted"}
+            color={theme.colors.greenContainer}
+            text={"Video Submitted"}
           />
           <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
-          <Legend
+          {/* <Legend
             color={theme.colors.surfaceContainerHigh}
             text={"Video Pending"}
-          />
+          /> */}
         </View>
         <Divider />
         <Text variant="bodyLarge" style={{ marginTop: 24 }}>

@@ -29,6 +29,7 @@ import { fetchSideEffects } from "./store/redux/sideEffectSlice";
 import { fetchVideos } from "./store/redux/videoSlice";
 import { USER_TYPE } from "./constants/constants";
 import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
+import DropDownPicker from "react-native-dropdown-picker";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();
@@ -149,7 +150,7 @@ const lightTheme = {
   ...MD3LightTheme,
   fonts: configureFonts({
     config: {
-      ...baseVariants,
+      // ...baseVariants,
       ...customVariants,
     },
   }),

@@ -9,7 +9,6 @@ import {
   RadioButton,
   Text,
   TextInput,
-  Tooltip,
   useTheme,
 } from "react-native-paper";
 import { ScrollView } from "react-native-gesture-handler";
@@ -25,11 +24,7 @@ import {
   SIDE_EFFECT_STATUS,
 } from "../../../constants/constants";
 import { useDispatch } from "react-redux";
-import {
-  createSideEffect,
-  fetchSideEffects,
-  updateSideEffect,
-} from "../../../store/redux/sideEffectSlice";
+import { createSideEffect } from "../../../store/redux/sideEffectSlice";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
@@ -43,6 +38,7 @@ function ReportSideEffectScreen() {
   const [hour, setHour] = React.useState("");
   const [minute, setMinute] = React.useState("");
   const [symptoms, setSymptoms] = React.useState([]);
+  const [otherSymptom, setOtherSymptom] = React.useState("");
   // [{ label: "cough", grade: 1 }];
   const dispatch = useDispatch();
   const [visible, setVisible] = React.useState(false);
@@ -65,6 +61,9 @@ function ReportSideEffectScreen() {
   const onConfirmSingle = React.useCallback(
     (params) => {
       setCalendarOpen(false);
+      if (params.date === undefined) {
+        return;
+      }
 
       //Format iosDate to date
       const dateObject = new Date(params.date);
@@ -74,6 +73,7 @@ function ReportSideEffectScreen() {
         .toString()
         .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
       console.log(formattedDate);
+
       setDate(formattedDate);
       setSubmitDate(params.date);
     },
@@ -155,10 +155,10 @@ function ReportSideEffectScreen() {
   //TODO calculate severity
   function calculateSeverity() {
     return symptoms.some((s) => s.grade == 2)
-      ? SIDE_EFFECT_SEVERITY.MODERATE
+      ? SIDE_EFFECT_SEVERITY.GRADE_2
       : symptoms.some((s) => s.grade == 3)
-      ? SIDE_EFFECT_SEVERITY.SEVERE
-      : SIDE_EFFECT_SEVERITY.MILD;
+      ? SIDE_EFFECT_SEVERITY.GRADE_1
+      : SIDE_EFFECT_SEVERITY.GRADE_3;
   }
 
   //Update date, hour, minute and symptoms to firebase
@@ -173,6 +173,9 @@ function ReportSideEffectScreen() {
       submitDate.setMinutes(minute);
       submitDate.setHours(hour);
       submitDate.setSeconds(0);
+      if (otherSymptom !== "") {
+        symptoms.push({ label: otherSymptom, grade: 0 });
+      }
 
       const newSideEffect = {
         created_timestamp: serverTimestamp(),
@@ -191,7 +194,7 @@ function ReportSideEffectScreen() {
       if (symptoms.some((s) => s.grade > 1)) {
         Alert.alert(
           "Successfully submited",
-          "Please seek medical assistance at the hospital immediately."
+          "Please seek medical assistance at nearest hospital."
         );
       } else {
         Alert.alert("Success", "Side Effects successfully reported.");
@@ -245,7 +248,6 @@ function ReportSideEffectScreen() {
             paddingHorizontal: 16,
             paddingTop: 16,
             backgroundColor: theme.colors.background,
-            // flex: 1,
             height: "100%",
           }}
         >
@@ -294,11 +296,11 @@ function ReportSideEffectScreen() {
               justifyContent: "space-between",
               alignItems: "center",
               marginTop: 32,
-              // marginBottom: 8,
+              marginBottom: 8,
             }}
           >
             <Text variant="titleLarge" style={{}}>
-              Symptoms experienced
+              Symptoms (Choose All Applicable)
             </Text>
             <IconButton
               icon="information-outline"
@@ -315,13 +317,28 @@ function ReportSideEffectScreen() {
           <View
             style={{
               flexDirection: "row",
-              justifyContent: "space-between",
-              marginBottom: 16,
+              marginBottom: 12,
+              flexWrap: "wrap",
             }}
           >
-            <Text variant="labelSmall">Grade 1 : Mild</Text>
-            <Text variant="labelSmall">Grade 2 : Moderate</Text>
-            <Text variant="labelSmall">Grade 3 : Serious</Text>
+            <Text
+              variant="labelSmall"
+              style={{ marginRight: 16, marginBottom: 4 }}
+            >
+              Grade 1 : Mild
+            </Text>
+            <Text
+              variant="labelSmall"
+              style={{ marginRight: 16, marginBottom: 4 }}
+            >
+              Grade 2 : Moderate
+            </Text>
+            <Text
+              variant="labelSmall"
+              style={{ marginRight: 16, marginBottom: 4 }}
+            >
+              Grade 3 : Serious
+            </Text>
           </View>
           {tuberculosisSymptoms.map((symptom, i) => {
             const [checked, setChecked] = React.useState(1);
@@ -394,6 +411,23 @@ function ReportSideEffectScreen() {
               </View>
             );
           })}
+          <TextInput
+            mode="outlined"
+            style={{ flex: 1, marginLeft: 24, marginTop: 4 }}
+            label="Other Symptom"
+            placeholder="Leave blank if no other symptoms"
+            maxLength={100}
+            value={otherSymptom}
+            onChangeText={(value) => setOtherSymptom(value)}
+          />
+          {symptoms.some((s) => s.grade > 1) && (
+            <Text
+              variant="bodyMedium"
+              style={{ color: theme.colors.error, marginTop: 16 }}
+            >
+              Please seek medical assistance at nearest hospital
+            </Text>
+          )}
           <View style={{ alignItems: "flex-end" }}>
             <Button
               mode="contained"
@@ -423,11 +457,12 @@ function ReportSideEffectScreen() {
               onDismiss={onDismiss}
               onConfirm={onConfirm}
               use24HourClock={false}
+              defaultInputType="keyboard"
             />
           </View>
         </View>
       </ScrollView>
-      <Portal>
+      {/* <Portal>
         <Modal
           visible={visible}
           onDismiss={hideModal}
@@ -435,7 +470,7 @@ function ReportSideEffectScreen() {
         >
           <Text>Example Modal. Click outside this area to dismiss.</Text>
         </Modal>
-      </Portal>
+      </Portal> */}
       {/* <Portal>
         <Modal
           visible={visible}

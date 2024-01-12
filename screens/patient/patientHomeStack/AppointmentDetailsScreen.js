@@ -38,13 +38,13 @@ export default function AppointmentDetailsScreen() {
   function PendingCard() {
     return (
       <View>
-        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+        {/* <Text variant="bodyLarge" style={{ marginTop: 16 }}>
           This appointment is currently pending approval from the doctor.
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 24 }}>
           If you cannot make it, please request a cancellation or you can
           reschedule it.
-        </Text>
+        </Text> */}
         <View
           style={{
             flexDirection: "row-reverse",
@@ -52,13 +52,13 @@ export default function AppointmentDetailsScreen() {
             flexWrap: "wrap",
           }}
         >
-          {/* <Button
+          <Button
             mode="contained"
             onPress={rescheduleAppointment}
             style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Reschedule
-          </Button> */}
+          </Button>
           <Button
             mode="contained-tonal"
             style={{ marginLeft: 16, marginBottom: 16 }}
@@ -96,20 +96,33 @@ export default function AppointmentDetailsScreen() {
   function AcceptedCard() {
     return (
       <View>
-        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+        {/* <Text variant="bodyLarge" style={{ marginTop: 16 }}>
           Your appointment has been confirmed by the doctor, please join the
           call on time.
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 24 }}>
           If you cannot make it, please request a cancellation.
-        </Text>
-        <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
+        </Text> */}
+        <View
+          style={{
+            flexDirection: "row-reverse",
+            marginTop: 40,
+            flexWrap: "wrap",
+          }}
+        >
           <Button
             mode="contained"
             onPress={handleVideoCall()}
             style={{ marginLeft: 16, marginBottom: 16 }}
           >
             Video Call
+          </Button>
+          <Button
+            mode="contained-tonal"
+            onPress={rescheduleAppointment}
+            style={{ marginLeft: 16, marginBottom: 16 }}
+          >
+            Reschedule
           </Button>
           <Button
             mode="contained-tonal"
@@ -148,9 +161,9 @@ export default function AppointmentDetailsScreen() {
   function CompletedCard() {
     return (
       <View>
-        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+        {/* <Text variant="bodyLarge" style={{ marginTop: 16 }}>
           This appointment is completed.
-        </Text>
+        </Text> */}
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
           Remarks/Notes
         </Text>
@@ -166,9 +179,9 @@ export default function AppointmentDetailsScreen() {
   function CancelledCard() {
     return (
       <View>
-        <Text variant="bodyLarge" style={{ marginTop: 16 }}>
+        {/* <Text variant="bodyLarge" style={{ marginTop: 16 }}>
           This appointment has been cancelled by the healthcare.
-        </Text>
+        </Text> */}
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
           Cancellation Reasons
         </Text>
@@ -186,7 +199,10 @@ export default function AppointmentDetailsScreen() {
 
   //TODO Reschedule Appointment
   const rescheduleAppointment = () => {
-    navigation.navigate("BookAppointmentScreen", { isReschedule: true });
+    navigation.navigate("BookAppointmentScreen", {
+      isReschedule: true,
+      lastAppointment: currentAppointment,
+    });
   };
 
   const cancelAppointment = async () => {

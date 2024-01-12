@@ -5,10 +5,14 @@ import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
-import { addDocument } from "../../../util/firestoreWR";
+import { addDocument, deleteDocument } from "../../../util/firestoreWR";
 import * as Haptics from "expo-haptics";
 import { useDispatch } from "react-redux";
-import { createAppointment } from "../../../store/redux/appointmentSlice";
+import { createAppointment, deleteAppointment } from "../../../store/redux/appointmentSlice";
+import {
+  APPOINTMENT_TIME,
+  FIREBASE_COLLECTION,
+} from "../../../constants/constants";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
@@ -18,24 +22,47 @@ export default function BookAppointmentScreen() {
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
+  const [isReschedule, setIsReschedule] = React.useState();
+  const [lastAppointment, setLastAppointment] = React.useState();
   const [date, setDate] = React.useState(undefined);
   const [submitDate, setSubmitDate] = React.useState(null);
   const [time, setTime] = React.useState();
-  const [items, setItems] = React.useState([
-    { label: "2:00 pm", value: { hour: 2, minute: 0 } },
-    { label: "2:30 pm", value: { hour: 2, minute: 30 } },
-    { label: "3:00 pm", value: { hour: 3, minute: 0 } },
-    { label: "3:30 pm", value: { hour: 3, minute: 30 } },
-    { label: "4:00 pm", value: { hour: 4, minute: 0 } },
-    { label: "4:30 pm", value: { hour: 4, minute: 30 } },
-  ]);
+  const [items, setItems] = React.useState(APPOINTMENT_TIME);
+
   const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Book Appointment"
+      headerTitle: "Book Appointment",
     });
   });
+
+  React.useEffect(() => {
+    if (params && params.isReschedule) {
+      setIsReschedule(params.isReschedule);
+      setLastAppointment(params.lastAppointment);
+
+      const inputDate = new Date(params.lastAppointment.scheduled_timestamp);
+      setDate(formatDate(inputDate));
+      setSubmitDate(inputDate);
+
+      //TODO !!!idk it wont work
+
+      // const hour = inputDate.getHours();
+      // const minute = inputDate.getMinutes();
+
+      // //to the format { hour: 2, minute: 30 }
+      // const formattedTime = {
+      //   hour: hour % 12 || 12, // Convert 24-hour time to 12-hour time
+      //   minute: minute, // Format minute as "00" if it's 0
+      // };
+      // console.log(hour);
+      // console.log(minute);
+      // console.log(JSON.stringify(formattedTime));
+
+      // setTime(formattedTime);
+    }
+  }, [params]);
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {
@@ -45,23 +72,28 @@ export default function BookAppointmentScreen() {
   const onConfirmSingle = React.useCallback(
     (params) => {
       setCalendarOpen(false);
+      if (params.date === undefined) {
+        return;
+      }
 
-      //Format iosDate to date
-      const dateObject = new Date(params.date);
-
-      //in the format "YYYY-MM-DD"
-      const formattedDate = `${dateObject.getFullYear()}-${(
-        dateObject.getMonth() + 1
-      )
-        .toString()
-        .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
-      // console.log(formattedDate);
-      setDate(formattedDate);
+      setDate(formatDate(params.date));
       setSubmitDate(params.date);
       console.log(submitDate + " submit Date");
     },
     [setCalendarOpen, setDate, setSubmitDate]
   );
+
+  const formatDate = (date) => {
+    //Format iosDate to date
+    //in the format "YYYY-MM-DD"
+    const dateObject = new Date(date);
+    const formattedDate = `${dateObject.getFullYear()}-${(
+      dateObject.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
+    return formattedDate;
+  };
 
   //Filter out the dates other than Monday, Wednesday and Friday
   //The date also is filtered from today
@@ -87,6 +119,12 @@ export default function BookAppointmentScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert("Invalid Input", "Please fill in all the input");
     }
+
+    if (isReschedule) {
+      deleteDocument(FIREBASE_COLLECTION.APPOINTMENT, lastAppointment.id);
+      dispatch(deleteAppointment({ id: lastAppointment.id }));
+    }
+
     const storedUid = await SecureStore.getItemAsync("uid");
     setSubmitDate(new Date(submitDate));
     submitDate.setHours(time.hour + 12, time.minute, 0);
@@ -119,7 +157,7 @@ export default function BookAppointmentScreen() {
         scheduled_timestamp: submitDate.toISOString(),
       })
     );
-    navigation.goBack();
+    navigation.popToTop();
   };
 
   return (

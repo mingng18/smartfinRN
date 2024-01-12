@@ -63,7 +63,7 @@ export default function LanguageScreen() {
             <RadioButton.Android value={LANGUAGE.BAHASA_MELAYU} />
           </View>
           <View style={styles.row}>
-            <Text variant="bodyLarge">Bahasa Indo</Text>
+            <Text variant="bodyLarge">Bahasa Indonesia</Text>
             <RadioButton.Android value={LANGUAGE.BAHASA_INDONESIA} />
           </View>
         </RadioButton.Group>

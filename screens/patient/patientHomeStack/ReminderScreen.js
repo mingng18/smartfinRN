@@ -23,7 +23,7 @@ export default function ReminderScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
 
-  const [medicReminder, setMedicReminder] = React.useState(true);
+  const [videoReminder, setVideoReminder] = React.useState(true);
   const [appointmentReminder, setAppointmentReminder] = React.useState(true);
   const [timePickerOpen, setTimePickerOpen] = React.useState(false);
   const [hour, setHour] = React.useState("");
@@ -82,14 +82,6 @@ export default function ReminderScreen() {
         }}
       >
         <View style={{ marginTop: 16 }}>
-          <TouchableRipple onPress={() => setMedicReminder(!medicReminder)}>
-            <View style={styles.row}>
-              <Text variant="bodyLarge">Medication Reminder</Text>
-              <View pointerEvents="none">
-                <Switch value={medicReminder} />
-              </View>
-            </View>
-          </TouchableRipple>
           <TouchableRipple
             onPress={() => setAppointmentReminder(!appointmentReminder)}
           >
@@ -100,29 +92,41 @@ export default function ReminderScreen() {
               </View>
             </View>
           </TouchableRipple>
+          <TouchableRipple onPress={() => setVideoReminder(!videoReminder)}>
+            <View style={styles.row}>
+              <Text variant="bodyLarge">Video Upload Reminder</Text>
+              <View pointerEvents="none">
+                <Switch value={videoReminder} />
+              </View>
+            </View>
+          </TouchableRipple>
         </View>
-        <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Set the time for daily reminder
-        </Text>
-        <Pressable onPress={() => setTimePickerOpen(true)}>
-          <View pointerEvents="none">
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 8 }}
-              label="Time"
-              placeholder="Starting date of the symptoms"
-              value={hour == "" ? `` : `${hour} : ${minute}`}
-              onChangeText={(value) => setDate(value)}
-              right={
-                <TextInput.Icon
-                  icon="clock"
-                  color={theme.colors.onBackground}
+        {videoReminder && (
+          <>
+            <Text variant="titleLarge" style={{ marginTop: 32 }}>
+              Set the time for video upload reminder
+            </Text>
+            <Pressable onPress={() => setTimePickerOpen(true)}>
+              <View pointerEvents="none">
+                <TextInput
+                  mode="outlined"
+                  style={{ marginTop: 8 }}
+                  label="Time"
+                  placeholder="Starting date of the symptoms"
+                  value={hour == "" ? `` : `${hour} : ${minute}`}
+                  onChangeText={(value) => setDate(value)}
+                  right={
+                    <TextInput.Icon
+                      icon="clock"
+                      color={theme.colors.onBackground}
+                    />
+                  }
+                  maxLength={100}
                 />
-              }
-              maxLength={100}
-            />
-          </View>
-        </Pressable>
+              </View>
+            </Pressable>
+          </>
+        )}
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
           <Button
             mode="contained"
@@ -140,6 +144,7 @@ export default function ReminderScreen() {
         onDismiss={onDismiss}
         onConfirm={onConfirm}
         use24HourClock={false}
+        defaultInputType="keyboard"
       />
     </KeyboardAvoidingView>
   );

@@ -1,4 +1,5 @@
 export const BLANK_PROFILE_PIC = require("../assets/blank-profile-pic.png");
+export const LOGO_NO_TYPE = require("../assets/logo-no-type.png");
 
 export const APPOINTMENT_STATUS = {
   PENDING: "pending",
@@ -8,9 +9,9 @@ export const APPOINTMENT_STATUS = {
 };
 
 export const SIDE_EFFECT_SEVERITY = {
-  SEVERE: "severe",
-  MODERATE: "moderate",
-  MILD: "mild",
+  GRADE_1: "grade1",
+  GRADE_2: "grade2",
+  GRADE_3: "grade3",
 };
 
 export const VIDEO_STATUS = {
@@ -27,7 +28,7 @@ export const SIDE_EFFECT_STATUS = {
 export const LANGUAGE = {
   ENGLISH: "english",
   BAHASA_MELAYU: "bahasa-melayu",
-  BAHASA_INDONESIA: "bahasa-indo",
+  BAHASA_INDONESIA: "bahasa-indonesia",
 };
 
 export const GENDER = [
@@ -85,3 +86,18 @@ export const USER_TYPE = {
   PATIENT: "patient",
   HEALTHCARE: "healthcare",
 };
+
+export const CALENDAR_ENTITIES = {
+  VIDEO: "video",
+  APPOINTMENT: "appointment",
+  SIDE_EFFECT: "side-effect",
+};
+
+export const APPOINTMENT_TIME = [
+  { label: "2:00 pm", value: { hour: 2, minute: 0 } },
+  { label: "2:30 pm", value: { hour: 2, minute: 30 } },
+  { label: "3:00 pm", value: { hour: 3, minute: 0 } },
+  { label: "3:30 pm", value: { hour: 3, minute: 30 } },
+  { label: "4:00 pm", value: { hour: 4, minute: 0 } },
+  { label: "4:30 pm", value: { hour: 4, minute: 30 } },
+];

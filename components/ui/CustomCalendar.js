@@ -1,8 +1,10 @@
 import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Chip, useTheme } from "react-native-paper";
-import { Timestamp } from "firebase/firestore";
+import { CALENDAR_ENTITIES } from "../../constants/constants";
+import Legend from "./Legend";
+import { useSelector } from "react-redux";
 
 export default function CustomCalendar({
   video,
@@ -11,63 +13,88 @@ export default function CustomCalendar({
   highlightedDates,
   selectedDate,
   setSelectedDate,
-  isVideo,
-  setIsVideo,
-  isAppointment,
-  setIsAppointment,
-  isSideEffect,
-  setIsSideEffect,
+  currentSelected,
+  setCurrentSelected,
 }) {
   const theme = useTheme();
+  const user = useSelector((state) => state.authObject);
 
   //useMemo to optimise performance
   //Decide which colour to color the container
   const marked = React.useMemo(() => {
     return highlightedDates.reduce((acc, date) => {
-      const videoMatch = video.some(
-        (item) =>
-          new Date(item.uploaded_timestamp).toISOString().slice(0, 10) === date
-      );
-      const appointmentMatch = appointment.some(
-        (item) =>
-          new Date(item.scheduled_timestamp).toISOString().slice(0, 10) === date
-      );
-      const sideEffectMatch = sideEffect.some(
-        (item) =>
-          new Date(item.side_effect_occuring_timestamp)
-            .toISOString()
-            .slice(0, 10) === date
-      );
-
-      if (
-        (isVideo && videoMatch) ||
-        (isAppointment && appointmentMatch) ||
-        (isSideEffect && sideEffectMatch)
-      ) {
+      //Side effect is selected
+      if (currentSelected === CALENDAR_ENTITIES.SIDE_EFFECT) {
+        const sideEffectMatch = sideEffect.some(
+          (item) =>
+            new Date(item.side_effect_occuring_timestamp)
+              .toISOString()
+              .slice(0, 10) === date
+        );
         acc[date] = {
           selected: true,
-          selectedColor:
-            isVideo && videoMatch
-              ? theme.colors.primaryFixedDim
-              : isAppointment && appointmentMatch
-              ? theme.colors.secondaryContainer
-              : isSideEffect && sideEffectMatch
-              ? theme.colors.yellowContainer
-              : theme.colors.background,
+          selectedColor: sideEffectMatch
+            ? theme.colors.yellowContainer
+            : theme.colors.background,
           selectedTextColor: theme.colors.onBackground,
         };
       }
+
+      //Appointment is selected
+      if (currentSelected === CALENDAR_ENTITIES.APPOINTMENT) {
+        const appointmentMatch = appointment.some(
+          (item) =>
+            new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
+            date
+        );
+        acc[date] = {
+          selected: true,
+          selectedColor: appointmentMatch
+            ? theme.colors.secondaryContainer
+            : theme.colors.background,
+          selectedTextColor: theme.colors.onBackground,
+        };
+      }
+
+      //Video is selected
+      if (currentSelected === CALENDAR_ENTITIES.VIDEO) {
+        const today = new Date();
+        const startDate = new Date(user.date_of_diagnosis);
+        const treatmentEndDate = new Date(startDate);
+        treatmentEndDate.setMonth(
+          treatmentEndDate.getMonth() + user.treatment_duration_months
+        );
+        while (startDate <= treatmentEndDate) {
+          const dateString = startDate.toISOString().slice(0, 10);
+          const videoMatch = video.find(
+            (item) => item.uploaded_timestamp.slice(0, 10) === dateString
+          );
+
+          if (videoMatch) {
+            acc[dateString] = {
+              selected: true,
+              selectedColor: theme.colors.greenContainer,
+              selectedTextColor: theme.colors.onBackground,
+            };
+          } else if (!videoMatch && startDate <= today) {
+            acc[dateString] = {
+              selected: true,
+              selectedColor: theme.colors.errorContainer,
+              selectedTextColor: theme.colors.onBackground,
+            };
+          } else {
+            acc[dateString] = {
+              selected: true,
+              selectedColor: theme.colors.surfaceContainerHigh,
+              selectedTextColor: theme.colors.onBackground,
+            };
+          }
+          startDate.setDate(startDate.getDate() + 1); // Move to the next date
+        }
+      }
       return acc;
     }, {});
-  }, [
-    highlightedDates,
-    video,
-    appointment,
-    sideEffect,
-    isVideo,
-    isAppointment,
-    isSideEffect,
-  ]);
+  }, [highlightedDates, video, appointment, sideEffect, currentSelected]);
 
   return (
     <>
@@ -76,13 +103,13 @@ export default function CustomCalendar({
           flexDirection: "row",
           justifyContent: "center",
           marginBottom: 24,
-          overflow: "hidden"
+          overflow: "hidden",
         }}
       >
         <Chip
-          mode={!isAppointment && "outlined"}
+          mode={currentSelected !== CALENDAR_ENTITIES.APPOINTMENT && "outlined"}
           style={[styles.chip, styles.firstChip]}
-          onPress={() => setIsAppointment(!isAppointment)}
+          onPress={() => setCurrentSelected(CALENDAR_ENTITIES.APPOINTMENT)}
           theme={{
             colors: { secondaryContainer: theme.colors.secondaryContainer },
           }}
@@ -90,8 +117,8 @@ export default function CustomCalendar({
           Appointment
         </Chip>
         <Chip
-          mode={!isVideo && "outlined"}
-          onPress={() => setIsVideo(!isVideo)}
+          mode={currentSelected !== CALENDAR_ENTITIES.VIDEO && "outlined"}
+          onPress={() => setCurrentSelected(CALENDAR_ENTITIES.VIDEO)}
           style={[styles.chip, styles.secondChip]}
           theme={{
             colors: { secondaryContainer: theme.colors.primaryFixedDim },
@@ -100,8 +127,8 @@ export default function CustomCalendar({
           Video
         </Chip>
         <Chip
-          mode={!isSideEffect && "outlined"}
-          onPress={() => setIsSideEffect(!isSideEffect)}
+          mode={currentSelected !== CALENDAR_ENTITIES.SIDE_EFFECT && "outlined"}
+          onPress={() => setCurrentSelected(CALENDAR_ENTITIES.SIDE_EFFECT)}
           style={[styles.chip, styles.thirdChip]}
           theme={{
             colors: { secondaryContainer: theme.colors.yellowContainer },
@@ -126,11 +153,27 @@ export default function CustomCalendar({
           ...marked,
           [selectedDate]: {
             selected: true,
-            selectedColor: theme.colors.surfaceContainerHigh,
-            selectedTextColor: theme.colors.onBackground,
+            selectedColor: theme.colors.onBackground
+            // selectedTextColor: theme.colors.onBackground,
           },
         }}
       />
+      {currentSelected === CALENDAR_ENTITIES.VIDEO && (
+        <View
+          style={{
+            flexDirection: "row-reverse",
+            flexWrap: "wrap",
+            alignItems: "center",
+            marginVertical: 24,
+          }}
+        >
+          <Legend
+            color={theme.colors.greenContainer}
+            text={"Video Submitted"}
+          />
+          <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
+        </View>
+      )}
     </>
   );
 }

@@ -20,6 +20,7 @@ import {
 } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
+import { LOGO_NO_TYPE } from "../../constants/constants";
 
 function LoginContentForm({ onAuthenticate }) {
   const navigation = useNavigation();
@@ -153,12 +154,12 @@ function LoginContentForm({ onAuthenticate }) {
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Text
                   style={[styles.titleText, { color: theme.colors.onPrimary }]}
-                  variant="headlineLarge"
+                  variant="headlineMedium"
                 >
-                  Welcome to
+                  My TB Companion
                 </Text>
                 <Image
-                  source={require("../../assets/TBLogoWhite.png")}
+                  source={LOGO_NO_TYPE}
                   style={{ width: 150, height: 150 }}
                 />
               </View>
@@ -168,6 +169,12 @@ function LoginContentForm({ onAuthenticate }) {
                   { backgroundColor: theme.colors.background },
                 ]}
               >
+                <Text
+                  style={{ marginVertical: 8, alignSelf: "center" }}
+                  variant="titleLarge"
+                >
+                  Log In
+                </Text>
                 <TextInput
                   mode="outlined"
                   style={{ height: 56 }}
@@ -188,7 +195,7 @@ function LoginContentForm({ onAuthenticate }) {
                   secureTextEntry={hidePassword}
                   right={
                     <TextInput.Icon
-                    icon= {hidePassword? "eye":"eye-off"}
+                      icon={hidePassword ? "eye" : "eye-off"}
                       style={{ marginTop: 16 }}
                       onPress={() => setHidePassword(!hidePassword)}
                     />
@@ -234,7 +241,7 @@ function LoginContentForm({ onAuthenticate }) {
                 <Divider style={{ height: 1 }} />
                 <Text
                   variant="labelLarge"
-                  style={{ alignSelf: "center", marginTop: 8 }}
+                  style={{ alignSelf: "center", marginTop: 16 }}
                 >
                   Sign up as
                 </Text>
@@ -242,6 +249,7 @@ function LoginContentForm({ onAuthenticate }) {
                   style={{
                     flexDirection: "row",
                     marginTop: 8,
+                    marginBottom: 16,
                   }}
                 >
                   <Button
@@ -277,6 +285,9 @@ const styles = StyleSheet.create({
   titleText: {
     marginHorizontal: 16,
     marginTop: 56,
+    alignSelf: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   },
   titleText2: {
     marginHorizontal: 16,

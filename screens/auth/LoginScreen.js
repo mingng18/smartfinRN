@@ -23,12 +23,17 @@ import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { useNavigation } from "@react-navigation/native";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
   const dispatch = useDispatch();
   const auth = getAuth();
+  const { navigate } = useNavigation();
 
+  // React.useLayoutEffect(() => {
+  //   navigate("PersonalInformationScreen");
+  // });
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
@@ -40,7 +45,10 @@ function LoginScreen() {
       const user = userCredential.user;
       const token = await user.getIdTokenResult();
       try {
-        const isPatient = await fetchDocument("patient", user.uid);
+        const isPatient = await fetchDocument(
+          FIREBASE_COLLECTION.PATIENT,
+          user.uid
+        );
         dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
         dispatch(
           fetchPatientData({
@@ -63,7 +71,7 @@ function LoginScreen() {
           fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
         );
       } catch (error) {
-        const isHealthcare = await fetchDocument("healthcare", user.uid);
+        const isHealthcare = await fetchDocument(FIREBASE_COLLECTION.HEALTHCARE, user.uid);
         dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
         dispatch(fetchHealthcareData({ ...isHealthcare }));
         dispatch(fetchPatientCollectionData());

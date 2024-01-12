@@ -112,7 +112,7 @@ export const appointmentSlice = createSlice({
     },
     deleteAppointment: (state, action) => {
       state.appointments = state.appointments.filter(
-        (appointment) => appointment.id !== action.payload
+        (appointment) => appointment.id !== action.payload.id
       );
     },
     updateAppointment: (state, action) => {

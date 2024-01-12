@@ -1,7 +1,7 @@
 import { Chip, Text } from "react-native-paper";
 import { Pressable, StyleSheet } from "react-native";
 import React from "react";
-export default function InformationChip({ isBlur = false, text, icon }) {
+export default function InformationChip({ isBlur = false, text, icon, style }) {
   const [isBlurring, setIsBlurring] = React.useState(isBlur);
   const [isDisableBlur, setIsDisableBlur] = React.useState(true);
 
@@ -10,7 +10,7 @@ export default function InformationChip({ isBlur = false, text, icon }) {
   });
 
   return (
-    <Pressable onPress={() => setIsBlurring(!isBlurring)}>
+    <Pressable onPress={() => setIsBlurring(!isBlurring)} style={{...style}}>
       {icon ? 
       //Chip with Icon
       (<Chip selected icon={icon} style={{ marginRight: 8, marginBottom: 8 }}>

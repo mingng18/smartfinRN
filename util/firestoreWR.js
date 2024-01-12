@@ -8,6 +8,7 @@ import {
   addDoc,
   getDoc,
   updateDoc,
+  deleteDoc
 } from "firebase/firestore";
 
 export async function fetchDocument(collectionName, documentId) {
@@ -50,6 +51,15 @@ export async function addDocument(collectionName, documentData) {
     const collectionRef = collection(db, collectionName);
     const docRef = await addDoc(collectionRef, documentData);
     return docRef.id;
+  } catch (error) {
+    throw new Error("Failed to store document: " + error.message);
+  }
+}
+
+export async function deleteDocument(collectionName, documentId) {
+  try {
+    const docRef = doc(db, collectionName, documentId);
+    await deleteDoc(docRef);
   } catch (error) {
     throw new Error("Failed to store document: " + error.message);
   }

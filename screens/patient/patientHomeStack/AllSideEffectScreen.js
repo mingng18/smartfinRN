@@ -27,12 +27,10 @@ function AllSideEffectScreen() {
   });
 
   //Determine the container color
-  function containerColor(appointment) {
-    return appointment.severity === SIDE_EFFECT_SEVERITY.SEVERE
-      ? theme.colors.errorContainer
-      : appointment.severity === SIDE_EFFECT_SEVERITY.MODERATE
-      ? theme.colors.yellowContainer
-      : theme.colors.surfaceContainer;
+  function containerColor(sideEffect) {
+    return sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+      ? theme.colors.surfaceContainer
+      : theme.colors.errorContainer;
   }
 
   return (
@@ -49,7 +47,11 @@ function AllSideEffectScreen() {
           sortedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              subject={capitalizeFirstLetter(sideEffect.severity)}
+              subject={sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                ? "Grade 1"
+                : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
+                ? "Grade 2"
+                : "Grade 3"}
               date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
               time={new Date(
                 sideEffect.side_effect_occuring_timestamp

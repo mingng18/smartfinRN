@@ -10,7 +10,9 @@ import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { useSelector } from "react-redux";
 import {
   APPOINTMENT_STATUS,
+  CALENDAR_ENTITIES,
   HORIZONTAL_CARD_TYPE,
+  SIDE_EFFECT_SEVERITY,
 } from "../../constants/constants";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 
@@ -22,9 +24,12 @@ function PatientCalendarScreen() {
   //Data state
   const [highlightedDates, setHighlightedDates] = React.useState([]);
   const [selectedDate, setSelectedDate] = React.useState("");
-  const [isVideo, setIsVideo] = React.useState(true);
-  const [isAppointment, setIsAppointment] = React.useState(true);
-  const [isSideEffect, setIsSideEffect] = React.useState(true);
+  const [currentSelected, setCurrentSelected] = React.useState(
+    CALENDAR_ENTITIES.VIDEO
+  );
+  // const [isVideo, setIsVideo] = React.useState(true);
+  // const [isAppointment, setIsAppointment] = React.useState(true);
+  // const [isSideEffect, setIsSideEffect] = React.useState(true);
   const user = useSelector((state) => state.authObject);
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
@@ -93,7 +98,7 @@ function PatientCalendarScreen() {
             {matchedVideo.status === "accepted"
               ? "Video submitted and accepted"
               : matchedVideo.status === "pending"
-              ? "Video submitted and pending approval"
+              ? "Video submitted"
               : "Video Rejected"}
           </Text>
           {matchedVideo.rejected_reason && (
@@ -182,7 +187,13 @@ function PatientCalendarScreen() {
           {matchedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              subject={capitalizeFirstLetter(sideEffect.severity)}
+              subject={
+                sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                  ? "Grade 1"
+                  : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
+                  ? "Grade 2"
+                  : "Grade 3"
+              }
               date={new Date(sideEffect.side_effect_occuring_timestamp)
                 .toISOString()
                 .slice(0, 10)}
@@ -193,7 +204,9 @@ function PatientCalendarScreen() {
                 minute: "numeric",
                 hour12: true,
               })}
-              color={theme.colors.yellowContainer}
+              color={sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                ? theme.colors.surfaceContainer
+                : theme.colors.errorContainer}
               onPressedCallback={() => {
                 navigate("SideEffectDetailsScreen", {
                   sideEffect: sideEffect,
@@ -228,7 +241,8 @@ function PatientCalendarScreen() {
                 profilePic={appointment.healthcare_profile_picture}
                 subject={capitalizeFirstLetter(
                   appointment.healthcare_first_name === "" ||
-                    appointment.healthcare_first_name === null
+                    appointment.healthcare_first_name === null ||
+                    appointment.healthcare_first_name === undefined
                     ? "Appointment"
                     : appointment.healthcare_first_name
                 )}
@@ -278,21 +292,19 @@ function PatientCalendarScreen() {
         sideEffect={sideEffects}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}
-        isVideo={isVideo}
-        setIsVideo={setIsVideo}
-        isAppointment={isAppointment}
-        setIsAppointment={setIsAppointment}
-        isSideEffect={isSideEffect}
-        setIsSideEffect={setIsSideEffect}
+        currentSelected={currentSelected}
+        setCurrentSelected={setCurrentSelected}
       />
       <Divider style={{ marginTop: 32 }} />
       <ScrollView
         style={{ paddingTop: 32, flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
-        {isVideo && VideoHorizontalCard()}
-        {isSideEffect && SideEffectHorizontalCard()}
-        {isAppointment && AppointmentHorizontalCard()}
+        {currentSelected === CALENDAR_ENTITIES.VIDEO && VideoHorizontalCard()}
+        {currentSelected === CALENDAR_ENTITIES.SIDE_EFFECT &&
+          SideEffectHorizontalCard()}
+        {currentSelected === CALENDAR_ENTITIES.APPOINTMENT &&
+          AppointmentHorizontalCard()}
         <View style={{ marginBottom: 54 }}></View>
       </ScrollView>
       <UploadVideoModal bottomSheetModalRef={bottomSheetModalRef} />

@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useLayoutEffect } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { List, Searchbar, Text, useTheme } from "react-native-paper";
+import { Button, List, Searchbar, Text, useTheme } from "react-native-paper";
 
 export default function TuberculosisMaterialsScreen() {
   const navigation = useNavigation();
@@ -90,6 +90,32 @@ export default function TuberculosisMaterialsScreen() {
             />
           ))}
         </List.Section>
+        <View style={{ flexDirection: "row", marginTop: 24 }}>
+          <Button
+            mode="contained"
+            onPress={() => navigate("")}
+          >
+            More Materials
+          </Button>
+        </View>
+        <View
+          style={{ flexDirection: "row", marginVertical: 16, flexWrap: "wrap" }}
+        >
+          <Button
+            mode="contained-tonal"
+            onPress={() => navigate("")}
+            style={{ marginRight: 16, marginBottom: 16 }}
+          >
+            About TB
+          </Button>
+          <Button
+            mode="contained-tonal"
+            onPress={() => navigate("")}
+            style={{ marginBottom: 16 }}
+          >
+            About MyTBCompanion
+          </Button>
+        </View>
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
     </View>

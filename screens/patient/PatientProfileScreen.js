@@ -9,7 +9,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
 import React from "react";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
-import { capitalizeFirstLetter, getLastTenCharacters } from "../../util/wordUtil";
+import {
+  capitalizeFirstLetter,
+  getLastTenCharacters,
+} from "../../util/wordUtil";
 import InformationChip from "../../components/ui/InformationChip";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
@@ -21,6 +24,7 @@ function PatientProfileScreen() {
   const { navigate } = useNavigation();
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
+  const today = new Date();
 
   // React.useLayoutEffect(() => {
   //   navigate("PatientEditProfileScreen");
@@ -102,7 +106,6 @@ function PatientProfileScreen() {
   }
 
   const monthsSinceDiagnosis = React.useMemo(() => {
-    const today = new Date();
     const diagnosis = new Date(user.date_of_diagnosis);
     console.log(diagnosis);
 
@@ -112,6 +115,47 @@ function PatientProfileScreen() {
       diagnosis.getMonth();
     return months + 1;
   });
+
+  const streakCounter = () => {
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+
+    let count = videos.reduce((acc, video) => {
+      const uploadedDate = new Date(video.uploaded_timestamp);
+      if (uploadedDate >= sevenDaysAgo && uploadedDate <= today) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+
+    return count;
+  };
+
+  const getTotalVideosForCurrentMonth = () => {
+    // Get the first day of the current month
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    // Get the last day of the current month
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 1,
+      0
+    );
+
+    // Filter the videos submitted within the current month
+
+    let count = videos.reduce((acc, video) => {
+      const uploadedDate = new Date(video.uploaded_timestamp);
+      if (uploadedDate >= firstDayOfMonth && uploadedDate <= lastDayOfMonth) {
+        return acc + 1;
+      }
+      return acc;
+    }, 0);
+
+    console.log(count);
+    // Return the total number of videos submitted this month
+    return count;
+  };
 
   return (
     <SafeAreaView
@@ -126,26 +170,23 @@ function PatientProfileScreen() {
       <View style={[styles.homeHeader]}>
         {/* TODO Change the name to the patients image */}
         {user.profile_pic_url && (
-            <CachedImage
-              source={{ uri: user.profile_pic_url }}
-              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
-              defaultSource={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          )}
+          <CachedImage
+            source={{ uri: user.profile_pic_url }}
+            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+            defaultSource={BLANK_PROFILE_PIC}
+            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+          />
+        )}
         <View style={[styles.headerText]}>
           {/* TODO Change the name to the patients name */}
           <View style={{ flexDirection: "row" }}>
-            <Text variant="bodyLarge">You are doing </Text>
-            <Text
-              variant="bodyLarge"
-              style={{ fontFamily: "DMSans-Bold", color: theme.colors.green }}
-            >
-              {user.compliance_status
-                ? user.compliance_status.toUpperCase()
-                : "NICE"}
+            <Text variant="bodyLarge">
+              {streakCounter() == 7
+                ? "Keep it up!"
+                : streakCounter() > 1
+                ? "Take your Medication"
+                : "You can do better"}{" "}
             </Text>
-            <Text variant="bodyLarge"> !</Text>
           </View>
           <Text variant="headlineLarge">
             {capitalizeFirstLetter(user.first_name)}
@@ -163,16 +204,30 @@ function PatientProfileScreen() {
       {/* TODO change the personal information */}
       <View style={{ marginTop: 16, flexDirection: "row", flexWrap: "wrap" }}>
         <InformationChip
-          text={capitalizeFirstLetter(user.gender)}
-          icon={"gender-male-female"}
-        />
-        <InformationChip
           text={user.nric_passport}
           icon={"card-account-details"}
+          style={{ width: "60%" }}
         />
-        <InformationChip text={user.age} icon={"face-man"} />
-        <InformationChip text={user.nationality} icon={"flag"} />
-        <InformationChip text={user.phone_number} icon={"phone"} />
+        <InformationChip
+          text={capitalizeFirstLetter(user.gender)}
+          icon={"gender-male-female"}
+          style={{ width: "40%" }}
+        />
+        <InformationChip
+          text={user.nationality}
+          icon={"flag"}
+          style={{ width: "60%" }}
+        />
+        <InformationChip
+          text={user.age}
+          icon={"face-man"}
+          style={{ width: "40%" }}
+        />
+        <InformationChip
+          text={user.phone_number}
+          icon={"phone"}
+          style={{ width: "60%" }}
+        />
       </View>
       {/* ======================= Progress Tracker =================== */}
       <View
@@ -180,6 +235,7 @@ function PatientProfileScreen() {
           flexDirection: "row",
           justifyContent: "center",
           marginTop: 32,
+          marginBottom: 24,
           // backgroundColor: theme.colors.surfaceContainerLow,
           height: "22%",
         }}
@@ -206,7 +262,8 @@ function PatientProfileScreen() {
             <>
               <Text variant="headlineLarge">{fill}%</Text>
               <Text variant="titleMedium">Progress Completion</Text>
-              <Text variant="labelLarge">
+              <Text variant="labelSmall">
+                {`${getTotalVideosForCurrentMonth()} video submitted for `}
                 {monthsSinceDiagnosis}
                 {monthsSinceDiagnosis === 1
                   ? "st"
@@ -217,7 +274,10 @@ function PatientProfileScreen() {
                   : "th"}
                 {` month`}
               </Text>
-              <Text variant="labelLarge" style={{ opacity: 0 }} />
+              <Text
+                variant="labelSmall"
+                style={{ opacity: 1 }}
+              >{`${videos.length} video submitted in total`}</Text>
               <Text variant="labelLarge" style={{ opacity: 0 }} />
               <Text variant="labelLarge" style={{ opacity: 0 }} />
               <Text variant="labelLarge" style={{ opacity: 0 }} />

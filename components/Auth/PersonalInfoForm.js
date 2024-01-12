@@ -1,27 +1,35 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Keyboard,
-  KeyboardAvoidingView,
   View,
   TouchableWithoutFeedback,
   Alert,
+  Pressable,
 } from "react-native";
-import { Button, Text, TextInput, useTheme } from "react-native-paper";
-import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
 import {
-  updateAuthSlice,
-  updatePersonalInformation,
-} from "../../store/redux/signupSlice";
+  Button,
+  Modal,
+  Portal,
+  Searchbar,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
+import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
+import { updatePersonalInformation } from "../../store/redux/signupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {
   FIREBASE_COLLECTION,
   GENDER,
   NATIONALITY,
+  USER_TYPE,
 } from "../../constants/constants";
 import { fetchPatientData } from "../../store/redux/authSlice";
 import { editDocument } from "../../util/firestoreWR";
+import countryList from "../../assets/data/countryList.json";
 import * as Haptics from "expo-haptics";
+import { ScrollView } from "react-native-gesture-handler";
 
 export default function PersonalInfoForm({ isEditing }) {
   //TODO handle update personal info case
@@ -39,6 +47,9 @@ export default function PersonalInfoForm({ isEditing }) {
   const [genderData, setGenderData] = React.useState(GENDER);
 
   const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [countryCode, setCountryCode] = React.useState(
+    countryList.find((country) => country.name === "Malaysia")
+  );
 
   const [nationalityOpen, setNationalityOpen] = React.useState(false);
   const [nationality, setNationality] = React.useState("Malaysian");
@@ -56,6 +67,19 @@ export default function PersonalInfoForm({ isEditing }) {
     age: false,
   });
   const [isAuthenticating, setIsAuthenticating] = React.useState();
+
+  const [visible, setVisible] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
+
+  const showModal = () => setVisible(true);
+  const hideModal = () => {
+    setVisible(false);
+    setSearchQuery("");
+  };
+
+  const filteredCountryList = countryList.filter((country) =>
+    country.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -82,11 +106,11 @@ export default function PersonalInfoForm({ isEditing }) {
     setNric(value);
 
     if (nric !== null) {
-      const currentYear = new Date().getFullYear()
-      
-      if(value.slice(0, 2) > currentYear%100) {
+      const currentYear = new Date().getFullYear();
+
+      if (value.slice(0, 2) > currentYear % 100) {
         setAge(currentYear - (1900 + parseInt(value.slice(0, 2))));
-      }else{
+      } else {
         setAge(currentYear - (2000 + parseInt(value.slice(0, 2))));
       }
     }
@@ -94,7 +118,7 @@ export default function PersonalInfoForm({ isEditing }) {
 
   //Update personal info, triggered when update button is pressed in profile page
   async function updateButtonHandler() {
-    if (user.user_type == "patient") {
+    if (user.user_type == USER_TYPE.PATIENT) {
       try {
         await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
           first_name: firstName,
@@ -283,6 +307,18 @@ export default function PersonalInfoForm({ isEditing }) {
             marginVertical: 16,
           }}
         >
+          <Pressable
+            style={{
+              paddingHorizontal: 12,
+              justifyContent: "center",
+              marginTop: 6,
+              marginRight: 8,
+              borderRadius: 4,
+            }}
+            onPress={showModal}
+          >
+            <Text variant="bodyLarge">{`${countryCode.emoji} ${countryCode.iso}`}</Text>
+          </Pressable>
           <TextInput
             mode="outlined"
             style={{ flex: 3 }}
@@ -292,6 +328,7 @@ export default function PersonalInfoForm({ isEditing }) {
             value={phoneNumber}
             onChangeText={(value) => setPhoneNumber(value)}
             error={credentialsInvalid.phoneNumber}
+            keyboardType="numeric"
           />
         </View>
         <CustomDropDownPicker
@@ -316,28 +353,26 @@ export default function PersonalInfoForm({ isEditing }) {
             error={credentialsInvalid.nric}
           />
         ) : (
-          <>
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Passport Number"
-              maxLength={12}
-              value={passport}
-              onChangeText={(value) => setPassport(value)}
-              error={credentialsInvalid.passport}
-            />
-            <TextInput
-              mode="outlined"
-              style={{ marginTop: 16 }}
-              label="Age"
-              keyboardType="numeric"
-              maxLength={3}
-              value={age}
-              onChangeText={(value) => setAge(value)}
-              error={credentialsInvalid.age}
-            />
-          </>
+          <TextInput
+            mode="outlined"
+            style={{ marginTop: 16 }}
+            label="Passport Number"
+            maxLength={12}
+            value={passport}
+            onChangeText={(value) => setPassport(value)}
+            error={credentialsInvalid.passport}
+          />
         )}
+        <TextInput
+          mode="outlined"
+          style={{ marginTop: 16 }}
+          label="Age"
+          keyboardType="numeric"
+          maxLength={3}
+          value={`${age}`}
+          onChangeText={(value) => setAge(value)}
+          error={credentialsInvalid.age}
+        />
 
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
           <Button
@@ -351,6 +386,58 @@ export default function PersonalInfoForm({ isEditing }) {
             {isEditing ? "Update" : "Next"}
           </Button>
         </View>
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={hideModal}
+            contentContainerStyle={{
+              backgroundColor: "white",
+              paddingLeft: 24,
+              paddingVertical: 40,
+              margin: 16,
+              borderRadius: 16,
+              height: "80%",
+            }}
+          >
+            <Text variant="titleLarge">Pick your country</Text>
+            <Searchbar
+              placeholder="Search"
+              onChangeText={setSearchQuery}
+              value={searchQuery}
+              style={{ marginVertical: 16, marginRight: 24 }}
+            />
+            <ScrollView>
+              {filteredCountryList.map((country, i) => {
+                return (
+                  <Pressable
+                    key={i}
+                    style={{
+                      flexDirection: "row",
+                      paddingVertical: 8,
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                    onPress={() => {
+                      setVisible(false);
+                      setSearchQuery("");
+                      setCountryCode(country);
+                      // setPhoneNumber(country.iso);
+                    }}
+                  >
+                    <Text variant="titleLarge" style={{ paddingRight: 16 }}>
+                      {country.emoji}
+                    </Text>
+                    <Text variant="bodyMedium" style={{ flexGrow: 1 }}>
+                      {country.name}
+                    </Text>
+                    <Text variant="bodyLarge">{country.iso}</Text>
+                    <View style={{ marginRight: 24 }} />
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </Modal>
+        </Portal>
       </View>
     </TouchableWithoutFeedback>
   );

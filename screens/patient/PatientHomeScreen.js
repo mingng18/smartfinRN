@@ -21,6 +21,7 @@ import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
+  LOGO_NO_TYPE,
   USER_TYPE,
   VIDEO_STATUS,
 } from "../../constants/constants";
@@ -79,7 +80,8 @@ function PatientHomeScreen() {
     const calculatePendingAppointmentsCount = () => {
       const appointmentData = appointments.filter(
         (appointment) =>
-          appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED
+          appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED ||
+          appointment.appointment_status === APPOINTMENT_STATUS.PENDING
       );
       setPendingAppointmentsCount(appointmentData.length);
     };
@@ -119,10 +121,25 @@ function PatientHomeScreen() {
     calculatePendingAppointmentsCount();
     isVideoTodayRejected();
     calculateHasAteMedicine();
-    console.log("the rejected video: " + rejectedVideo);
-    console.log("the has ate medicine: " + hasAteMedicine);
-    console.log("the pending appointment: " + pendingAppointmentsCount);
+    // console.log("the rejected video: " + rejectedVideo);
+    // console.log("the has ate medicine: " + hasAteMedicine);
+    // console.log("the pending appointment: " + pendingAppointmentsCount);
   }, [appointments, videos]);
+
+  const pendingNumber = () => {
+    var count = 0;
+    if (pendingAppointmentsCount > 0) {
+      count++;
+    }
+    if (!hasAteMedicine) {
+      count++;
+    }
+    if (rejectedVideo) {
+      count++;
+    }
+
+    return count;
+  };
 
   //Video Modal
   const bottomSheetModalRef = useRef(null);
@@ -141,9 +158,9 @@ function PatientHomeScreen() {
             onPress: () => {
               return;
             },
-            style : "cancel"
+            style: "cancel",
           },
-        ],
+        ]
       );
     }
     return bottomSheetModalRef.current?.present();
@@ -188,12 +205,13 @@ function PatientHomeScreen() {
               style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
             />
           )}
-          <View style={[styles.headerText]}>
+          <View style={[styles.headerText, { flexGrow: 1 }]}>
             <Text variant="bodyLarge">Hello</Text>
             <Text variant="headlineLarge">
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
+          <Image source={LOGO_NO_TYPE} style={{ width: 74, height: 74 }} />
         </View>
         {/* ================ TodoList ============== */}
         <View
@@ -211,9 +229,25 @@ function PatientHomeScreen() {
               { backgroundColor: theme.colors.surfaceContainerLow },
             ]}
           >
-            <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
-              To-Do List
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
+                Pending
+              </Text>
+              <View
+                style={{
+                  backgroundColor: theme.colors.error,
+                  borderRadius: 100,
+                  width: 24,
+                  height: 24,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: theme.colors.onError }}>
+                  {pendingNumber()}
+                </Text>
+              </View>
+            </View>
             <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
               {hasAteMedicine &&
               pendingAppointmentsCount == 0 &&
@@ -234,7 +268,7 @@ function PatientHomeScreen() {
                   showsVerticalScrollIndicator={false}
                   showsHorizontalScrollIndicator={false}
                 >
-                  {hasAteMedicine === false && (
+                  {!hasAteMedicine && (
                     <ToDoCard
                       title={"You haven’t take\nmedication yet today"}
                       icon="medical-bag"
@@ -259,7 +293,7 @@ function PatientHomeScreen() {
                       count={rejectedVideo}
                       onPressedCallback={() => {
                         // Assuming rejectedVideo is a Map object
-                        console.log(JSON.stringify(rejectedVideo));
+                        // console.log(JSON.stringify(rejectedVideo));
 
                         navigate("VideoDetailsScreen", {
                           video: rejectedVideo,
@@ -280,14 +314,11 @@ function PatientHomeScreen() {
             </View>
           </View>
           {/* ================== CTA buttons ============== */}
-          <View style={{ paddingVertical: 16 }}>
-            <Text
-              variant="titleLarge"
-              style={{ marginTop: 16, marginHorizontal: 16 }}
-            >
+          <View style={{ paddingVertical: 32 }}>
+            <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
               Are you up for something?
             </Text>
-            <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
+            <View style={[{ flexDirection: "row", marginTop: 16 }]}>
               {/* TODO change the navigation screen for each */}
               <CTAButton
                 icon="upload"
@@ -297,7 +328,7 @@ function PatientHomeScreen() {
               />
               <CTAButton
                 icon="emoticon-sick"
-                title="Report Side Effect"
+                title="Side Effect"
                 color={theme.colors.secondary}
                 onPressedCallback={() => {
                   navigate("ReportSideEffectScreen");
@@ -305,7 +336,7 @@ function PatientHomeScreen() {
               />
               <CTAButton
                 icon="calendar-blank"
-                title="Make Appointment"
+                title="Appointment"
                 color={theme.colors.tertiary}
                 onPressedCallback={() => navigate("BookAppointmentScreen")}
                 isLastItem={true}
@@ -319,21 +350,18 @@ function PatientHomeScreen() {
               { backgroundColor: theme.colors.primaryContainer },
             ]}
           >
-            <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
-              Tuberculosis Materials
-            </Text>
             <Text
-              variant="bodyLarge"
-              style={{ marginHorizontal: 16, marginTop: 8 }}
+              variant="titleLarge"
+              style={{ marginHorizontal: 16, alignSelf: "center" }}
             >
-              Curious about tuberculosis?
+              Materials
             </Text>
             <Button
               mode="contained"
               onPress={() => navigate("TuberculosisMaterialsScreen")}
-              style={{ margin: 16 }}
+              style={{ marginHorizontal: 16, marginTop: 16 }}
             >
-              Learn more about TB
+              Learn more
             </Button>
           </View>
           <View
@@ -370,6 +398,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
   },
   tbMaterial: {
-    paddingTop: 16,
+    paddingVertical: 24,
   },
 });

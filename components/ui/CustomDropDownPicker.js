@@ -17,7 +17,7 @@ export default function CustomDropDownPicker({
         {
           backgroundColor: theme.colors.background,
           borderRadius: 4,
-          borderColor: theme.colors.outline, 
+          borderColor: theme.colors.outline,
         },
       ]}
       arrowIconStyle={{
@@ -53,6 +53,8 @@ export default function CustomDropDownPicker({
       setValue={setValue}
       items={items}
       setItems={setItems}
+      maxHeight={250}
+      itemKey="label"
     />
   );
 }

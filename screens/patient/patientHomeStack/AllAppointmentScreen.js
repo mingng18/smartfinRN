@@ -106,12 +106,14 @@ function AllAppointmentScreen() {
           );
         })}
         {pendingAppointment.map((appointment) => {
+          console.log('sadsad' + appointment.healthcare_first_name)
           return (
             <HorizontalCard
               key={`pending-${appointment.id}`}
               subject={capitalizeFirstLetter(
                 appointment.healthcare_first_name === "" ||
-                  appointment.healthcare_first_name === null
+                  appointment.healthcare_first_name === null || 
+                  appointment.healthcare_first_name === undefined
                   ? "Appointment"
                   : appointment.healthcare_first_name
               )}
