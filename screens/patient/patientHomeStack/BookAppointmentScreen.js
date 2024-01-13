@@ -111,7 +111,7 @@ export default function BookAppointmentScreen() {
       { length: 300 },
       (_, i) =>
         new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)
-    ).filter((d) => !isValidDate(d)), // Disable all days except Saturdays
+    ).filter((d) => !isValidDate(d)), // Disable all days except Monday, Wednesday and Friday
   };
 
   const handleAppointmentSubmission = async () => {

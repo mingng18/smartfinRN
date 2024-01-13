@@ -8,7 +8,9 @@ import {
   addDoc,
   getDoc,
   updateDoc,
-  deleteDoc
+  deleteDoc,
+  query,
+  where,
 } from "firebase/firestore";
 
 export async function fetchDocument(collectionName, documentId) {
@@ -92,34 +94,54 @@ export async function editDocument(collectionName, documentId, updatedData) {
 //Appointment
 export async function fetchAppointmentsForPatient(patientId) {
   try {
-    const collectionRef = collection(db, FIREBASE_COLLECTION.APPOINTMENT);
-    const querySnapshot = await getDocs(collectionRef);
+    const appointmentCollectionRef = collection(
+      db,
+      FIREBASE_COLLECTION.APPOINTMENT
+    );
+    const healthcareCollectionRef = collection(
+      db,
+      FIREBASE_COLLECTION.HEALTHCARE
+    );
+    // const querySnapshot = await getDocs(patientCollectionRef);
 
     const appointments = [];
     const promises = [];
 
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      if (data.patient_id === patientId) {
+    const queryAppointment = query(
+      appointmentCollectionRef,
+      where("patient_id", "==", patientId)
+    );
+
+    const querySnapshot = await getDocs(queryAppointment);
+    querySnapshot
+      .forEach((doc) => {
+        const data = doc.data();
         if (data.healthcare_id) {
-          const promise = fetchDocument(FIREBASE_COLLECTION.HEALTHCARE, data.healthcare_id)
-            .then((healthcareDoc) => {
-              appointments.push({
-                id: doc.id,
-                healthcare_profile_picture: healthcareDoc.profile_pic_url
-                  ? healthcareDoc.profile_pic_url
-                  : "",
-                healthcare_first_name: healthcareDoc.first_name
-                  ? healthcareDoc.first_name
-                  : "",
-                ...data,
+          const querySnapshotHealthcarePromise = getDocs(
+            healthcareCollectionRef,
+            where("healthcare_id", "==", data.healthcare_id)
+          )
+            .then((healthcareSnapshot) => {
+              healthcareSnapshot.forEach((healthcareDoc) => {
+                appointments.push({
+                  id: doc.id,
+                  healthcare_profile_picture: healthcareDoc.profile_pic_url
+                    ? healthcareDoc.profile_pic_url
+                    : "",
+                  healthcare_first_name: healthcareDoc.first_name
+                    ? healthcareDoc.first_name
+                    : "",
+                  ...data,
+                });
               });
             })
             .catch((error) => {
-              console.error("Failed to fetch healthcare document:", error);
+              console.error(
+                "Failed to fetch healthcare document after fetching appointment:",
+                error
+              );
             });
-
-          promises.push(promise);
+          promises.push(querySnapshotHealthcarePromise);
         } else {
           // If healthcare_id doesn't exist, push an appointment with empty profile_picture and first_name
           appointments.push({
@@ -129,12 +151,49 @@ export async function fetchAppointmentsForPatient(patientId) {
             ...data,
           });
         }
-      }
-    });
+      })
+      
+    //Deprecated Fetching code
+    // querySnapshot.forEach((doc) => {
+    //   const data = doc.data();
+    //   if (data.patient_id === patientId) {
+    //     if (data.healthcare_id) {
+    //       const promise = fetchDocument(
+    //         FIREBASE_COLLECTION.HEALTHCARE,
+    //         data.healthcare_id
+    //       )
+    //         .then((healthcareDoc) => {
+    //           appointments.push({
+    //             id: doc.id,
+    //             healthcare_profile_picture: healthcareDoc.profile_pic_url
+    //               ? healthcareDoc.profile_pic_url
+    //               : "",
+    //             healthcare_first_name: healthcareDoc.first_name
+    //               ? healthcareDoc.first_name
+    //               : "",
+    //             ...data,
+    //           });
+    //         })
+    //         .catch((error) => {
+    //           console.error("Failed to fetch healthcare document:", error);
+    //         });
+
+    //       promises.push(promise);
+    //     } else {
+    //       // If healthcare_id doesn't exist, push an appointment with empty profile_picture and first_name
+    //       appointments.push({
+    //         id: doc.id,
+    //         healthcare_profile_picture: "", // Empty profile picture
+    //         healthcare_first_name: "", // Empty first name
+    //         ...data,
+    //       });
+    //     }
+    //   }
+    // });
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    console.log("firebase appointments", appointments);
+    console.log("firebase appointments mauhaha", appointments);
     return appointments;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
@@ -192,7 +251,10 @@ export async function fetchVideosToBeReviewedForHealthcare() {
       console.log("reviewer: " + data.reviewer_id);
       if (data.reviewer_id === "" || data.reviewer_id === null) {
         console.log("pushing video");
-        const promise = fetchDocument(FIREBASE_COLLECTION.PATIENT, data.submitter_id)
+        const promise = fetchDocument(
+          FIREBASE_COLLECTION.PATIENT,
+          data.submitter_id
+        )
           .then((patientDoc) => {
             videos.push({
               id: doc.id,
@@ -239,7 +301,10 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
         data.healthcare_id === "" ||
         data.healthcare_id == null
       ) {
-        const promise = fetchDocument(FIREBASE_COLLECTION.PATIENT, data.patient_id)
+        const promise = fetchDocument(
+          FIREBASE_COLLECTION.PATIENT,
+          data.patient_id
+        )
           .then((patientDoc) => {
             if (data.healthcare_id === healthcareId) {
               appointments.push({
@@ -284,7 +349,10 @@ export async function fetchSideEffectsAlertHealthcare() {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.healthcare_id === "" || data.healthcare_id === null) {
-        const promise = fetchDocument(FIREBASE_COLLECTION.PATIENT, data.patient_id)
+        const promise = fetchDocument(
+          FIREBASE_COLLECTION.PATIENT,
+          data.patient_id
+        )
           .then((patientDoc) => {
             sideEffects.push({
               id: doc.id,
