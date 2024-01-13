@@ -89,8 +89,8 @@ export const fetchAppointments = createAsyncThunk(
         });
       }
 
-      console.log("appointments ", appointments);
-      console.log("pendingAppointments ", pendingAppointments);
+      // console.log("appointments ", appointments);
+      // console.log("pendingAppointments ", pendingAppointments);
 
       return { appointments, pendingAppointments };
     } catch (error) {
