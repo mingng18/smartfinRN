@@ -85,16 +85,33 @@ function LoginContentForm({ onAuthenticate }) {
     email = enteredEmail.trim();
     password = enteredPassword.trim();
 
-    const emailIsValid = email.includes("@");
-    const passwordIsValid = password.length > 6;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailIsValid = emailRegex.test(email);
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
+    const passwordIsValid = passwordRegex.test(password);
+
+    setCredentialsInvalid({
+      email: !emailIsValid,
+      password: !passwordIsValid,
+    });
 
     if (!emailIsValid || !passwordIsValid) {
-      Alert.alert("Invalid input", "Please check your entered credentials.");
-      setCredentialsInvalid({
-        email: !emailIsValid,
-        password: !passwordIsValid,
-      });
-      return;
+      if (!emailIsValid && !passwordIsValid) {
+        return Alert.alert(
+          "Invalid email and password",
+          "Please enter a valid email address and password."
+        );
+      } else if (!emailIsValid) {
+        return Alert.alert(
+          "Invalid email",
+          "Please enter a valid email address."
+        );
+      } else if (!passwordIsValid) {
+        return Alert.alert(
+          "Invalid password",
+          "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
+        );
+      }
     }
     onAuthenticate({ email, password });
   }
@@ -285,9 +302,9 @@ const styles = StyleSheet.create({
   titleText: {
     marginHorizontal: 16,
     marginTop: 56,
-    alignSelf: 'center',
-    alignItems: 'center',
-    alignContent: 'center'
+    alignSelf: "center",
+    alignItems: "center",
+    alignContent: "center",
   },
   titleText2: {
     marginHorizontal: 16,

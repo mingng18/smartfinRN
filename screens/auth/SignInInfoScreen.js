@@ -38,6 +38,47 @@ export default function SignInInfoScreen({ route }) {
   async function nextButtonHandler() {
     setIsAuthenticating(true);
 
+    
+    //Client side validation
+    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
+    const passwordIsValid = passwordRegex.test(password);
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const emailIsValid = emailRegex.test(email);
+    const confirmPasswordIsValid = password === confirmPassword;
+
+    setCredentialsInvalid({
+      email: !emailIsValid,
+      password: !passwordIsValid,
+      confirmPassword: !confirmPasswordIsValid,
+    });
+    
+    if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
+      
+      if (!emailIsValid && !passwordIsValid) {
+        setIsAuthenticating(false);
+        return Alert.alert("Invalid email and password", "Please enter a valid email address and password.");
+      } else if (!emailIsValid) {
+        setIsAuthenticating(false);
+        return Alert.alert("Invalid email", "Please enter a valid email address.");
+      } else if (!passwordIsValid) {
+        setIsAuthenticating(false);
+        return Alert.alert(
+          "Invalid password",
+          "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
+          );
+        } else if (!confirmPasswordIsValid) {
+          setIsAuthenticating(false);
+          return Alert.alert(
+            "Invalid confirm password",
+            "Confirm password must match password."
+            );
+          } else {
+            setIsAuthenticating(false);
+            return Alert.alert("Invalid input", "Please check your entered credentials.");
+      }
+      
+
+    }
     //Check if email already exists
     const signInMethods = await fetchSignInMethodsForEmail(auth, email);
     if (signInMethods.length > 0) {
@@ -47,43 +88,7 @@ export default function SignInInfoScreen({ route }) {
       );
       return setIsAuthenticating(false);
     }
-
-    //Client side validation
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
-    const passwordIsValid = passwordRegex.test(password);
-    const emailIsValid = email.includes("@") && signInMethods.length === 0;
-    const confirmPasswordIsValid = password === confirmPassword;
-
-    if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
-      if (!emailIsValid && !passwordIsValid) {
-        setErrorTitle("Invalid email and password");
-        setErrorMessage("Please enter a valid email address and password.");
-      } else if (!emailIsValid) {
-        setErrorTitle("Invalid email");
-        setErrorMessage("Please enter a valid email address.");
-      } else if (!passwordIsValid) {
-        setErrorTitle("Invalid password");
-        setErrorMessage(
-          "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
-        );
-      } else if (!confirmPasswordIsValid) {
-        setErrorTitle("Invalid confirm password");
-        setErrorMessage("Confirm password must match password.");
-      } else {
-        setErrorTitle("Invalid input");
-        setErrorMessage("Please check your entered credentials.");
-      }
-
-      setCredentialsInvalid({
-        email: !emailIsValid,
-        password: !passwordIsValid,
-        confirmPassword: !confirmPasswordIsValid,
-      });
-
-      setIsAuthenticating(false);
-      return Alert.alert(errorTitle, errorMessage);
-    }
-
+    
     //Local state update and error handling
     try {
       dispatch(updateSignInCredentials({ email: email, password: password }));
