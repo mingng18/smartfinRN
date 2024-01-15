@@ -35,6 +35,7 @@ import {
 import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
+import { fetchBookedAppointmentDates } from "../../store/redux/bookedAppointmentDateSlice";
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
@@ -43,6 +44,7 @@ function PatientHomeScreen() {
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
+  const bookedAppointmentDates = useSelector( state => state.bookedAppointmentDateObject.bookedAppointmentDates)
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
   const [pendingAppointmentsCount, setPendingAppointmentsCount] =
@@ -70,6 +72,7 @@ function PatientHomeScreen() {
       fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
     );
     dispatch(fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT }));
+    dispatch(fetchBookedAppointmentDates({}))
   };
 
   React.useEffect(() => {

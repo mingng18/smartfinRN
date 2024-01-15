@@ -7,8 +7,12 @@ import * as SecureStore from "expo-secure-store";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { addDocument, deleteDocument } from "../../../util/firestoreWR";
 import * as Haptics from "expo-haptics";
-import { useDispatch } from "react-redux";
-import { createAppointment, deleteAppointment } from "../../../store/redux/appointmentSlice";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createAppointment,
+  deleteAppointment,
+  fetchBookedAppointmentDates,
+} from "../../../store/redux/appointmentSlice";
 import {
   APPOINTMENT_TIME,
   FIREBASE_COLLECTION,
@@ -18,6 +22,10 @@ export default function BookAppointmentScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
+
+  const bookedAppointmentDates = useSelector(
+    (state) => state.bookedAppointmentDateObject.bookedAppointmentDates
+  );
 
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -38,6 +46,8 @@ export default function BookAppointmentScreen() {
   });
 
   React.useEffect(() => {
+    async () => await fetchBookedAppointmentDates();
+
     if (params && params.isReschedule) {
       setIsReschedule(params.isReschedule);
       setLastAppointment(params.lastAppointment);
@@ -101,17 +111,33 @@ export default function BookAppointmentScreen() {
     return date.getDay() === 1 || date.getDay() === 3 || date.getDay() === 5;
   };
 
+  //Check if the date is booked and filter out the booked dates
+  const isBookedDate = (date) => {
+    const bookedDates = bookedAppointmentDates.map((dateStr) => {
+      const date = new Date(dateStr);
+      date.setHours(0, 0, 0, 0); // Set the time part to midnight
+      return date;
+    });
+
+    const compareDate = new Date(date);
+    compareDate.setHours(0, 0, 0, 0);
+
+    return bookedDates.some(
+      (bookedDate) => bookedDate.getTime() === compareDate.getTime()
+    );
+  };
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const validRange = {
     startDate: today,
-    endDate: undefined,
+    endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 365),
     disabledDates: Array.from(
-      { length: 300 },
+      { length: 366 },
       (_, i) =>
         new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)
-    ).filter((d) => !isValidDate(d)), // Disable all days except Monday, Wednesday and Friday
+    ).filter((d) => isBookedDate(d) || !isValidDate(d)), // Disable all booked dates and dates other than Monday, Wednesday and Friday
   };
 
   const handleAppointmentSubmission = async () => {

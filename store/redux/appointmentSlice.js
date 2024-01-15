@@ -23,7 +23,7 @@ export const fetchAppointments = createAsyncThunk(
         [appointments, pendingAppointments] =
           await fetchAppointmentsForHealthcare(userId);
       }
-      console.log("slice" + appointments);
+      console.log("slice in appointmentSlice" + appointments);
 
       // Convert non-serializable values to serializable ones and handle null cases
 

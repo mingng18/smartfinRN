@@ -200,6 +200,39 @@ export async function fetchAppointmentsForPatient(patientId) {
   }
 }
 
+export async function fetchBookedDateOfAppointmentFromFirebase() {
+  try {
+    const appointmentCollectionRef = collection(
+      db,
+      FIREBASE_COLLECTION.APPOINTMENT
+    );
+    const queryAppointment = query(
+      appointmentCollectionRef,
+      or(
+        where("appointment_status", "==", "pending"),
+        where("appointment_status", "==", "accepted")
+      )
+    );
+
+    const querySnapshot = await getDocs(queryAppointment);
+
+    const bookedAppointmentDates = [];
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      console.log("data is " + data.scheduled_timestamp.toDate().toISOString().slice(0, 10));
+      bookedAppointmentDates.push(data.scheduled_timestamp.toDate().toISOString().slice(0, 10));
+    });
+    return bookedAppointmentDates;
+  } catch (error) {
+    console.log("error in fetchBookedDateOfAppointment", error);
+    throw new Error(
+      "Failed to fetch booked appointment dates: " + error.message
+    );
+  }
+
+}
+
 export async function fetchSideEffectsForPatient(patientId) {
   try {
     const collectionRef = collection(db, FIREBASE_COLLECTION.SIDE_EFFECT);

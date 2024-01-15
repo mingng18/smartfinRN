@@ -7,6 +7,7 @@ import appointmentReducer from "./appointmentSlice";
 import sideEffectReducer from "./sideEffectSlice";
 import videoReducer from "./videoSlice";
 import patientDataReducer from "./patientDataSlice";
+import bookedAppointmentDateReducer from "./bookedAppointmentDateSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,5 +19,6 @@ export const store = configureStore({
     sideEffectObject: sideEffectReducer,
     videoObject: videoReducer,
     patientDataObject: patientDataReducer,
+    bookedAppointmentDateObject: bookedAppointmentDateReducer,
   },
 });

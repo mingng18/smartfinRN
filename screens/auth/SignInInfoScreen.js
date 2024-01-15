@@ -103,7 +103,7 @@ export default function SignInInfoScreen({ route }) {
         "Something went wrong",
         "Please check your input and try again later."
       );
-      console.log(error); //Debug use
+      console.log(error + " in signInInfoScreen"); //Debug use
     } finally {
       setIsAuthenticating(false);
     }
