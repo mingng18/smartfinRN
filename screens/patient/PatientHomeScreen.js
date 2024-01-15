@@ -124,6 +124,7 @@ function PatientHomeScreen() {
     calculatePendingAppointmentsCount();
     isVideoTodayRejected();
     calculateHasAteMedicine();
+    dispatch(fetchBookedAppointmentDates({}))
     // console.log("the rejected video: " + rejectedVideo);
     // console.log("the has ate medicine: " + hasAteMedicine);
     // console.log("the pending appointment: " + pendingAppointmentsCount);

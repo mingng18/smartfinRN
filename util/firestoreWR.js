@@ -220,7 +220,6 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log("data is " + data.scheduled_timestamp.toDate().toISOString().slice(0, 10));
       bookedAppointmentDates.push(data.scheduled_timestamp.toDate().toISOString().slice(0, 10));
     });
     return bookedAppointmentDates;
