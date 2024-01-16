@@ -53,7 +53,10 @@ export const DIAGNOSIS = [
   { label: "Extrapulmonary tuberculosis (EXPTB)", value: "EXPTB" },
   { label: "Latent TB infection (LTBI)", value: "LTBI" },
 ];
-export const NOTES = { VOTS: "Continue VOTS", DOTS: "Switch to DOTS" };
+export const NOTES = [
+  { label: "Continue VOTS", value: "Continue VOTS" },
+  { label: "Switch to DOTS", value: "Switch to DOTS" },
+];
 
 export const SIDE_EFFECT_GRADE = [
   { label: "Grade 1", value: 1 },

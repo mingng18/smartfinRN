@@ -9,10 +9,15 @@ export default function CustomDropDownPicker({
   items,
   setItems,
   placeholder,
+  listMode,
+  onChangeValue,
 }) {
   const theme = useTheme();
   return (
     <DropDownPicker
+      listMode={listMode}
+      dropDownDirection={listMode && "TOP"}
+      onChangeValue={onChangeValue}
       style={[
         {
           backgroundColor: theme.colors.background,

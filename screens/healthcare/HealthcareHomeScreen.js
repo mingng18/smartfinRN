@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import React, { useRef } from "react";
+import React from "react";
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -8,17 +8,20 @@ import {
 import {
   View,
   StyleSheet,
-  Image,
   RefreshControl,
   Platform,
+  Image,
 } from "react-native";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Text, useTheme } from "react-native-paper";
 import {
   capitalizeFirstLetter,
   getLastTenCharacters,
 } from "../../util/wordUtil";
-import ToDoCard from "../../components/ui/ToDoCard";
-import { BLANK_PROFILE_PIC, USER_TYPE } from "../../constants/constants";
+import {
+  BLANK_PROFILE_PIC,
+  LOGO_NO_TYPE,
+  USER_TYPE,
+} from "../../constants/constants";
 import HealthcareToDoCard from "../../components/ui/ToDoCard_Healthcare";
 import CTAButton from "../../components/ui/CTAButton";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
@@ -28,6 +31,7 @@ import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import CachedImage from "expo-cached-image";
+import * as SecureStore from "expo-secure-store";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
@@ -55,7 +59,7 @@ function HealthcareHomeScreen() {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    fetchDataForHealthcare;
+    fetchDataForHealthcare();
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     setTimeout(() => {
       setRefreshing(false);
@@ -137,11 +141,19 @@ function HealthcareHomeScreen() {
         }}
       >
         {/* ================ HomeHeader =============== */}
-        <View style={[styles.homeHeader]}>
+        <View
+          style={[
+            styles.homeHeader,
+            {
+              backgroundColor:
+                Platform.OS === "android" && theme.colors.secondaryContainer,
+            },
+          ]}
+        >
           {user.profile_pic_url && (
             <CachedImage
               source={{ uri: user.profile_pic_url }}
-              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
               defaultSource={BLANK_PROFILE_PIC}
               style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
             />
@@ -152,6 +164,7 @@ function HealthcareHomeScreen() {
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
+          <Image source={LOGO_NO_TYPE} style={{ width: 74, height: 74 }} />
         </View>
         {/* ================ TodoList ============== */}
         <View
@@ -170,69 +183,43 @@ function HealthcareHomeScreen() {
               { backgroundColor: theme.colors.surfaceContainerLow },
             ]}
           >
-            <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
-              To-Do List
-            </Text>
-          </View>
-          <View
-            style={[
-              {
-                flexDirection: "row",
-                marginTop: 16,
-                marginBottom: 8,
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
-          >
-            {
-              /* !hasAteMedicine &&*/ <HealthcareToDoCard
+            <Text variant="titleLarge">To-Do List</Text>
+            <View style={[{ flexDirection: "row", marginTop: 16 }]}>
+              <HealthcareToDoCard
                 title={"Total Patient"}
                 icon="account-outline"
                 count={patientAmount}
                 onPressedCallback={() => navigate("AllPatientScreen")}
+                style={{ marginRight: 8 }}
               />
-            }
-            {
-              /*pendingAppointmentsCount > 0 &&*/ <HealthcareToDoCard
-                title={"Videos to Review"}
+              <HealthcareToDoCard
+                title={"Review Videos"}
                 icon="video"
                 count={videosToBeReviewedCount}
                 onPressedCallback={() => navigation.jumpTo("healthcareReview")}
+                style={{ marginLeft: 8 }}
               />
-            }
-            <View style={{ marginRight: 16 }} />
-          </View>
-          <View
-            style={[
-              {
-                flexDirection: "row",
-                marginTop: 8,
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
-          >
-            {
-              /* !hasAteMedicine &&*/ <HealthcareToDoCard
+            </View>
+            <View style={[{ flexDirection: "row", marginTop: 16 }]}>
+              <HealthcareToDoCard
                 title={"Appointment"}
                 icon="calendar"
                 count={appointmentsCount}
                 onPressedCallback={() =>
                   navigation.jumpTo("healthcareAppointment")
                 }
+                style={{ marginRight: 8 }}
               />
-            }
-            {
-              /*pendingAppointmentsCount > 0 &&*/ <HealthcareToDoCard
-                title={"Side Effect Alert"}
+              <HealthcareToDoCard
+                title={"Side Effect"}
                 icon="emoticon-sick-outline"
                 count={sideEffectsAlertCount}
                 onPressedCallback={() => navigate("ReviewSideEffectScreen")}
+                style={{ marginLeft: 8 }}
               />
-            }
-            <View style={{ marginRight: 16 }} />
+            </View>
           </View>
+
           {/* ================== CTA buttons ============== */}
           <View
             style={[
@@ -251,13 +238,13 @@ function HealthcareHomeScreen() {
               {/* TODO change the navigation screen for each */}
               <CTAButton
                 icon="video"
-                title="Review Video"
+                title="Video"
                 color={theme.colors.primary}
                 onPressedCallback={() => navigation.jumpTo("healthcareReview")}
               />
               <CTAButton
                 icon="emoticon-sick"
-                title="Review Side Effect"
+                title="Side Effect"
                 color={theme.colors.secondary}
                 onPressedCallback={() => {
                   navigate("ReviewSideEffectScreen");
@@ -265,7 +252,7 @@ function HealthcareHomeScreen() {
               />
               <CTAButton
                 icon="calendar-blank"
-                title="Review Appointment"
+                title="Appointment"
                 color={theme.colors.tertiary}
                 onPressedCallback={() => navigate("healthcareAppointment")}
                 isLastItem={true}
@@ -273,17 +260,15 @@ function HealthcareHomeScreen() {
             </View>
           </View>
           {/* ================== Analytics ================= */}
-          <View
-            style={[
-              {
-                paddingTop: 16,
-              },
-            ]}
+          {/* <Text
+            variant="titleLarge"
+            style={{
+              paddingTop: 16,
+              marginHorizontal: 16,
+            }}
           >
-            <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
-              Analytics
-            </Text>
-          </View>
+            Analytics
+          </Text> */}
         </View>
         <View
           style={[
@@ -311,10 +296,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginLeft: 16,
     justifyContent: "center",
+    flexGrow: 1,
   },
   toDoList: {
-    paddingTop: 16,
     borderRadius: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
   tbMaterial: {
     paddingTop: 16,

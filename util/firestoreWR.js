@@ -99,11 +99,6 @@ export async function fetchAppointmentsForPatient(patientId) {
       db,
       FIREBASE_COLLECTION.APPOINTMENT
     );
-    const healthcareCollectionRef = collection(
-      db,
-      FIREBASE_COLLECTION.HEALTHCARE
-    );
-    // const querySnapshot = await getDocs(patientCollectionRef);
 
     const appointments = [];
     const promises = [];
@@ -117,22 +112,20 @@ export async function fetchAppointmentsForPatient(patientId) {
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       if (data.healthcare_id) {
-        const querySnapshotHealthcarePromise = getDocs(
-          healthcareCollectionRef,
-          where("healthcare_id", "==", data.healthcare_id)
+        const querySnapshotHealthcarePromise = fetchDocument(
+          FIREBASE_COLLECTION.HEALTHCARE,
+          data.healthcare_id
         )
-          .then((healthcareSnapshot) => {
-            healthcareSnapshot.forEach((healthcareDoc) => {
-              appointments.push({
-                id: doc.id,
-                healthcare_profile_picture: healthcareDoc.profile_pic_url
-                  ? healthcareDoc.profile_pic_url
-                  : "",
-                healthcare_first_name: healthcareDoc.first_name
-                  ? healthcareDoc.first_name
-                  : "",
-                ...data,
-              });
+          .then((healthcareDoc) => {
+            appointments.push({
+              id: doc.id,
+              healthcare_profile_picture: healthcareDoc.profile_pic_url
+                ? healthcareDoc.profile_pic_url
+                : "",
+              healthcare_first_name: healthcareDoc.first_name
+                ? healthcareDoc.first_name
+                : "",
+              ...data,
             });
           })
           .catch((error) => {
@@ -153,47 +146,9 @@ export async function fetchAppointmentsForPatient(patientId) {
       }
     });
 
-    //Deprecated Fetching code
-    // querySnapshot.forEach((doc) => {
-    //   const data = doc.data();
-    //   if (data.patient_id === patientId) {
-    //     if (data.healthcare_id) {
-    //       const promise = fetchDocument(
-    //         FIREBASE_COLLECTION.HEALTHCARE,
-    //         data.healthcare_id
-    //       )
-    //         .then((healthcareDoc) => {
-    //           appointments.push({
-    //             id: doc.id,
-    //             healthcare_profile_picture: healthcareDoc.profile_pic_url
-    //               ? healthcareDoc.profile_pic_url
-    //               : "",
-    //             healthcare_first_name: healthcareDoc.first_name
-    //               ? healthcareDoc.first_name
-    //               : "",
-    //             ...data,
-    //           });
-    //         })
-    //         .catch((error) => {
-    //           console.error("Failed to fetch healthcare document:", error);
-    //         });
-
-    //       promises.push(promise);
-    //     } else {
-    //       // If healthcare_id doesn't exist, push an appointment with empty profile_picture and first_name
-    //       appointments.push({
-    //         id: doc.id,
-    //         healthcare_profile_picture: "", // Empty profile picture
-    //         healthcare_first_name: "", // Empty first name
-    //         ...data,
-    //       });
-    //     }
-    //   }
-    // });
-
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    console.log("firebase appointments mauhaha", appointments);
+    console.log("firebase appointments mauhaha", appointments.length);
     return appointments;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
@@ -220,10 +175,9 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log("Firestore Timestamp:", data.scheduled_timestamp);
-      console.log("Converted to ISOString:", data.scheduled_timestamp.toDate().toISOString());
-      console.log("data.scheduled_timestamp.toDate().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })", data.scheduled_timestamp.toDate().toLocaleTimeString('en-US'));
-      bookedAppointmentDates.push(data.scheduled_timestamp.toDate().toISOString());
+      bookedAppointmentDates.push(
+        data.scheduled_timestamp.toDate().toISOString().slice(0, 10)
+      );
     });
     return bookedAppointmentDates;
   } catch (error) {
@@ -232,7 +186,6 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
       "Failed to fetch booked appointment dates: " + error.message
     );
   }
-
 }
 
 export async function fetchSideEffectsForPatient(patientId) {
@@ -291,8 +244,8 @@ export async function fetchVideosToBeReviewedForHealthcare() {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log("reviewer: " + data.reviewer_id);
-      console.log("pushing video");
+      // console.log("reviewer: " + data.reviewer_id);
+      // console.log("pushing video");
       const promise = fetchDocument(
         FIREBASE_COLLECTION.PATIENT,
         data.submitter_id
@@ -447,12 +400,6 @@ export async function fetchSideEffectsAlertHealthcare() {
             patient_first_name: patientDoc.first_name
               ? patientDoc.first_name
               : "",
-            cardColor:
-              data.severity === "grade1"
-                ? "#DBE1FF"
-                : data.severity === "grade2"
-                ? "#FFDCC4"
-                : "#FFDAD6",
             ...data,
           });
         })

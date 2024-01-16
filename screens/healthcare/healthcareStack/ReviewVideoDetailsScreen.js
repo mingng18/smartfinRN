@@ -21,7 +21,7 @@ import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";
-import { updateVideo } from "../../../store/redux/videoSlice";
+import { deleteVideo } from "../../../store/redux/videoSlice";
 
 export default function ReviewVideoDetailsScreen() {
   const navigation = useNavigation();
@@ -69,36 +69,17 @@ export default function ReviewVideoDetailsScreen() {
           video_url: "",
         };
 
-        console.log("currently in 2");
         await editDocument("video", currentVideo.id, updatedVideo);
-        console.log("currently in 3");
 
         // Delete the video file from firebase storage
         deleteVideo(currentVideo.id);
-        console.log("currently in 4");
 
         // Dispatch the updateVideo action to update the Redux state
-        // dispatch(
-        //   updateVideo({
-        //     id: currentVideo.id,
-        //     changes: {
-        //       medical_checklist: treatment,
-        //       rejected_reason: "",
-        //       reviewed_timestamp: new Date().toISOString(),
-        //       reviewer_id: storedUid,
-        //       status: VIDEO_STATUS.ACCEPTED,
-        //       submitter_id: currentVideo.submitter_id,
-        //       uploaded_timestamp: currentVideo.uploaded_timestamp,
-        //       video_url: "",
-        //     },
-        //   })
-        // );
-        console.log("currently in 5");
-        
+        dispatch(deleteVideo({ id: currentVideo.id }));
+
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         Alert.alert("Success", "Video successfully accepted.");
         navigation.goBack();
-        console.log("currently in 6");
       } else {
         if (reason === "") {
           setReasonError(true);
@@ -120,10 +101,10 @@ export default function ReviewVideoDetailsScreen() {
           await editDocument("video", currentVideo.id, updatedVideo);
 
           // Delete the video file from firebase storage
-          deleteVideo(currentVideo.id);
+          deleteVideoFromFirestore(currentVideo.id);
 
           // Dispatch the updateVideo action to update the Redux state
-          dispatch(updateVideo({ id: currentVideo.id, changes: updatedVideo }));
+          dispatch(deleteVideo({ id: currentVideo.id }));
 
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           Alert.alert("Success", "Video successfully rejected.");
@@ -136,7 +117,7 @@ export default function ReviewVideoDetailsScreen() {
     }
   };
 
-  function deleteVideo(vidId) {
+  function deleteVideoFromFirestore(vidId) {
     const videoRef = ref(storageRef, `patientTreatmentVideo/${vidId}`);
 
     deleteObject(videoRef)
@@ -173,14 +154,16 @@ export default function ReviewVideoDetailsScreen() {
           )}
           color={theme.colors.surfaceContainer}
         />
-        <Video
-          ref={videoRef}
-          style={styles.video}
-          source={{ uri: currentVideo.video_url }}
-          useNativeControls
-          resizeMode={ResizeMode.CONTAIN}
-          isLooping={false}
-        />
+        {currentVideo.video_url && (
+          <Video
+            ref={videoRef}
+            style={styles.video}
+            source={{ uri: currentVideo.video_url }}
+            useNativeControls
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping={false}
+          />
+        )}
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
           Medication Checklists
         </Text>

@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   fetchVideosForPatient,
   fetchVideosToBeReviewedForHealthcare,
-} from "../../util/firestoreWR"; // You should replace this with the actual function to fetch video data
+} from "../../util/firestoreWR"; 
 
 const initialState = {
   videos: [],
@@ -20,9 +20,9 @@ export const fetchVideos = createAsyncThunk(
       } else {
         videos = await fetchVideosToBeReviewedForHealthcare(userId); // Fetch video data from Firestore or any other source for healthcare
       }
-      
-      if (videos === null || videos === undefined){
-        return null
+
+      if (videos === null || videos === undefined) {
+        return null;
       }
 
       // Convert non-serializable values to serializable ones if needed
@@ -60,13 +60,14 @@ export const videoSlice = createSlice({
     },
     deleteVideo: (state, action) => {
       state.videos = state.videos.filter(
-        (video) => video.id !== action.payload
+        (video) => video.id !== action.payload.id
       );
     },
     updateVideo: (state, action) => {
       const index = state.videos.findIndex(
         (video) => video.id === action.payload.id
       );
+      console.log("index is " + index);
       if (index !== -1) {
         state.videos[index] = {
           ...state.videos[index],
@@ -92,7 +93,8 @@ export const videoSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { createVideo, deleteVideo } = videoSlice.actions;
+export const { createVideo } = videoSlice.actions;
 export const updateVideo = videoSlice.actions.updateVideo;
+export const deleteVideo = videoSlice.actions.deleteVideo;
 
 export default videoSlice.reducer;

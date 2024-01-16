@@ -108,6 +108,9 @@ const authSlice = createSlice({
       state.role = action.payload.role;
       state.category = action.payload.category;
     },
+    updateProfilePic: (state, action) => {
+      state.profile_pic_url = action.payload.profile_pic_url;
+    },
   },
 });
 
@@ -145,4 +148,5 @@ export const setFirstTimeLogin = authSlice.actions.setFirstTimeLogin;
 export const authenticate = authSlice.actions.authenticate;
 export const logout = authSlice.actions.logout;
 export const editHealthcareInfo = authSlice.actions.editHealthcareInfo;
+export const updateProfilePic = authSlice.actions.updateProfilePic;
 export default authSlice.reducer;

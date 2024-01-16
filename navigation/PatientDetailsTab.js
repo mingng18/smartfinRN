@@ -158,12 +158,17 @@ const PatientDetailsTab = ({ patient }) => {
   }
 
   function ViewPatientGoalTracker() {
-    const today = new Date();
-    const startDate = new Date(patient.date_of_diagnosis);
-
     const marked = React.useMemo(() => {
       const markedDates = {};
-      while (startDate <= today) {
+      const startDate = new Date(patient.date_of_diagnosis);
+      const today = new Date();
+
+      const treatmentEndDate = new Date(startDate);
+      treatmentEndDate.setMonth(
+        treatmentEndDate.getMonth() + patient.treatment_duration_months
+      );
+
+      while (startDate <= treatmentEndDate) {
         const dateString = startDate.toISOString().slice(0, 10);
         const video = patientVideos.find(
           (v) =>
@@ -172,34 +177,32 @@ const PatientDetailsTab = ({ patient }) => {
         );
 
         //Exclude date other than today
-        if (startDate < today) {
-          if (!video || video.status === VIDEO_STATUS.REJECTED) {
-            markedDates[dateString] = {
-              selected: true,
-              selectedColor: theme.colors.errorContainer,
-              selectedTextColor: theme.colors.onBackground,
-              disableTouchEvent: true,
-            };
-          } else if (video.status === VIDEO_STATUS.PENDING) {
-            markedDates[dateString] = {
-              selected: true,
-              selectedColor: theme.colors.surfaceContainerHigh,
-              selectedTextColor: theme.colors.onBackground,
-              disableTouchEvent: true,
-            };
-          } else {
-            markedDates[dateString] = {
-              selected: true,
-              selectedColor: theme.colors.primaryFixedDim,
-              selectedTextColor: theme.colors.onBackground,
-              disableTouchEvent: true,
-            };
-          }
+        if (video) {
+          markedDates[dateString] = {
+            selected: true,
+            selectedColor: theme.colors.greenContainer,
+            selectedTextColor: theme.colors.onBackground,
+            disableTouchEvent: true,
+          };
+        } else if (!video && startDate <= today) {
+          markedDates[dateString] = {
+            selected: true,
+            selectedColor: theme.colors.errorContainer,
+            selectedTextColor: theme.colors.onBackground,
+            disableTouchEvent: true,
+          };
+        } else {
+          markedDates[dateString] = {
+            selected: true,
+            selectedColor: theme.colors.surfaceContainerHigh,
+            selectedTextColor: theme.colors.onBackground,
+            disableTouchEvent: true,
+          };
         }
         startDate.setDate(startDate.getDate() + 1); // Move to the next date
       }
       return markedDates;
-    }, [startDate, today, patientVideos]);
+    }, [patientVideos]);
 
     return (
       <View
@@ -222,7 +225,6 @@ const PatientDetailsTab = ({ patient }) => {
               selectedDayTextColor: theme.colors.onPrimary,
             }}
             markedDates={marked}
-            // disabledByDefault
           />
         </View>
         <View
@@ -234,14 +236,10 @@ const PatientDetailsTab = ({ patient }) => {
           }}
         >
           <Legend
-            color={theme.colors.primaryFixedDim}
-            text={"Video Accepted"}
+            color={theme.colors.greenContainer}
+            text={"Video Submitted"}
           />
           <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
-          <Legend
-            color={theme.colors.surfaceContainerHigh}
-            text={"Video Pending"}
-          />
         </View>
       </View>
     );

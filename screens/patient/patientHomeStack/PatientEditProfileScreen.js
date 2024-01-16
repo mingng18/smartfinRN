@@ -2,11 +2,11 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useRef } from "react";
 import { Image, ScrollView, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-import { BLANK_PROFILE_PIC } from "../../../constants/constants";
+import { BLANK_PROFILE_PIC, USER_TYPE } from "../../../constants/constants";
 import { Timestamp } from "firebase/firestore";
 import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
 import TreatmentInfoForm from "../../../components/Auth/TreatmentInfoForm";
-import UploadProfilePicModal from "./UploadProfilePicModal";
+import UploadProfilePicModal from "../../common/UploadProfilePicModal";
 import { useSelector } from "react-redux";
 
 function PatientEditProfileScreen() {
@@ -85,7 +85,10 @@ function PatientEditProfileScreen() {
         <TreatmentInfoForm isEditing={true} />
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
-      <UploadProfilePicModal bottomSheetModalRef={bottomSheetModalRef} />
+      <UploadProfilePicModal
+        bottomSheetModalRef={bottomSheetModalRef}
+        userType={USER_TYPE.PATIENT}
+      />
     </View>
   );
 }

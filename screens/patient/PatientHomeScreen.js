@@ -44,7 +44,9 @@ function PatientHomeScreen() {
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
-  const bookedAppointmentDates = useSelector( state => state.bookedAppointmentDateObject.bookedAppointmentDates)
+  const bookedAppointmentDates = useSelector(
+    (state) => state.bookedAppointmentDateObject.bookedAppointmentDates
+  );
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
   const [pendingAppointmentsCount, setPendingAppointmentsCount] =
@@ -72,7 +74,7 @@ function PatientHomeScreen() {
       fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
     );
     dispatch(fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT }));
-    dispatch(fetchBookedAppointmentDates({}))
+    dispatch(fetchBookedAppointmentDates({}));
   };
 
   React.useEffect(() => {
@@ -102,9 +104,10 @@ function PatientHomeScreen() {
 
         return video.status === VIDEO_STATUS.REJECTED && isToday;
       });
+      console.log("rejected vid " + vid);
 
       if (vid == null || vid == undefined) {
-        setRejectedVideo(0);
+        setRejectedVideo();
         return;
       }
       setRejectedVideo(vid);
@@ -124,7 +127,7 @@ function PatientHomeScreen() {
     calculatePendingAppointmentsCount();
     isVideoTodayRejected();
     calculateHasAteMedicine();
-    dispatch(fetchBookedAppointmentDates({}))
+    dispatch(fetchBookedAppointmentDates({}));
     // console.log("the rejected video: " + rejectedVideo);
     // console.log("the has ate medicine: " + hasAteMedicine);
     // console.log("the pending appointment: " + pendingAppointmentsCount);
@@ -148,10 +151,10 @@ function PatientHomeScreen() {
   //Video Modal
   const bottomSheetModalRef = useRef(null);
   const handlePresentModalPress = () => {
-    if (rejectedVideo == 0 && hasAteMedicine) {
+    if (!rejectedVideo && hasAteMedicine) {
       return Alert.alert(
         "You have already uploaded today",
-        "You have already uploaded a video today. If you upload again, the previous video will be overwritten.",
+        "You have already uploaded a video today. If you upload again, it will replace the previous video.",
         [
           {
             text: "Continue",
@@ -204,12 +207,12 @@ function PatientHomeScreen() {
           {user.profile_pic_url && (
             <CachedImage
               source={{ uri: user.profile_pic_url }}
-              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
               defaultSource={BLANK_PROFILE_PIC}
               style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
             />
           )}
-          <View style={[styles.headerText, { flexGrow: 1 }]}>
+          <View style={[styles.headerText]}>
             <Text variant="bodyLarge">Hello</Text>
             <Text variant="headlineLarge">
               {capitalizeFirstLetter(user.first_name)}
@@ -255,7 +258,7 @@ function PatientHomeScreen() {
             <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
               {hasAteMedicine &&
               pendingAppointmentsCount == 0 &&
-              rejectedVideo == 0 ? (
+              !rejectedVideo ? (
                 <Text
                   variant="bodyLarge"
                   style={{
@@ -290,15 +293,12 @@ function PatientHomeScreen() {
                       onPressedCallback={() => navigate("AllAppointmentScreen")}
                     />
                   )}
-                  {rejectedVideo != null && rejectedVideo > 0 && (
+                  {rejectedVideo && (
                     <ToDoCard
                       title={"Video Rejected"}
                       icon="play"
-                      count={rejectedVideo}
+                      count={"1"}
                       onPressedCallback={() => {
-                        // Assuming rejectedVideo is a Map object
-                        // console.log(JSON.stringify(rejectedVideo));
-
                         navigate("VideoDetailsScreen", {
                           video: rejectedVideo,
                         });
@@ -396,6 +396,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     marginLeft: 16,
     justifyContent: "center",
+    flexGrow: 1,
   },
   toDoList: {
     paddingTop: 16,

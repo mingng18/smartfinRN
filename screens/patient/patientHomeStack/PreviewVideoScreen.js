@@ -17,8 +17,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
-import { Timestamp, doc, setDoc } from "firebase/firestore";
-import { db } from "../../../util/firebaseConfig";
+import { Timestamp } from "firebase/firestore";
 import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
 import { createVideo } from "../../../store/redux/videoSlice";

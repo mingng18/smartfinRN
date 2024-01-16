@@ -6,15 +6,12 @@ export default function HealthcareToDoCard({
   title,
   count,
   onPressedCallback,
+  style,
 }) {
   const theme = useTheme();
 
   return (
-    <View
-      style={[
-        { borderRadius: 8, overflow: "hidden", marginLeft: 16, width: 170},
-      ]}
-    >
+    <View style={[{ borderRadius: 8, overflow: "hidden", flex: 1, ...style }]}>
       <Pressable
         onPress={onPressedCallback}
         android_ripple={{ color: theme.colors.onBackground, borderless: true }}
@@ -50,7 +47,7 @@ const styles = StyleSheet.create({
   todoCard: {
     flexDirection: "row",
     padding: 8,
-    
+
     // paddingRight: 8,
     // paddingBottom: 0,
     borderRadius: 8,

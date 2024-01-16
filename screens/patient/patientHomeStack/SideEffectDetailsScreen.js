@@ -11,6 +11,7 @@ import {
 } from "react-native-paper";
 import { SIDE_EFFECT_STATUS } from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
+import SideEffectChip from "../../../components/ui/SideEffectChip";
 
 export default function SideEffectDetailsScreen() {
   const navigation = useNavigation();
@@ -82,25 +83,7 @@ export default function SideEffectDetailsScreen() {
       </Text>
       <View style={{ marginTop: 8, flexDirection: "row", flexWrap: "wrap" }}>
         {currentSideEffect.symptoms.map((symptom, i) => {
-          return (
-            <Chip
-              key={i}
-              style={{
-                marginRight: 8,
-                marginBottom: 8,
-                backgroundColor:
-                  symptom.grade == 3
-                    ? theme.colors.errorContainer
-                    : symptom.grade == 2
-                    ? theme.colors.yellowContainer
-                    : theme.colors.secondaryContainer,
-              }}
-            >
-              {symptom.grade == 0
-                ? capitalizeFirstLetter(symptom.label)
-                : `${capitalizeFirstLetter(symptom.label)} : ${symptom.grade}`}
-            </Chip>
-          );
+          return <SideEffectChip symptom={symptom} key={i} />;
         })}
       </View>
       {currentSideEffect.se_status === SIDE_EFFECT_STATUS.REVIEWED &&

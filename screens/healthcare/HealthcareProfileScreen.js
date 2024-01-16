@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, signOut } from "firebase/auth";
-import { Image, StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,19 +21,30 @@ export default function HealthcareProfileScreen() {
   const { navigate } = useNavigation();
 
   function signOutHandler() {
-    signOut(auth)
-      .then(async () => {
-        // Sign out successful
-        console.log("User signed out successfully");
-        dispatch(logoutDeleteNative());
-        // navigation.navigate("Login");
-        // Add any additional logic or navigation here
-      })
-      .catch((error) => {
-        // An error occurred during sign out
-        console.error("Error signing out:", error);
-        // Handle the error or display an error message
-      });
+    Alert.alert("Signing out", "Are you sure want to sign out?", [
+      {
+        text: "Sign Out",
+        onPress: () => {
+          signOut(auth)
+            .then(async () => {
+              // Sign out successful
+              console.log("User signed out successfully");
+              dispatch(logoutDeleteNative());
+              // navigation.navigate("Login");
+              // Add any additional logic or navigation here
+            })
+            .catch((error) => {
+              // An error occurred during sign out
+              console.error("Error signing out:", error);
+              // Handle the error or display an error message
+            });
+        },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
   }
 
   return (
@@ -49,7 +60,7 @@ export default function HealthcareProfileScreen() {
         {user.profile_pic_url && (
           <CachedImage
             source={{ uri: user.profile_pic_url }}
-            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
             defaultSource={BLANK_PROFILE_PIC}
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />

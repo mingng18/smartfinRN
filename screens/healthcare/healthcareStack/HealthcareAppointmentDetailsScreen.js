@@ -10,7 +10,11 @@ import {
   useTheme,
 } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { APPOINTMENT_STATUS, FIREBASE_COLLECTION, TREATMENT } from "../../../constants/constants";
+import {
+  APPOINTMENT_STATUS,
+  FIREBASE_COLLECTION,
+  TREATMENT,
+} from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import InformationChip from "../../../components/ui/InformationChip";
 import * as Haptics from "expo-haptics";
@@ -139,20 +143,31 @@ export default function HealthcareAppointmentDetailsScreen() {
       </Text>
       <View style={{ marginTop: 8, flexDirection: "row", flexWrap: "wrap" }}>
         <InformationChip
-          text={capitalizeFirstLetter(currentPatient.gender)}
-          icon={"gender-male-female"}
-        />
-        <InformationChip
           text={currentPatient.nric_passport}
           icon={"card-account-details"}
+          style={{ width: "60%" }}
           isBlur
         />
-        <InformationChip text={currentPatient.age} icon={"face-man"} />
-        <InformationChip text={currentPatient.nationality} icon={"flag"} />
+        <InformationChip
+          text={capitalizeFirstLetter(currentPatient.gender)}
+          icon={"gender-male-female"}
+          style={{ width: "40%" }}
+        />
         <InformationChip
           text={currentPatient.phone_number}
           icon={"phone"}
+          style={{ width: "60%" }}
           isBlur
+        />
+        <InformationChip
+          text={currentPatient.age}
+          icon={"face-man"}
+          style={{ width: "40%" }}
+        />
+        <InformationChip
+          text={currentPatient.nationality}
+          icon={"flag"}
+          style={{ width: "60%" }}
         />
       </View>
       <Text variant="titleLarge" style={{ marginTop: 32 }}>

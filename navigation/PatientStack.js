@@ -19,7 +19,7 @@ import PreviewProfilePicScreen from "../screens/auth/PreviewProfilePicScreen";
 import TuberculosisMaterialsScreen from "../screens/patient/patientHomeStack/TuberculosisMaterialsScreen";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import React from "react";
-import PatientPreviewProfilePicScreen from "../screens/patient/patientHomeStack/PatientPreviewProfile";
+import UserPreviewProfilePicScreen from "../screens/common/UserPreviewProfilePicScreen";
 import LanguageScreen from "../screens/common/LanguageScreen";
 import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
 
@@ -164,8 +164,8 @@ export default function PatientStackGroup() {
         }}
       />
       <PatientStack.Screen
-        name="PatientPreviewProfilePicScreen"
-        component={PatientPreviewProfilePicScreen}
+        name="UserPreviewProfilePicScreen"
+        component={UserPreviewProfilePicScreen}
         options={{
           headerShown: true,
         }}

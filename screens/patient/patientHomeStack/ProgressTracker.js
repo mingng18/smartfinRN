@@ -13,9 +13,7 @@ export default function ProgressTracker() {
   const videos = useSelector((state) => state.videoObject.videos);
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
   const navigation = useNavigation();
-  const today = new Date();
   const user = useSelector((state) => state.authObject);
-  const startDate = new Date(user.date_of_diagnosis);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -40,6 +38,8 @@ export default function ProgressTracker() {
 
   const marked = useMemo(() => {
     const markedDates = {};
+    const startDate = new Date(user.date_of_diagnosis);
+    const today = new Date();
 
     //Determine whether the patient has ended the treatment, thus stop tracking
     const treatmentEndDate = new Date(startDate);
@@ -82,7 +82,7 @@ export default function ProgressTracker() {
       startDate.setDate(startDate.getDate() + 1); // Move to the next date
     }
     return markedDates;
-  }, [startDate, today, videos]);
+  }, [videos]);
 
   return (
     <KeyboardAvoidingView>

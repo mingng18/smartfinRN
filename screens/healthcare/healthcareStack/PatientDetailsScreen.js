@@ -11,12 +11,13 @@ import { debounce } from "lodash";
 import { editDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updatePatientData } from "../../../store/redux/patientDataSlice";
+import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 
 export default function PatientDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
-  const currentPatient = params.patient;
+  const [currentPatient, setCurrentPatient] = React.useState(params.patient);
   const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
@@ -31,6 +32,10 @@ export default function PatientDetailsScreen() {
   //   }
   // }, [currentPatient]);
 
+  const [notesOpen, setNotesOpen] = React.useState(false);
+  const [notes, setNotes] = React.useState("government_hospital");
+  const [notesData, setNotesData] = React.useState(NOTES);
+
   const updateNotes = async (note) => {
     console.log("clicked");
     const updatedData = {
@@ -41,19 +46,12 @@ export default function PatientDetailsScreen() {
       dispatch(
         updatePatientData({ id: currentPatient.id, changes: updatedData })
       );
+      setCurrentPatient({ ...currentPatient, notes: note });
       console.log("success");
     } catch (error) {
       console.log("error " + error);
     }
   };
-
-  const debouncedUpdateNotes = React.useCallback(debounce(updateNotes, 1000), [
-    currentPatient.notes,
-  ]);
-
-  function handleNotesChange(note) {
-    debouncedUpdateNotes(note);
-  }
 
   return (
     <View
@@ -63,6 +61,7 @@ export default function PatientDetailsScreen() {
       }}
     >
       <ScrollView
+        nestedScrollEnabled={true}
         showsVerticalScrollIndicator={false}
         automaticallyAdjustKeyboardInsets
         style={{ flex: 1 }}
@@ -100,20 +99,31 @@ export default function PatientDetailsScreen() {
             style={{ marginTop: 16, flexDirection: "row", flexWrap: "wrap" }}
           >
             <InformationChip
-              text={capitalizeFirstLetter(currentPatient.gender)}
-              icon={"gender-male-female"}
-            />
-            <InformationChip
               text={currentPatient.nric_passport}
               icon={"card-account-details"}
+              style={{ width: "60%" }}
               isBlur
             />
-            <InformationChip text={currentPatient.age} icon={"face-man"} />
-            <InformationChip text={currentPatient.nationality} icon={"flag"} />
+            <InformationChip
+              text={capitalizeFirstLetter(currentPatient.gender)}
+              icon={"gender-male-female"}
+              style={{ width: "40%" }}
+            />
             <InformationChip
               text={currentPatient.phone_number}
               icon={"phone"}
+              style={{ width: "60%" }}
               isBlur
+            />
+            <InformationChip
+              text={currentPatient.age}
+              icon={"face-man"}
+              style={{ width: "40%" }}
+            />
+            <InformationChip
+              text={currentPatient.nationality}
+              icon={"flag"}
+              style={{ width: "60%" }}
             />
           </View>
           <Text variant="titleLarge" style={{ marginTop: 32 }}>
@@ -155,7 +165,7 @@ export default function PatientDetailsScreen() {
           <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
             Notes
           </Text>
-          <View style={{ flexDirection: "row" }}>
+          {/* <View style={{ flexDirection: "row" }}>
             <Pressable
               style={{
                 flexDirection: "row",
@@ -190,7 +200,20 @@ export default function PatientDetailsScreen() {
               />
               <Text variant="labelLarge">{NOTES.DOTS}</Text>
             </Pressable>
-          </View>
+          </View> */}
+          <CustomDropDownPicker
+            listMode="SCROLLVIEW"
+            zIndex={3000}
+            zIndexInverse={1000}
+            open={notesOpen}
+            setOpen={setNotesOpen}
+            value={notes}
+            setValue={setNotes}
+            items={notesData}
+            setItems={setNotesData}
+            onChangeValue={(value) => updateNotes(value)}
+            placeholder="Notes"
+          />
           <View style={{ marginBottom: 32 }} />
         </View>
         <View style={{ minHeight: 500 }}>

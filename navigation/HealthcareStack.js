@@ -9,11 +9,13 @@ import LanguageScreen from "../screens/common/LanguageScreen";
 import HealthcareEditProfileScreen from "../screens/healthcare/healthcareStack/HealthcareEditProfileScreen";
 import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
 import ReviewSideEffectScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectScreen";
-import ReviewSideEffectDetailScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectDetailScreen";
 import AllAppointmentRequestScreen from "../screens/healthcare/healthcareStack/AllAppointmentRequestScreen";
 import HealthcareAppointmentDetailsScreen from "../screens/healthcare/healthcareStack/HealthcareAppointmentDetailsScreen";
 import AllPatientScreen from "../screens/healthcare/healthcareStack/AllPatientScreen";
 import PatientDetailsScreen from "../screens/healthcare/healthcareStack/PatientDetailsScreen";
+import ReviewSideEffectDetailScreen from "../screens/healthcare/healthcareStack/ReviewSideEffectDetailScreen";
+import UserPreviewProfilePicScreen from "../screens/common/UserPreviewProfilePicScreen";
+import CameraScreen from "../components/ui/CameraScreen";
 
 const HealthcareStack = createNativeStackNavigator();
 
@@ -49,7 +51,7 @@ export default function HealthcareStackGroup() {
         options={{ headerShown: true }}
       />
       <HealthcareStack.Screen
-        name="ReviewSideEffectDetailsScreen"
+        name="ReviewSideEffectDetailScreen"
         component={ReviewSideEffectDetailScreen}
         options={{ headerShown: true }}
       />
@@ -87,6 +89,16 @@ export default function HealthcareStackGroup() {
         name="PatientDetailsScreen"
         component={PatientDetailsScreen}
         options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="UserPreviewProfilePicScreen"
+        component={UserPreviewProfilePicScreen}
+        options={{ headerShown: true }}
+      />
+      <HealthcareStack.Screen
+        name="CameraScreen"
+        component={CameraScreen}
+        options={{ headerShown: false }}
       />
     </HealthcareStack.Navigator>
   );

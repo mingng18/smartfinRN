@@ -32,6 +32,7 @@ function AllAppointmentScreen() {
 
   //Seperate the appointment into accepeted, pending and completed
   React.useEffect(() => {
+    console.log(appointments.length)
     setAcceptedAppointment(
       appointments.filter(
         (appointment) =>
@@ -57,7 +58,7 @@ function AllAppointmentScreen() {
   }, [appointments]);
 
   //Determine the container color
-  //If it is accepted, the color is bluie
+  //If it is accepted, the color is blue
   //otherwise it is grey color
   function containerColor(appointment) {
     return appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED
@@ -82,7 +83,7 @@ function AllAppointmentScreen() {
               profilePic={appointment.healthcare_profile_picture}
               subject={capitalizeFirstLetter(
                 appointment.healthcare_first_name === ""
-                  ? "Awaiting Confirmation"
+                  ? "Appointment"
                   : appointment.healthcare_first_name
               )}
               status={capitalizeFirstLetter(appointment.appointment_status)}

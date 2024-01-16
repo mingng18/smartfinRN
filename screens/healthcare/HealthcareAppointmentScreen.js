@@ -184,10 +184,13 @@ export default function HealthcareAppointmentScreen() {
         </View>
         <AppointmentHorizontalCard />
         <Divider style={{ marginTop: 24, height: 1 }} />
-        <TextListButton
+        <Text variant="titleLarge" style={{ marginTop: 24, marginBottom: 16 }}>
+          Appointment Requests
+        </Text>
+        {/* <TextListButton
           text={"Appointment Requests"}
           onPressCallback={() => navigate("AllAppointmentRequestScreen")}
-        />
+        /> */}
         <AppointmentHorizontalCard isPending={true} />
       </ScrollView>
     </View>

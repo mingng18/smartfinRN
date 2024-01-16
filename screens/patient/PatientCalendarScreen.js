@@ -15,6 +15,7 @@ import {
   SIDE_EFFECT_SEVERITY,
 } from "../../constants/constants";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
+import { sideEffectGradeText } from "../../util/sideEffectUtil";
 
 function PatientCalendarScreen() {
   const { navigate } = useNavigation();
@@ -187,13 +188,7 @@ function PatientCalendarScreen() {
           {matchedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              subject={
-                sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
-                  ? "Grade 1"
-                  : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
-                  ? "Grade 2"
-                  : "Grade 3"
-              }
+              subject={sideEffectGradeText(sideEffect)}
               date={new Date(sideEffect.side_effect_occuring_timestamp)
                 .toISOString()
                 .slice(0, 10)}
@@ -204,9 +199,11 @@ function PatientCalendarScreen() {
                 minute: "numeric",
                 hour12: true,
               })}
-              color={sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
-                ? theme.colors.surfaceContainer
-                : theme.colors.errorContainer}
+              color={
+                sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                  ? theme.colors.surfaceContainer
+                  : theme.colors.errorContainer
+              }
               onPressedCallback={() => {
                 navigate("SideEffectDetailsScreen", {
                   sideEffect: sideEffect,

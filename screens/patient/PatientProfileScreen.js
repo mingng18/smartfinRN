@@ -1,4 +1,4 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { Button, Chip, IconButton, Text, useTheme } from "react-native-paper";
 import TextListButton from "../../components/ui/TextListButton";
@@ -31,19 +31,30 @@ function PatientProfileScreen() {
   // });
 
   function signOutHandler() {
-    signOut(auth)
-      .then(async () => {
-        // Sign out successful
-        console.log("User signed out successfully");
-        dispatch(logoutDeleteNative());
-        // navigation.navigate("Login");
-        // Add any additional logic or navigation here
-      })
-      .catch((error) => {
-        // An error occurred during sign out
-        console.error("Error signing out:", error);
-        // Handle the error or display an error message
-      });
+    Alert.alert("Signing out", "Are you sure want to sign out?", [
+      {
+        text: "Sign Out",
+        onPress: () => {
+          signOut(auth)
+            .then(async () => {
+              // Sign out successful
+              console.log("User signed out successfully");
+              dispatch(logoutDeleteNative());
+              // navigation.navigate("Login");
+              // Add any additional logic or navigation here
+            })
+            .catch((error) => {
+              // An error occurred during sign out
+              console.error("Error signing out:", error);
+              // Handle the error or display an error message
+            });
+        },
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
   }
 
   function calculateProgress() {
@@ -168,24 +179,22 @@ function PatientProfileScreen() {
     >
       {/* ===================HEADER==================== */}
       <View style={[styles.homeHeader]}>
-        {/* TODO Change the name to the patients image */}
         {user.profile_pic_url && (
           <CachedImage
             source={{ uri: user.profile_pic_url }}
-            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}-thumb`}
+            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
             defaultSource={BLANK_PROFILE_PIC}
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
         )}
         <View style={[styles.headerText]}>
-          {/* TODO Change the name to the patients name */}
           <View style={{ flexDirection: "row" }}>
             <Text variant="bodyLarge">
               {streakCounter() == 7
                 ? "Keep it up!"
                 : streakCounter() > 1
                 ? "Take your Medication"
-                : "You can do better"}{" "}
+                : "You can do better"}
             </Text>
           </View>
           <Text variant="headlineLarge">
@@ -214,8 +223,8 @@ function PatientProfileScreen() {
           style={{ width: "40%" }}
         />
         <InformationChip
-          text={user.nationality}
-          icon={"flag"}
+          text={user.phone_number}
+          icon={"phone"}
           style={{ width: "60%" }}
         />
         <InformationChip
@@ -224,8 +233,8 @@ function PatientProfileScreen() {
           style={{ width: "40%" }}
         />
         <InformationChip
-          text={user.phone_number}
-          icon={"phone"}
+          text={user.nationality}
+          icon={"flag"}
           style={{ width: "60%" }}
         />
       </View>
@@ -253,7 +262,11 @@ function PatientProfileScreen() {
           width={15}
           prefill={calculateProgress()}
           fill={calculateProgress()}
-          tintColor={theme.colors.primary}
+          tintColor={
+            calculateProgress() > 70
+              ? theme.colors.greenContainer
+              : theme.colors.primary
+          }
           backgroundColor={theme.colors.primaryContainer}
           arcSweepAngle={180}
           rotation={270}

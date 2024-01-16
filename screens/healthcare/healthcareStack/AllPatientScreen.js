@@ -59,7 +59,7 @@ export default function AllPatientScreen() {
         {filteredPatients.map((patient, i) => {
           return (
             <HorizontalCard
-            key ={i}
+              key={i}
               profilePic={patient.profile_pic_url}
               subject={capitalizeFirstLetter(patient.first_name)}
               date={capitalizeFirstLetter(patient.compliance_status)}
@@ -73,6 +73,7 @@ export default function AllPatientScreen() {
             />
           );
         })}
+        <View style={{ marginBottom: 56 }} />
       </ScrollView>
     </View>
   );

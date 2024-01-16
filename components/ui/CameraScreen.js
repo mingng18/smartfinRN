@@ -44,9 +44,12 @@ export default function CameraScreen() {
       try {
         const data = await cameraRef.current.takePictureAsync();
         navigation.navigate(
-          isEditing ? "PatientPreviewProfilePicScreen" : "PreviewProfilePicScreen",
+          isEditing
+            ? "UserPreviewProfilePicScreen"
+            : "PreviewProfilePicScreen",
           {
             uri: data.uri,
+            userType: params.userType ? params.userType : "",
           }
         );
       } catch (e) {
@@ -62,7 +65,7 @@ export default function CameraScreen() {
         setIsRecording(true);
         await cameraRef.current.recordAsync().then((data) => {
           console.log("Finish loading");
-          navigation.navigate("PreviewVideoScreen", {uri :data.uri});
+          navigation.navigate("PreviewVideoScreen", { uri: data.uri });
         });
       } catch (e) {
         console.log(e);

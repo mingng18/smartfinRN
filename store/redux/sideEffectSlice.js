@@ -91,7 +91,7 @@ export const sideEffectSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { createSideEffect, deleteSideEffect, updateSideEffect } =
-  sideEffectSlice.actions;
+export const { createSideEffect, updateSideEffect } = sideEffectSlice.actions;
+export const deleteSideEffect = sideEffectSlice.actions.deleteSideEffect;
 
 export default sideEffectSlice.reducer;

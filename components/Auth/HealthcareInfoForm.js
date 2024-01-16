@@ -179,7 +179,13 @@ export default function HealthcareInfoForm({ isEditing }) {
         placeholder="Category"
       />
 
-      <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
+      <View
+        style={{
+          marginTop: 40,
+          flexDirection: "row-reverse",
+          marginBottom: 56,
+        }}
+      >
         <Button
           mode="contained"
           onPress={
