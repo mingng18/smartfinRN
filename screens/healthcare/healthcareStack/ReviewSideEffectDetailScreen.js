@@ -14,7 +14,10 @@ import {
   USER_TYPE,
 } from "../../../constants/constants";
 import { editDocument } from "../../../util/firestoreWR";
-import { deleteSideEffect } from "../../../store/redux/sideEffectSlice";
+import {
+  deleteSideEffect,
+  updateSideEffect,
+} from "../../../store/redux/sideEffectSlice";
 import SideEffectChip from "../../../components/ui/SideEffectChip";
 import {
   sideEffectContainerColor,
@@ -25,8 +28,9 @@ export default function ReviewSideEffectDetailScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
-  const dispatch = useDispatch();
   const currentSideEffect = params.sideEffect;
+  const dispatch = useDispatch();
+
   const [remarks, setRemarks] = React.useState("");
 
   React.useLayoutEffect(() => {
@@ -35,33 +39,38 @@ export default function ReviewSideEffectDetailScreen() {
     });
   });
 
-  const handleSideEffectReviewSubmission = async() => {
-    // try {
-      const storedUid = await SecureStore.getItemAsync("uid");
+  const handleSideEffectReviewSubmission = async () => {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    try {
+      const updatedSideEffect = {
+        remarks: remarks,
+        healthcare_id: storedUid,
+        reviewed_timestamp: new Date(),
+        se_status: SIDE_EFFECT_STATUS.REVIEWED,
+      };
       await editDocument(
         FIREBASE_COLLECTION.SIDE_EFFECT,
         currentSideEffect.id,
-        {
-          remarks: remarks,
-          healthcare_id: storedUid,
-          reviewed_timestamp: new Date(),
-          se_status: SIDE_EFFECT_STATUS.REVIEWED,
-        }
+        updatedSideEffect
       );
-      // Update state or dispatch an action if necessary
+
+      deleteSideEffect(currentSideEffect.id);
+      dispatch(deleteSideEffect({ id: currentSideEffect.id }));
       Alert.alert("Reviewed");
-      //TODO fix this shit, this line gt prob but idk whr
-      // dispatch(deleteSideEffect(currentSideEffect.id));
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
-    // } catch (error) {
-    //   console.log(error, " occurred when editing side Effect");
-    //   Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    //   Alert.alert(
-    //     "Submit Error",
-    //     "Something went wrong. Please try again later."
-    //   );
-    // }
+      // dispatch(updateSideEffect( {id: currentSideEffect.id, changes: currentSideEffect} ))
+      // Update state or dispatch an action if necessary
+      //TODO fix this shit, this line gt prob but idk whr
+    } catch (error) {
+      console.log(error, " occurred when editing side Effect");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(
+        "Submit Error",
+        "Something went wrong. Please try again later."
+      );
+      console.log(error + " is the error in reviewsideeffectdetailscreen");
+    }
   };
 
   return (

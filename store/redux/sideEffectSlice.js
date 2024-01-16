@@ -59,7 +59,7 @@ export const sideEffectSlice = createSlice({
     },
     deleteSideEffect: (state, action) => {
       state.sideEffects = state.sideEffects.filter(
-        (sideEffect) => sideEffect.id !== action.payload
+        (sideEffect) => sideEffect.id !== action.payload.id
       );
     },
     updateSideEffect: (state, action) => {
@@ -92,6 +92,7 @@ export const sideEffectSlice = createSlice({
 
 // Action creators generated for each case reducer function
 export const { createSideEffect, updateSideEffect } = sideEffectSlice.actions;
-export const deleteSideEffect = sideEffectSlice.actions.deleteSideEffect;
+export const deleteSideEffect =  sideEffectSlice.actions.deleteSideEffect;
+
 
 export default sideEffectSlice.reducer;

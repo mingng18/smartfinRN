@@ -19,21 +19,23 @@ import {
 } from "../../../util/sideEffectUtil";
 
 const ReviewSideEffectScreen = () => {
-  const navigation = useNavigation();
   const theme = useTheme();
   const sideEffects = useSelector(
     (state) => state.sideEffectObject.sideEffects
-  );
-  const sortedSideEffects = React.useMemo(() => {
-    if (sideEffects.length > 0) {
-      return [...sideEffects].sort((a, b) => {
-        if (a.severity < b.severity) return 1;
-        if (a.severity > b.severity) return -1;
-        return 0;
-      });
-    }
-    return [];
-  }, [sideEffects]);
+    );
+    const navigation = useNavigation();
+  // const sortedSideEffects = React.useMemo(() => {
+  //   console.log(sideEffects + " here")
+  //   if (sideEffects.length > 0) {
+  //     return [...sideEffects].sort((a, b) => {
+  //       if (a.severity < b.severity) return 1;
+  //       if (a.severity > b.severity) return -1;
+  //       return 0;
+  //     });
+  //   }else{
+  //     return [];
+  //   }
+  // }, [sideEffects]);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -50,8 +52,8 @@ const ReviewSideEffectScreen = () => {
       }}
     >
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-        {sortedSideEffects.length > 0 ? (
-          sortedSideEffects.map((sideEffect, i) => {
+        {sideEffects.length > 0 ? (
+          sideEffects.map((sideEffect, i) => {
             return (
               <HorizontalCard
                 key={`review-${i}`}
