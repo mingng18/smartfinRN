@@ -37,6 +37,19 @@ export default function BookAppointmentScreen() {
   const [time, setTime] = React.useState();
   const [items, setItems] = React.useState(APPOINTMENT_TIME);
 
+  const updateItemValue = (timeSlot, newValue) => {
+    setItems((prevItems) => {
+      return prevItems.map((item) => {
+        if (item.label === timeSlot) {
+          console.log("item value " + item.label);
+          // Update the value of the item with the specified key
+          return { ...item, disabled: newValue };
+        }
+        return item;
+      });
+    });
+  };
+
   const dispatch = useDispatch();
 
   React.useLayoutEffect(() => {
@@ -86,6 +99,32 @@ export default function BookAppointmentScreen() {
         return;
       }
 
+      //Reset the time picker to null
+      setTime(null);
+      
+      //Check if the timeslot already booked or not, if booked, disable the time slot
+      if (isBookedDate(params.date)) {
+        console.log("this is a booked date, todo : disable the time slot ");
+        const timeSlots = bookedAppointmentDates
+          .filter((timeSlot) =>
+            timeSlot.startsWith(params.date.toISOString().slice(0, 10))
+          )
+          .map((timeSlot) => {
+            console.log("time slot here " + timeSlot);
+            const localeTime = new Date(timeSlot); // Convert to Date object
+            return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
+          });
+
+          timeSlots.forEach(timeslot => {
+            updateItemValue(timeslot, true);
+          });
+      }
+      else{ //If the date is not booked at all, enable all the time slot
+        items.forEach(item => {
+          updateItemValue(item.label, false);
+        });
+      }
+
       setDate(formatDate(params.date));
       setSubmitDate(params.date);
       console.log(submitDate + " submit Date");
@@ -132,12 +171,16 @@ export default function BookAppointmentScreen() {
 
   const validRange = {
     startDate: today,
-    endDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 365),
+    endDate: new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() + 365
+    ),
     disabledDates: Array.from(
       { length: 366 },
       (_, i) =>
         new Date(today.getFullYear(), today.getMonth(), today.getDate() + i)
-    ).filter((d) => isBookedDate(d) || !isValidDate(d)), // Disable all booked dates and dates other than Monday, Wednesday and Friday
+    ).filter((d) => !isValidDate(d)), // Disable all booked dates and dates other than Monday, Wednesday and Friday
   };
 
   const handleAppointmentSubmission = async () => {

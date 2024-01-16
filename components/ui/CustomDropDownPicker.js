@@ -46,6 +46,9 @@ export default function CustomDropDownPicker({
         fontSize: 16,
         color: theme.colors.onSurfaceVariant,
       }}
+      disabledItemLabelStyle={{
+        opacity: 0.5
+      }}
       placeholder={placeholder}
       open={open}
       setOpen={setOpen}

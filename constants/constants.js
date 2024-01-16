@@ -94,10 +94,10 @@ export const CALENDAR_ENTITIES = {
 };
 
 export const APPOINTMENT_TIME = [
-  { label: "2:00 pm", value: { hour: 2, minute: 0 } },
-  { label: "2:30 pm", value: { hour: 2, minute: 30 } },
-  { label: "3:00 pm", value: { hour: 3, minute: 0 } },
-  { label: "3:30 pm", value: { hour: 3, minute: 30 } },
-  { label: "4:00 pm", value: { hour: 4, minute: 0 } },
-  { label: "4:30 pm", value: { hour: 4, minute: 30 } },
+  { label: "2:00 pm", value: { hour: 2, minute: 0 } , disabled: false},
+  { label: "2:30 pm", value: { hour: 2, minute: 30 } , disabled: false },
+  { label: "3:00 pm", value: { hour: 3, minute: 0 } , disabled: false},
+  { label: "3:30 pm", value: { hour: 3, minute: 30 } , disabled: false },
+  { label: "4:00 pm", value: { hour: 4, minute: 0 } , disabled: false},
+  { label: "4:30 pm", value: { hour: 4, minute: 30 } , disabled: false },
 ];

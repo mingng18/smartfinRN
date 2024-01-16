@@ -220,7 +220,10 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      bookedAppointmentDates.push(data.scheduled_timestamp.toDate().toISOString().slice(0, 10));
+      console.log("Firestore Timestamp:", data.scheduled_timestamp);
+      console.log("Converted to ISOString:", data.scheduled_timestamp.toDate().toISOString());
+      console.log("data.scheduled_timestamp.toDate().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })", data.scheduled_timestamp.toDate().toLocaleTimeString('en-US'));
+      bookedAppointmentDates.push(data.scheduled_timestamp.toDate().toISOString());
     });
     return bookedAppointmentDates;
   } catch (error) {
