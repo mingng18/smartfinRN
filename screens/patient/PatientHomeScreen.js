@@ -201,7 +201,10 @@ function PatientHomeScreen() {
         <View
           style={[
             styles.homeHeader,
-            { backgroundColor: theme.colors.secondaryContainer },
+            {
+              backgroundColor:
+                Platform.OS === "android" && theme.colors.secondaryContainer,
+            },
           ]}
         >
           {user.profile_pic_url && (
