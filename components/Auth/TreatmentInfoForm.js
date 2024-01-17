@@ -107,15 +107,35 @@ export default function TreatmentInfoForm({ isEditing }) {
     (params) => {
       setCalendarOpen(false);
 
-      //Format iosDate to date
-      const dateObject = new Date(params.date);
+      //If user did not select a date, default to today's date
+      if(params.date == null || params.date == undefined || params.date == "") {
+        //Format iosDate to date
+        const dateObject = new Date();
+        dateObject.setHours(0,0,0,0);
+        console.log(dateObject)
+        console.log(dateObject.toISOString())
+        const formattedDate = `${dateObject.getFullYear()}-${(
+          dateObject.getMonth() + 1
+          )
+          .toString()
+          .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
+          setDiagnosisDate(formattedDate);
+          setSubmitDate(dateObject);
+          return;
+        }
+        
+        //Format iosDate to date
+        const dateObject = new Date(params.date);
+        dateObject.setHours(0,0,0,0);
+        console.log(dateObject)
+        console.log(dateObject.toISOString())
       const formattedDate = `${dateObject.getFullYear()}-${(
         dateObject.getMonth() + 1
       )
         .toString()
         .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
       setDiagnosisDate(formattedDate);
-      setSubmitDate(params.date);
+      setSubmitDate(dateObject);
     },
     [setCalendarOpen, setDiagnosisDate, setSubmitDate]
   );
@@ -194,9 +214,7 @@ export default function TreatmentInfoForm({ isEditing }) {
               fetchPatientData({
                 age: signupInfo.age,
                 compliance_status: COMPLIANCE_STATUS.GOOD,
-                date_of_diagnosis: new Date(submitDate)
-                  .toISOString()
-                  .toString(),
+                date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
                 diagnosis: diagnosis,
                 email: signupInfo.email,
                 first_name: signupInfo.firstName,
@@ -365,7 +383,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           // notes: user.notes,
           // profile_pic_url: user.profile_pic_url,
           //changed part
-          date_of_diagnosis: submitDate,
+          date_of_diagnosis: submitDate.toISOString(),
           diagnosis: diagnosis,
           treatment_duration_months: durationOfTreatment,
           treatment: treatment,
@@ -386,7 +404,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             notes: user.notes,
             profile_pic_url: user.profile_pic_url,
             //changed part
-            date_of_diagnosis: new Date(submitDate).toISOString().toString(),
+            date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
             diagnosis: diagnosis,
             treatment_duration_months: durationOfTreatment,
             treatment: treatment,
