@@ -101,6 +101,7 @@ export default function PersonalInfoForm({ isEditing }) {
     }
   }, [isEditing]);
 
+
   //Calculate the age based on nric, triggered when nric is changed
   function handlerForAgeInputChange(value) {
     setNric(value);
@@ -115,16 +116,18 @@ export default function PersonalInfoForm({ isEditing }) {
       }
     }
   }
-
+  
   //Update personal info, triggered when update button is pressed in profile page
   async function updateButtonHandler() {
+
+    const countryCodePhoneNumber = countryCode.iso + phoneNumber;
     if (user.user_type == USER_TYPE.PATIENT) {
       try {
         await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
           first_name: firstName,
           last_name: lastName,
           gender: gender,
-          phone_number: phoneNumber,
+          phone_number: countryCodePhoneNumber,
           nationality: nationality,
           nric_passport: nric,
         });
@@ -133,7 +136,7 @@ export default function PersonalInfoForm({ isEditing }) {
             first_name: firstName,
             last_name: lastName,
             gender: gender,
-            phone_number: phoneNumber,
+            phone_number: countryCodePhoneNumber,
             nationality: nationality,
             nric_passport: nric,
             age: user.age,
@@ -161,16 +164,18 @@ export default function PersonalInfoForm({ isEditing }) {
 
   //Next button handler, triggered when next button is pressed in signup page, will be substituted by update button handler in profile page
   async function nextButtonHandler() {
+    const countryCodePhoneNumber = countryCode.iso + phoneNumber;
+    console.log(countryCodePhoneNumber + " checking here")
     // Input validation logic
     const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
-    const phoneRegex = /^\+[0-9]{10,13}$/; //+60123456789
+    const phoneRegex = /^\+[0-9]{11,15}$/; //+60123456789
     const nricRegex = /^[0-9]{12}$/; //Without spacing and -
     const passportRegex = /^[A-Za-z]{1}\d{7}$/; //A1234567
     const ageRegex = /^\d{1,3}$/; //1-3 digits
 
     const isFirstNameValid = nameRegex.test(firstName);
     const isLastNameValid = nameRegex.test(lastName);
-    const isPhoneNumberValid = phoneRegex.test(phoneNumber);
+    const isPhoneNumberValid = phoneRegex.test(countryCodePhoneNumber);
     const isNricValid = nricRegex.test(nric);
     const isPassportValid = passportRegex.test(passport);
     const isAgeValid = ageRegex.test(age);
@@ -230,7 +235,7 @@ export default function PersonalInfoForm({ isEditing }) {
                 firstName: firstName,
                 lastName: lastName,
                 gender: gender,
-                phoneNumber: phoneNumber,
+                phoneNumber: countryCodePhoneNumber,
                 nationality: nationality,
                 nric_passport: nric,
                 age: age,
@@ -241,7 +246,7 @@ export default function PersonalInfoForm({ isEditing }) {
                 firstName: firstName,
                 lastName: lastName,
                 gender: gender,
-                phoneNumber: phoneNumber,
+                phoneNumber: countryCodePhoneNumber,
                 nationality: nationality,
                 nric_passport: passport,
                 age: age,

@@ -52,6 +52,7 @@ import {
   COMPLIANCE_STATUS,
   DIAGNOSIS,
   FIREBASE_COLLECTION,
+  NUMBER_OF_TABLETS,
   TREATMENT,
 } from "../../constants/constants";
 import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
@@ -81,9 +82,13 @@ export default function TreatmentInfoForm({ isEditing }) {
   const [treatment, setTreatment] = React.useState("akurit4");
   const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
 
+  //Number of tablets Drop down
+  const [numberOfTabletsOpen, setNumberOfTabletsOpen] = React.useState(false);
+  const [numberOfTablets, setNumberOfTablets] = React.useState();
+  const [numberOfTabletsData, setNumberOfTabletsData] = React.useState(NUMBER_OF_TABLETS);
+
   //Text inputs
   const [durationOfTreatment, setDurationOfTreatment] = React.useState(0);
-  const [numberOfTablets, setNumberOfTablets] = React.useState(0);
   const [credentialsInvalid, setCredentialsInvalid] = React.useState({
     durationOfTreatment: false,
     numberOfTablets: false,
@@ -184,7 +189,6 @@ export default function TreatmentInfoForm({ isEditing }) {
         (error) => {},
         (snapshot) => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-
             //Update redux store
             dispatch(
               fetchPatientData({
@@ -466,6 +470,8 @@ export default function TreatmentInfoForm({ isEditing }) {
         My Current Treatment
       </Text>
       <CustomDropDownPicker
+        zIndex={3000}
+        zIndexInverse={1000}
         open={treatmentOpen}
         setOpen={setTreatmentOpen}
         value={treatment}
@@ -474,16 +480,18 @@ export default function TreatmentInfoForm({ isEditing }) {
         setItems={setTreatmentData}
         placeholder="Treatment"
       />
-      <TextInput
-        mode="outlined"
-        label="Number of Tablets"
-        style={{ marginTop: 16 }}
-        placeholder={numberOfTablets ? numberOfTablets.toString() : "5"}
-        maxLength={2}
-        keyboardType="numeric"
-        value={`${numberOfTablets}`}
-        onChangeText={(text) => setNumberOfTablets(text)}
-        error={credentialsInvalid.numberOfTablets}
+      <CustomDropDownPicker
+        zIndex={2000}
+        zIndexInverse={2000}
+        open={numberOfTabletsOpen}
+        setOpen={setNumberOfTabletsOpen}
+        value={numberOfTablets}
+        setValue={setNumberOfTablets}
+        items={numberOfTabletsData}
+        setItems={setNumberOfTabletsData}
+        placeholder="Number of Tablets"
+        marginTop={16}
+        marginBottom={70}
       />
       {isEditing ? (
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>

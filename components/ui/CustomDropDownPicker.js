@@ -11,6 +11,10 @@ export default function CustomDropDownPicker({
   placeholder,
   listMode,
   onChangeValue,
+  marginTop,
+  marginBottom,
+  zIndex,
+  zIndexInverse,
 }) {
   const theme = useTheme();
   return (
@@ -18,11 +22,15 @@ export default function CustomDropDownPicker({
       listMode={listMode}
       dropDownDirection={listMode && "TOP"}
       onChangeValue={onChangeValue}
+      zIndex={zIndex}
+      zIndexInverse={zIndexInverse}
       style={[
         {
           backgroundColor: theme.colors.background,
           borderRadius: 4,
           borderColor: theme.colors.outline,
+          marginTop: marginTop,
+          marginBottom: marginBottom,
         },
       ]}
       arrowIconStyle={{
@@ -52,7 +60,7 @@ export default function CustomDropDownPicker({
         color: theme.colors.onSurfaceVariant,
       }}
       disabledItemLabelStyle={{
-        opacity: 0.5
+        opacity: 0.5,
       }}
       placeholder={placeholder}
       open={open}
