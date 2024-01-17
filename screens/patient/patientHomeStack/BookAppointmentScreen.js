@@ -58,12 +58,50 @@ export default function BookAppointmentScreen() {
     });
   });
 
+  function disableTimeSlotsBasedOnDate(params, isReschedule) {
+    let selectedDate = null;
+    if(isReschedule){
+      selectedDate = params;
+    }else{
+      selectedDate = params.date;
+    }
+
+    console.log("params date: " + selectedDate)
+    if (isBookedDate(selectedDate)) {
+      console.log("this is a booked date, todo : disable the time slot ");
+      const timeSlots = bookedAppointmentDates
+        .filter((timeSlot) =>
+          timeSlot.startsWith(selectedDate.toISOString().slice(0, 10))
+        )
+        .map((timeSlot) => {
+          console.log("time slot here " + timeSlot);
+          const localeTime = new Date(timeSlot); // Convert to Date object
+          return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
+        });
+
+        timeSlots.forEach(timeslot => {
+          updateItemValue(timeslot, true);
+        });
+    }
+    else{ //If the date is not booked at all, enable all the time slot
+      items.forEach(item => {
+        updateItemValue(item.label, false);
+      });
+    }
+  }
+
   React.useEffect(() => {
     async () => await fetchBookedAppointmentDates();
 
     if (params && params.isReschedule) {
       setIsReschedule(params.isReschedule);
       setLastAppointment(params.lastAppointment);
+      console.log("last appointment " + params.lastAppointment.scheduled_timestamp);
+      //Fri Jan 19 2024 23:59:59 GMT+0900 params date
+      console.log("finding the format here: " + new Date(params.lastAppointment.scheduled_timestamp).toISOString());
+      console.log("finding the format here: " + new Date(params.lastAppointment.scheduled_timestamp).toLocaleDateString());
+      console.log("finding the format here: " + new Date(params.lastAppointment.scheduled_timestamp).toUTCString());
+      disableTimeSlotsBasedOnDate(new Date(params.lastAppointment.scheduled_timestamp), true);
 
       const inputDate = new Date(params.lastAppointment.scheduled_timestamp);
       setDate(formatDate(inputDate));
@@ -103,27 +141,8 @@ export default function BookAppointmentScreen() {
       setTime(null);
       
       //Check if the timeslot already booked or not, if booked, disable the time slot
-      if (isBookedDate(params.date)) {
-        console.log("this is a booked date, todo : disable the time slot ");
-        const timeSlots = bookedAppointmentDates
-          .filter((timeSlot) =>
-            timeSlot.startsWith(params.date.toISOString().slice(0, 10))
-          )
-          .map((timeSlot) => {
-            console.log("time slot here " + timeSlot);
-            const localeTime = new Date(timeSlot); // Convert to Date object
-            return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
-          });
-
-          timeSlots.forEach(timeslot => {
-            updateItemValue(timeslot, true);
-          });
-      }
-      else{ //If the date is not booked at all, enable all the time slot
-        items.forEach(item => {
-          updateItemValue(item.label, false);
-        });
-      }
+      console.log("params date " + params)
+      disableTimeSlotsBasedOnDate(params, false)
 
       setDate(formatDate(params.date));
       setSubmitDate(params.date);
