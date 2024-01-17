@@ -17,13 +17,14 @@ import {
   sideEffectContainerColor,
   sideEffectGradeText,
 } from "../../../util/sideEffectUtil";
+import { SIDE_EFFECT_SEVERITY } from "../../../constants/constants";
 
 const ReviewSideEffectScreen = () => {
   const theme = useTheme();
   const sideEffects = useSelector(
     (state) => state.sideEffectObject.sideEffects
-    );
-    const navigation = useNavigation();
+  );
+  const navigation = useNavigation();
   // const sortedSideEffects = React.useMemo(() => {
   //   console.log(sideEffects + " here")
   //   if (sideEffects.length > 0) {
@@ -56,11 +57,17 @@ const ReviewSideEffectScreen = () => {
           sideEffects.map((sideEffect, i) => {
             return (
               <HorizontalCard
-                key={`review-${i}`}
+                key={`sideEffect-${i}`}
                 cardType={"sideEffect"}
                 profilePic={sideEffect.patient_profile_picture}
                 subject={capitalizeFirstLetter(sideEffect.patient_first_name)}
-                status={sideEffectGradeText(sideEffect)}
+                status={
+                  sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                    ? "Grade 1"
+                    : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
+                    ? "Grade 2"
+                    : "Grade 3"
+                }
                 date={new Date(sideEffect.created_timestamp)
                   .toISOString()
                   .slice(0, 10)}
@@ -72,7 +79,10 @@ const ReviewSideEffectScreen = () => {
                     hour12: true,
                   }
                 )}
-                color={sideEffectContainerColor(sideEffect)}
+                color={sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                ? theme.colors.surfaceContainer
+                : 
+                theme.colors.errorContainer}
                 onPressedCallback={() => {
                   navigation.navigate("ReviewSideEffectDetailScreen", {
                     sideEffect: sideEffect,

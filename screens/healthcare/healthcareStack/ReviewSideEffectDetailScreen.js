@@ -48,28 +48,25 @@ export default function ReviewSideEffectDetailScreen() {
         reviewed_timestamp: new Date(),
         se_status: SIDE_EFFECT_STATUS.REVIEWED,
       };
+
       await editDocument(
         FIREBASE_COLLECTION.SIDE_EFFECT,
         currentSideEffect.id,
         updatedSideEffect
       );
 
-      deleteSideEffect(currentSideEffect.id);
+      // Update state or dispatch an action if necessary
       dispatch(deleteSideEffect({ id: currentSideEffect.id }));
       Alert.alert("Reviewed");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
-      // dispatch(updateSideEffect( {id: currentSideEffect.id, changes: currentSideEffect} ))
-      // Update state or dispatch an action if necessary
-      //TODO fix this shit, this line gt prob but idk whr
+
     } catch (error) {
-      console.log(error, " occurred when editing side Effect");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(
         "Submit Error",
         "Something went wrong. Please try again later."
       );
-      console.log(error + " is the error in reviewsideeffectdetailscreen");
     }
   };
 
