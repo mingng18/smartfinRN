@@ -3,6 +3,7 @@ import React, { useLayoutEffect } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, List, Searchbar, Text, useTheme } from "react-native-paper";
+import TextListButton from "../../../components/ui/TextListButton";
 
 export default function TuberculosisMaterialsScreen() {
   const navigation = useNavigation();
@@ -91,17 +92,27 @@ export default function TuberculosisMaterialsScreen() {
           ))}
         </List.Section>
         <View style={{ flexDirection: "row", marginTop: 24 }}>
-          <Button
+          <Text variant="titleLarge">More Materials</Text>
+          {/* <Button
             mode="contained"
             onPress={() => navigate("")}
           >
             More Materials
-          </Button>
+          </Button> */}
         </View>
         <View
           style={{ flexDirection: "row", marginVertical: 16, flexWrap: "wrap" }}
         >
-          <Button
+          <TextListButton
+            text={"About TB"}
+            onPressCallback={() => null}
+          />
+          <TextListButton
+            text={"MyTBCompanion"}
+            onPressCallback={() =>  null}
+          />
+          
+          {/* <Button
             mode="contained-tonal"
             onPress={() => navigate("")}
             style={{ marginRight: 16, marginBottom: 16 }}
@@ -114,7 +125,7 @@ export default function TuberculosisMaterialsScreen() {
             style={{ marginBottom: 16 }}
           >
             About MyTBCompanion
-          </Button>
+          </Button> */}
         </View>
         <View style={{ marginBottom: 54 }} />
       </ScrollView>

@@ -231,10 +231,15 @@ export default function BookAppointmentScreen() {
     addDocument("appointment", newAppointment);
     // setBookedDialogVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert(
-      "Booked Successful!",
-      "Please wait for the healthcare to approve it."
-    );
+    if (isReschedule) {
+      Alert.alert(
+        "Reschedule Successful!"
+      )
+    }else{
+      Alert.alert(
+        "Booked Successful!"
+      );
+    }
     dispatch(
       createAppointment({
         patient_id: storedUid,

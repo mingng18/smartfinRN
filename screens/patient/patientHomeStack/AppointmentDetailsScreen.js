@@ -68,12 +68,12 @@ export default function AppointmentDetailsScreen() {
                 "Are you sure want to cancel the appointment?",
                 [
                   {
-                    text: "Go Back",
+                    text: "No",
                     onPress: () => {},
                     style: "cancel",
                   },
                   {
-                    text: "Cancel",
+                    text: "Yes",
                     onPress: () => {
                       cancelAppointment();
                     },
