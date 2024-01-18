@@ -39,6 +39,11 @@ export const bookedAppointmentDateSlice = createSlice({
         (appointmentDate) => appointmentDate.id !== appointmentDateToDelete.id
       );
     },
+    clearAppointmentDateSlice: (state) => {
+      state.bookedAppointmentDates = [];
+      state.status = "idle";
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,7 +61,7 @@ export const bookedAppointmentDateSlice = createSlice({
   },
 });
 
-export const { createAppointmentDate, deleteAppointmentDate } =
+export const { createAppointmentDate, deleteAppointmentDate, clearAppointmentDateSlice } =
   bookedAppointmentDateSlice.actions;
 
 export default bookedAppointmentDateSlice.reducer;

@@ -69,6 +69,11 @@ export const patientDataSlice = createSlice({
         return patient;
       });
     },
+    clearPatientDataSlice: (state) => {
+      state.patients = [];
+      state.status = "idle";
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -87,6 +92,6 @@ export const patientDataSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { updatePatientData } = patientDataSlice.actions;
+export const { updatePatientData,clearPatientDataSlice } = patientDataSlice.actions;
 
 export default patientDataSlice.reducer;

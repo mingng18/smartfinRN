@@ -59,6 +59,28 @@ const signupSlice = createSlice({
       state.currentTreatment = action.payload.currentTreatment;
       state.numberOfTablets = action.payload.numberOfTablets;
     },
+    clearSignupSlice: (state) => {
+      state.firstName = "";
+      state.lastName = "";
+      state.gender = "";
+      state.phoneNumber = "";
+      state.nationality = "";
+      state.nric_passport = "";
+      state.uid = "";
+      state.email = "";
+      state.dateOfDiagnosis = null;
+      state.diagnosis = "";
+      state.durationOfTreatment = 0;
+      state.currentTreatment = null;
+      state.numberOfTablets = 0;
+      state.password = "";
+      state.profilePictureURI = null;
+      state.age = 0;
+      state.signupMode = "";
+      state.mpmId = "";
+      state.role = "";
+      state.category = "";
+    }
   },
 });
 
@@ -73,5 +95,6 @@ export const updateHealthcareInformation =
   signupSlice.actions.updateHealthcareInformation;
 export const updateMedicalInformation =
   signupSlice.actions.updateMedicalInformation;
+export const clearSignupSlice = signupSlice.actions.clearSignupSlice;
 
 export default signupSlice.reducer;

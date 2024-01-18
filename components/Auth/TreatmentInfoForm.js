@@ -36,6 +36,7 @@ import {
 } from "../../util/firestoreWR";
 import { ScrollView } from "react-native-gesture-handler";
 import {
+  clearSignupSlice,
   updateAuthSlice,
   updateMedicalInformation,
   updateProfilePictureURI,
@@ -190,12 +191,13 @@ export default function TreatmentInfoForm({ isEditing }) {
   async function uploadImage(uri, path, userId, token) {
     try {
       let imageData = "";
+      let imageBlob = "";
       if (uri == "" || uri == null) {
-        imageData = await fetch(BLANK_PROFILE_PIC);
+        imageBlob = BLANK_PROFILE_PIC;
       } else {
         imageData = await fetch(uri);
+        imageBlob = await imageData.blob();
       }
-      const imageBlob = await imageData.blob();
 
       uploadTask = uploadBytesResumable(path, imageBlob);
       uploadTask.on(
@@ -230,7 +232,8 @@ export default function TreatmentInfoForm({ isEditing }) {
                 treatment_duration_months: durationOfTreatment,
               })
             );
-
+            
+            dispatch(clearSignupSlice());
             setIsUploading(false);
             dispatch(authenticateStoreNative(token, userId, "patient")),
               await saveUserDateToFirestore("patient", userId, downloadURL);

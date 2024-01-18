@@ -53,7 +53,7 @@ export default function PersonalInfoForm({ isEditing }) {
 
   const [nationalityOpen, setNationalityOpen] = React.useState(false);
   const [nationality, setNationality] = React.useState("Malaysian");
-  const [nationalityData, setNationalityData] = React.useState(NATIONALITY);
+  const [nationalityData, setNationalityData] = React.useState(NATIONALITY.sort((a, b) => a.label.localeCompare(b.label)));
 
   const [nric, setNric] = React.useState("");
   const [passport, setPassport] = React.useState("");
@@ -312,7 +312,7 @@ export default function PersonalInfoForm({ isEditing }) {
             marginVertical: 16,
           }}
         >
-          <Pressable
+          <Pressable //Phone Country code picker
             style={{
               paddingHorizontal: 12,
               justifyContent: "center",
@@ -329,7 +329,7 @@ export default function PersonalInfoForm({ isEditing }) {
             style={{ flex: 3 }}
             label="Mobile Phone Number"
             maxLength={13}
-            placeholder="+60123456789"
+            placeholder="123456789"
             value={phoneNumber}
             onChangeText={(value) => setPhoneNumber(value)}
             error={credentialsInvalid.phoneNumber}
@@ -345,7 +345,7 @@ export default function PersonalInfoForm({ isEditing }) {
           setItems={setNationalityData}
           placeholder="Nationality"
         />
-        {nationality == "Malaysian" ? (
+        {nationality == "Malaysia" ? (
           <TextInput
             mode="outlined"
             style={{ marginTop: 16 }}

@@ -73,6 +73,11 @@ export const sideEffectSlice = createSlice({
         };
       }
     },
+    clearSideEffectSlice: (state) => {
+      state.sideEffects = [];
+      state.status = "idle";
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -91,7 +96,7 @@ export const sideEffectSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { createSideEffect, updateSideEffect, deleteSideEffect  } = sideEffectSlice.actions;
+export const { createSideEffect, updateSideEffect, deleteSideEffect, clearSideEffectSlice  } = sideEffectSlice.actions;
 
 
 export default sideEffectSlice.reducer;

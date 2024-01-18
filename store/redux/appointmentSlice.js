@@ -143,6 +143,12 @@ export const appointmentSlice = createSlice({
         state.appointments.push(currentAppointment);
       }
     },
+    clearAppointmentSlice: (state) => {
+      state.appointments = [];
+      state.pendingAppointments = [];
+      state.status = "idle";
+      state.error = null;
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -167,6 +173,7 @@ export const {
   deleteAppointment,
   updateAppointment,
   updatePendingAppointment,
+  clearAppointmentSlice,
 } = appointmentSlice.actions;
 
 export default appointmentSlice.reducer;

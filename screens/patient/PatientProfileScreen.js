@@ -16,6 +16,11 @@ import {
 import InformationChip from "../../components/ui/InformationChip";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
+import { clearAppointmentDateSlice } from "../../store/redux/bookedAppointmentDateSlice";
+import { clearAppointmentSlice } from "../../store/redux/appointmentSlice";
+import { clearSideEffectSlice } from "../../store/redux/sideEffectSlice";
+import { clearVideoSlice } from "../../store/redux/videoSlice";
+import { clearSignupSlice } from "../../store/redux/signupSlice";
 
 function PatientProfileScreen() {
   const theme = useTheme();
@@ -30,6 +35,15 @@ function PatientProfileScreen() {
   //   navigate("PatientEditProfileScreen");
   // });
 
+  function clearLocalData() {
+    dispatch(logoutDeleteNative());
+    dispatch(clearAppointmentDateSlice());
+    dispatch(clearAppointmentSlice());
+    dispatch(clearSideEffectSlice());
+    dispatch(clearVideoSlice());
+    dispatch(clearSignupSlice());
+  }
+
   function signOutHandler() {
     Alert.alert("Signing out", "Are you sure want to sign out?", [
       {
@@ -39,14 +53,12 @@ function PatientProfileScreen() {
             .then(async () => {
               // Sign out successful
               console.log("User signed out successfully");
-              dispatch(logoutDeleteNative());
-              // navigation.navigate("Login");
-              // Add any additional logic or navigation here
+              clearLocalData();
             })
             .catch((error) => {
               // An error occurred during sign out
               console.error("Error signing out:", error);
-              // Handle the error or display an error message
+              Alert.alert("Error signing out", "Please check your connection and try again later");
             });
         },
       },

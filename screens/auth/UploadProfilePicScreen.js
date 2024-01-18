@@ -4,6 +4,7 @@ import { Image, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useSelector } from "react-redux";
+import { BLANK_PROFILE_PIC } from "../../constants/constants";
 
 export default function UploadProfilePicScreen() {
   const navigation = useNavigation();
@@ -42,7 +43,7 @@ export default function UploadProfilePicScreen() {
         Upload your profile picture
       </Text>
       <Image
-        source={require("../../assets/blank-profile-pic.png")}
+        source={BLANK_PROFILE_PIC}
         style={{
           borderRadius: 800 / 2,
           alignSelf: "center",

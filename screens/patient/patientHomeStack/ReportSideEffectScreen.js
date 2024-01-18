@@ -163,8 +163,16 @@ function ReportSideEffectScreen() {
 
   //Update date, hour, minute and symptoms to firebase
   async function submitDataToDatabase() {
-    if (!submitDate || hour === "" || minute === "" || symptoms.length == 0) {
-      Alert.alert("Error", "Please fill in all the details");
+    if ((!submitDate || hour === "" || minute === "") ||( (symptoms.length == 0) && otherSymptom === "")) {
+      if ((!submitDate || hour === "" || minute === "") &&( (symptoms.length == 0) && otherSymptom === "")) {
+        Alert.alert("Error", "Please fill in all the details");
+      }else if(( (symptoms.length == 0) && otherSymptom === "")){
+        Alert.alert("Symptom Error", "Please fill in the symptoms");
+      }else if((!submitDate || hour === "" || minute === "")){
+        Alert.alert("Date Time Error", "Please fill in the date and time");
+      }else{
+        Alert.alert("Something Wrong", "Please check all the details and try again");
+      }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
     }
@@ -290,30 +298,32 @@ function ReportSideEffectScreen() {
               />
             </View>
           </Pressable>
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: 32,
-              marginBottom: 8,
-            }}
-          >
-            <Text variant="titleLarge" style={{}}>
-              Symptoms (Choose All Applicable)
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: 32,
+              }}
+            >
+              <Text variant="titleLarge" style={{}}>
+                Symptoms
+              </Text>
+              <IconButton
+                icon="information-outline"
+                size={24}
+                onPress={() =>
+                  Alert.alert(
+                    "Grade Classification",
+                    "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
+                  )
+                }
+                // onPress={showModal}
+              />
+            </View>
+            <Text variant="titleLarge" style={{marginBottom: 8}}>
+              (Choose all applicable)
             </Text>
-            <IconButton
-              icon="information-outline"
-              size={24}
-              onPress={() =>
-                Alert.alert(
-                  "Grade Classification",
-                  "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
-                )
-              }
-              // onPress={showModal}
-            />
-          </View>
           <View
             style={{
               flexDirection: "row",

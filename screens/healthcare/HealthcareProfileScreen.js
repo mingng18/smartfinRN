@@ -12,6 +12,7 @@ import { logoutDeleteNative } from "../../store/redux/authSlice";
 import CachedImage from "expo-cached-image";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { clearPatientDataSlice } from "../../store/redux/patientDataSlice";
 
 export default function HealthcareProfileScreen() {
   const theme = useTheme();
@@ -19,6 +20,16 @@ export default function HealthcareProfileScreen() {
   const auth = getAuth();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+
+  function clearLocalData() {
+    dispatch(logoutDeleteNative());
+    dispatch(clearAppointmentDateSlice());
+    dispatch(clearAppointmentSlice());
+    dispatch(clearSideEffectSlice());
+    dispatch(clearVideoSlice());
+    dispatch(clearSignupSlice());
+    dispatch(clearPatientDataSlice())
+  }
 
   function signOutHandler() {
     Alert.alert("Signing out", "Are you sure want to sign out?", [
@@ -29,7 +40,7 @@ export default function HealthcareProfileScreen() {
             .then(async () => {
               // Sign out successful
               console.log("User signed out successfully");
-              dispatch(logoutDeleteNative());
+              clearLocalData()
               // navigation.navigate("Login");
               // Add any additional logic or navigation here
             })

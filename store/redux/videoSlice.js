@@ -75,6 +75,11 @@ export const videoSlice = createSlice({
         };
       }
     },
+    clearVideoSlice: (state) => {
+      state.videos = [];
+      state.status = "idle";
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -93,7 +98,7 @@ export const videoSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { createVideo } = videoSlice.actions;
+export const { createVideo, clearVideoSlice } = videoSlice.actions;
 export const updateVideo = videoSlice.actions.updateVideo;
 export const deleteVideo = videoSlice.actions.deleteVideo;
 
