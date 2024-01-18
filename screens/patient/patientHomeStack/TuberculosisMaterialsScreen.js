@@ -1,14 +1,30 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useLayoutEffect } from "react";
+import React, { useCallback, useLayoutEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, List, Searchbar, Text, useTheme } from "react-native-paper";
 import TextListButton from "../../../components/ui/TextListButton";
+import YoutubePlayer from "react-native-youtube-iframe";
 
 export default function TuberculosisMaterialsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [playing, setPlaying] = useState(false);
+
+  const onStateChange = useCallback(
+    (state) => {
+      if (state === "ended") {
+        setPlaying(false);
+        Alert.alert("video has finished playing!");
+      }
+    },
+    [playing]
+  );
+
+  const togglePlaying = useCallback(() => {
+    setPlaying((prev) => !prev);
+  }, []);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -103,14 +119,8 @@ export default function TuberculosisMaterialsScreen() {
         <View
           style={{ flexDirection: "row", marginVertical: 16, flexWrap: "wrap" }}
         >
-          <TextListButton
-            text={"About TB"}
-            onPressCallback={() => null}
-          />
-          <TextListButton
-            text={"MyTBCompanion"}
-            onPressCallback={() =>  null}
-          />
+          <TextListButton text={"About TB"} onPressCallback={() => null} />
+          <TextListButton text={"MyTBCompanion"} onPressCallback={() => null} />
           
           {/* <Button
             mode="contained-tonal"
@@ -127,6 +137,13 @@ export default function TuberculosisMaterialsScreen() {
             About MyTBCompanion
           </Button> */}
         </View>
+        <YoutubePlayer
+            height={300}
+            play={playing}
+            videoId={"iee2TATGMyI"}
+            onChangeState={onStateChange}
+          />
+          <Button title={playing ? "pause" : "play"} onPress={togglePlaying} />
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
     </View>
