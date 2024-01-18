@@ -65,7 +65,7 @@ export default function VideoDetailsScreen() {
           </Text>
         </View>
         <Text variant="bodyLarge" style={{ marginTop: 32 }}>
-          The video has been <em>approved</em> by doctor.
+          The video has been approved by doctor.
         </Text>
       </View>
     );
@@ -100,7 +100,7 @@ export default function VideoDetailsScreen() {
             </Button>
           </View>
         ) : (
-          <Text style={{ marginTop: 32 }}>
+          <Text variant="bodyLarge" style={{ marginTop: 32 }}>
             You have miss the time to resubmit
           </Text>
         )}
@@ -132,11 +132,11 @@ export default function VideoDetailsScreen() {
           marginTop: 8,
         }}
       >
-        <Text>
+        <Text variant="bodyLarge">
           {currentVideo.uploaded_timestamp &&
             currentVideo.uploaded_timestamp.slice(0, 10)}
         </Text>
-        <Text>
+        <Text variant="bodyLarge">
           {new Date(currentVideo.uploaded_timestamp).toLocaleTimeString(
             "en-US",
             {
@@ -154,5 +154,3 @@ export default function VideoDetailsScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({});
