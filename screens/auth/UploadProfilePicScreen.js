@@ -1,20 +1,144 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Image, View } from "react-native";
+import { Alert, Image, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { updateProfilePictureURI } from "../../store/redux/signupSlice";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import {
+  authenticateStoreNative,
+  fetchHealthcareData,
+  setUserType,
+} from "../../store/redux/authSlice";
+import { addDocumentWithId } from "../../util/firestoreWR";
+import { set } from "lodash";
 
 export default function UploadProfilePicScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const signupInfo = useSelector((state) => state.signupObject);
+  const auth = getAuth();
+  const dispatch = useDispatch();
+  const storage = getStorage();
+
+  const [isUploading, setIsUploading] = React.useState(false);
+  const [uploadProgress, setUploadProgress] = React.useState(0);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "Profile Picture",
     });
   });
+
+  async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
+    await addDocumentWithId(userType, userId, {
+      email: signupInfo.email,
+      first_name: signupInfo.firstName,
+      last_name: signupInfo.lastName,
+      category: signupInfo.category,
+      role: signupInfo.role,
+      mpm_id: signupInfo.mpmId,
+      profile_pic_url: profilePicUrl,
+    });
+  }
+
+  async function uploadImage(path, userId, token) {
+    setIsUploading(true);
+    try {
+      imageBlob = BLANK_PROFILE_PIC;
+
+      uploadTask = uploadBytesResumable(path, imageBlob);
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          setUploadProgress(progress.toFixed(2));
+        },
+        (error) => {},
+        (snapshot) => {
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            console.log("File available at ", downloadURL);
+            dispatch(setUserType({ user_type: signupInfo.signupMode }));
+            dispatch(
+              fetchHealthcareData({
+                category: signupInfo.category,
+                email: signupInfo.email,
+                first_name: signupInfo.firstName,
+                last_name: signupInfo.lastName,
+                role: signupInfo.role,
+                mpm_Id: signupInfo.mpmId,
+                profile_pic_url: downloadURL,
+              })
+            );
+            //Save user data to firestore
+            await saveUserDateToFirestore("healthcare", userId, downloadURL);
+            //Save userToken, userId and userType to redux
+            dispatch(authenticateStoreNative(token, userId, "healthcare"));
+            setIsUploading(false);
+          });
+        }
+      );
+    } catch (error) {
+      console.log(error + "Error uploading image at uploadProfilePicScreen");
+      setIsUploading(false);
+    }
+  }
+
+  async function signupHealthcare() {
+    dispatch(updateProfilePictureURI(BLANK_PROFILE_PIC));
+    //Debug use
+    console.log(
+      "email: " + signupInfo.email,
+      "password: " + signupInfo.password,
+      "first_name: " + signupInfo.firstName,
+      "last_name: " + signupInfo.lastName,
+      "category: " + signupInfo.category,
+      "role: " + signupInfo.role,
+      "staff_id: " + signupInfo.staffId,
+      "profile_pic_url: " + signupInfo.profilePictureURI
+    );
+
+    try {
+      //Create user
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        signupInfo.email,
+        signupInfo.password
+      );
+      const user = userCredential.user;
+      const token = await user.getIdTokenResult();
+
+      //Upload profile picture
+      const ppStorageRef = ref(storage, "healthcareProfilePicture/" + user.uid);
+      setIsUploading(true);
+      const donwloadURL = await uploadImage(
+        ppStorageRef,
+        user.uid,
+        token.token
+      );
+      setIsUploading(false);
+    } catch (error) {
+      Alert.alert(
+        "Signup failed, please check your email and try again later."
+      );
+      console.log(error); //Debug use
+      setIsUploading(false);
+    }
+  }
+
+  const skipProfilePictureHandler = () => {
+    console.log("signupMode: " + signupInfo.signupMode);
+    if (signupInfo.signupMode === "healthcare") {
+      signupHealthcare();
+    } else {
+      navigation.navigate("TreatmentInfoScreen");
+    }
+  };
 
   const pickImage = async () => {
     //No permission when launching image library
@@ -64,9 +188,7 @@ export default function UploadProfilePicScreen() {
         >
           Take Picture
         </Button>
-        <Button onPress={() => navigation.navigate("TreatmentInfoScreen")}>
-          Skip
-        </Button>
+        <Button onPress={() => skipProfilePictureHandler()}>Skip</Button>
       </View>
     </View>
   );

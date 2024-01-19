@@ -44,6 +44,18 @@ const ReviewSideEffectScreen = () => {
     });
   });
 
+  const sortedSideEffects = React.useMemo(() => {
+    if (sideEffects.length > 0) {
+      return [...sideEffects].sort((a, b) => {
+        if (a.severity < b.severity) return 1;
+        if (a.severity > b.severity) return -1;
+        return 0;
+      });
+    } else {
+      return [];
+    }
+  }, [sideEffects]);
+
   return (
     <View
       style={{
@@ -54,7 +66,7 @@ const ReviewSideEffectScreen = () => {
     >
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         {sideEffects.length > 0 ? (
-          sideEffects.map((sideEffect, i) => {
+          sortedSideEffects.map((sideEffect, i) => {
             return (
               <HorizontalCard
                 key={`sideEffect-${i}`}

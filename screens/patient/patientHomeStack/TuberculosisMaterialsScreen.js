@@ -63,6 +63,11 @@ export default function TuberculosisMaterialsScreen() {
       description:
         "VOT is the use of a videophone or other video/computer equipment to observe tuberculosis (TB) patients taking their medications remotely.",
     },
+    {
+      title: "video example",
+      description: "video example",
+      videoId: "iee2TATGMyI",
+    }
   ];
 
   const filteredAccordionData = accordionData.filter(
@@ -71,7 +76,9 @@ export default function TuberculosisMaterialsScreen() {
       item.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  function ListCard({ title, description }) {
+  function ListCard({ title, description, videoId }) {
+    console.log(title)
+    console.log(videoId)
     return (
       <List.Accordion title={title} titleNumberOfLines={10}>
         <List.Item
@@ -79,6 +86,16 @@ export default function TuberculosisMaterialsScreen() {
           descriptionNumberOfLines={10}
           style={{ marginTop: -20, paddingTop: 0, paddingLeft: 16 }}
         />
+        {videoId ? (
+          <View style={{marginVertical:30}}>
+            <YoutubePlayer
+              height={200}
+              play={playing}
+              videoId={videoId}
+              onChangeState={onStateChange}
+            />
+          </View>
+        ) : null}
       </List.Accordion>
     );
   }
@@ -104,6 +121,7 @@ export default function TuberculosisMaterialsScreen() {
               key={index}
               title={item.title}
               description={item.description}
+              videoId={item.videoId}
             />
           ))}
         </List.Section>
@@ -117,33 +135,16 @@ export default function TuberculosisMaterialsScreen() {
           </Button> */}
         </View>
         <View
-          style={{ flexDirection: "row", marginVertical: 16, flexWrap: "wrap" }}
-        >
-          <TextListButton text={"About TB"} onPressCallback={() => null} />
-          <TextListButton text={"MyTBCompanion"} onPressCallback={() => null} />
-          
-          {/* <Button
-            mode="contained-tonal"
-            onPress={() => navigate("")}
-            style={{ marginRight: 16, marginBottom: 16 }}
-          >
-            About TB
-          </Button>
-          <Button
-            mode="contained-tonal"
-            onPress={() => navigate("")}
-            style={{ marginBottom: 16 }}
-          >
-            About MyTBCompanion
-          </Button> */}
+          style={{ flexDirection: "row", marginTop: 16, flexWrap: "wrap" }}
+        >   
+          <TextListButton text={"About TB"} onPressCallback={() => null} textVariant={"titleSmall"} marginTopValue={0}/>
         </View>
-        <YoutubePlayer
-            height={300}
-            play={playing}
-            videoId={"iee2TATGMyI"}
-            onChangeState={onStateChange}
-          />
-          <Button title={playing ? "pause" : "play"} onPress={togglePlaying} />
+        <View
+          style={{ flexDirection: "row",  flexWrap: "wrap" }}
+        >   
+          <TextListButton text={"MyTBCompanion"} onPressCallback={() => null} textVariant={"titleSmall"}  marginTopValue={0}/>
+        </View>
+        
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
     </View>

@@ -13,6 +13,7 @@ export const fetchPatientCollectionData = createAsyncThunk(
   async (thunkAPI) => {
     try {
       let patients = await fetchCollection(FIREBASE_COLLECTION.PATIENT);
+
       // console.log("fetching patient " + patients[0].date_of_diagnosis.toDate().toISOString())
       patients = patients.map((patient) => {
         const updatedPatient = {
@@ -26,6 +27,7 @@ export const fetchPatientCollectionData = createAsyncThunk(
 
       return patients;
     } catch (error) {
+      console.log("error in patientDataSlice", error);
       return thunkAPI.rejectWithValue(error.message);
     }
   }
@@ -73,7 +75,7 @@ export const patientDataSlice = createSlice({
       state.patients = [];
       state.status = "idle";
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -92,6 +94,7 @@ export const patientDataSlice = createSlice({
 });
 
 // Action creators generated for each case reducer function
-export const { updatePatientData,clearPatientDataSlice } = patientDataSlice.actions;
+export const { updatePatientData, clearPatientDataSlice } =
+  patientDataSlice.actions;
 
 export default patientDataSlice.reducer;

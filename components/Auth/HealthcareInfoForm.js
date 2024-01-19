@@ -19,6 +19,7 @@ export default function HealthcareInfoForm({ isEditing }) {
   const [roleData, setRoleData] = React.useState([
     { label: "Doctor", value: "doctor" },
     { label: "Nurse", value: "nurse" },
+    { label: "Medical Assistant", value: "medical_assistant" },
   ]);
 
   const [categoryOpen, setCategoryOpen] = React.useState(false);
@@ -40,8 +41,10 @@ export default function HealthcareInfoForm({ isEditing }) {
   });
 
   const user = useSelector((state) => state.authObject);
+  const signupInfo = useSelector((state) => state.signupObject);
 
   React.useEffect(() => {
+    console.log(signupInfo.signupMode)
     if (isEditing) {
       setCategory(user.category);
       setRole(user.role);
@@ -52,7 +55,12 @@ export default function HealthcareInfoForm({ isEditing }) {
   }, [isEditing]);
 
   async function nextButtonHandler() {
-    inputCheck();
+    const inputValid = inputCheck();
+
+    if (!inputValid) {
+      return;
+    }
+
     // Update redux store
     dispatch(
       updateHealthcareInformation({
@@ -68,7 +76,11 @@ export default function HealthcareInfoForm({ isEditing }) {
   }
 
   async function updateButtonHandler() {
-    inputCheck();
+    const inputValid = inputCheck();
+
+    if (!inputValid) {
+      return;
+    }
 
     //Update new data into firebase
     try {
@@ -116,8 +128,10 @@ export default function HealthcareInfoForm({ isEditing }) {
         lastName: !lastNameIsValid,
         mpmId: !mpmIdIsValid,
       });
-      return Alert.alert("Invalid input", "Please check your entered input.");
+      Alert.alert("Invalid input", "Please check your entered input.");
+      return false;
     }
+    return true
   }
 
   return (
@@ -151,6 +165,8 @@ export default function HealthcareInfoForm({ isEditing }) {
         />
       </View>
       <CustomDropDownPicker
+        zIndex={5000}
+        zIndexInverse={3000}
         open={roleOpen}
         setOpen={setRoleOpen}
         value={role}
@@ -160,16 +176,20 @@ export default function HealthcareInfoForm({ isEditing }) {
         placeholder="Role"
       />
       <View style={{ marginTop: 16 }} />
-      <TextInput
-        mode="outlined"
-        label="MPM ID"
-        maxLength={10}
-        value={mpmId}
-        onChangeText={(value) => setMpmId(value)}
-        error={credentialsInvalid.mpmId}
-      />
+      <View style={{zIndex : -5}}>
+        <TextInput
+          mode="outlined"
+          label="MPM ID"
+          maxLength={10}
+          value={mpmId}
+          onChangeText={(value) => setMpmId(value)}
+          error={credentialsInvalid.mpmId}
+        />
+      </View>
       <View style={{ marginTop: 16 }} />
       <CustomDropDownPicker
+        zIndex={4000}
+        zIndexInverse={2000}
         open={categoryOpen}
         setOpen={setCategoryOpen}
         value={category}

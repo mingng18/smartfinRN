@@ -91,6 +91,7 @@ export default function SignInInfoScreen({ route }) {
     
     //Local state update and error handling
     try {
+      console.log("signUpMode"+ signupMode)
       dispatch(updateSignInCredentials({ email: email, password: password }));
       dispatch(updateSignupMode({ signupMode: signupMode }));
       if (signupMode === "patient") {

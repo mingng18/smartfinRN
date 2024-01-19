@@ -91,15 +91,16 @@ function HealthcareHomeScreen() {
     // console.log("the profile pic : " + user.profile_pic_url);
     //{TODO calculate total patients, videos to review, appointment, side effects alerts here}
     const calculatePatientCount = () => {
+      console.log("patients: ", patients.length)
       setPatientAmount(patients.length);
     };
     const calculateAppointmentCount = () => {
-      console.log("appointments: ", appointments.length);
-      console.log("pendingAppointments: ", pendingAppointments.length);
-      setAppointmentsCount(parseInt(appointments.length));
+      // console.log("appointments: ", appointments.length);
+      // console.log("pendingAppointments: ", pendingAppointments.length);
+      setAppointmentsCount(parseInt(pendingAppointments.length));
     };
     const calculateVideosToBeReviewedCount = () => {
-      console.log("videos: ", videos.length);
+      // console.log("videos: ", videos.length);
       if (videos.length === 0 || videos === undefined || videos === null) {
         setVideosToBeReviewedCount(0);
         return;
@@ -107,7 +108,7 @@ function HealthcareHomeScreen() {
       setVideosToBeReviewedCount(parseInt(videos.length));
     };
     const calculateSideEffectsAlertCount = () => {
-      console.log("side effects: ", sideEffects.length);
+      // console.log("side effects: ", sideEffects.length);
       setSideEffectsAlertCount(parseInt(sideEffects.length));
     };
     calculatePatientCount();
@@ -183,7 +184,7 @@ function HealthcareHomeScreen() {
               { backgroundColor: theme.colors.surfaceContainerLow },
             ]}
           >
-            <Text variant="titleLarge">To-Do List</Text>
+            <Text variant="titleLarge">Pending</Text>
             <View style={[{ flexDirection: "row", marginTop: 16 }]}>
               <HealthcareToDoCard
                 title={"Total Patient"}

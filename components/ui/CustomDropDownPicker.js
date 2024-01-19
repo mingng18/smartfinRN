@@ -24,6 +24,7 @@ export default function CustomDropDownPicker({
       onChangeValue={onChangeValue}
       zIndex={zIndex}
       zIndexInverse={zIndexInverse}
+      dropDownStyle={{ elevation: 999 }}
       style={[
         {
           backgroundColor: theme.colors.background,

@@ -23,7 +23,6 @@ export default function HealthcareProfileScreen() {
 
   function clearLocalData() {
     dispatch(logoutDeleteNative());
-    dispatch(clearAppointmentDateSlice());
     dispatch(clearAppointmentSlice());
     dispatch(clearSideEffectSlice());
     dispatch(clearVideoSlice());

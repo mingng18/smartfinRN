@@ -64,8 +64,6 @@ export default function PreviewProfilePicScreen() {
     const imageData = await fetch(uri);
     const imageBlob = await imageData.blob();
 
-    // Compress the image
-    // const compressedImage = await compressImage(imageBlob);
     uploadTask = uploadBytesResumable(path, imageBlob);
     uploadTask.on(
       "state_changed",
