@@ -41,7 +41,9 @@ export default function SideEffectDetailsScreen() {
           Remarks
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-          {currentSideEffect.remarks}
+          {currentSideEffect.remarks === ""
+            ? "No remarks given"
+            : currentSideEffect.remarks}
         </Text>
       </View>
     );
@@ -65,10 +67,10 @@ export default function SideEffectDetailsScreen() {
           marginTop: 8,
         }}
       >
-        <Text>
+        <Text variant="bodyLarge">
           {currentSideEffect.side_effect_occuring_timestamp.slice(0, 10)}
         </Text>
-        <Text>
+        <Text variant="bodyLarge">
           {new Date(
             currentSideEffect.side_effect_occuring_timestamp
           ).toLocaleTimeString("en-US", {

@@ -72,20 +72,18 @@ function PreviewVideoScreen() {
           "Error",
           "Something wrong, please login again and try again"
         );
-
       }
 
-      if(video === null || video === undefined || video === "") {
-        return Alert.alert(
-          "Video error",
-          "Please choose another video"
-        );
+      if (video === null || video === undefined || video === "") {
+        return Alert.alert("Video error", "Please choose another video");
       }
       const videoData = await fetch(video);
       const videoBlob = await videoData.blob();
       const videoRef = ref(
         storageRef,
-        "patientTreatmentVideo/" + uid + Timestamp.now().toDate().toISOString().slice(0, 10)
+        "patientTreatmentVideo/" +
+          uid +
+          Timestamp.now().toDate().toISOString().slice(0, 10)
       );
       uploadTask = uploadBytesResumable(videoRef, videoBlob);
       uploadTask.on(
@@ -171,26 +169,26 @@ function PreviewVideoScreen() {
       );
     } catch (error) {
       switch (error.code) {
-          case "storage/unauthorized":
-              // User doesn't have permission to access the object
-              Alert.alert(
-                "Unauthorized",
-                "Error uploading video, please login again and try again"
-              );
-              break;
+        case "storage/unauthorized":
+          // User doesn't have permission to access the object
+          Alert.alert(
+            "Unauthorized",
+            "Error uploading video, please login again and try again"
+          );
+          break;
 
-            case "storage/canceled":
-              // User canceled the upload
-              Alert.alert("Cancelled", "Video upload cancelled");
-              break;
+        case "storage/canceled":
+          // User canceled the upload
+          Alert.alert("Cancelled", "Video upload cancelled");
+          break;
 
-            case "storage/unknown":
-              // Unknown error occurred, inspect error.serverResponse
-              Alert.alert("Error", "Error uploading video, please try again");
-              break;
+        case "storage/unknown":
+          // Unknown error occurred, inspect error.serverResponse
+          Alert.alert("Error", "Error uploading video, please try again");
+          break;
       }
-      
-          setIsLoading(false);
+
+      setIsLoading(false);
       setIsLoading(false);
       Alert.alert("Error", "Error uploading video, please try again");
       console.error("Error uploading video:", error);
@@ -243,18 +241,25 @@ function PreviewVideoScreen() {
           <ProgressBar progress={uploadProgress} />
         </View>
       ) : null}
-      <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
+      <View
+        style={{
+          flexDirection: "row-reverse",
+          marginTop: 40,
+          flexWrap: "wrap",
+        }}
+      >
         <Button
           mode="contained"
           onPress={handleVideoSubmit}
+          style={{ marginLeft: 16, marginBottom: 16 }}
           disabled={isLoading ? true : false}
         >
           Upload
         </Button>
         <Button
           mode="contained-tonal"
-          style={{ marginRight: 16 }}
           onPress={pickImage}
+          style={{ marginBottom: 16 }}
           disabled={isLoading ? true : false}
         >
           Choose Another Video

@@ -60,13 +60,13 @@ export default function BookAppointmentScreen() {
 
   function disableTimeSlotsBasedOnDate(params, isReschedule) {
     let selectedDate = null;
-    if(isReschedule){
+    if (isReschedule) {
       selectedDate = params;
-    }else{
+    } else {
       selectedDate = params.date;
     }
 
-    console.log("params date: " + selectedDate)
+    console.log("params date: " + selectedDate);
     if (isBookedDate(selectedDate)) {
       console.log("this is a booked date, todo : disable the time slot ");
       const timeSlots = bookedAppointmentDates
@@ -79,12 +79,12 @@ export default function BookAppointmentScreen() {
           return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
         });
 
-        timeSlots.forEach(timeslot => {
-          updateItemValue(timeslot, true);
-        });
-    }
-    else{ //If the date is not booked at all, enable all the time slot
-      items.forEach(item => {
+      timeSlots.forEach((timeslot) => {
+        updateItemValue(timeslot, true);
+      });
+    } else {
+      //If the date is not booked at all, enable all the time slot
+      items.forEach((item) => {
         updateItemValue(item.label, false);
       });
     }
@@ -96,12 +96,28 @@ export default function BookAppointmentScreen() {
     if (params && params.isReschedule) {
       setIsReschedule(params.isReschedule);
       setLastAppointment(params.lastAppointment);
-      console.log("last appointment " + params.lastAppointment.scheduled_timestamp);
+      console.log(
+        "last appointment " + params.lastAppointment.scheduled_timestamp
+      );
       //Fri Jan 19 2024 23:59:59 GMT+0900 params date
-      console.log("finding the format here: " + new Date(params.lastAppointment.scheduled_timestamp).toISOString());
-      console.log("finding the format here: " + new Date(params.lastAppointment.scheduled_timestamp).toLocaleDateString());
-      console.log("finding the format here: " + new Date(params.lastAppointment.scheduled_timestamp).toUTCString());
-      disableTimeSlotsBasedOnDate(new Date(params.lastAppointment.scheduled_timestamp), true);
+      console.log(
+        "finding the format here: " +
+          new Date(params.lastAppointment.scheduled_timestamp).toISOString()
+      );
+      console.log(
+        "finding the format here: " +
+          new Date(
+            params.lastAppointment.scheduled_timestamp
+          ).toLocaleDateString()
+      );
+      console.log(
+        "finding the format here: " +
+          new Date(params.lastAppointment.scheduled_timestamp).toUTCString()
+      );
+      disableTimeSlotsBasedOnDate(
+        new Date(params.lastAppointment.scheduled_timestamp),
+        true
+      );
 
       const inputDate = new Date(params.lastAppointment.scheduled_timestamp);
       setDate(formatDate(inputDate));
@@ -139,10 +155,10 @@ export default function BookAppointmentScreen() {
 
       //Reset the time picker to null
       setTime(null);
-      
+
       //Check if the timeslot already booked or not, if booked, disable the time slot
-      console.log("params date " + params)
-      disableTimeSlotsBasedOnDate(params, false)
+      console.log("params date " + params);
+      disableTimeSlotsBasedOnDate(params, false);
 
       setDate(formatDate(params.date));
       setSubmitDate(params.date);
@@ -232,13 +248,9 @@ export default function BookAppointmentScreen() {
     // setBookedDialogVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     if (isReschedule) {
-      Alert.alert(
-        "Reschedule Successful!"
-      )
-    }else{
-      Alert.alert(
-        "Booked Successful!"
-      );
+      Alert.alert("Reschedule Successful!");
+    } else {
+      Alert.alert("Booked Successful!");
     }
     dispatch(
       createAppointment({
@@ -300,7 +312,7 @@ export default function BookAppointmentScreen() {
             handleAppointmentSubmission(); // TODO: Fix this Show the dialog to be able to function in ios as well
           }}
         >
-          Book
+          {isReschedule ? "Reschedule" : "Book"}
         </Button>
         <Button
           mode="contained-tonal"
