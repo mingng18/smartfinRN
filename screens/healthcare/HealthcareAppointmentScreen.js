@@ -3,7 +3,15 @@ import React from "react";
 import { View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
-import { Divider, Text, useTheme } from "react-native-paper";
+import {
+  Button,
+  Divider,
+  Modal,
+  Portal,
+  Text,
+  TextInput,
+  useTheme,
+} from "react-native-paper";
 import { useSelector } from "react-redux";
 import {
   APPOINTMENT_STATUS,
@@ -24,6 +32,18 @@ export default function HealthcareAppointmentScreen() {
   );
 
   const [selectedDate, setSelectedDate] = React.useState("");
+  const [callingAppointment, setcallingAppointment] = React.useState(null);
+  // const [appointmentNotesPatientName, setAppointmentNotesPatientName] = React.useState("");
+  const [visible, setVisible] = React.useState(false);
+  const containerStyle = { backgroundColor: "white", margin: 30, padding: 20 };
+  const showModal = () => setVisible(true);
+  const hideModal = () => setVisible(false);
+
+    function showAppointmentNotesRecorderHandler(appointmentData){
+      showModal(true);
+      setcallingAppointment(appointmentData);
+    }
+
   const marked = React.useMemo(() => {
     const allDates = [
       ...appointments.map((item) =>
@@ -104,7 +124,7 @@ export default function HealthcareAppointmentScreen() {
                     : HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT
                 }
                 iconOnPressedCallBack={() => {
-                  console.log("video calling");
+                  showAppointmentNotesRecorderHandler(appointment);
                 }}
               />
             );
@@ -132,6 +152,60 @@ export default function HealthcareAppointmentScreen() {
       }}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Portal>
+          <Modal
+            visible={visible}
+            onDismiss={() => hideModal()}
+            contentContainerStyle={containerStyle}
+          >
+            <Text variant="titleLarge" style={{marginVertical:8}}>Appointment Notes</Text>
+            <View style={{ marginVertical: 16 }}>
+              <Text variant="titleMedium" style={{ marginVertical: 8 }}>
+                Patient Information
+              </Text>
+              <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
+                Name: {callingAppointment?.patient_data.first_name} {callingAppointment?.patient_data.last_name}
+              </Text>
+              <Text variant="titleMedium" style={{ marginVertical: 8 }}>
+                Appointment Information
+              </Text>
+              <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
+                Date: {new Date(callingAppointment?.scheduled_timestamp)
+                  .toISOString()
+                  .slice(0, 10)}
+              </Text>
+              <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
+                Time: {new Date(
+                  callingAppointment?.scheduled_timestamp
+                ).toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })}
+              </Text>
+              <Text variant="titleMedium" style={{ marginTop: 8 }}>
+                Remarks/Notes
+              </Text>
+              <TextInput
+                mode="outlined"
+                label="Remarks/Notes"
+                placeholder="Write some notes here"
+                multiline={true}
+                numberOfLines={10}
+                style={{ marginVertical: 8 }}
+              ></TextInput>
+              <Button
+                mode="contained"
+                onPress={() => {
+                  hideModal();
+                }}
+                style={{ marginTop: 8 }}
+              >
+                Save
+              </Button>
+            </View>
+          </Modal>
+        </Portal>
         <Calendar
           theme={{
             calendarBackground: theme.colors.background,

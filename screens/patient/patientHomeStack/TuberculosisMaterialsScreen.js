@@ -16,7 +16,6 @@ export default function TuberculosisMaterialsScreen() {
     (state) => {
       if (state === "ended") {
         setPlaying(false);
-        Alert.alert("video has finished playing!");
       }
     },
     [playing]
