@@ -96,24 +96,6 @@ export default function BookAppointmentScreen() {
     if (params && params.isReschedule) {
       setIsReschedule(params.isReschedule);
       setLastAppointment(params.lastAppointment);
-      console.log(
-        "last appointment " + params.lastAppointment.scheduled_timestamp
-      );
-      //Fri Jan 19 2024 23:59:59 GMT+0900 params date
-      console.log(
-        "finding the format here: " +
-          new Date(params.lastAppointment.scheduled_timestamp).toISOString()
-      );
-      console.log(
-        "finding the format here: " +
-          new Date(
-            params.lastAppointment.scheduled_timestamp
-          ).toLocaleDateString()
-      );
-      console.log(
-        "finding the format here: " +
-          new Date(params.lastAppointment.scheduled_timestamp).toUTCString()
-      );
       disableTimeSlotsBasedOnDate(
         new Date(params.lastAppointment.scheduled_timestamp),
         true
@@ -244,7 +226,7 @@ export default function BookAppointmentScreen() {
       scheduled_timestamp: submitDate,
     };
 
-    addDocument("appointment", newAppointment);
+    addDocument(FIREBASE_COLLECTION.APPOINTMENT, newAppointment);
     // setBookedDialogVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     if (isReschedule) {

@@ -1,18 +1,23 @@
-import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { FAB, Text, useTheme } from "react-native-paper";
 import {} from "../../../assets/blank-profile-pic.png";
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
   HORIZONTAL_CARD_TYPE,
+  USER_TYPE,
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { Timestamp } from "firebase/firestore";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchDocument } from "../../../util/firestoreWR";
+import { fetchAppointments } from "../../../store/redux/appointmentSlice";
+
+import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { FAB, Text, useTheme } from "react-native-paper";
+import { Timestamp } from "firebase/firestore";
+import * as SecureStore from "expo-secure-store";
+import * as Haptics from "expo-haptics";
 
 function AllAppointmentScreen() {
   const navigation = useNavigation();
@@ -20,6 +25,8 @@ function AllAppointmentScreen() {
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
+  const dispatch = useDispatch();
+
   const [acceptedAppointment, setAcceptedAppointment] = React.useState([]);
   const [pendingAppointment, setPendingAppointment] = React.useState([]);
   const [completedAppointment, setCompletedAppointment] = React.useState([]);
@@ -30,9 +37,13 @@ function AllAppointmentScreen() {
     });
   });
 
+  React.useEffect(() => {
+    fetchAppointmentFromFirebase();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+  }, []);
+
   //Seperate the appointment into accepeted, pending and completed
   React.useEffect(() => {
-    console.log(appointments.length)
     setAcceptedAppointment(
       appointments.filter(
         (appointment) =>
@@ -56,6 +67,13 @@ function AllAppointmentScreen() {
         .sort((a, b) => a.scheduled_timestamp - b.scheduled_timestamp)
     );
   }, [appointments]);
+
+  const fetchAppointmentFromFirebase = async () => {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    dispatch(
+      fetchAppointments({ userId: storedUid, userType: USER_TYPE.PATIENT })
+    );
+  };
 
   //Determine the container color
   //If it is accepted, the color is blue
@@ -107,7 +125,6 @@ function AllAppointmentScreen() {
           );
         })}
         {pendingAppointment.map((appointment) => {
-          console.log('sadsad' + appointment.healthcare_first_name)
           return (
             <HorizontalCard
               key={`pending-${appointment.id}`}

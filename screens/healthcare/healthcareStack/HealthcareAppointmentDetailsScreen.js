@@ -180,14 +180,15 @@ export default function HealthcareAppointmentDetailsScreen() {
           ).label
         }
       </Text>
-      <Text variant="titleLarge" style={{ marginTop: 32 }}>
+      {/* Notes should be added after the video call */}
+      {/* <Text variant="titleLarge" style={{ marginTop: 32 }}>
         Notes
       </Text>
       <Text variant="bodyLarge" style={{ marginTop: 8 }}>
         {currentPatient.notes
           ? currentPatient.notes
           : "This patient currently has no notes"}
-      </Text>
+      </Text> */}
       <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
         {currentAppointment.appointment_status ===
         APPOINTMENT_STATUS.PENDING ? (
