@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -12,18 +12,22 @@ import {
   TextInput,
   useTheme,
 } from "react-native-paper";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   APPOINTMENT_STATUS,
+  FIREBASE_COLLECTION,
   HORIZONTAL_CARD_TYPE,
 } from "../../constants/constants";
 import TextListButton from "../../components/ui/TextListButton";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
+import { editDocument } from "../../util/firestoreWR";
+import { updateAppointment } from "../../store/redux/appointmentSlice";
 
 export default function HealthcareAppointmentScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
+  const dispatch = useDispatch();
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
@@ -33,15 +37,36 @@ export default function HealthcareAppointmentScreen() {
 
   const [selectedDate, setSelectedDate] = React.useState("");
   const [callingAppointment, setcallingAppointment] = React.useState(null);
+  const [callingAppointmentDate, setcallingAppointmentDate] = React.useState(null);
+  const [callingAppointmentTime, setcallingAppointmentTime] = React.useState(null);
+  const [callingAppointmentNotes, setCallingAppointmentNotes] = React.useState("");
   // const [appointmentNotesPatientName, setAppointmentNotesPatientName] = React.useState("");
   const [visible, setVisible] = React.useState(false);
   const containerStyle = { backgroundColor: "white", margin: 30, padding: 20 };
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
+  const showAppointmentNoteModal = () => setVisible(true);
+  const hideAppointmentNoteModal = () => setVisible(false);
 
     function showAppointmentNotesRecorderHandler(appointmentData){
-      showModal(true);
+      showAppointmentNoteModal(true);
       setcallingAppointment(appointmentData);
+      setcallingAppointmentDate(new Date(appointmentData.scheduled_timestamp).toISOString().slice(0, 10));
+      setcallingAppointmentTime(new Date(appointmentData.scheduled_timestamp).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      }));
+    }
+
+    async function submitAppointmentNotesHandler(){
+      try {
+        console.log("callingAppointmentId is " + callingAppointment.id)
+        const newAppointment = {...callingAppointment, notes: callingAppointmentNotes}
+        await editDocument(FIREBASE_COLLECTION.APPOINTMENT, callingAppointment.id, {notes: callingAppointmentNotes})
+        dispatch(updateAppointment({id: callingAppointment.id, changes: newAppointment}))
+      } catch (error) {
+        Alert.alert("Error saving the appointment note", error.message);
+      }
+      hideAppointmentNoteModal();
     }
 
   const marked = React.useMemo(() => {
@@ -93,7 +118,7 @@ export default function HealthcareAppointmentScreen() {
             return (
               <HorizontalCard
                 key={i}
-                profilePic={appointment.patient_data.profile_pic_url}
+                profilePic={appointment.patient_data.profile_pic_url?appointment.patient_data.profile_pic_url:BLANK_PROFILE_PIC}
                 subject={capitalizeFirstLetter(
                   appointment.patient_data.first_name
                 )}
@@ -155,7 +180,7 @@ export default function HealthcareAppointmentScreen() {
         <Portal>
           <Modal
             visible={visible}
-            onDismiss={() => hideModal()}
+            onDismiss={() => hideAppointmentNoteModal()}
             contentContainerStyle={containerStyle}
           >
             <Text variant="titleLarge" style={{marginVertical:8}}>Appointment Notes</Text>
@@ -170,34 +195,27 @@ export default function HealthcareAppointmentScreen() {
                 Appointment Information
               </Text>
               <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
-                Date: {new Date(callingAppointment?.scheduled_timestamp)
-                  .toISOString()
-                  .slice(0, 10)}
+                Date: {callingAppointmentDate}
               </Text>
               <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
-                Time: {new Date(
-                  callingAppointment?.scheduled_timestamp
-                ).toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "numeric",
-                  hour12: true,
-                })}
+                Time: {callingAppointmentTime}
               </Text>
               <Text variant="titleMedium" style={{ marginTop: 8 }}>
                 Remarks/Notes
               </Text>
               <TextInput
                 mode="outlined"
-                label="Remarks/Notes"
-                placeholder="Write some notes here"
+                label="Write some notes here"
                 multiline={true}
                 numberOfLines={10}
                 style={{ marginVertical: 8 }}
+                value={callingAppointmentNotes}
+                onChangeText={(text) => setCallingAppointmentNotes(text)}
               ></TextInput>
               <Button
                 mode="contained"
                 onPress={() => {
-                  hideModal();
+                  submitAppointmentNotesHandler();
                 }}
                 style={{ marginTop: 8 }}
               >

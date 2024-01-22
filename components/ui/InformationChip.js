@@ -1,7 +1,9 @@
-import { Chip, Text } from "react-native-paper";
+import { Chip, Text, useTheme } from "react-native-paper";
 import { Pressable, StyleSheet } from "react-native";
 import React from "react";
 export default function InformationChip({ isBlur = false, text, icon, style }) {
+  const theme = useTheme();
+
   const [isBlurring, setIsBlurring] = React.useState(isBlur);
   const [isDisableBlur, setIsDisableBlur] = React.useState(true);
 
@@ -39,12 +41,22 @@ export default function InformationChip({ isBlur = false, text, icon, style }) {
 
 const styles = StyleSheet.create({
   blurring: {
-    color: "#fff0",
-    textShadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    textShadowRadius: 10,
+    height: 3,
+    width: 70,
+    shadowOpacity: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 10, height: 10 },
+    shadowRadius: 5,
+    elevation: 5,
+    borderWidth: 0.01,
+    borderColor: "#CEE5FF",
+    backgroundColor: "#CEE5FF"
+    // color: "#fff0",
+    // textShadowOffset: {
+    //   width: 0,
+    //   height: 0,
+    // },
+    // textShadowRadius: 10,
   },
   noBlurred: {},
 });
