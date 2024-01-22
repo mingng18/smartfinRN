@@ -344,13 +344,13 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
         data.patient_id
       )
         .then((patientDoc) => {
-          if (data.healthcare_id === healthcareId) {
+          if (data.healthcare_id === healthcareId && data.appointment_status === "accepted") {
             appointments.push({
               id: doc.id,
               patient_data: patientDoc,
               ...data,
             });
-          } else {
+          } else if (data.appointment_status === "pending" ) {
             pendingAppointments.push({
               id: doc.id,
               patient_data: patientDoc,

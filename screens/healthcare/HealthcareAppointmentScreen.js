@@ -13,6 +13,8 @@ import {
   useTheme,
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import * as Haptics from "expo-haptics";
+
 import {
   APPOINTMENT_STATUS,
   FIREBASE_COLLECTION,
@@ -63,13 +65,18 @@ export default function HealthcareAppointmentScreen() {
         const newAppointment = {...callingAppointment, notes: callingAppointmentNotes}
         await editDocument(FIREBASE_COLLECTION.APPOINTMENT, callingAppointment.id, {notes: callingAppointmentNotes})
         dispatch(updateAppointment({id: callingAppointment.id, changes: newAppointment}))
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
         Alert.alert("Error saving the appointment note", error.message);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
       hideAppointmentNoteModal();
     }
 
   const marked = React.useMemo(() => {
+    pendingAppointments.forEach(element => {
+      console.log(element.scheduled_timestamp + " pending appointments")
+    });
     const allDates = [
       ...appointments.map((item) =>
         new Date(item.scheduled_timestamp).toISOString().slice(0, 10)
