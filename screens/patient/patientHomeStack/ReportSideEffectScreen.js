@@ -154,10 +154,10 @@ function ReportSideEffectScreen() {
 
   //TODO calculate severity
   function calculateSeverity() {
-    return symptoms.some((s) => s.grade == 2)
-      ? SIDE_EFFECT_SEVERITY.GRADE_2
-      : symptoms.some((s) => s.grade == 3)
+    return symptoms.some((s) => s.grade == 3)
       ? SIDE_EFFECT_SEVERITY.GRADE_3
+      : symptoms.some((s) => s.grade == 2)
+      ? SIDE_EFFECT_SEVERITY.GRADE_2
       : SIDE_EFFECT_SEVERITY.GRADE_1;
   }
 

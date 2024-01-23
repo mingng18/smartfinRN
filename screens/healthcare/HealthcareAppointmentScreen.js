@@ -25,6 +25,7 @@ import HorizontalCard from "../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { editDocument } from "../../util/firestoreWR";
 import { updateAppointment } from "../../store/redux/appointmentSlice";
+import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 
 export default function HealthcareAppointmentScreen() {
   const { navigate } = useNavigation();
@@ -44,9 +45,16 @@ export default function HealthcareAppointmentScreen() {
   const [callingAppointmentNotes, setCallingAppointmentNotes] = React.useState("");
   // const [appointmentNotesPatientName, setAppointmentNotesPatientName] = React.useState("");
   const [visible, setVisible] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const containerStyle = { backgroundColor: "white", margin: 30, padding: 20 };
   const showAppointmentNoteModal = () => setVisible(true);
   const hideAppointmentNoteModal = () => setVisible(false);
+
+    function dismissAppointmentNotesModalHandler(){
+      hideAppointmentNoteModal()
+      setCallingAppointmentNotes("");
+    }
 
     function showAppointmentNotesRecorderHandler(appointmentData){
       showAppointmentNoteModal(true);
@@ -60,16 +68,18 @@ export default function HealthcareAppointmentScreen() {
     }
 
     async function submitAppointmentNotesHandler(){
+      setIsLoading(true);
       try {
-        console.log("callingAppointmentId is " + callingAppointment.id)
         const newAppointment = {...callingAppointment, notes: callingAppointmentNotes}
         await editDocument(FIREBASE_COLLECTION.APPOINTMENT, callingAppointment.id, {notes: callingAppointmentNotes})
         dispatch(updateAppointment({id: callingAppointment.id, changes: newAppointment}))
+        
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch (error) {
         Alert.alert("Error saving the appointment note", error.message);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       }
+      setIsLoading(false);
       hideAppointmentNoteModal();
     }
 
@@ -183,11 +193,11 @@ export default function HealthcareAppointmentScreen() {
         paddingTop: 56,
       }}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets={true} automaticallyAdjustContentInsets={true}>
         <Portal>
           <Modal
             visible={visible}
-            onDismiss={() => hideAppointmentNoteModal()}
+            onDismiss={() => dismissAppointmentNotesModalHandler()}
             contentContainerStyle={containerStyle}
           >
             <Text variant="titleLarge" style={{marginVertical:8}}>Appointment Notes</Text>
@@ -214,10 +224,11 @@ export default function HealthcareAppointmentScreen() {
                 mode="outlined"
                 label="Write some notes here"
                 multiline={true}
-                numberOfLines={10}
+                numberOfLines={5}
                 style={{ marginVertical: 8 }}
-                value={callingAppointmentNotes}
+                value={callingAppointment!== null && (callingAppointment.notes!== null || callingAppointment.notes!=="")? callingAppointment.notes: callingAppointmentNotes}
                 onChangeText={(text) => setCallingAppointmentNotes(text)}
+                
               ></TextInput>
               <Button
                 mode="contained"
@@ -292,6 +303,14 @@ export default function HealthcareAppointmentScreen() {
         /> */}
         <AppointmentHorizontalCard isPending={true} />
       </ScrollView>
+      <LoadingIndicatorDialog
+        visible={isLoading}
+        close={() => {
+          setIsLoading(false);
+        }}
+        title={"Saving Appointment Notes"}
+        bodyText={"Please wait a while"}
+      />
     </View>
   );
 }

@@ -23,6 +23,8 @@ import {
   sideEffectContainerColor,
   sideEffectGradeText,
 } from "../../../util/sideEffectUtil";
+import { set } from "lodash";
+import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 
 export default function ReviewSideEffectDetailScreen() {
   const navigation = useNavigation();
@@ -32,6 +34,7 @@ export default function ReviewSideEffectDetailScreen() {
   const dispatch = useDispatch();
 
   const [remarks, setRemarks] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -40,6 +43,7 @@ export default function ReviewSideEffectDetailScreen() {
   });
 
   const handleSideEffectReviewSubmission = async () => {
+    setIsLoading(true);
     const storedUid = await SecureStore.getItemAsync("uid");
     try {
       const updatedSideEffect = {
@@ -57,12 +61,14 @@ export default function ReviewSideEffectDetailScreen() {
 
       // Update state or dispatch an action if necessary
       dispatch(deleteSideEffect({ id: currentSideEffect.id }));
-      Alert.alert("Reviewed");
+      setIsLoading(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Reviewed");
       navigation.goBack();
 
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setIsLoading(false);
       Alert.alert(
         "Submit Error",
         "Something went wrong. Please try again later."
@@ -71,6 +77,7 @@ export default function ReviewSideEffectDetailScreen() {
   };
 
   return (
+    
     <View
       style={{
         backgroundColor: theme.colors.background,
@@ -143,6 +150,14 @@ export default function ReviewSideEffectDetailScreen() {
           </Button>
         </View>
       </ScrollView>
+      <LoadingIndicatorDialog
+        visible={isLoading}
+        close={() => {
+          setIsLoading(false);
+        }}
+        title={"Reviewing Side Effect"}
+        bodyText={"Please wait a while"}
+      />
     </View>
   );
 }

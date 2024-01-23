@@ -22,6 +22,8 @@ import { TREATMENT, VIDEO_STATUS } from "../../../constants/constants";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";
 import { deleteVideo } from "../../../store/redux/videoSlice";
+import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
+import { set } from "lodash";
 
 export default function ReviewVideoDetailsScreen() {
   const navigation = useNavigation();
@@ -44,6 +46,7 @@ export default function ReviewVideoDetailsScreen() {
   const hideDialog = () => setVisible(false);
   const [reason, setReason] = React.useState("");
   const [reasonError, setReasonError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -52,6 +55,7 @@ export default function ReviewVideoDetailsScreen() {
   });
 
   const handleVideoSubmission = async (isAccepted) => {
+    setIsLoading(true);
     const storedUid = await SecureStore.getItemAsync("uid");
     try {
       if (isAccepted) {
@@ -77,13 +81,16 @@ export default function ReviewVideoDetailsScreen() {
         // Dispatch the updateVideo action to update the Redux state
         dispatch(deleteVideo({ id: currentVideo.id }));
 
+
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        setIsLoading(false);
         Alert.alert("Success", "Video successfully accepted.");
         navigation.goBack();
       } else {
         if (reason === "") {
           setReasonError(true);
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          setIsLoading(false);
           Alert.alert("Error occured", "Please fill in reason");
         } else {
           const updatedVideo = {
@@ -107,12 +114,14 @@ export default function ReviewVideoDetailsScreen() {
           dispatch(deleteVideo({ id: currentVideo.id }));
 
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          setIsLoading(false);
           Alert.alert("Success", "Video successfully rejected.");
           navigation.goBack();
         }
       }
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      setIsLoading(false);
       Alert.alert("Error Occurred", `Please try again later ${error}`);
     }
   };
@@ -216,6 +225,14 @@ export default function ReviewVideoDetailsScreen() {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+      <LoadingIndicatorDialog
+        visible={isLoading}
+        close={() => {
+          setIsLoading(false);
+        }}
+        title={"Reviewing Video"}
+        bodyText={"Please wait a while"}
+      />
     </View>
   );
 }
