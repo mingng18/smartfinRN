@@ -30,6 +30,7 @@ import { fetchVideos } from "./store/redux/videoSlice";
 import { USER_TYPE } from "./constants/constants";
 import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
 import DropDownPicker from "react-native-dropdown-picker";
+import { LogBox } from "react-native";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();
@@ -40,6 +41,9 @@ SplashScreen.preventAutoHideAsync();
 function Root() {
   const [isTryingLogin, setIsTryingLogin] = useState(true);
   const dispatch = useDispatch();
+
+  LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
+  LogBox.ignoreAllLogs();
 
   useEffect(() => {
     async function fetchToken() {
@@ -96,7 +100,10 @@ function Root() {
             fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
           );
         } catch (error) {
-          const healthcareUser = await fetchDocument(FIREBASE_COLLECTION.HEALTHCARE, storedUid);
+          const healthcareUser = await fetchDocument(
+            FIREBASE_COLLECTION.HEALTHCARE,
+            storedUid
+          );
           console.log(
             "healthcare email from firebase is: " + healthcareUser.email
           );
