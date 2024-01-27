@@ -205,38 +205,44 @@ function HealthcareHomeScreen() {
       throw new Error("Failed to fetch collection size: " + error.message);
     }
   }
+  React.useEffect(() => {
+    fetchVideoSubmittedThisMonth();
+    fetchSideEffectSubmittedThisMonth();
+  }, []);
 
   //Calculate total patients, videos to review, appointment, side effects alerts here
   React.useEffect(() => {
-    // console.log("the user : " + user.first_name + " " + user.last_name);
-    // console.log("the profile pic : " + user.profile_pic_url);
-    //{TODO calculate total patients, videos to review, appointment, side effects alerts here}
+    const calculateAppointmentCount = () => {
+      setAppointmentsCount(parseInt(pendingAppointments.length));
+    };
+    calculateAppointmentCount();
+  }, [appointments]);
+
+  React.useEffect(() => {
     const calculatePatientCount = () => {
       console.log("patients: ", patients.length);
       setPatientAmount(patients.length);
     };
-    const calculateAppointmentCount = () => {
-      // console.log("appointments: ", appointments.length);
-      // console.log("pendingAppointments: ", pendingAppointments.length);
-      setAppointmentsCount(parseInt(pendingAppointments.length));
+    calculatePatientCount();
+  }, [patients]);
+
+  React.useEffect(() => {
+    const calculateSideEffectsAlertCount = () => {
+      setSideEffectsAlertCount(parseInt(sideEffects.length));
     };
+    calculateSideEffectsAlertCount();
+  }, [sideEffects]);
+
+  React.useEffect(() => {
     const calculateVideosToBeReviewedCount = () => {
-      // console.log("videos: ", videos.length);
       if (videos.length === 0 || videos === undefined || videos === null) {
         setVideosToBeReviewedCount(0);
         return;
       }
       setVideosToBeReviewedCount(parseInt(videos.length));
     };
-    const calculateSideEffectsAlertCount = () => {
-      // console.log("side effects: ", sideEffects.length);
-      setSideEffectsAlertCount(parseInt(sideEffects.length));
-    };
-    calculatePatientCount();
-    calculateAppointmentCount();
     calculateVideosToBeReviewedCount();
-    calculateSideEffectsAlertCount();
-  }, [appointments, videos, patients, sideEffects]);
+  }, [videos]);
 
   return (
     <GestureHandlerRootView>
@@ -456,7 +462,7 @@ function HealthcareHomeScreen() {
               }}
             />
           </VictoryStack>
-          <View style={{ flexDirection: 'row-reverse' }}>
+          <View style={{ flexDirection: "row-reverse" }}>
             <Legend text={"Grade 3"} color={theme.colors.error} />
             <Legend text={"Grade 2"} color={theme.colors.yellow} />
             <Legend text={"Grade 1"} color={theme.colors.primary} />
