@@ -66,7 +66,7 @@ export default function TuberculosisMaterialsScreen() {
       title: "video example",
       description: "video example",
       videoId: "iee2TATGMyI",
-    }
+    },
   ];
 
   const filteredAccordionData = accordionData.filter(
@@ -76,8 +76,8 @@ export default function TuberculosisMaterialsScreen() {
   );
 
   function ListCard({ title, description, videoId }) {
-    console.log(title)
-    console.log(videoId)
+    console.log(title);
+    console.log(videoId);
     return (
       <List.Accordion title={title} titleNumberOfLines={10}>
         <List.Item
@@ -86,7 +86,7 @@ export default function TuberculosisMaterialsScreen() {
           style={{ marginTop: -20, paddingTop: 0, paddingLeft: 16 }}
         />
         {videoId ? (
-          <View style={{marginVertical:30}}>
+          <View style={{ marginVertical: 30 }}>
             <YoutubePlayer
               height={200}
               play={playing}
@@ -104,10 +104,14 @@ export default function TuberculosisMaterialsScreen() {
       style={{
         backgroundColor: theme.colors.background,
         height: "100%",
-        paddingHorizontal: 16,
       }}
     >
-      <ScrollView automaticallyAdjustKeyboardInsets>
+      <ScrollView
+        automaticallyAdjustKeyboardInsets
+        style={{
+          paddingHorizontal: 16,
+        }}
+      >
         <Searchbar
           placeholder="Search"
           onChangeText={(query) => setSearchQuery(query)}
@@ -133,17 +137,18 @@ export default function TuberculosisMaterialsScreen() {
             More Materials
           </Button> */}
         </View>
-        <View
-          style={{ flexDirection: "row", marginTop: 16, flexWrap: "wrap" }}
-        >   
-          <TextListButton text={"About TB"} onPressCallback={() => null} textVariant={"titleSmall"} marginTopValue={0}/>
+        <View style={{ flexDirection: "row", marginTop: 16, flexWrap: "wrap" }}>
+          <Button
+            mode="contained"
+            style={{ marginRight: 16, marginBottom: 16 }}
+            onPress={() => {}}
+          >
+            About TB
+          </Button>
+          <Button mode='contained-tonal' style={{ marginBottom: 16 }} onPress={() => {}}>
+            About MyTBCompanion
+          </Button>
         </View>
-        <View
-          style={{ flexDirection: "row",  flexWrap: "wrap" }}
-        >   
-          <TextListButton text={"MyTBCompanion"} onPressCallback={() => null} textVariant={"titleSmall"}  marginTopValue={0}/>
-        </View>
-        
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
     </View>

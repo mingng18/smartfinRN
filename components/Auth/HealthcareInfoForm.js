@@ -25,7 +25,7 @@ export default function HealthcareInfoForm({ isEditing }) {
   const [categoryOpen, setCategoryOpen] = React.useState(false);
   const [category, setCategory] = React.useState("government_hospital");
   const [categoryData, setCategoryData] = React.useState([
-    { label: "Government hospital", value: "government_hospital" },
+    { label: "Government Hospital", value: "government_hospital" },
     { label: "Private Hospital", value: "private_hospital" },
     { label: "NGO", value: "ngo" },
   ]);
@@ -189,7 +189,7 @@ export default function HealthcareInfoForm({ isEditing }) {
       <View style={{ marginTop: 16 }} />
       <CustomDropDownPicker
         zIndex={4000}
-        zIndexInverse={2000}
+        // zIndexInverse={2000}
         open={categoryOpen}
         setOpen={setCategoryOpen}
         value={category}

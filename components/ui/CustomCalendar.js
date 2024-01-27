@@ -18,6 +18,9 @@ export default function CustomCalendar({
 }) {
   const theme = useTheme();
   const user = useSelector((state) => state.authObject);
+  const today = new Date();
+  // console.log(today);
+  // console.log(today.slice(0, 10));
 
   //useMemo to optimise performance
   //Decide which colour to color the container
@@ -58,7 +61,6 @@ export default function CustomCalendar({
 
       //Video is selected
       if (currentSelected === CALENDAR_ENTITIES.VIDEO) {
-        const today = new Date();
         const startDate = new Date(user.date_of_diagnosis);
         const treatmentEndDate = new Date(startDate);
         treatmentEndDate.setMonth(
@@ -138,6 +140,8 @@ export default function CustomCalendar({
         </Chip>
       </View>
       <Calendar
+      // initialDate=""
+      // context={{ date : '' }}
         theme={{
           calendarBackground: theme.colors.background,
           monthTextColor: theme.colors.onBackground,
@@ -152,10 +156,16 @@ export default function CustomCalendar({
         markedDates={{
           ...marked,
           [selectedDate]: {
-            selected: true,
-            selectedColor: theme.colors.onBackground
+            selected:
+              currentSelected === CALENDAR_ENTITIES.VIDEO ? false : true,
+            selectedColor: theme.colors.onBackground,
             // selectedTextColor: theme.colors.onBackground,
           },
+          // ['2024-01-27']: {
+          //   selected: true,
+          //   selectedColor: theme.colors.onBackground,
+          //   selectedTextColor: theme.colors.onBackground,
+          // },
         }}
       />
       {currentSelected === CALENDAR_ENTITIES.VIDEO && (

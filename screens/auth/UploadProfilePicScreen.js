@@ -6,7 +6,12 @@ import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import { updateProfilePictureURI } from "../../store/redux/signupSlice";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import {
   authenticateStoreNative,
@@ -175,8 +180,18 @@ export default function UploadProfilePicScreen() {
         }}
       />
 
-      <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-        <Button mode="contained" onPress={pickImage} style={{ marginLeft: 16 }}>
+      <View
+        style={{
+          marginTop: 40,
+          flexDirection: "row-reverse",
+          flexWrap: "wrap",
+        }}
+      >
+        <Button
+          mode="contained"
+          onPress={pickImage}
+          style={{ marginLeft: 16, marginBottom: 16 }}
+        >
           Upload
         </Button>
         <Button
@@ -184,11 +199,16 @@ export default function UploadProfilePicScreen() {
           onPress={() => {
             navigation.navigate("CameraScreen", { isEditing: false });
           }}
-          style={{ marginLeft: 16 }}
+          style={{ marginLeft: 16, marginBottom: 16 }}
         >
           Take Picture
         </Button>
-        <Button onPress={() => skipProfilePictureHandler()}>Skip</Button>
+        <Button
+          style={{ marginBottom: 16 }}
+          onPress={() => skipProfilePictureHandler()}
+        >
+          Skip
+        </Button>
       </View>
     </View>
   );

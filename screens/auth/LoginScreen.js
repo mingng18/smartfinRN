@@ -32,7 +32,7 @@ function LoginScreen() {
   const { navigate } = useNavigation();
 
   // React.useLayoutEffect(() => {
-  //   navigate("PersonalInformationScreen");
+  //   navigate("TreatmentInfoScreen");
   // });
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
@@ -71,7 +71,10 @@ function LoginScreen() {
           fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
         );
       } catch (error) {
-        const isHealthcare = await fetchDocument(FIREBASE_COLLECTION.HEALTHCARE, user.uid);
+        const isHealthcare = await fetchDocument(
+          FIREBASE_COLLECTION.HEALTHCARE,
+          user.uid
+        );
         dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
         dispatch(fetchHealthcareData({ ...isHealthcare }));
         dispatch(fetchPatientCollectionData());

@@ -21,7 +21,9 @@ import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
+  LOGO_BLACK_TYPE,
   LOGO_NO_TYPE,
+  LOGO_WHITE_TYPE,
   USER_TYPE,
   VIDEO_STATUS,
 } from "../../constants/constants";
@@ -221,7 +223,7 @@ function PatientHomeScreen() {
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
-          <Image source={LOGO_NO_TYPE} style={{ width: 74, height: 74 }} />
+          <Image source={LOGO_BLACK_TYPE} style={{ width: 74, height: 74 }} />
         </View>
         {/* ================ TodoList ============== */}
         <View

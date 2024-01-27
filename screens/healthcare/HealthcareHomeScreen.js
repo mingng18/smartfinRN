@@ -11,6 +11,7 @@ import {
   RefreshControl,
   Platform,
   Image,
+  Dimensions,
 } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import {
@@ -19,7 +20,9 @@ import {
 } from "../../util/wordUtil";
 import {
   BLANK_PROFILE_PIC,
-  LOGO_NO_TYPE,
+  FIREBASE_COLLECTION,
+  LOGO_BLACK_TYPE,
+  SIDE_EFFECT_SEVERITY,
   USER_TYPE,
 } from "../../constants/constants";
 import HealthcareToDoCard from "../../components/ui/ToDoCard_Healthcare";
@@ -32,6 +35,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 import CachedImage from "expo-cached-image";
 import * as SecureStore from "expo-secure-store";
+import {
+  VictoryAxis,
+  VictoryBar,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLegend,
+  VictoryLine,
+  VictoryStack,
+  VictoryTheme,
+} from "victory-native";
+import { Timestamp } from "firebase/firestore";
+import { fetchCollection } from "../../util/firestoreWR";
+import Legend from "../../components/ui/Legend";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
@@ -56,6 +72,13 @@ function HealthcareHomeScreen() {
     React.useState(0);
   const [sideEffectsAlertCount, setSideEffectsAlertCount] = React.useState(0);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [videoAnalytic, setVideoAnalytic] = React.useState([]);
+  const [sideEffectGrade1Analytic, setSideEffectGrade1Analytic] =
+    React.useState([]);
+  const [sideEffectGrade2Analytic, setSideEffectGrade2Analytic] =
+    React.useState([]);
+  const [sideEffectGrade3Analytic, setSideEffectGrade3Analytic] =
+    React.useState([]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -66,9 +89,9 @@ function HealthcareHomeScreen() {
     }, 2000);
   }, []);
 
-  // React.useLayoutEffect(() => {
-  //   navigation.navigate("AllPatientScreen");
-  // });
+  React.useLayoutEffect(() => {
+    // navigation.navigate("AllPatientScreen");
+  });
 
   //Load all data with userId on the home page
   const fetchDataForHealthcare = async () => {
@@ -83,7 +106,105 @@ function HealthcareHomeScreen() {
     dispatch(
       fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
     );
+
+    fetchVideoSubmittedThisMonth();
+    fetchSideEffectSubmittedThisMonth();
   };
+
+  async function fetchVideoSubmittedThisMonth() {
+    try {
+      // const videos = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
+      const videoData = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
+      const videoCountByDay = new Map();
+      const today = new Date();
+
+      videoData.forEach((video) => {
+        const videoDate = video.uploaded_timestamp.toDate();
+
+        // console.log('lol ol ' + video.uploaded_timestamp);
+        // console.log('lol ol ' + videoDate.getMonth());
+        // console.log('lol ol ' + new Date().getMonth());
+
+        if (
+          videoDate.getMonth() === today.getMonth() &&
+          videoDate.getFullYear() === today.getFullYear()
+        ) {
+          // console.log("yay");
+          const day = videoDate.getDate();
+          videoCountByDay.set(day, (videoCountByDay.get(day) || 0) + 1);
+        }
+      });
+
+      // Convert the map to the desired format
+      const formattedData = Array.from(videoCountByDay).map(([x, y]) => ({
+        x,
+        y,
+      }));
+      // formattedData.sort((a, b) => a.day - b.day);
+      // console.log("video length is " + JSON.stringify(formattedData));
+      setVideoAnalytic(formattedData);
+    } catch (error) {
+      throw new Error("Failed to fetch collection size: " + error.message);
+    }
+  }
+
+  async function fetchSideEffectSubmittedThisMonth() {
+    try {
+      // const videos = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
+      const sideEffectData = await fetchCollection(
+        FIREBASE_COLLECTION.SIDE_EFFECT
+      );
+      var grade1 = new Map();
+      var grade2 = new Map();
+      var grade3 = new Map();
+      const today = new Date();
+
+      sideEffectData.forEach((sideEffect) => {
+        const sideEffectDate =
+          sideEffect.side_effect_occuring_timestamp.toDate();
+
+        console.log("lol ol " + sideEffectDate);
+        console.log("lol ol " + sideEffectDate.getMonth());
+        console.log("lol ol " + new Date().getMonth());
+
+        if (
+          sideEffectDate.getMonth() === today.getMonth() &&
+          sideEffectDate.getFullYear() === today.getFullYear()
+        ) {
+          console.log("yayyy");
+          const day = sideEffectDate.getDate();
+          if (sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1) {
+            grade1.set(day, (grade1.get(day) || 0) + 1);
+          } else if (sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2) {
+            grade2.set(day, (grade2.get(day) || 0) + 1);
+          } else if (sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_3) {
+            grade3.set(day, (grade3.get(day) || 0) + 1);
+          }
+        }
+      });
+
+      grade1 = Array.from(grade1)
+        .map(([x, y]) => ({ x, y }))
+        .sort((a, b) => a.x - b.x);
+      grade2 = Array.from(grade2)
+        .map(([x, y]) => ({ x, y }))
+        .sort((a, b) => a.x - b.x);
+      grade3 = Array.from(grade3)
+        .map(([x, y]) => ({ x, y }))
+        .sort((a, b) => a.x - b.x);
+
+      setSideEffectGrade1Analytic(grade1);
+      setSideEffectGrade2Analytic(grade2);
+      setSideEffectGrade3Analytic(grade3);
+
+      // formattedData.sort((a, b) => a.day - b.day);
+      console.log("sideEffect1 are " + JSON.stringify(grade1));
+      console.log("sideEffect2 are " + JSON.stringify(grade2));
+      console.log("sideEffect3 are " + JSON.stringify(grade3));
+    } catch (error) {
+      throw new Error("Failed to fetch collection size: " + error.message);
+    }
+  }
 
   //Calculate total patients, videos to review, appointment, side effects alerts here
   React.useEffect(() => {
@@ -91,7 +212,7 @@ function HealthcareHomeScreen() {
     // console.log("the profile pic : " + user.profile_pic_url);
     //{TODO calculate total patients, videos to review, appointment, side effects alerts here}
     const calculatePatientCount = () => {
-      console.log("patients: ", patients.length)
+      console.log("patients: ", patients.length);
       setPatientAmount(patients.length);
     };
     const calculateAppointmentCount = () => {
@@ -165,7 +286,7 @@ function HealthcareHomeScreen() {
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
-          <Image source={LOGO_NO_TYPE} style={{ width: 74, height: 74 }} />
+          <Image source={LOGO_BLACK_TYPE} style={{ width: 74, height: 74 }} />
         </View>
         {/* ================ TodoList ============== */}
         <View
@@ -194,25 +315,25 @@ function HealthcareHomeScreen() {
                 style={{ marginRight: 8 }}
               />
               <HealthcareToDoCard
-                title={"Review Videos"}
-                icon="video"
-                count={videosToBeReviewedCount}
-                onPressedCallback={() => navigation.jumpTo("healthcareReview")}
-                style={{ marginLeft: 8 }}
-              />
-            </View>
-            <View style={[{ flexDirection: "row", marginTop: 16 }]}>
-              <HealthcareToDoCard
                 title={"Appointment"}
                 icon="calendar"
                 count={appointmentsCount}
                 onPressedCallback={() =>
                   navigation.jumpTo("healthcareAppointment")
                 }
+                style={{ marginLeft: 8 }}
+              />
+            </View>
+            <View style={[{ flexDirection: "row", marginTop: 16 }]}>
+              <HealthcareToDoCard
+                title={"Review Videos\nof Patients"}
+                icon="video"
+                count={videosToBeReviewedCount}
+                onPressedCallback={() => navigation.jumpTo("healthcareReview")}
                 style={{ marginRight: 8 }}
               />
               <HealthcareToDoCard
-                title={"Side Effect"}
+                title={"Review Patients\nSide Effects"}
                 icon="emoticon-sick-outline"
                 count={sideEffectsAlertCount}
                 onPressedCallback={() => navigate("ReviewSideEffectScreen")}
@@ -261,7 +382,7 @@ function HealthcareHomeScreen() {
             </View>
           </View>
           {/* ================== Analytics ================= */}
-          {/* <Text
+          <Text
             variant="titleLarge"
             style={{
               paddingTop: 16,
@@ -269,12 +390,83 @@ function HealthcareHomeScreen() {
             }}
           >
             Analytics
-          </Text> */}
+          </Text>
+          <Text
+            variant="labelLarge"
+            style={{
+              paddingTop: 4,
+              marginHorizontal: 16,
+            }}
+          >
+            {`Number of videos submitted this month`}
+          </Text>
+          <VictoryChart theme={VictoryTheme.material}>
+            {/* X Axis */}
+            <VictoryAxis
+              label="Day"
+              style={{
+                axisLabel: { padding: 30 },
+              }}
+            />
+            {/* Y Axis */}
+            <VictoryAxis
+              dependentAxis
+              label="Number of Videos"
+              style={{
+                axisLabel: { padding: 30 },
+              }}
+              tickFormat={(tick) => {
+                return Number.isInteger(tick) ? tick.toString() : "";
+              }}
+            />
+            <VictoryBar
+              data={videoAnalytic}
+              style={{
+                data: { fill: theme.colors.primary },
+              }}
+            />
+          </VictoryChart>
+          <Text
+            variant="labelLarge"
+            style={{
+              paddingTop: 32,
+              marginHorizontal: 16,
+            }}
+          >
+            {`Side effects submitted this month`}
+          </Text>
+          <VictoryStack
+            theme={VictoryTheme.material}
+            colorScale={[
+              theme.colors.primary,
+              theme.colors.yellow,
+              theme.colors.error,
+            ]}
+          >
+            <VictoryBar data={sideEffectGrade1Analytic} />
+            <VictoryBar data={sideEffectGrade2Analytic} />
+            <VictoryBar data={sideEffectGrade3Analytic} />
+            <VictoryAxis />
+            <VictoryAxis
+              dependentAxis
+              label="Number of Side Effects"
+              axisLabelComponent={<VictoryLabel dy={-16} />}
+              tickFormat={(tick) => {
+                return Number.isInteger(tick) ? tick.toString() : "";
+              }}
+            />
+          </VictoryStack>
+          <View style={{ flexDirection: 'row-reverse' }}>
+            <Legend text={"Grade 3"} color={theme.colors.error} />
+            <Legend text={"Grade 2"} color={theme.colors.yellow} />
+            <Legend text={"Grade 1"} color={theme.colors.primary} />
+          </View>
         </View>
         <View
           style={[
             {
               backgroundColor: theme.colors.background,
+              marginBottom: 56,
               height: "100%",
             },
           ]}

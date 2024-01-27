@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useRef } from "react";
-import { useTheme, Text, Button, Divider } from "react-native-paper";
-import { Timestamp } from "firebase/firestore";
+import { useTheme, Text, Divider } from "react-native-paper";
 import CustomCalendar from "../../components/ui/CustomCalendar";
 import { ScrollView } from "react-native-gesture-handler";
 import HorizontalCard from "../../components/ui/HorizontalCard";
@@ -114,10 +113,29 @@ function PatientCalendarScreen() {
         treatmentEndDate.getMonth() + user.treatment_duration_months
       );
       const today = new Date();
-      console.log(user.date_of_diagnosis);
-      if (
-        today > new Date(selectedDate) &&
-        new Date(selectedDate).getDate() >= startDate.getDate()
+      // console.log("startDate:", startDate);
+      // console.log("treatmentEndDate:", treatmentEndDate);
+      // console.log("today:", today);
+      // console.log("selectedDate:", new Date(selectedDate));
+
+      if (today.getDate() === new Date(selectedDate).getDate()) {
+        return (
+          <Pressable onPress={() => bottomSheetModalRef.current?.present()}>
+            <View
+              style={{
+                backgroundColor: theme.colors.surfaceContainerHigh,
+                borderRadius: 8,
+                padding: 16,
+                marginBottom: 16,
+              }}
+            >
+              <Text variant="labelLarge">You have yet to upload</Text>
+            </View>
+          </Pressable>
+        );
+      } else if (
+        today.getTime() > new Date(selectedDate).getTime() &&
+        new Date(selectedDate).getTime() >= startDate.getTime()
       ) {
         return (
           <View
@@ -131,26 +149,9 @@ function PatientCalendarScreen() {
             <Text variant="labelLarge">You missed your medication!</Text>
           </View>
         );
-      } else if (today.getDate() === new Date(selectedDate).getDate()) {
-        return (
-          <Pressable onPress={() => bottomSheetModalRef.current?.present()}>
-            <View
-              style={{
-                backgroundColor: theme.colors.surfaceContainerHigh,
-                borderRadius: 8,
-                padding: 16,
-                marginBottom: 16,
-              }}
-            >
-              <Text variant="labelLarge">
-                You haven't upload any video for this day
-              </Text>
-            </View>
-          </Pressable>
-        );
       } else if (
-        today <= new Date(selectedDate) &&
-        new Date(selectedDate).getDate() <= treatmentEndDate.getDate()
+        today.getTime() <= new Date(selectedDate).getTime() &&
+        new Date(selectedDate).getTime() <= treatmentEndDate.getTime()
       ) {
         return (
           <View

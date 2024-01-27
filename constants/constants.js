@@ -1,5 +1,7 @@
 export const BLANK_PROFILE_PIC = require("../assets/blank-profile-pic.png");
 export const LOGO_NO_TYPE = require("../assets/logo-no-type.png");
+export const LOGO_WHITE_TYPE = require("../assets/logo-white-type.png");
+export const LOGO_BLACK_TYPE = require("../assets/logo-black-type.png");
 
 export const APPOINTMENT_STATUS = {
   PENDING: "pending",

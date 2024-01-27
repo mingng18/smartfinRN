@@ -123,6 +123,8 @@ export default function ReviewSideEffectDetailScreen() {
         <TextInput
           mode="outlined"
           placeholder="Enter notes"
+          multiline
+          style={{height:120}}
           value={remarks}
           onChangeText={(text) => setRemarks(text)}
         />

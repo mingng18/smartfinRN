@@ -37,12 +37,16 @@ export default function HealthcareAppointmentScreen() {
   const pendingAppointments = useSelector(
     (state) => state.appointmentObject.pendingAppointments
   );
+  const today = new Date();
 
   const [selectedDate, setSelectedDate] = React.useState("");
   const [callingAppointment, setcallingAppointment] = React.useState(null);
-  const [callingAppointmentDate, setcallingAppointmentDate] = React.useState(null);
-  const [callingAppointmentTime, setcallingAppointmentTime] = React.useState(null);
-  const [callingAppointmentNotes, setCallingAppointmentNotes] = React.useState("");
+  const [callingAppointmentDate, setcallingAppointmentDate] =
+    React.useState(null);
+  const [callingAppointmentTime, setcallingAppointmentTime] =
+    React.useState(null);
+  const [callingAppointmentNotes, setCallingAppointmentNotes] =
+    React.useState("");
   // const [appointmentNotesPatientName, setAppointmentNotesPatientName] = React.useState("");
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -51,41 +55,60 @@ export default function HealthcareAppointmentScreen() {
   const showAppointmentNoteModal = () => setVisible(true);
   const hideAppointmentNoteModal = () => setVisible(false);
 
-    function dismissAppointmentNotesModalHandler(){
-      hideAppointmentNoteModal()
-      setCallingAppointmentNotes("");
-    }
+  function dismissAppointmentNotesModalHandler() {
+    hideAppointmentNoteModal();
+    setCallingAppointmentNotes("");
+  }
 
-    function showAppointmentNotesRecorderHandler(appointmentData){
-      showAppointmentNoteModal(true);
-      setcallingAppointment(appointmentData);
-      setcallingAppointmentDate(new Date(appointmentData.scheduled_timestamp).toISOString().slice(0, 10));
-      setcallingAppointmentTime(new Date(appointmentData.scheduled_timestamp).toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      }));
-    }
+  function showAppointmentNotesRecorderHandler(appointmentData) {
+    showAppointmentNoteModal(true);
+    setcallingAppointment(appointmentData);
+    setcallingAppointmentDate(
+      new Date(appointmentData.scheduled_timestamp).toISOString().slice(0, 10)
+    );
+    setcallingAppointmentTime(
+      new Date(appointmentData.scheduled_timestamp).toLocaleTimeString(
+        "en-US",
+        {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        }
+      )
+    );
+  }
 
-    async function submitAppointmentNotesHandler(){
-      setIsLoading(true);
-      try {
-        const newAppointment = {...callingAppointment, notes: callingAppointmentNotes}
-        await editDocument(FIREBASE_COLLECTION.APPOINTMENT, callingAppointment.id, {notes: callingAppointmentNotes})
-        dispatch(updateAppointment({id: callingAppointment.id, changes: newAppointment}))
-        
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } catch (error) {
-        Alert.alert("Error saving the appointment note", error.message);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-      setIsLoading(false);
-      hideAppointmentNoteModal();
+  async function submitAppointmentNotesHandler() {
+    setIsLoading(true);
+    try {
+      const newAppointment = {
+        ...callingAppointment,
+        notes: callingAppointmentNotes,
+      };
+      await editDocument(
+        FIREBASE_COLLECTION.APPOINTMENT,
+        callingAppointment.id,
+        { notes: callingAppointmentNotes }
+      );
+      dispatch(
+        updateAppointment({
+          id: callingAppointment.id,
+          changes: newAppointment,
+        })
+      );
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      Alert.alert("Error saving the appointment note", error.message);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
+    setIsLoading(false);
+    hideAppointmentNoteModal();
+  }
 
   const marked = React.useMemo(() => {
-    pendingAppointments.forEach(element => {
-      console.log(element.scheduled_timestamp + " pending appointments")
+    pendingAppointments.forEach((element) => {
+      console.log(element.scheduled_timestamp + " pending appointments");
     });
     const allDates = [
       ...appointments.map((item) =>
@@ -135,7 +158,11 @@ export default function HealthcareAppointmentScreen() {
             return (
               <HorizontalCard
                 key={i}
-                profilePic={appointment.patient_data.profile_pic_url?appointment.patient_data.profile_pic_url:BLANK_PROFILE_PIC}
+                profilePic={
+                  appointment.patient_data.profile_pic_url
+                    ? appointment.patient_data.profile_pic_url
+                    : BLANK_PROFILE_PIC
+                }
                 subject={capitalizeFirstLetter(
                   appointment.patient_data.first_name
                 )}
@@ -193,20 +220,27 @@ export default function HealthcareAppointmentScreen() {
         paddingTop: 56,
       }}
     >
-      <ScrollView showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets={true} automaticallyAdjustContentInsets={true}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        automaticallyAdjustKeyboardInsets={true}
+        automaticallyAdjustContentInsets={true}
+      >
         <Portal>
           <Modal
             visible={visible}
             onDismiss={() => dismissAppointmentNotesModalHandler()}
             contentContainerStyle={containerStyle}
           >
-            <Text variant="titleLarge" style={{marginVertical:8}}>Appointment Notes</Text>
+            <Text variant="titleLarge" style={{ marginVertical: 8 }}>
+              Appointment Notes
+            </Text>
             <View style={{ marginVertical: 16 }}>
               <Text variant="titleMedium" style={{ marginVertical: 8 }}>
                 Patient Information
               </Text>
               <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
-                Name: {callingAppointment?.patient_data.first_name} {callingAppointment?.patient_data.last_name}
+                Name: {callingAppointment?.patient_data.first_name}{" "}
+                {callingAppointment?.patient_data.last_name}
               </Text>
               <Text variant="titleMedium" style={{ marginVertical: 8 }}>
                 Appointment Information
@@ -226,9 +260,14 @@ export default function HealthcareAppointmentScreen() {
                 multiline={true}
                 numberOfLines={5}
                 style={{ marginVertical: 8 }}
-                value={callingAppointment!== null && (callingAppointment.notes!== null || callingAppointment.notes!=="")? callingAppointment.notes: callingAppointmentNotes}
+                value={
+                  callingAppointment !== null &&
+                  (callingAppointment.notes !== null ||
+                    callingAppointment.notes !== "")
+                    ? callingAppointment.notes
+                    : callingAppointmentNotes
+                }
                 onChangeText={(text) => setCallingAppointmentNotes(text)}
-                
               ></TextInput>
               <Button
                 mode="contained"
@@ -256,6 +295,11 @@ export default function HealthcareAppointmentScreen() {
           onDayPress={(day) => setSelectedDate(day.dateString)}
           markedDates={{
             ...marked,
+            [today.toISOString().slice(0, 10)]: {
+              selected: true,
+              selectedColor: theme.colors.background,
+              selectedTextColor: theme.colors.onBackground,
+            },
             [selectedDate]: {
               selected: true,
               selectedColor: theme.colors.surfaceContainerHigh,

@@ -86,7 +86,8 @@ export default function TreatmentInfoForm({ isEditing }) {
   //Number of tablets Drop down
   const [numberOfTabletsOpen, setNumberOfTabletsOpen] = React.useState(false);
   const [numberOfTablets, setNumberOfTablets] = React.useState();
-  const [numberOfTabletsData, setNumberOfTabletsData] = React.useState(NUMBER_OF_TABLETS);
+  const [numberOfTabletsData, setNumberOfTabletsData] =
+    React.useState(NUMBER_OF_TABLETS);
 
   //Text inputs
   const [durationOfTreatment, setDurationOfTreatment] = React.useState(0);
@@ -109,27 +110,34 @@ export default function TreatmentInfoForm({ isEditing }) {
       setCalendarOpen(false);
 
       //If user did not select a date, default to today's date
-      if(params.date == null || params.date == undefined || params.date == "") {
+      if (
+        params.date == null ||
+        params.date == undefined ||
+        params.date == ""
+      ) {
         //Format iosDate to date
         const dateObject = new Date();
-        dateObject.setHours(0,0,0,0);
-        console.log(dateObject)
-        console.log(dateObject.toISOString())
+        dateObject.setHours(0, 0, 0, 0);
+        console.log(dateObject);
+        console.log(dateObject.toISOString());
         const formattedDate = `${dateObject.getFullYear()}-${(
           dateObject.getMonth() + 1
-          )
+        )
           .toString()
-          .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
-          setDiagnosisDate(formattedDate);
-          setSubmitDate(dateObject);
-          return;
-        }
-        
-        //Format iosDate to date
-        const dateObject = new Date(params.date);
-        dateObject.setHours(0,0,0,0);
-        console.log(dateObject)
-        console.log(dateObject.toISOString())
+          .padStart(2, "0")}-${dateObject
+          .getDate()
+          .toString()
+          .padStart(2, "0")}`;
+        setDiagnosisDate(formattedDate);
+        setSubmitDate(dateObject);
+        return;
+      }
+
+      //Format iosDate to date
+      const dateObject = new Date(params.date);
+      dateObject.setHours(0, 0, 0, 0);
+      console.log(dateObject);
+      console.log(dateObject.toISOString());
       const formattedDate = `${dateObject.getFullYear()}-${(
         dateObject.getMonth() + 1
       )
@@ -232,7 +240,7 @@ export default function TreatmentInfoForm({ isEditing }) {
                 treatment_duration_months: durationOfTreatment,
               })
             );
-            
+
             dispatch(clearSignupSlice());
             setIsUploading(false);
             dispatch(authenticateStoreNative(token, userId, "patient")),
@@ -501,9 +509,10 @@ export default function TreatmentInfoForm({ isEditing }) {
         setItems={setTreatmentData}
         placeholder="Treatment"
       />
+      <View style={{ marginBottom: 16 }}/> 
       <CustomDropDownPicker
         zIndex={2000}
-        zIndexInverse={2000}
+        // zIndexInverse={2000}
         open={numberOfTabletsOpen}
         setOpen={setNumberOfTabletsOpen}
         value={numberOfTablets}
@@ -511,8 +520,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         items={numberOfTabletsData}
         setItems={setNumberOfTabletsData}
         placeholder="Number of Tablets"
-        marginTop={16}
-        marginBottom={70}
+        // marginTop={16}
       />
       {isEditing ? (
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
@@ -525,7 +533,13 @@ export default function TreatmentInfoForm({ isEditing }) {
           </Button>
         </View>
       ) : (
-        <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
+        <View
+          style={{
+            marginTop: 40,
+            flexDirection: "row-reverse",
+            marginBottom: 200,
+          }}
+        >
           <Button
             mode="contained"
             onPress={() => handleFinishSignUpSubmission()}
