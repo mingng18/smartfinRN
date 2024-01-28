@@ -3,14 +3,16 @@ import React from "react";
 import { View } from "react-native";
 import { useTheme } from "react-native-paper";
 import HealthcareInfoForm from "../../components/Auth/HealthcareInfoForm";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareInformationScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const { t } = useTranslation("auth");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Healthcare Details",
+      headerTitle: t("healthcare_details"),
     });
   });
 

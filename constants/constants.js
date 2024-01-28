@@ -28,15 +28,10 @@ export const SIDE_EFFECT_STATUS = {
 };
 
 export const LANGUAGE = {
-  ENGLISH: "english",
-  BAHASA_MELAYU: "bahasa-melayu",
-  BAHASA_INDONESIA: "bahasa-indonesia",
+  ENGLISH: "en-MY",
+  BAHASA_MELAYU: "ms-MY",
+  BAHASA_INDONESIA: "id-ID",
 };
-
-export const GENDER = [
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
-];
 
 export const NATIONALITY = [
   { label: "Andorra", value: "Andorra" },

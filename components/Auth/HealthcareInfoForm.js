@@ -9,25 +9,27 @@ import { editDocument } from "../../util/firestoreWR";
 import { useNavigation } from "@react-navigation/native";
 import { editHealthcareInfo } from "../../store/redux/authSlice";
 import { FIREBASE_COLLECTION } from "../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareInfoForm({ isEditing }) {
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { t } = useTranslation("auth");
 
   const [roleOpen, setRoleOpen] = React.useState(false);
   const [role, setRole] = React.useState("doctor");
   const [roleData, setRoleData] = React.useState([
-    { label: "Doctor", value: "doctor" },
-    { label: "Nurse", value: "nurse" },
-    { label: "Medical Assistant", value: "medical_assistant" },
+    { label: t("doctor"), value: "doctor" },
+    { label: t("nurse"), value: "nurse" },
+    { label: t("medical_assistant"), value: "medical_assistant" },
   ]);
 
   const [categoryOpen, setCategoryOpen] = React.useState(false);
   const [category, setCategory] = React.useState("government_hospital");
   const [categoryData, setCategoryData] = React.useState([
-    { label: "Government Hospital", value: "government_hospital" },
-    { label: "Private Hospital", value: "private_hospital" },
-    { label: "NGO", value: "ngo" },
+    { label: t("government_hospital"), value: "government_hospital" },
+    { label: t("private_hospital"), value: "private_hospital" },
+    { label: t("ngo"), value: "ngo" },
   ]);
 
   const [firstName, setFirstName] = React.useState("");
@@ -44,7 +46,7 @@ export default function HealthcareInfoForm({ isEditing }) {
   const signupInfo = useSelector((state) => state.signupObject);
 
   React.useEffect(() => {
-    console.log(signupInfo.signupMode)
+    console.log(signupInfo.signupMode);
     if (isEditing) {
       setCategory(user.category);
       setRole(user.role);
@@ -103,11 +105,11 @@ export default function HealthcareInfoForm({ isEditing }) {
       );
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Update successful", "Your information has been updated.");
+      Alert.alert(t("update_success"), t("update_success_message"));
       navigation.goBack();
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Update failed", "Something went wrong, please try again.");
+      Alert.alert(t("update_failed"), t("update_failed_message"));
       console.log(error);
     }
   }
@@ -128,10 +130,10 @@ export default function HealthcareInfoForm({ isEditing }) {
         lastName: !lastNameIsValid,
         mpmId: !mpmIdIsValid,
       });
-      Alert.alert("Invalid input", "Please check your entered input.");
+      Alert.alert(t("invalid_input"), t("check_entered_details"));
       return false;
     }
-    return true
+    return true;
   }
 
   return (
@@ -146,8 +148,8 @@ export default function HealthcareInfoForm({ isEditing }) {
         <TextInput
           mode="outlined"
           style={{ flex: 1 }}
-          label="First Name"
-          placeholder="Muhammad Ali"
+          label={t("first_name_label")}
+          placeholder={t("first_name_placeholder")}
           maxLength={100}
           value={firstName}
           onChangeText={(value) => setFirstName(value)}
@@ -156,8 +158,8 @@ export default function HealthcareInfoForm({ isEditing }) {
         <TextInput
           mode="outlined"
           style={{ flex: 1, marginLeft: 16 }}
-          label="Last Name"
-          placeholder="Mohammad Abu"
+          label={t("last_name_label")}
+          placeholder={t("last_name_placeholder")}
           maxLength={100}
           value={lastName}
           onChangeText={(value) => setLastName(value)}
@@ -173,10 +175,10 @@ export default function HealthcareInfoForm({ isEditing }) {
         setValue={setRole}
         items={roleData}
         setItems={setRoleData}
-        placeholder="Role"
+        placeholder={t("role_placeholder")}
       />
       <View style={{ marginTop: 16 }} />
-      <View style={{zIndex : -5}}>
+      <View style={{ zIndex: -5 }}>
         <TextInput
           mode="outlined"
           label="MPM ID"
@@ -196,7 +198,7 @@ export default function HealthcareInfoForm({ isEditing }) {
         setValue={setCategory}
         items={categoryData}
         setItems={setCategoryData}
-        placeholder="Category"
+        placeholder={t("category")}
       />
 
       <View
@@ -212,7 +214,7 @@ export default function HealthcareInfoForm({ isEditing }) {
             isEditing ? () => updateButtonHandler() : () => nextButtonHandler()
           }
         >
-          {isEditing ? "Update" : "Next"}
+          {isEditing ? t("update_button") : t("next_button")}
         </Button>
       </View>
     </>

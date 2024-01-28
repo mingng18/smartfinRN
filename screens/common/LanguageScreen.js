@@ -4,11 +4,13 @@ import React, { useState, useMemo } from "react";
 import TextListButton from "../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
 import { LANGUAGE } from "../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function LanguageScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const [language, setLanguage] = React.useState(LANGUAGE.ENGLISH);
+  const { i18n } = useTranslation();
+  const [language, setLanguage] = React.useState(i18n.language);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -25,6 +27,7 @@ export default function LanguageScreen() {
         {
           text: "OK",
           onPress: () => {
+            i18n.changeLanguage(language);
             navigation.goBack();
           },
           style: "cancel",

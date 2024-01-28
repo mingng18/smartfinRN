@@ -30,6 +30,7 @@ import { editDocument } from "../../util/firestoreWR";
 import countryList from "../../assets/data/countryList.json";
 import * as Haptics from "expo-haptics";
 import { ScrollView } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
 
 export default function PersonalInfoForm({ isEditing }) {
   //TODO handle update personal info case
@@ -37,6 +38,7 @@ export default function PersonalInfoForm({ isEditing }) {
   const theme = useTheme();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authObject);
+  const { t } = useTranslation("auth");
   const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
 
   const [firstName, setFirstName] = React.useState("");
@@ -44,7 +46,10 @@ export default function PersonalInfoForm({ isEditing }) {
 
   const [genderOpen, setGenderOpen] = React.useState(false);
   const [gender, setGender] = React.useState("male");
-  const [genderData, setGenderData] = React.useState(GENDER);
+  const [genderData, setGenderData] = React.useState([
+    { label: t("male"), value: "male" },
+    { label: t("female"), value: "female" },
+  ]);
 
   const [phoneNumber, setPhoneNumber] = React.useState("");
   const [countryCode, setCountryCode] = React.useState(
@@ -53,7 +58,9 @@ export default function PersonalInfoForm({ isEditing }) {
 
   const [nationalityOpen, setNationalityOpen] = React.useState(false);
   const [nationality, setNationality] = React.useState("Malaysian");
-  const [nationalityData, setNationalityData] = React.useState(NATIONALITY.sort((a, b) => a.label.localeCompare(b.label)));
+  const [nationalityData, setNationalityData] = React.useState(
+    NATIONALITY.sort((a, b) => a.label.localeCompare(b.label))
+  );
 
   const [nric, setNric] = React.useState("");
   const [passport, setPassport] = React.useState("");
@@ -81,11 +88,11 @@ export default function PersonalInfoForm({ isEditing }) {
     country.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: "Personal Information",
-    });
-  });
+  // React.useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerTitle: "Personal Information",
+  //   });
+  // });
 
   React.useEffect(() => {
     if (isEditing) {
@@ -101,7 +108,6 @@ export default function PersonalInfoForm({ isEditing }) {
     }
   }, [isEditing]);
 
-
   //Calculate the age based on nric, triggered when nric is changed
   function handlerForAgeInputChange(value) {
     setNric(value);
@@ -116,10 +122,9 @@ export default function PersonalInfoForm({ isEditing }) {
       }
     }
   }
-  
+
   //Update personal info, triggered when update button is pressed in profile page
   async function updateButtonHandler() {
-
     const countryCodePhoneNumber = countryCode.iso + phoneNumber;
     if (user.user_type == USER_TYPE.PATIENT) {
       try {
@@ -152,11 +157,12 @@ export default function PersonalInfoForm({ isEditing }) {
           })
         );
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert("Update successful", "Your information has been updated.");
+        Alert.alert(t("update_success"), t("update_success_message"));
         navigation.goBack();
       } catch (error) {
+        // Update failed
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert("Update failed", "Something went wrong, please try again.");
+        Alert.alert(t("update_failed"), t("update_failed_message"));
         console.log(error);
       }
     }
@@ -165,7 +171,7 @@ export default function PersonalInfoForm({ isEditing }) {
   //Next button handler, triggered when next button is pressed in signup page, will be substituted by update button handler in profile page
   async function nextButtonHandler() {
     const countryCodePhoneNumber = countryCode.iso + phoneNumber;
-    console.log(countryCodePhoneNumber + " checking here")
+    console.log(countryCodePhoneNumber + " checking here");
     // Input validation logic
     const nameRegex = /^[A-Za-z ]+$/; //Only alphabets and spaces
     const phoneRegex = /^\+[0-9]{11,15}$/; //+60123456789
@@ -220,10 +226,7 @@ export default function PersonalInfoForm({ isEditing }) {
       (!isNricValid && !isPassportValid) ||
       !isAgeValid
     ) {
-      return Alert.alert(
-        "Invalid input",
-        "Please check your entered credentials."
-      );
+      return Alert.alert(t("invalid_input"), t("valid_input"));
     }
 
     setIsAuthenticating(true);
@@ -257,9 +260,7 @@ export default function PersonalInfoForm({ isEditing }) {
       navigation.navigate("UploadProfilePicScreen");
     } catch (error) {
       setIsAuthenticating(false);
-      Alert.alert(
-        "Something went wrong, please check your input and try again later."
-      );
+      Alert.alert(t("update_failed_message"));
       console.log(error); //Debug use
     }
   }
@@ -277,8 +278,8 @@ export default function PersonalInfoForm({ isEditing }) {
           <TextInput
             mode="outlined"
             style={{ flex: 1 }}
-            label="First Name"
-            placeholder="Muhammad Ali"
+            label={t("first_name_label")}
+            placeholder={t("first_name_placeholder")}
             maxLength={100}
             value={firstName}
             onChangeText={(value) => setFirstName(value)}
@@ -287,8 +288,8 @@ export default function PersonalInfoForm({ isEditing }) {
           <TextInput
             mode="outlined"
             style={{ flex: 1, marginLeft: 16 }}
-            label="Last Name"
-            placeholder="Mohammad Abu"
+            label={t("last_name_label")}
+            placeholder={t("last_name_placeholder")}
             maxLength={100}
             value={lastName}
             onChangeText={(value) => setLastName(value)}
@@ -302,7 +303,7 @@ export default function PersonalInfoForm({ isEditing }) {
           setValue={setGender}
           items={genderData}
           setItems={setGenderData}
-          placeholder="Gender"
+          placeholder={t("gender_placeholder")}
         />
 
         <View
@@ -327,7 +328,7 @@ export default function PersonalInfoForm({ isEditing }) {
           <TextInput
             mode="outlined"
             style={{ flex: 3 }}
-            label="Mobile Phone Number"
+            label={t("phone_no_label")}
             maxLength={13}
             placeholder="123456789"
             value={phoneNumber}
@@ -343,14 +344,14 @@ export default function PersonalInfoForm({ isEditing }) {
           setValue={setNationality}
           items={nationalityData}
           setItems={setNationalityData}
-          placeholder="Nationality"
+          placeholder={t("nationality_placeholder")}
         />
         {nationality == "Malaysia" ? (
           <TextInput
             mode="outlined"
             style={{ marginTop: 16 }}
             label="NRIC"
-            placeholder="Type without spacing and -"
+            placeholder={t("nric_placeholder")}
             maxLength={12}
             keyboardType="numeric"
             value={nric}
@@ -361,7 +362,7 @@ export default function PersonalInfoForm({ isEditing }) {
           <TextInput
             mode="outlined"
             style={{ marginTop: 16 }}
-            label="Passport Number"
+            label={t("passport_label")}
             maxLength={12}
             value={passport}
             onChangeText={(value) => setPassport(value)}
@@ -371,7 +372,7 @@ export default function PersonalInfoForm({ isEditing }) {
         <TextInput
           mode="outlined"
           style={{ marginTop: 16 }}
-          label="Age"
+          label={t("age_label")}
           keyboardType="numeric"
           maxLength={3}
           value={`${age}`}
@@ -388,7 +389,7 @@ export default function PersonalInfoForm({ isEditing }) {
                 : () => nextButtonHandler()
             }
           >
-            {isEditing ? "Update" : "Next"}
+            {isEditing ? t("update_button") : t("next_button")}
           </Button>
         </View>
         <Portal>
@@ -404,9 +405,9 @@ export default function PersonalInfoForm({ isEditing }) {
               height: "80%",
             }}
           >
-            <Text variant="titleLarge">Pick your country</Text>
+            <Text variant="titleLarge">{t("pick_country")}</Text>
             <Searchbar
-              placeholder="Search"
+              placeholder={t("search")}
               onChangeText={setSearchQuery}
               value={searchQuery}
               style={{ marginVertical: 16, marginRight: 24 }}

@@ -1,12 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import { Alert, Image, StyleSheet, View } from "react-native";
-import {
-  ActivityIndicator,
-  Button,
-  Text,
-  useTheme,
-} from "react-native-paper";
+import { ActivityIndicator, Button, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { updateProfilePictureURI } from "../../store/redux/signupSlice";
 import {
@@ -23,6 +18,8 @@ import {
 } from "../../store/redux/authSlice";
 import { addDocumentWithId } from "../../util/firestoreWR";
 import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
+import { USER_TYPE } from "../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function PreviewProfilePicScreen() {
   const navigation = useNavigation();
@@ -33,6 +30,7 @@ export default function PreviewProfilePicScreen() {
   const auth = getAuth();
   const signupMode = useSelector((state) => state.signupObject.signupMode);
   const signupInfo = useSelector((state) => state.signupObject);
+  const { t } = useTranslation("auth");
 
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
@@ -40,7 +38,7 @@ export default function PreviewProfilePicScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Profile Picture",
+      headerTitle: t("profile_picture"),
     });
     setUri(params.uri);
   });
@@ -101,7 +99,7 @@ export default function PreviewProfilePicScreen() {
   }
 
   async function signupHealthcare() {
-    dispatch(updateProfilePictureURI(uri))
+    dispatch(updateProfilePictureURI(uri));
     //Debug use
     console.log(
       "email: " + signupInfo.email,
@@ -134,13 +132,10 @@ export default function PreviewProfilePicScreen() {
         token.token
       );
       setIsUploading(false);
-
     } catch (error) {
-      Alert.alert(
-        "Signup failed, please check your email and try again later."
-        );
-        console.log(error); //Debug use
-        setIsUploading(false);
+      Alert.alert(t("sign_up_failed"));
+      console.log(error); //Debug use
+      setIsUploading(false);
     }
   }
 
@@ -150,14 +145,13 @@ export default function PreviewProfilePicScreen() {
     try {
       dispatch(updateProfilePictureURI({ profilePictureURI: uri }));
     } catch (error) {
-      return Alert.alert("Upload failed, please try again later.");
+      return Alert.alert(t("upload_failed"));
     } finally {
-      if (signupMode === "patient") {
+      if (signupMode === USER_TYPE.PATIENT) {
         navigation.navigate("TreatmentInfoScreen");
         setIsUploading(false);
       } else {
         signupHealthcare();
-        //todo : signup healthcare here
       }
     }
   }
@@ -171,7 +165,7 @@ export default function PreviewProfilePicScreen() {
       }}
     >
       <Text variant="titleLarge" style={{ marginTop: 16, marginBottom: 40 }}>
-        Preview profile picture
+        {t("preview")}
       </Text>
       <Image
         source={{ uri: uri }}
@@ -195,7 +189,7 @@ export default function PreviewProfilePicScreen() {
           }}
           style={{ marginLeft: 16 }}
         >
-          {signupMode === "patient" ? "Next" : "Signup"}
+          {signupMode === "patient" ? t("next_button") : t("sign_up_button")}
         </Button>
         <Button
           mode="contained-tonal"
@@ -203,7 +197,7 @@ export default function PreviewProfilePicScreen() {
             navigation.goBack();
           }}
         >
-          Back
+          {t("back")}
         </Button>
       </View>
       <LoadingIndicatorDialog
@@ -211,11 +205,10 @@ export default function PreviewProfilePicScreen() {
         close={() => {
           setIsUploading(false);
         }}
-        title = {"Signing up"}
-        bodyText={"Please wait patiently"}
+        title={t("signing_up")}
+        bodyText={t("wait_patiently")}
       />
     </View>
-    
   );
 }
 

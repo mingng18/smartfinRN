@@ -1,20 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import {
-  Keyboard,
-  View,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { Keyboard, View, TouchableWithoutFeedback } from "react-native";
 import PersonalInfoForm from "../../components/Auth/PersonalInfoForm";
 import { useTheme } from "react-native-paper";
+import { useTranslation } from "react-i18next";
 
 export default function PersonalInformationScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const { t } = useTranslation("auth");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Personal Information",
+      headerTitle: t("personal_info"),
     });
   });
 

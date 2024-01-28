@@ -12,14 +12,17 @@ import {
   updateSignupMode,
 } from "../../store/redux/signupSlice";
 import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
+import { useTranslation } from "react-i18next";
+import { USER_TYPE } from "../../constants/constants";
 
-export default function SignInInfoScreen({ route }) {
+export default function SignInInfoScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
   const auth = getAuth();
   const { params } = useRoute();
   const signupMode = params.signupMode;
+  const { t } = useTranslation("auth");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,7 +41,6 @@ export default function SignInInfoScreen({ route }) {
   async function nextButtonHandler() {
     setIsAuthenticating(true);
 
-    
     //Client side validation
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
     const passwordIsValid = passwordRegex.test(password);
@@ -51,59 +53,50 @@ export default function SignInInfoScreen({ route }) {
       password: !passwordIsValid,
       confirmPassword: !confirmPasswordIsValid,
     });
-    
+
     if (!emailIsValid || !passwordIsValid || !confirmPasswordIsValid) {
-      
       if (!emailIsValid && !passwordIsValid) {
         setIsAuthenticating(false);
-        return Alert.alert("Invalid email and password", "Please enter a valid email address and password.");
+        return Alert.alert(
+          t("invalid_email_and_password"),
+          t("valid_email_and_password")
+        );
       } else if (!emailIsValid) {
         setIsAuthenticating(false);
-        return Alert.alert("Invalid email", "Please enter a valid email address.");
+        return Alert.alert(t("invalid_email"), t("valid_email"));
       } else if (!passwordIsValid) {
         setIsAuthenticating(false);
+        return Alert.alert(t("invalid_password"), t("valid_password"));
+      } else if (!confirmPasswordIsValid) {
+        setIsAuthenticating(false);
         return Alert.alert(
-          "Invalid password",
-          "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
-          );
-        } else if (!confirmPasswordIsValid) {
-          setIsAuthenticating(false);
-          return Alert.alert(
-            "Invalid confirm password",
-            "Confirm password must match password."
-            );
-          } else {
-            setIsAuthenticating(false);
-            return Alert.alert("Invalid input", "Please check your entered credentials.");
+          t("invalid_confirm_password"),
+          t("valid_confirm_password")
+        );
+      } else {
+        setIsAuthenticating(false);
+        return Alert.alert(t("invalid_input"), t("valid_input"));
       }
-      
-
     }
     //Check if email already exists
     const signInMethods = await fetchSignInMethodsForEmail(auth, email);
     if (signInMethods.length > 0) {
-      Alert.alert(
-        "Email already exists",
-        "Please use another email address or request to reset password in the login page."
-      );
+      Alert.alert(t("email_existed"), t("email_existed_message"));
       return setIsAuthenticating(false);
     }
-    
+
     //Local state update and error handling
     try {
-      console.log("signUpMode"+ signupMode)
+      console.log("signUpMode" + signupMode);
       dispatch(updateSignInCredentials({ email: email, password: password }));
       dispatch(updateSignupMode({ signupMode: signupMode }));
-      if (signupMode === "patient") {
+      if (signupMode === USER_TYPE.PATIENT) {
         navigation.navigate("PersonalInformationScreen");
       } else {
         navigation.navigate("HealthcareInformationScreen");
       }
     } catch (error) {
-      Alert.alert(
-        "Something went wrong",
-        "Please check your input and try again later."
-      );
+      Alert.alert(t("unknown_error"), t("unknown_error_message"));
       console.log(error + " in signInInfoScreen"); //Debug use
     } finally {
       setIsAuthenticating(false);
@@ -112,12 +105,12 @@ export default function SignInInfoScreen({ route }) {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Sign In Credentials",
+      headerTitle: t("sign_in_title"),
     });
   }, [navigation]);
 
   if (isAuthenticating) {
-    return <LoadingOverlay message="Creating user..." />;
+    return <LoadingOverlay message={t("creating_user")} />;
   }
 
   return (
@@ -130,8 +123,8 @@ export default function SignInInfoScreen({ route }) {
     >
       <TextInput
         mode="outlined"
-        label="Email"
-        placeholder="Type your email"
+        label={t("email_label")}
+        placeholder={t("email_placeholder")}
         value={email}
         onChangeText={(text) => setEmail(text)}
         maxLength={100}
@@ -140,14 +133,14 @@ export default function SignInInfoScreen({ route }) {
       <TextInput
         mode="outlined"
         style={{ marginTop: 16 }}
-        label="Password"
-        placeholder="Type your password"
+        label={t("password_label")}
+        placeholder={t("password_placeholder")}
         value={password}
         onChangeText={(text) => setPassword(text)}
         secureTextEntry={hidePassword}
         right={
           <TextInput.Icon
-            icon= {hidePassword? "eye":"eye-off"}
+            icon={hidePassword ? "eye" : "eye-off"}
             style={{ marginTop: 10 }}
             onPress={() => setHidePassword(!hidePassword)}
           />
@@ -159,20 +152,19 @@ export default function SignInInfoScreen({ route }) {
         variant="bodySmall"
         style={{ marginTop: 4, color: theme.colors.onSurface }}
       >
-        Your password must contain a combination of letters, numbers, and
-        symbols, with at least 6 numbers included.
+        {t("password_requirement")}
       </Text>
       <TextInput
         mode="outlined"
         style={{ marginTop: 16 }}
-        label="Confirm Password"
-        placeholder="Retype your password"
+        label={t("confirm_password_label")}
+        placeholder={t("confirm_password_placeholder")}
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
         secureTextEntry={hideConfirmPassword}
         right={
           <TextInput.Icon
-            icon= {hideConfirmPassword? "eye":"eye-off"}
+            icon={hideConfirmPassword ? "eye" : "eye-off"}
             style={{ marginTop: 10 }}
             onPress={() => setHideConfirmPassword(!hideConfirmPassword)}
           />
@@ -185,7 +177,7 @@ export default function SignInInfoScreen({ route }) {
           mode="contained"
           onPress={() => nextButtonHandler(email, password)}
         >
-          Next
+          {t("next_button")}
         </Button>
       </View>
     </View>

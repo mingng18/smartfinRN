@@ -24,16 +24,18 @@ import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
   const dispatch = useDispatch();
   const auth = getAuth();
   const { navigate } = useNavigation();
+  const { t } = useTranslation("auth");
 
-  // React.useLayoutEffect(() => {
-  //   navigate("TreatmentInfoScreen");
-  // });
+  React.useLayoutEffect(() => {
+    // navigate("HealthcareInformationScreen");
+  });
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
     try {
@@ -119,47 +121,28 @@ function LoginScreen() {
             const credential = EmailAuthProvider.credential(email, password);
             await linkWithCredential(user, credential);
           } else {
-            Alert.alert(
-              "Authentication failed!",
-              "We have found your account with a different sign in method. Please sign in with the correct sign in method."
-            );
+            Alert.alert(t("auth_fail"), t("diff_acc"));
           }
           break;
         case "auth/user-not-found": //the user account was not found. This could happen if the user account has been deleted.
-          Alert.alert("User not found", "Please kindly sign up a new account.");
+          Alert.alert(t("user_not_found"), t("sign_up_new_acc"));
           break;
         //Sign In Method Error (Email or Google)
         case "auth/invalid-email": //Indicates the email address is malformed.
-          Alert.alert(
-            "Invalid email address",
-            "Please check your email address and try again."
-          );
+          Alert.alert(t("invalid_email"), t("invalid_email_message"));
           break;
         case "auth/user-disabled": //	Indicates the user's account is disabled.
-          Alert.alert(
-            "Your account has been disabled.",
-            "Please contact the administrator for more information."
-          );
+          Alert.alert(t("user_disabled"), t("user_disabled_message"));
           break;
         case "auth/wrong-password": //	Indicates the user attempted sign in with a wrong password.
-          Alert.alert(
-            "Wrong password",
-            "Please check your password and try again."
-          );
+          Alert.alert(t("wrong_password"), t("wrong_password_message"));
           break;
         case "auth/invalid-credential": //Indicates the supplied credential is invalid. This could happen if it has expired or it is malformed.
-          Alert.alert(
-            "Invalid credential",
-            "Your login might be expired or malformed. Please try again later."
-          );
+          Alert.alert(t("invalid_credential"), t("invalid_credential_message"));
           break;
-
         default: //Other error
           console.log(error.code);
-          Alert.alert(
-            "Unknown error occured",
-            "Please check your credentials and try again later"
-          );
+          Alert.alert(t("unknown_error"), t("unknown_error_message"));
           break;
       }
     }
@@ -167,7 +150,7 @@ function LoginScreen() {
   }
 
   if (isAuthenticating) {
-    return <LoadingOverlay message="Logging in..." />;
+    return <LoadingOverlay message={t("logging_in")} />;
   }
 
   return <LoginContentForm onAuthenticate={loginHandler} />;

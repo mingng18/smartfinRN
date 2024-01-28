@@ -21,10 +21,12 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
 import { LOGO_NO_TYPE } from "../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 function LoginContentForm({ onAuthenticate }) {
   const navigation = useNavigation();
   const theme = useTheme();
+  const { t } = useTranslation("auth");
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -142,28 +144,27 @@ function LoginContentForm({ onAuthenticate }) {
                       { color: theme.colors.onBackground, marginBottom: 16 },
                     ]}
                   >
-                    Please enter your email to reset password
+                    {t("reset_password_text")}
                   </Text>
                   <TextInput
                     mode="outlined"
                     style={{ marginBottom: 40 }}
-                    label="Forgot Email Address"
-                    placeholder="Type your email"
+                    label={t("forgot_email_label")}
+                    placeholder={t("forgot_email_placeholder")}
                     onChangeText={(email) => setEnteredForgotEmail(email)}
                     value={enteredForgotEmail}
                     keyboardType="email-address"
-                    // isInvalid={emailIsInvalid}
                   />
                   <View style={{ flexDirection: "row-reverse" }}>
                     <Button mode="contained" onPress={forgotPasswordHandler}>
-                      Reset Password
+                      {t("reset_password_btn")}
                     </Button>
                     <Button
                       mode="contained-tonal"
                       onPress={hideModal}
                       style={{ marginRight: 16 }}
                     >
-                      Cancel
+                      {t("cancel")}
                     </Button>
                   </View>
                 </Modal>
@@ -190,13 +191,13 @@ function LoginContentForm({ onAuthenticate }) {
                   style={{ marginVertical: 8, alignSelf: "center" }}
                   variant="titleLarge"
                 >
-                  Log In
+                  {t("log_in")}
                 </Text>
                 <TextInput
                   mode="outlined"
                   style={{ height: 56 }}
-                  label="Email Address"
-                  placeholder="Type your email"
+                  label={t("email")}
+                  placeholder={t("type_email")}
                   onChangeText={updateInputValueHandler.bind(this, "email")}
                   value={enteredEmail}
                   keyboardType="email-address"
@@ -205,8 +206,8 @@ function LoginContentForm({ onAuthenticate }) {
                 <TextInput
                   mode="outlined"
                   style={{ height: 56, marginTop: 16 }}
-                  label="Password"
-                  placeholder="Type your password"
+                  label={t("password")}
+                  placeholder={t("type_password")}
                   onChangeText={updateInputValueHandler.bind(this, "password")}
                   value={enteredPassword}
                   secureTextEntry={hidePassword}
@@ -230,7 +231,7 @@ function LoginContentForm({ onAuthenticate }) {
                     alignItems: "flex-end",
                   }}
                 >
-                  Forgot Password?
+                  {t("forgot_password")}
                 </Button>
                 <View style={{ flexGrow: 1 }} />
                 <Button
@@ -238,7 +239,7 @@ function LoginContentForm({ onAuthenticate }) {
                   onPress={submitHandler}
                   style={{ height: 40 }}
                 >
-                  Log In
+                  {t("log_in")}
                 </Button>
                 {/* TODO: To be Google Sign in */}
                 <Button
@@ -253,14 +254,14 @@ function LoginContentForm({ onAuthenticate }) {
                     },
                   ]}
                 >
-                  Google Sign In
+                  {t("google_sign_in")}
                 </Button>
                 <Divider style={{ height: 1 }} />
                 <Text
                   variant="labelLarge"
                   style={{ alignSelf: "center", marginTop: 16 }}
                 >
-                  Sign up as
+                  {t("sign_up")}
                 </Text>
                 <View
                   style={{
@@ -274,14 +275,14 @@ function LoginContentForm({ onAuthenticate }) {
                     onPress={() => switchAuthModeHandler("patient")}
                     style={[{ flex: 1, marginRight: 8 }]}
                   >
-                    Patient
+                    {t("patient")}
                   </Button>
                   <Button
                     mode="contained-tonal"
                     onPress={() => switchAuthModeHandler("healthcare")}
                     style={[{ flex: 1, marginLeft: 8 }]}
                   >
-                    Healthcare
+                    {t("healthcare")}
                   </Button>
                 </View>
               </View>

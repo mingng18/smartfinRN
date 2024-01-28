@@ -4,7 +4,7 @@ import { Alert, Image, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { useDispatch, useSelector } from "react-redux";
-import { BLANK_PROFILE_PIC } from "../../constants/constants";
+import { BLANK_PROFILE_PIC, USER_TYPE } from "../../constants/constants";
 import { updateProfilePictureURI } from "../../store/redux/signupSlice";
 import {
   getDownloadURL,
@@ -19,7 +19,7 @@ import {
   setUserType,
 } from "../../store/redux/authSlice";
 import { addDocumentWithId } from "../../util/firestoreWR";
-import { set } from "lodash";
+import { useTranslation } from "react-i18next";
 
 export default function UploadProfilePicScreen() {
   const navigation = useNavigation();
@@ -28,13 +28,14 @@ export default function UploadProfilePicScreen() {
   const auth = getAuth();
   const dispatch = useDispatch();
   const storage = getStorage();
+  const { t } = useTranslation("auth");
 
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Profile Picture",
+      headerTitle: t("profile_picture"),
     });
   });
 
@@ -128,9 +129,7 @@ export default function UploadProfilePicScreen() {
       );
       setIsUploading(false);
     } catch (error) {
-      Alert.alert(
-        "Signup failed, please check your email and try again later."
-      );
+      Alert.alert(t("sign_up_failed"));
       console.log(error); //Debug use
       setIsUploading(false);
     }
@@ -138,7 +137,7 @@ export default function UploadProfilePicScreen() {
 
   const skipProfilePictureHandler = () => {
     console.log("signupMode: " + signupInfo.signupMode);
-    if (signupInfo.signupMode === "healthcare") {
+    if (signupInfo.signupMode === USER_TYPE.HEALTHCARE) {
       signupHealthcare();
     } else {
       navigation.navigate("TreatmentInfoScreen");
@@ -169,7 +168,7 @@ export default function UploadProfilePicScreen() {
       }}
     >
       <Text variant="titleLarge" style={{ marginTop: 16, marginBottom: 40 }}>
-        Upload your profile picture
+        {t("upload_profile_pic")}
       </Text>
       <Image
         source={BLANK_PROFILE_PIC}
@@ -192,7 +191,7 @@ export default function UploadProfilePicScreen() {
           onPress={pickImage}
           style={{ marginLeft: 16, marginBottom: 16 }}
         >
-          Upload
+          {t("upload_button")}
         </Button>
         <Button
           mode="contained-tonal"
@@ -201,13 +200,13 @@ export default function UploadProfilePicScreen() {
           }}
           style={{ marginLeft: 16, marginBottom: 16 }}
         >
-          Take Picture
+          {t("take_pic")}
         </Button>
         <Button
           style={{ marginBottom: 16 }}
           onPress={() => skipProfilePictureHandler()}
         >
-          Skip
+          {t("skip")}
         </Button>
       </View>
     </View>

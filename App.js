@@ -31,6 +31,8 @@ import { USER_TYPE } from "./constants/constants";
 import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
 import DropDownPicker from "react-native-dropdown-picker";
 import { LogBox } from "react-native";
+import { I18nextProvider } from "react-i18next";
+import i18n from "./i18n";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();
@@ -194,16 +196,20 @@ export default function App() {
     return null;
   }
 
+  i18n.changeLanguage('id-ID');
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
         {/* <AuthContextProvider> */}
-        <PaperProvider theme={lightTheme}>
-          <BottomSheetModalProvider>
-            <StatusBar style="dark" />
-            <Root />
-          </BottomSheetModalProvider>
-        </PaperProvider>
+        <I18nextProvider i18n={i18n}>
+          <PaperProvider theme={lightTheme}>
+            <BottomSheetModalProvider>
+              <StatusBar style="dark" />
+              <Root />
+            </BottomSheetModalProvider>
+          </PaperProvider>
+        </I18nextProvider>
       </Provider>
       {/* </AuthContextProvider> */}
     </GestureHandlerRootView>

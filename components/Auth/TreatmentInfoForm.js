@@ -1,51 +1,26 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import {
-  Pressable,
-  View,
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  StyleSheet,
-} from "react-native";
-import {
-  ActivityIndicator,
-  Button,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
+import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
+
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Pressable, View, Alert, StyleSheet } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  deleteUser,
-} from "firebase/auth";
-
-import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import {
   authenticateStoreNative,
-  fetchHealthcareData,
   fetchPatientData,
 } from "../../store/redux/authSlice";
-import {
-  addDocument,
-  addDocumentWithId,
-  editDocument,
-} from "../../util/firestoreWR";
-import { ScrollView } from "react-native-gesture-handler";
+import { addDocumentWithId, editDocument } from "../../util/firestoreWR";
 import {
   clearSignupSlice,
-  updateAuthSlice,
   updateMedicalInformation,
-  updateProfilePictureURI,
 } from "../../store/redux/signupSlice";
 import {
   getDownloadURL,
   getStorage,
   ref,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import {
@@ -55,8 +30,10 @@ import {
   FIREBASE_COLLECTION,
   NUMBER_OF_TABLETS,
   TREATMENT,
+  USER_TYPE,
 } from "../../constants/constants";
-import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
+import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 export default function TreatmentInfoForm({ isEditing }) {
   //TODO handle editing case
@@ -69,6 +46,7 @@ export default function TreatmentInfoForm({ isEditing }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authObject);
   const storage = getStorage();
+  const { t } = useTranslation("auth");
 
   const [calendarOpen, setCalendarOpen] = React.useState(false);
 
@@ -189,10 +167,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         notes: "",
       });
     } catch (error) {
-      return Alert.alert(
-        "Error when saving user data to database",
-        "Please try again later."
-      );
+      return Alert.alert(t("error_saving_user_data"), t("try_again_later"));
     }
   }
 
@@ -245,9 +220,11 @@ export default function TreatmentInfoForm({ isEditing }) {
             setIsUploading(false);
             dispatch(authenticateStoreNative(token, userId, "patient")),
               await saveUserDateToFirestore("patient", userId, downloadURL);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
             Alert.alert(
-              "Sign Up Successful!",
-              "Thanks for signing up!",
+              t("sign_up_successful"),
+              t("thanks_for_signing_up"),
               [
                 {
                   text: "OK",
@@ -264,9 +241,11 @@ export default function TreatmentInfoForm({ isEditing }) {
       );
     } catch (error) {
       console.log(error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
       return Alert.alert(
-        "Profile Picture Upload Failed",
-        "Please try again later."
+        t("profile_picture_upload_failed"),
+        t("try_again_later")
       );
     }
   }
@@ -294,7 +273,9 @@ export default function TreatmentInfoForm({ isEditing }) {
       !isNumberOfTabletsValid ||
       !isDiagnosisDateValid
     ) {
-      return Alert.alert("Invalid input", "Please check your entered details.");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
+      return Alert.alert(t("invalid_input"), t("check_entered_details"));
     }
 
     //Calling APIs to create user, upload profile picture, then add user data to firestore
@@ -329,37 +310,28 @@ export default function TreatmentInfoForm({ isEditing }) {
       switch (error.code) {
         case "auth/email-already-in-use":
           return Alert.alert(
-            "Email already exists",
-            "Please use another email address or request to reset password in the login page."
+            t("email_already_exists"),
+            t("use_another_email_or_reset_password")
           );
         case "auth/invalid-email":
-          return Alert.alert(
-            "Invalid email",
-            "Please enter a valid email address."
-          );
+          return Alert.alert(t("invalid_email"), t("valid_email"));
         case "auth/weak-password":
-          return Alert.alert(
-            "Weak password",
-            "Please enter a valid password. Your password must contain a combination of letters, numbers, and symbols, with at least 6 characters."
-          );
+          return Alert.alert(t("weak_password"), t("enter_valid_password"));
         default:
           console.log("Unknown error occured" + error);
           //Delete user created just now if sign up fails because of other reasons
           // await deleteUser(user.uid);
-          return Alert.alert(
-            "Unknown error occured",
-            "Please try again later."
-          );
+          return Alert.alert(t("unknown_error"), t("unknown_error_message"));
       }
     }
     setIsUploading(false);
   }
 
   React.useEffect(() => {
-    console.log("first name: " + user.first_name);
-    console.log("diagnosis: " + user.diagnosis);
-    console.log("number of taabnles: " + user.number_of_tablets);
-    console.log("date_ofdiagnosis: " + user.date_of_diagnosis);
+    // console.log("first name: " + user.first_name);
+    // console.log("diagnosis: " + user.diagnosis);
+    // console.log("number of taabnles: " + user.number_of_tablets);
+    // console.log("date_ofdiagnosis: " + user.date_of_diagnosis);
     if (isEditing) {
       //treatment
       // setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
@@ -377,8 +349,8 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   //TODO healthcare update profile
   async function handleUpdateTreatment() {
-    if (user.user_type == "patient") {
-      console.log("user first name: " + user.first_name);
+    if (user.user_type == USER_TYPE.PATIENT) {
+      // console.log("user first name: " + user.first_name);
       try {
         await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
           //unchanged part
@@ -422,10 +394,12 @@ export default function TreatmentInfoForm({ isEditing }) {
             number_of_tablets: numberOfTablets,
           })
         );
-        Alert.alert("Update successful", "Your information has been updated.");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        Alert.alert(t("update_success"), t("update_success_message"));
         navigation.goBack();
       } catch (error) {
-        Alert.alert("Update failed", "Something went wrong, please try again.");
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert(t("update_failed"), t("update_failed_message"));
         console.log(error);
       }
     }
@@ -446,23 +420,17 @@ export default function TreatmentInfoForm({ isEditing }) {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: theme.colors.background,
-        // paddingHorizontal: 16,
-        // height: "100%",
-      }}
-    >
+    <View style={{ backgroundColor: theme.colors.background }}>
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
-        My Diagnosis
+        {t("diagnosis")}
       </Text>
       <Pressable onPress={() => setCalendarOpen(true)}>
         <View pointerEvents="none">
           <TextInput
             mode="outlined"
             style={{ marginVertical: 16 }}
-            label="Date of Diagnosis"
-            placeholder="Starting date of the symptoms"
+            label={t("diagnosis_date")}
+            placeholder={t("diagnosis_date_ph")}
             value={diagnosisDate}
             right={
               <TextInput.Icon
@@ -482,11 +450,11 @@ export default function TreatmentInfoForm({ isEditing }) {
         setValue={setDiagnosis}
         items={diagnosisData}
         setItems={setDiagnosisData}
-        placeholder="Diagnosis"
+        placeholder={t("diagnosis")}
       />
       <TextInput
         mode="outlined"
-        label="Duration of Diagnosis (months)"
+        label={t("diagnosis_duration")}
         style={{ marginTop: 16 }}
         placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
         maxLength={2}
@@ -496,7 +464,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         error={credentialsInvalid.durationOfTreatment}
       />
       <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
-        My Current Treatment
+        {t("my_treatment")}
       </Text>
       <CustomDropDownPicker
         zIndex={3000}
@@ -507,20 +475,18 @@ export default function TreatmentInfoForm({ isEditing }) {
         setValue={setTreatment}
         items={treatmentData}
         setItems={setTreatmentData}
-        placeholder="Treatment"
+        placeholder={t("my_treatment")}
       />
-      <View style={{ marginBottom: 16 }}/> 
+      <View style={{ marginBottom: 16 }} />
       <CustomDropDownPicker
         zIndex={2000}
-        // zIndexInverse={2000}
         open={numberOfTabletsOpen}
         setOpen={setNumberOfTabletsOpen}
         value={numberOfTablets}
         setValue={setNumberOfTablets}
         items={numberOfTabletsData}
         setItems={setNumberOfTabletsData}
-        placeholder="Number of Tablets"
-        // marginTop={16}
+        placeholder={t("tablet_no")}
       />
       {isEditing ? (
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
@@ -529,7 +495,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             onPress={() => handleUpdateTreatment()}
             style={{ marginLeft: 16 }}
           >
-            Update
+            {t("update_button")}
           </Button>
         </View>
       ) : (
@@ -537,7 +503,6 @@ export default function TreatmentInfoForm({ isEditing }) {
           style={{
             marginTop: 40,
             flexDirection: "row-reverse",
-            marginBottom: 200,
           }}
         >
           <Button
@@ -545,7 +510,7 @@ export default function TreatmentInfoForm({ isEditing }) {
             onPress={() => handleFinishSignUpSubmission()}
             style={{ marginLeft: 16 }}
           >
-            Sign Up
+            {t("sign_up_button")}
           </Button>
           <Button
             mode="contained-tonal"
@@ -553,7 +518,7 @@ export default function TreatmentInfoForm({ isEditing }) {
               navigation.goBack();
             }}
           >
-            Back
+            {t("back")}
           </Button>
         </View>
       )}
@@ -571,23 +536,9 @@ export default function TreatmentInfoForm({ isEditing }) {
         close={() => {
           setIsUploading(false);
         }}
-        title={"Please wait"}
-        bodyText={"Signing you up."}
+        title={t("signing_up")}
+        bodyText={t("wait_patiently")}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  video: {
-    alignSelf: "center",
-    height: "100%",
-    aspectRatio: 9 / 16,
-  },
-  activityIndicatorContainer: {
-    ...StyleSheet.absoluteFillObject, // Position the container absolutely to cover the entire video area
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for the loading overlay
-  },
-});
