@@ -10,6 +10,7 @@ import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import {
   FIREBASE_COLLECTION,
+  SIDE_EFFECT_SEVERITY,
   SIDE_EFFECT_STATUS,
 } from "../../../constants/constants";
 import { editDocument } from "../../../util/firestoreWR";
