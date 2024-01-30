@@ -13,7 +13,8 @@ import {
 export default function LanguageScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const { i18n, t } = useTranslation();
+  const { i18n } = useTranslation();
+  const { t } = useTranslation("common");
   const [language, setLanguage] = React.useState(i18n.language);
 
   React.useLayoutEffect(() => {
