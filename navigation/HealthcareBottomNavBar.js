@@ -5,18 +5,20 @@ import HealthcareHomeScreen from "../screens/healthcare/HealthcareHomeScreen";
 import HealthcareAppointmentScreen from "../screens/healthcare/HealthcareAppointmentScreen";
 import HealthcareProfileScreen from "../screens/healthcare/HealthcareProfileScreen";
 import HealthcareReviewScreen from "../screens/healthcare/HealthcareReviewScreen";
+import { useTranslation } from "react-i18next";
 
 const Tab = createMaterialBottomTabNavigator();
 
 const HealthcareBottomNavBar = () => {
   const theme = useTheme();
+  const { t } = useTranslation("healthcare");
 
   //Routes for Bottom Nav Bar
   const [routes, setRoutes] = React.useState([
     {
       index: 0,
       key: "healthcareHome",
-      title: "Home",
+      title: t("home"),
       focusedIcon: "home",
       component: HealthcareHomeScreen,
       unfocusedIcon: "home-outline",
@@ -24,7 +26,7 @@ const HealthcareBottomNavBar = () => {
     {
       index: 1,
       key: "healthcareReview",
-      title: "Review",
+      title: t("review"),
       focusedIcon: "eye",
       component: HealthcareReviewScreen,
       unfocusedIcon: "eye-outline",
@@ -32,7 +34,7 @@ const HealthcareBottomNavBar = () => {
     {
       index: 2,
       key: "healthcareAppointment",
-      title: "Appointment",
+      title: t("appointment"),
       focusedIcon: "calendar-blank",
       component: HealthcareAppointmentScreen,
       unfocusedIcon: "calendar-blank-outline",
@@ -40,7 +42,7 @@ const HealthcareBottomNavBar = () => {
     {
       index: 3,
       key: "healthcareProfile",
-      title: "Profile",
+      title: t("profile"),
       focusedIcon: "account",
       component: HealthcareProfileScreen,
       unfocusedIcon: "account-outline",

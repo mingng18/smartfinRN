@@ -5,11 +5,13 @@ import { useSelector } from "react-redux";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareReviewScreen() {
   const theme = useTheme();
   const videos = useSelector((state) => state.videoObject.videos);
   const navigation = useNavigation();
+  const { t } = useTranslation("healthcare");
 
   return (
     <View
@@ -21,8 +23,9 @@ export default function HealthcareReviewScreen() {
     >
       <ScrollView style={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
         <Text variant="titleLarge" style={{ marginTop: 54, marginBottom: 16 }}>
-          Review Video
+          {t("review_video")}
         </Text>
+
         {videos.length > 0 ? (
           videos.map((video, i) => {
             return (
@@ -53,7 +56,7 @@ export default function HealthcareReviewScreen() {
             );
           })
         ) : (
-          <Text variant="bodyLarge">All the video had been reviewed!</Text>
+          <Text variant="bodyLarge">{t("all_videos_reviewed")}</Text>
         )}
       </ScrollView>
     </View>

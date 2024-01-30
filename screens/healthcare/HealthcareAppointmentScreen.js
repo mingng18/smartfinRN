@@ -26,11 +26,14 @@ import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { editDocument } from "../../util/firestoreWR";
 import { updateAppointment } from "../../store/redux/appointmentSlice";
 import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareAppointmentScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { t } = useTranslation("healthcare");
+
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
@@ -47,7 +50,6 @@ export default function HealthcareAppointmentScreen() {
     React.useState(null);
   const [callingAppointmentNotes, setCallingAppointmentNotes] =
     React.useState("");
-  // const [appointmentNotesPatientName, setAppointmentNotesPatientName] = React.useState("");
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -99,7 +101,7 @@ export default function HealthcareAppointmentScreen() {
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
-      Alert.alert("Error saving the appointment note", error.message);
+      Alert.alert(t("error_saving_appointment_note"), error.message);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
     setIsLoading(false);
@@ -166,7 +168,7 @@ export default function HealthcareAppointmentScreen() {
                 subject={capitalizeFirstLetter(
                   appointment.patient_data.first_name
                 )}
-                status={capitalizeFirstLetter(appointment.appointment_status)}
+                status={t(appointment.appointment_status)}
                 date={new Date(appointment.scheduled_timestamp)
                   .toISOString()
                   .slice(0, 10)}
@@ -204,8 +206,8 @@ export default function HealthcareAppointmentScreen() {
       return (
         <Text variant="bodyLarge">
           {!isPending
-            ? "You don't have any accepted appointment on this day"
-            : "All the appointments had been accepted!"}
+            ? t("no_accepted_appointment_on_this_day")
+            : t("all_appointments_accepted")}
         </Text>
       );
     }
@@ -232,31 +234,31 @@ export default function HealthcareAppointmentScreen() {
             contentContainerStyle={containerStyle}
           >
             <Text variant="titleLarge" style={{ marginVertical: 8 }}>
-              Appointment Notes
+              {t("appointment_notes")}
             </Text>
             <View style={{ marginVertical: 16 }}>
               <Text variant="titleMedium" style={{ marginVertical: 8 }}>
-                Patient Information
+                {t("patient_information")}
               </Text>
               <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
-                Name: {callingAppointment?.patient_data.first_name}{" "}
+                {t("name")}: {callingAppointment?.patient_data.first_name}{" "}
                 {callingAppointment?.patient_data.last_name}
               </Text>
               <Text variant="titleMedium" style={{ marginVertical: 8 }}>
-                Appointment Information
+                {t("appointment_information")}
               </Text>
               <Text variant="bodyLarge" style={{ marginVertical: 8 }}>
-                Date: {callingAppointmentDate}
+                {t("date")}: {callingAppointmentDate}
               </Text>
               <Text variant="bodyLarge" style={{ marginBottom: 8 }}>
-                Time: {callingAppointmentTime}
+                {t("time")}: {callingAppointmentTime}
               </Text>
               <Text variant="titleMedium" style={{ marginTop: 8 }}>
-                Remarks/Notes
+                {t("remarks_notes")}
               </Text>
               <TextInput
                 mode="outlined"
-                label="Write some notes here"
+                label={t("write_some_notes_here")}
                 multiline={true}
                 numberOfLines={5}
                 style={{ marginVertical: 8 }}
@@ -268,7 +270,7 @@ export default function HealthcareAppointmentScreen() {
                     : callingAppointmentNotes
                 }
                 onChangeText={(text) => setCallingAppointmentNotes(text)}
-              ></TextInput>
+              />
               <Button
                 mode="contained"
                 onPress={() => {
@@ -276,7 +278,7 @@ export default function HealthcareAppointmentScreen() {
                 }}
                 style={{ marginTop: 8 }}
               >
-                Save
+                {t("save")}
               </Button>
             </View>
           </Modal>
@@ -315,7 +317,7 @@ export default function HealthcareAppointmentScreen() {
             alignItems: "center",
           }}
         >
-          <Text>Accepted</Text>
+          <Text>{t("accepted")}</Text>
           <View
             style={{
               borderRadius: 24,
@@ -325,7 +327,7 @@ export default function HealthcareAppointmentScreen() {
               marginRight: 8,
             }}
           />
-          <Text style={{ marginRight: 24 }}>Pending</Text>
+          <Text style={{ marginRight: 24 }}>{t("pending")}</Text>
           <View
             style={{
               borderRadius: 24,
@@ -339,12 +341,8 @@ export default function HealthcareAppointmentScreen() {
         <AppointmentHorizontalCard />
         <Divider style={{ marginTop: 24, height: 1 }} />
         <Text variant="titleLarge" style={{ marginTop: 24, marginBottom: 16 }}>
-          Appointment Requests
+          {t("appointment_requests")}
         </Text>
-        {/* <TextListButton
-          text={"Appointment Requests"}
-          onPressCallback={() => navigate("AllAppointmentRequestScreen")}
-        /> */}
         <AppointmentHorizontalCard isPending={true} />
       </ScrollView>
       <LoadingIndicatorDialog
@@ -352,8 +350,8 @@ export default function HealthcareAppointmentScreen() {
         close={() => {
           setIsLoading(false);
         }}
-        title={"Saving Appointment Notes"}
-        bodyText={"Please wait a while"}
+        title={t("saving_appointment_notes")}
+        bodyText={t("please_wait")}
       />
     </View>
   );

@@ -25,6 +25,7 @@ import {
   updateAppointment,
   updatePendingAppointment,
 } from "../../../store/redux/appointmentSlice";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareAppointmentDetailsScreen() {
   const navigation = useNavigation();
@@ -33,6 +34,7 @@ export default function HealthcareAppointmentDetailsScreen() {
   const currentAppointment = params.appointment;
   const currentPatient = currentAppointment.patient_data;
   const dispatch = useDispatch();
+  const { t } = useTranslation("healthcare");
 
   //Dialog
   const [visible, setVisible] = React.useState(false);
@@ -43,7 +45,7 @@ export default function HealthcareAppointmentDetailsScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Appointment",
+      headerTitle: t("appointment"),
     });
   });
 
@@ -75,23 +77,22 @@ export default function HealthcareAppointmentDetailsScreen() {
       );
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Success", "Appointment successfully accepted.");
+      Alert.alert(t("success"), t("appointment_successfully_accepted"));
       navigation.goBack();
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       console.log(`Error accepting appointment ${error}`);
-      Alert.alert("Error Occurred", `Please try again later `);
+      Alert.alert(t("error_occurred"), t("please_try_again_later"));
     }
   }
 
   function videoCall() {}
 
   async function cancelAppointment() {
-    const storedUid = await SecureStore.getItemAsync("uid");
     if (reason === "") {
       setReasonError(true);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Error occured", "Please fill in reason");
+      Alert.alert(t("error_occurred"), t("please_fill_in_reason"));
     } else {
       const updatedAppointment = {
         remarks: reason,
@@ -109,7 +110,7 @@ export default function HealthcareAppointmentDetailsScreen() {
         })
       );
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Success", "Appointment successfully cancelled.");
+      Alert.alert(t("success"), t("appointment_successfully_cancelled"));
       navigation.goBack();
     }
   }
@@ -125,7 +126,7 @@ export default function HealthcareAppointmentDetailsScreen() {
       <HorizontalCard
         profilePic={currentPatient.profile_pic_url}
         subject={capitalizeFirstLetter(currentPatient.first_name)}
-        status={capitalizeFirstLetter(currentAppointment.appointment_status)}
+        status={t(currentAppointment.appointment_status)}
         date={new Date(currentAppointment.scheduled_timestamp)
           .toISOString()
           .slice(0, 10)}
@@ -139,7 +140,7 @@ export default function HealthcareAppointmentDetailsScreen() {
         color={containerColor(currentAppointment)}
       />
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
-        Patient Information
+        {t("patient_information")}
       </Text>
       <View style={{ marginTop: 8, flexDirection: "row", flexWrap: "wrap" }}>
         <InformationChip
@@ -149,7 +150,7 @@ export default function HealthcareAppointmentDetailsScreen() {
           isBlur
         />
         <InformationChip
-          text={capitalizeFirstLetter(currentPatient.gender)}
+          text={t(currentPatient.gender)}
           icon={"gender-male-female"}
           style={{ width: "40%" }}
         />
@@ -171,7 +172,7 @@ export default function HealthcareAppointmentDetailsScreen() {
         />
       </View>
       <Text variant="titleLarge" style={{ marginTop: 32 }}>
-        Treatment Information
+        {t("treatment_information")}
       </Text>
       <Text variant="bodyLarge" style={{ marginTop: 8 }}>
         {
@@ -182,45 +183,43 @@ export default function HealthcareAppointmentDetailsScreen() {
       </Text>
       {/* Notes should be added after the video call */}
       <Text variant="titleLarge" style={{ marginTop: 32 }}>
-        Appointment Notes
+        {t("appointment_notes")}
       </Text>
       <Text variant="bodyLarge" style={{ marginTop: 8 }}>
         {currentAppointment.notes
           ? currentAppointment.notes
-          : "This patient currently has no notes"}
+          : t("no_notes_for_patient")}
       </Text>
       <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
         {currentAppointment.appointment_status ===
         APPOINTMENT_STATUS.PENDING ? (
           <Button mode="contained" onPress={() => handleAccept()}>
-            Accept
+            {t("accept")}
           </Button>
         ) : (
           <>
             <Button mode="contained" onPress={() => videoCall()}>
-              Video Call
+              {t("video_call")}
             </Button>
             <Button
               mode="contained-tonal"
               style={{ marginRight: 16 }}
               onPress={() => showDialog()}
             >
-              Cancel Appointment
+              {t("cancel_appointment")}
             </Button>
           </>
         )}
       </View>
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog}>
-          <Dialog.Title>Are you sure?</Dialog.Title>
+          <Dialog.Title>{t("are_you_sure")}</Dialog.Title>
           <Dialog.Content>
-            <Text variant="bodyMedium">
-              Please provide reasons for the cancellation
-            </Text>
+            <Text variant="bodyMedium">{t("provide_cancellation_reason")}</Text>
             <TextInput
               mode="outlined"
               style={{ marginTop: 8 }}
-              placeholder="Type your reason here"
+              placeholder={t("type_reason_here")}
               value={reason}
               onChangeText={(text) => setReason(text)}
               maxLength={100}
@@ -228,8 +227,8 @@ export default function HealthcareAppointmentDetailsScreen() {
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={hideDialog}>Go Back</Button>
-            <Button onPress={() => cancelAppointment()}>Submit</Button>
+            <Button onPress={hideDialog}>{t("go_back")}</Button>
+            <Button onPress={() => cancelAppointment()}>{t("submit")}</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

@@ -13,6 +13,7 @@ import CachedImage from "expo-cached-image";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { clearPatientDataSlice } from "../../store/redux/patientDataSlice";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareProfileScreen() {
   const theme = useTheme();
@@ -20,6 +21,7 @@ export default function HealthcareProfileScreen() {
   const auth = getAuth();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
+  const { t } = useTranslation("healthcare");
 
   function clearLocalData() {
     dispatch(logoutDeleteNative());
@@ -27,19 +29,19 @@ export default function HealthcareProfileScreen() {
     dispatch(clearSideEffectSlice());
     dispatch(clearVideoSlice());
     dispatch(clearSignupSlice());
-    dispatch(clearPatientDataSlice())
+    dispatch(clearPatientDataSlice());
   }
 
   function signOutHandler() {
-    Alert.alert("Signing out", "Are you sure want to sign out?", [
+    Alert.alert(t("signing_out"), t("confirm_sign_out"), [
       {
-        text: "Sign Out",
+        text: t("sign_out"),
         onPress: () => {
           signOut(auth)
             .then(async () => {
               // Sign out successful
               console.log("User signed out successfully");
-              clearLocalData()
+              clearLocalData();
               // navigation.navigate("Login");
               // Add any additional logic or navigation here
             })
@@ -51,7 +53,7 @@ export default function HealthcareProfileScreen() {
         },
       },
       {
-        text: "Cancel",
+        text: t("cancel"),
         style: "cancel",
       },
     ]);
@@ -96,7 +98,7 @@ export default function HealthcareProfileScreen() {
         />
       </View>
       <TextListButton
-        text={"Language"}
+        text={t("language")}
         onPressCallback={() => navigate("LanguageScreen")}
       />
       <Button
@@ -104,7 +106,7 @@ export default function HealthcareProfileScreen() {
         style={{ marginTop: 24 }}
         onPress={() => signOutHandler()}
       >
-        Sign Out
+        {t("sign_out")}
       </Button>
     </SafeAreaView>
   );

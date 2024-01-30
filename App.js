@@ -197,7 +197,7 @@ export default function App() {
     return null;
   }
 
-  i18n.changeLanguage('id-ID');
+  // i18n.changeLanguage('id-ID');
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

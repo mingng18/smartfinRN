@@ -8,11 +8,13 @@ import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
 import HealthcareInfoForm from "../../../components/Auth/HealthcareInfoForm";
 import UploadProfilePicModal from "../../common/UploadProfilePicModal";
 import { USER_TYPE } from "../../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function HealthcareEditProfileScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const user = useSelector((state) => state.authObject);
+  const { t } = useTranslation("healthcare");
 
   // modal ref
   const bottomSheetModalRef = useRef(null);
@@ -46,24 +48,24 @@ export default function HealthcareEditProfileScreen() {
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <Button onPress={() => bottomSheetModalRef.current?.present()}>
-            Change Profile Picture
+            {t("change_profile_picture")}
           </Button>
         </View>
         {/* ====================== Sign In Info =================== */}
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Sign In Info
+          {t("sign_in_info")}
         </Text>
         <TextInput
           mode="outlined"
-          label="Email"
-          placeholder="Type your email"
+          label={t("email")}
+          placeholder={t("type_your_email")}
           value={user.email}
           maxLength={100}
           style={{ marginTop: 16 }}
           disabled
         />
         <Text variant="bodySmall" style={{ marginTop: 4 }}>
-          You cannot change your email, please contact developer
+          {t("cannot_change_email")}
         </Text>
         <View style={{ flexDirection: "row-reverse", marginTop: 24 }}>
           <Button
@@ -72,13 +74,15 @@ export default function HealthcareEditProfileScreen() {
               navigation.navigate("ChangePasswordScreen");
             }}
           >
-            Change Password
+            {t("change_password")}
           </Button>
         </View>
+
         {/* ====================== Personal Information =================== */}
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
-          Personal Information
+          {t("personal_information")}
         </Text>
+
         <HealthcareInfoForm isEditing={true} />
         <View style={{ marginTop: 32 }} />
       </ScrollView>

@@ -12,12 +12,15 @@ import { ScrollView } from "react-native-gesture-handler";
 import { APPOINTMENT_STATUS, VIDEO_STATUS } from "../constants/constants";
 import Legend from "../components/ui/Legend";
 import { Calendar } from "react-native-calendars";
+import { useTranslation } from "react-i18next";
+import SideEffectChip from "../components/ui/SideEffectChip";
 
 const TopTabs = createMaterialTopTabNavigator();
 
 //Create Bottom Navigation Bar for Patient Module
 const PatientDetailsTab = ({ patient }) => {
   const theme = useTheme();
+  const { t } = useTranslation("healthcare");
 
   const [patientSideEffects, setPatientSideEffects] = React.useState([]);
   const [patientAppointments, setPatientAppointments] = React.useState([]);
@@ -93,7 +96,7 @@ const PatientDetailsTab = ({ patient }) => {
           })
         ) : (
           <Text variant="bodyLarge" style={{ paddingHorizontal: 24 }}>
-            This patient hasn't booked any appointment.
+            {t("no_appointment_booked")}
           </Text>
         )}
       </ScrollView>
@@ -142,7 +145,7 @@ const PatientDetailsTab = ({ patient }) => {
                   </Text>
                 </View>
                 {sideEffect.symptoms.map((symptom, j) => {
-                  return <InformationChip key={j} text={symptom.label} />;
+                  return <SideEffectChip symptom={symptom} key={j} />;
                 })}
                 <View style={{ marginRight: 16 }} />
               </ScrollView>
@@ -150,7 +153,7 @@ const PatientDetailsTab = ({ patient }) => {
           })
         ) : (
           <Text variant="bodyLarge" style={{ paddingHorizontal: 24 }}>
-            This patient hasn't reported any side effects.
+            {t("no_side_effects_reported")}
           </Text>
         )}
       </ScrollView>
@@ -237,9 +240,12 @@ const PatientDetailsTab = ({ patient }) => {
         >
           <Legend
             color={theme.colors.greenContainer}
-            text={"Video Submitted"}
+            text={t("video_submitted")}
           />
-          <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
+          <Legend
+            color={theme.colors.errorContainer}
+            text={t("video_missed")}
+          />
         </View>
       </View>
     );
@@ -260,13 +266,13 @@ const PatientDetailsTab = ({ patient }) => {
           backgroundColor: theme.colors.background,
         },
       }}
-      initialRouteName="ViewPatientAppointment"
+      initialRouteName="Appointment"
       backBehavior="none"
       style={{ margin: 0, padding: 0 }}
     >
-      <TopTabs.Screen name="Appointment" component={ViewPatientAppointment} />
-      <TopTabs.Screen name="Side Effect" component={ViewPatientSideEffect} />
-      <TopTabs.Screen name="Goal Tracker" component={ViewPatientGoalTracker} />
+      <TopTabs.Screen name={t("appointment")} component={ViewPatientAppointment} />
+      <TopTabs.Screen name={t("side_effect")} component={ViewPatientSideEffect} />
+      <TopTabs.Screen name={t("goal_tracker")} component={ViewPatientGoalTracker} />
     </TopTabs.Navigator>
   );
 };

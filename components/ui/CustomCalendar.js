@@ -167,10 +167,7 @@ export default function CustomCalendar({
           selectedDayBackgroundColor: theme.colors.primary,
           selectedDayTextColor: theme.colors.onPrimary,
         }}
-        onDayPress={(day) =>
-          currentSelected !== CALENDAR_ENTITIES.VIDEO &&
-          setSelectedDate(day.dateString)
-        }
+        onDayPress={(day) => setSelectedDate(day.dateString)}
         markedDates={{
           ...marked,
           [selectedDate]: {

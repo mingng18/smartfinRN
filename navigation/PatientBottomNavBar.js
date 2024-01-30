@@ -14,7 +14,6 @@ const PatientBottomNavBar = () => {
   const theme = useTheme();
   const { t } = useTranslation("patient");
 
-
   //Routes for Bottom Nav Bar
   const routes = [
     {

@@ -12,6 +12,7 @@ import { editDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updatePatientData } from "../../../store/redux/patientDataSlice";
 import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
+import { useTranslation } from "react-i18next";
 
 export default function PatientDetailsScreen() {
   const navigation = useNavigation();
@@ -19,10 +20,11 @@ export default function PatientDetailsScreen() {
   const { params } = useRoute();
   const [currentPatient, setCurrentPatient] = React.useState(params.patient);
   const dispatch = useDispatch();
+  const { t } = useTranslation("healthcare");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Patient Profile",
+      headerTitle: t("patient_profile"),
     });
   });
 
@@ -91,7 +93,7 @@ export default function PatientDetailsScreen() {
               <Text variant="bodyLarge" style={[styles.headerText]}>
                 {currentPatient.notes
                   ? capitalizeFirstLetter(currentPatient.notes)
-                  : "No notes"}
+                  : t("no_notes")}
               </Text>
             </View>
           </View>
@@ -105,7 +107,7 @@ export default function PatientDetailsScreen() {
               isBlur
             />
             <InformationChip
-              text={capitalizeFirstLetter(currentPatient.gender)}
+              text={t(currentPatient.gender)}
               icon={"gender-male-female"}
               style={{ width: "40%" }}
             />
@@ -127,7 +129,7 @@ export default function PatientDetailsScreen() {
             />
           </View>
           <Text variant="titleLarge" style={{ marginTop: 32 }}>
-            Diagnosis
+            {t("diagnosis")}
           </Text>
           <Text variant="bodyLarge" style={{ marginTop: 8 }}>
             {
@@ -139,7 +141,11 @@ export default function PatientDetailsScreen() {
           <Text
             variant="labelLargeProminent"
             style={{ alignSelf: "flex-end", marginTop: 8 }}
-          >{`On ${currentPatient.date_of_diagnosis.slice(0, 10)}`}</Text>
+          >
+            {t("on_date", {
+              date: currentPatient.date_of_diagnosis.slice(0, 10),
+            })}
+          </Text>
           <View
             style={{
               marginTop: 32,
@@ -148,7 +154,7 @@ export default function PatientDetailsScreen() {
               alignItems: "center",
             }}
           >
-            <Text variant="titleLarge">Treatment Information</Text>
+            <Text variant="titleLarge">{t("treatment_information")}</Text>
             {/* <IconButton icon="pencil" size={24} onPress={() => {}} /> */}
           </View>
           <Text variant="bodyLarge" style={{ marginTop: 8 }}>
@@ -161,9 +167,14 @@ export default function PatientDetailsScreen() {
           <Text
             variant="labelLargeProminent"
             style={{ alignSelf: "flex-end", marginTop: 8 }}
-          >{`${currentPatient.number_of_tablets} tablets for ${currentPatient.treatment_duration_months} months`}</Text>
+          >
+            {t("tablets", {
+              number: currentPatient.number_of_tablets,
+              month: currentPatient.treatment_duration_months,
+            })}
+          </Text>
           <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
-            Notes
+            {t("notes")}
           </Text>
           {/* <View style={{ flexDirection: "row" }}>
             <Pressable
@@ -212,7 +223,7 @@ export default function PatientDetailsScreen() {
             items={notesData}
             setItems={setNotesData}
             onChangeValue={(value) => updateNotes(value)}
-            placeholder="Notes"
+            placeholder={t("notes_placeholder")}
           />
           <View style={{ marginBottom: 32 }} />
         </View>

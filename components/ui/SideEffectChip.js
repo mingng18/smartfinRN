@@ -25,7 +25,7 @@ export default function SideEffectChip({ symptom }) {
       }}
     >
       {symptom.grade == 0
-        ? t(formatSymptomKey(symptom.label))
+        ? symptom.label
         : `${t(formatSymptomKey(symptom.label))} : ${symptom.grade}`}
     </Chip>
   );

@@ -11,20 +11,12 @@ import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import {
   FIREBASE_COLLECTION,
   SIDE_EFFECT_STATUS,
-  USER_TYPE,
 } from "../../../constants/constants";
 import { editDocument } from "../../../util/firestoreWR";
-import {
-  deleteSideEffect,
-  updateSideEffect,
-} from "../../../store/redux/sideEffectSlice";
+import { deleteSideEffect } from "../../../store/redux/sideEffectSlice";
 import SideEffectChip from "../../../components/ui/SideEffectChip";
-import {
-  sideEffectContainerColor,
-  sideEffectGradeText,
-} from "../../../util/sideEffectUtil";
-import { set } from "lodash";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
+import { useTranslation } from "react-i18next";
 
 export default function ReviewSideEffectDetailScreen() {
   const navigation = useNavigation();
@@ -32,13 +24,14 @@ export default function ReviewSideEffectDetailScreen() {
   const { params } = useRoute();
   const currentSideEffect = params.sideEffect;
   const dispatch = useDispatch();
+  const { t } = useTranslation("healthcare");
 
   const [remarks, setRemarks] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Side Effect",
+      headerTitle: t("side_effect"),
     });
   });
 
@@ -63,21 +56,16 @@ export default function ReviewSideEffectDetailScreen() {
       dispatch(deleteSideEffect({ id: currentSideEffect.id }));
       setIsLoading(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert("Reviewed");
+      Alert.alert(t("reviewed"));
       navigation.goBack();
-
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setIsLoading(false);
-      Alert.alert(
-        "Submit Error",
-        "Something went wrong. Please try again later."
-      );
+      Alert.alert(t("submit_error_title"), t("submit_error_message"));
     }
   };
 
   return (
-    
     <View
       style={{
         backgroundColor: theme.colors.background,
@@ -90,7 +78,7 @@ export default function ReviewSideEffectDetailScreen() {
           cardType={"sideEffect"}
           profilePic={currentSideEffect.patient_profile_picture}
           subject={capitalizeFirstLetter(currentSideEffect.patient_first_name)}
-          status={sideEffectGradeText(currentSideEffect)}
+          status={t(currentSideEffect.severity)}
           date={new Date(currentSideEffect.created_timestamp)
             .toISOString()
             .slice(0, 10)}
@@ -101,11 +89,15 @@ export default function ReviewSideEffectDetailScreen() {
             minute: "numeric",
             hour12: true,
           })}
-          color={sideEffectContainerColor(currentSideEffect)}
+          color={
+            currentSideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+              ? theme.colors.surfaceContainer
+              : theme.colors.errorContainer
+          }
         />
         {/* ========================SIDE EFFECTS======================= */}
         <Text variant="titleLarge" style={{ marginTop: 16, marginBottom: 8 }}>
-          Side Effects
+          {t("side_effects")}
         </Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
           {currentSideEffect.symptoms.length > 0 ? (
@@ -118,13 +110,13 @@ export default function ReviewSideEffectDetailScreen() {
         </View>
         {/* ========================Remarks/Notes======================= */}
         <Text variant="titleLarge" style={{ marginTop: 24, marginBottom: 8 }}>
-          Remarks/Notes
+          {t("remarks_notes")}
         </Text>
         <TextInput
           mode="outlined"
-          placeholder="Enter notes"
+          placeholder={t("enter_notes")}
           multiline
-          style={{height:120}}
+          style={{ height: 120 }}
           value={remarks}
           onChangeText={(text) => setRemarks(text)}
         />
@@ -141,14 +133,14 @@ export default function ReviewSideEffectDetailScreen() {
             style={{ marginLeft: 16 }}
             onPress={() => handleSideEffectReviewSubmission()}
           >
-            Review
+            {t("review")}
           </Button>
           <Button
             mode="contained-tonal"
             style={{ marginLeft: 16 }}
             onPress={() => {}}
           >
-            Call Patient
+            {t("call_patient")}
           </Button>
         </View>
       </ScrollView>
@@ -157,8 +149,8 @@ export default function ReviewSideEffectDetailScreen() {
         close={() => {
           setIsLoading(false);
         }}
-        title={"Reviewing Side Effect"}
-        bodyText={"Please wait a while"}
+        title={t("reviewing_side_effect")}
+        bodyText={t("please_wait")}
       />
     </View>
   );

@@ -48,12 +48,15 @@ import {
 import { Timestamp } from "firebase/firestore";
 import { fetchCollection } from "../../util/firestoreWR";
 import Legend from "../../components/ui/Legend";
+import { useTranslation } from "react-i18next";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
   const { navigate } = navigation;
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { t } = useTranslation("healthcare");
+  
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
@@ -287,7 +290,7 @@ function HealthcareHomeScreen() {
             />
           )}
           <View style={[styles.headerText]}>
-            <Text variant="bodyLarge">Hello</Text>
+            <Text variant="bodyLarge">{t("hello")}</Text>
             <Text variant="headlineLarge">
               {capitalizeFirstLetter(user.first_name)}
             </Text>
@@ -311,17 +314,17 @@ function HealthcareHomeScreen() {
               { backgroundColor: theme.colors.surfaceContainerLow },
             ]}
           >
-            <Text variant="titleLarge">Pending</Text>
+            <Text variant="titleLarge">{t("pending")}</Text>
             <View style={[{ flexDirection: "row", marginTop: 16 }]}>
               <HealthcareToDoCard
-                title={"Total Patient"}
+                title={t("total_patient")}
                 icon="account-outline"
                 count={patientAmount}
                 onPressedCallback={() => navigate("AllPatientScreen")}
                 style={{ marginRight: 8 }}
               />
               <HealthcareToDoCard
-                title={"Appointment"}
+                title={t("appointment")}
                 icon="calendar"
                 count={appointmentsCount}
                 onPressedCallback={() =>
@@ -332,14 +335,14 @@ function HealthcareHomeScreen() {
             </View>
             <View style={[{ flexDirection: "row", marginTop: 16 }]}>
               <HealthcareToDoCard
-                title={"Review Videos\nof Patients"}
+                title={t("review_videos_of_patients")}
                 icon="video"
                 count={videosToBeReviewedCount}
                 onPressedCallback={() => navigation.jumpTo("healthcareReview")}
                 style={{ marginRight: 8 }}
               />
               <HealthcareToDoCard
-                title={"Review Patients\nSide Effects"}
+                title={t("review_patients_side_effects")}
                 icon="emoticon-sick-outline"
                 count={sideEffectsAlertCount}
                 onPressedCallback={() => navigate("ReviewSideEffectScreen")}
@@ -347,7 +350,6 @@ function HealthcareHomeScreen() {
               />
             </View>
           </View>
-
           {/* ================== CTA buttons ============== */}
           <View
             style={[
@@ -360,19 +362,19 @@ function HealthcareHomeScreen() {
               variant="titleLarge"
               style={{ marginHorizontal: 16, marginTop: 16 }}
             >
-              Are you up for something?
+              {t("are_you_up_for_something")}
             </Text>
             <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
               {/* TODO change the navigation screen for each */}
               <CTAButton
                 icon="video"
-                title="Video"
+                title={t("video")}
                 color={theme.colors.primary}
                 onPressedCallback={() => navigation.jumpTo("healthcareReview")}
               />
               <CTAButton
                 icon="emoticon-sick"
-                title="Side Effect"
+                title={t("side_effect")}
                 color={theme.colors.secondary}
                 onPressedCallback={() => {
                   navigate("ReviewSideEffectScreen");
@@ -380,7 +382,7 @@ function HealthcareHomeScreen() {
               />
               <CTAButton
                 icon="calendar-blank"
-                title="Appointment"
+                title={t("appointment")}
                 color={theme.colors.tertiary}
                 onPressedCallback={() => navigate("healthcareAppointment")}
                 isLastItem={true}
@@ -395,7 +397,7 @@ function HealthcareHomeScreen() {
               marginHorizontal: 16,
             }}
           >
-            Analytics
+            {t("analytics")}
           </Text>
           <Text
             variant="labelLarge"
@@ -404,12 +406,12 @@ function HealthcareHomeScreen() {
               marginHorizontal: 16,
             }}
           >
-            {`Number of videos submitted this month`}
+            {t("number_of_videos_submitted_this_month")}
           </Text>
           <VictoryChart theme={VictoryTheme.material}>
             {/* X Axis */}
             <VictoryAxis
-              label="Day"
+              label={t("day")}
               style={{
                 axisLabel: { padding: 30 },
               }}
@@ -417,7 +419,7 @@ function HealthcareHomeScreen() {
             {/* Y Axis */}
             <VictoryAxis
               dependentAxis
-              label="Number of Videos"
+              label={t("number_of_videos")}
               style={{
                 axisLabel: { padding: 30 },
               }}
@@ -439,7 +441,7 @@ function HealthcareHomeScreen() {
               marginHorizontal: 16,
             }}
           >
-            {`Side effects submitted this month`}
+            {t("side_effects_submitted_this_month")}
           </Text>
           <VictoryStack
             theme={VictoryTheme.material}
@@ -455,7 +457,7 @@ function HealthcareHomeScreen() {
             <VictoryAxis />
             <VictoryAxis
               dependentAxis
-              label="Number of Side Effects"
+              label={t("number_of_side_effects")}
               axisLabelComponent={<VictoryLabel dy={-16} />}
               tickFormat={(tick) => {
                 return Number.isInteger(tick) ? tick.toString() : "";
@@ -463,9 +465,9 @@ function HealthcareHomeScreen() {
             />
           </VictoryStack>
           <View style={{ flexDirection: "row-reverse" }}>
-            <Legend text={"Grade 3"} color={theme.colors.error} />
-            <Legend text={"Grade 2"} color={theme.colors.yellow} />
-            <Legend text={"Grade 1"} color={theme.colors.primary} />
+            <Legend text={t("grade_3")} color={theme.colors.error} />
+            <Legend text={t("grade_2")} color={theme.colors.yellow} />
+            <Legend text={t("grade_1")} color={theme.colors.primary} />
           </View>
         </View>
         <View

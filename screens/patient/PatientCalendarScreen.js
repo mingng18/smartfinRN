@@ -14,7 +14,6 @@ import {
   SIDE_EFFECT_SEVERITY,
 } from "../../constants/constants";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
-import { sideEffectGradeText } from "../../util/sideEffectUtil";
 import { useTranslation } from "react-i18next";
 
 function PatientCalendarScreen() {
@@ -192,7 +191,7 @@ function PatientCalendarScreen() {
           {matchedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              subject={sideEffectGradeText(sideEffect)}
+              subject={t(sideEffect.severity)}
               date={new Date(sideEffect.side_effect_occuring_timestamp)
                 .toISOString()
                 .slice(0, 10)}

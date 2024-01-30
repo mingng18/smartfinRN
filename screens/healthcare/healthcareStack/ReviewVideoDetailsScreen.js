@@ -23,13 +23,14 @@ import CustomDropDownPicker from "../../../components/ui/CustomDropDownPicker";
 import { editDocument } from "../../../util/firestoreWR";
 import { deleteVideo } from "../../../store/redux/videoSlice";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
-import { set } from "lodash";
+import { useTranslation } from "react-i18next";
 
 export default function ReviewVideoDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
   const currentVideo = params.video;
+  const { t } = useTranslation("healthcare");
 
   const videoRef = React.useRef(null);
   const storageRef = getStorage();
@@ -50,7 +51,7 @@ export default function ReviewVideoDetailsScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Video",
+      headerTitle: t("video_header"),
     });
   });
 
@@ -59,7 +60,6 @@ export default function ReviewVideoDetailsScreen() {
     const storedUid = await SecureStore.getItemAsync("uid");
     try {
       if (isAccepted) {
-        console.log("currently in 1");
         const updatedVideo = {
           medical_checklist: treatment,
           rejected_reason: "",
@@ -81,10 +81,9 @@ export default function ReviewVideoDetailsScreen() {
         // Dispatch the updateVideo action to update the Redux state
         dispatch(deleteVideo({ id: currentVideo.id }));
 
-
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setIsLoading(false);
-        Alert.alert("Success", "Video successfully accepted.");
+        Alert.alert(t("success"), t("video_accepted"));
         navigation.goBack();
       } else {
         if (reason === "") {
@@ -115,14 +114,14 @@ export default function ReviewVideoDetailsScreen() {
 
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
           setIsLoading(false);
-          Alert.alert("Success", "Video successfully rejected.");
+          Alert.alert(t("success"), t("video_rejected"));
           navigation.goBack();
         }
       }
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setIsLoading(false);
-      Alert.alert("Error Occurred", `Please try again later ${error}`);
+      Alert.alert(t("error_occurred"), t("try_again_later"));
     }
   };
 
@@ -174,7 +173,7 @@ export default function ReviewVideoDetailsScreen() {
           />
         )}
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
-          Medication Checklists
+          {t("medication_checklists")}
         </Text>
         <CustomDropDownPicker
           open={treatmentOpen}
@@ -183,7 +182,7 @@ export default function ReviewVideoDetailsScreen() {
           setValue={setTreatment}
           items={treatmentData}
           setItems={setTreatmentData}
-          placeholder="Treatment"
+          placeholder={t("treatment")}
         />
         <View
           style={{
@@ -197,22 +196,22 @@ export default function ReviewVideoDetailsScreen() {
             onPress={() => handleVideoSubmission(true)}
             style={{ marginLeft: 16 }}
           >
-            Accept
+            {t("accept")}
           </Button>
           <Button mode="contained-tonal" onPress={() => showDialog()}>
-            Reject
+            {t("reject")}
           </Button>
         </View>
       </ScrollView>
       <Portal>
         <Dialog visible={visible} onDismiss={hideDialog}>
-          <Dialog.Title>Video Rejected</Dialog.Title>
+          <Dialog.Title>{t("video_rejected_title")}</Dialog.Title>
           <Dialog.Content>
-            <Text variant="bodyMedium">Please provide reasons</Text>
+            <Text variant="bodyMedium">{t("provide_reasons")}</Text>
             <TextInput
               mode="outlined"
               style={{ marginTop: 8 }}
-              placeholder="Type your reason here"
+              placeholder={t("type_reason_here")}
               value={reason}
               onChangeText={(text) => setReason(text)}
               maxLength={100}
@@ -220,8 +219,10 @@ export default function ReviewVideoDetailsScreen() {
             />
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={hideDialog}>Cancel</Button>
-            <Button onPress={() => handleVideoSubmission(false)}>Submit</Button>
+            <Button onPress={hideDialog}>{t("cancel")}</Button>
+            <Button onPress={() => handleVideoSubmission(false)}>
+              {t("submit")}
+            </Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
@@ -230,8 +231,8 @@ export default function ReviewVideoDetailsScreen() {
         close={() => {
           setIsLoading(false);
         }}
-        title={"Reviewing Video"}
-        bodyText={"Please wait a while"}
+        title={t("reviewing_video_title")}
+        bodyText={t("please_wait")}
       />
     </View>
   );

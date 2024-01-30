@@ -10,11 +10,13 @@ import {
   COMPLIANCE_STATUS,
   HORIZONTAL_CARD_TYPE,
 } from "../../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function AllPatientScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const patients = useSelector((state) => state.patientDataObject.patients);
+  const { t } = useTranslation("healthcare");
 
   const [searchQuery, setSearchQuery] = React.useState("");
 
@@ -26,7 +28,7 @@ export default function AllPatientScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "All Patient",
+      headerTitle: t("all_patient"),
     });
   });
 
@@ -51,18 +53,19 @@ export default function AllPatientScreen() {
         automaticallyAdjustKeyboardInsetsF
       >
         <Searchbar
-          placeholder="Search"
+          placeholder={t("search")}
           onChangeText={(query) => setSearchQuery(query)}
           value={searchQuery}
           style={{ marginTop: 8, marginBottom: 16 }}
         />
+
         {filteredPatients.map((patient, i) => {
           return (
             <HorizontalCard
               key={i}
               profilePic={patient.profile_pic_url}
               subject={capitalizeFirstLetter(patient.first_name)}
-              date={capitalizeFirstLetter(patient.compliance_status)}
+              date={t(patient.compliance_status)}
               color={containerColor(patient.compliance_status)}
               cardType={HORIZONTAL_CARD_TYPE.PATIENT}
               onPressedCallback={() =>
