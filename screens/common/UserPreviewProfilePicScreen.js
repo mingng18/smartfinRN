@@ -15,6 +15,7 @@ import { updateProfilePic } from "../../store/redux/authSlice";
 import * as Haptics from "expo-haptics";
 import { CacheManager } from "expo-cached-image";
 import { getLastTenCharacters } from "../../util/wordUtil";
+import { useTranslation } from "react-i18next";
 
 export default function UserPreviewProfilePicScreen() {
   const navigation = useNavigation();
@@ -23,18 +24,18 @@ export default function UserPreviewProfilePicScreen() {
   const user = useSelector((state) => state.authObject);
   const storage = getStorage();
   const dispatch = useDispatch();
+  const { t } = useTranslation("common");
 
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
   const [uri, setUri] = React.useState(params?.uri || "");
   const [userType, setUserType] = React.useState(params?.userType || "");
 
-  //TODO Update profile picture
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Profile Picture",
+      headerTitle: t("profile_picture"),
     });
-  });
+  }, [t]);
 
   async function uploadImage(uri) {
     console.log("user is : " + user.user_uid);
@@ -46,7 +47,7 @@ export default function UserPreviewProfilePicScreen() {
 
     try {
       if (uri == "" || uri == null) {
-        return Alert.alert("No image selected", "Please select an image");
+        return Alert.alert(t("no_image_selected"), t("select_an_image"));
       }
 
       const imageData = await fetch(uri);
@@ -88,8 +89,7 @@ export default function UserPreviewProfilePicScreen() {
 
             setIsUploading(false);
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            Alert.alert("Profile pic updated");
-
+            Alert.alert(t("profile_pic_updated"));
             navigation.goBack();
           });
         }
@@ -99,8 +99,8 @@ export default function UserPreviewProfilePicScreen() {
       console.log("Update profile pic failed: " + error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return Alert.alert(
-        "Update profile picture failed",
-        "Please try again later"
+        t("update_profile_picture_failed"),
+        t("try_again_later")
       );
     }
   }
@@ -119,7 +119,7 @@ export default function UserPreviewProfilePicScreen() {
       }}
     >
       <Text variant="titleLarge" style={{ marginTop: 16, marginBottom: 40 }}>
-        Preview profile picture
+        {t("preview_profile_picture")}
       </Text>
       <Image
         source={{ uri: uri }}
@@ -138,7 +138,7 @@ export default function UserPreviewProfilePicScreen() {
           }}
           style={{ marginLeft: 16 }}
         >
-          Update
+          {t("update")}
         </Button>
         <Button
           mode="contained-tonal"
@@ -146,7 +146,7 @@ export default function UserPreviewProfilePicScreen() {
             navigation.goBack();
           }}
         >
-          Back
+          {t("back")}
         </Button>
       </View>
     </View>

@@ -1,1 +1,32 @@
-{}
+{
+  "change_password": "Change Password",
+  "password_updated": "Password updated!",
+  "update_fail": "Update fail!",
+  "invalid_input": "Invalid input",
+  "check_password": "Please check your entered password.",
+  "old_password": "Old Password",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "old_password_ph": "Type your old password",
+  "password_ph": "Type your password",
+  "confirm_password_ph": "Retype your password",
+  "password_requirements": "Your password must contain a combination of letters, numbers, and symbols, with at least 6 numbers included.",
+  "update": "Update",
+  "cancel": "Cancel",
+  "language": "Language",
+
+  "upload_profile_picture": "Upload Profile Picture",
+  "upload_photo_storage": "Upload Photo from Storage",
+  "take_photo": "Take Photo",
+
+  "profile_picture": "Profile Picture",
+  "no_image_selected": "No image selected",
+  "select_an_image": "Please select an image",
+  "profile_pic_updated": "Profile pic updated",
+  "update_profile_picture_failed": "Update profile picture failed",
+  "try_again_later": "Please try again later",
+  "preview_profile_picture": "Preview profile picture",
+  "back": "Back",
+
+  "no_access_camera": "No access to the camera"
+}

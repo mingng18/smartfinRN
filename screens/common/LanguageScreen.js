@@ -5,19 +5,21 @@ import TextListButton from "../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
 import { LANGUAGE } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
-import { changeCalendarsLocales, changePaperLocales } from "../../util/calendarLocales";
+import {
+  changeCalendarsLocales,
+  changePaperLocales,
+} from "../../util/calendarLocales";
 
 export default function LanguageScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [language, setLanguage] = React.useState(i18n.language);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Language",
+      headerTitle: t("language"),
     });
-    console.log(i18n.language);
   });
 
   const handleLanguageSubmission = () => {
@@ -81,7 +83,7 @@ export default function LanguageScreen() {
               handleLanguageSubmission();
             }}
           >
-            Update
+            {t("update")}
           </Button>
         </View>
       </View>

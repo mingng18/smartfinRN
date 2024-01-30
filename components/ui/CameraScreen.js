@@ -5,11 +5,13 @@ import { View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 export default function CameraScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const { params } = useRoute();
+  const { t } = useTranslation("common");
   const [isRecordingPage, setIsRecordingPage] = React.useState(false);
 
   //Permission
@@ -44,9 +46,7 @@ export default function CameraScreen() {
       try {
         const data = await cameraRef.current.takePictureAsync();
         navigation.navigate(
-          isEditing
-            ? "UserPreviewProfilePicScreen"
-            : "PreviewProfilePicScreen",
+          isEditing ? "UserPreviewProfilePicScreen" : "PreviewProfilePicScreen",
           {
             uri: data.uri,
             userType: params.userType ? params.userType : "",
@@ -93,7 +93,7 @@ export default function CameraScreen() {
   if (!hasCameraPermission || !hasAudioPermission) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>No access to the camera</Text>
+        <Text>{t("no_access_camera")}</Text>
       </View>
     );
   }

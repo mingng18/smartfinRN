@@ -1,1 +1,32 @@
-{}
+{
+  "change_password": "Ubah Kata Sandi",
+  "password_updated": "Kata sandi berhasil diperbarui!",
+  "update_fail": "Pembaruan gagal!",
+  "invalid_input": "Input tidak valid",
+  "check_password": "Harap periksa kata sandi yang Anda masukkan.",
+  "old_password": "Kata Sandi Lama",
+  "password": "Kata Sandi",
+  "confirm_password": "Konfirmasi Kata Sandi",
+  "old_password_ph": "Ketik kata sandi lama Anda",
+  "password_ph": "Ketik kata sandi Anda",
+  "confirm_password_ph": "Ketik ulang kata sandi Anda",
+  "password_requirements": "Kata sandi Anda harus mengandung kombinasi huruf, angka, dan simbol, dengan setidaknya 6 angka.",
+  "update": "Perbarui",
+  "cancel": "Batal",
+  "language": "Bahasa",
+
+  "upload_profile_picture": "Unggah Foto Profil",
+  "upload_photo_storage": "Unggah Foto dari Penyimpanan",
+  "take_photo": "Ambil Foto",
+
+  "profile_picture": "Foto Profil",
+  "no_image_selected": "Tidak ada gambar yang dipilih",
+  "select_an_image": "Silakan pilih sebuah gambar",
+  "profile_pic_updated": "Foto profil diperbarui",
+  "update_profile_picture_failed": "Pembaruan foto profil gagal",
+  "try_again_later": "Silakan coba lagi nanti",
+  "preview_profile_picture": "Pratinjau foto profil",
+  "back": "Kembali",
+
+  "no_access_camera": "Tidak ada akses ke kamera"
+}

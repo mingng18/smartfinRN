@@ -4,9 +4,7 @@ import { Button, Text, useTheme } from "react-native-paper";
 import React from "react";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
-import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
-import { useSelector } from "react-redux";
-import { USER_TYPE } from "../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function UploadProfilePicModal({
   bottomSheetModalRef,
@@ -15,7 +13,7 @@ export default function UploadProfilePicModal({
   const { navigate } = useNavigation();
   const snapPoints = React.useMemo(() => ["30%"], []);
   const theme = useTheme();
-  //   const [dialogVisible, setDialogVisible] = React.useState(false);
+  const { t } = useTranslation("common");
 
   const handleClosePress = () => bottomSheetModalRef.current.close();
 
@@ -46,7 +44,9 @@ export default function UploadProfilePicModal({
             justifyContent: "space-between",
           }}
         >
-          <Text variant="labelLargeProminent">Upload Profile Picture</Text>
+          <Text variant="labelLargeProminent">
+            {t("upload_profile_picture")}
+          </Text>
           <View
             style={{
               backgroundColor: theme.colors.primary,
@@ -62,7 +62,7 @@ export default function UploadProfilePicModal({
               bottomSheetModalRef.current.close();
             }}
           >
-            Upload Photo from Storage
+            {t("upload_photo_storage")}
           </Button>
           <Button
             mode="text"
@@ -71,7 +71,7 @@ export default function UploadProfilePicModal({
               bottomSheetModalRef.current.close();
             }}
           >
-            Take Photo
+            {t("take_photo")}
           </Button>
           <View
             style={{
@@ -82,7 +82,7 @@ export default function UploadProfilePicModal({
             }}
           />
           <Button mode="text" onPress={handleClosePress}>
-            Cancel
+            {t("cancel")}
           </Button>
         </View>
       </BottomSheetModal>

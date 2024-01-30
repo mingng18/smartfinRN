@@ -9,12 +9,14 @@ import {
   EmailAuthProvider,
 } from "firebase/auth";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 export default function ChangePasswordScreen() {
   const navigation = useNavigation();
   const { key, name, params, path } = useRoute();
   const theme = useTheme();
   const auth = getAuth();
+  const { t } = useTranslation("common");
 
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
@@ -26,7 +28,7 @@ export default function ChangePasswordScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Change Password",
+      headerTitle: t("change_password"),
     });
   });
 
@@ -41,7 +43,7 @@ export default function ChangePasswordScreen() {
         updatePassword(auth.currentUser, newPassword)
           .then(() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            Alert.alert("Password updated!");
+            Alert.alert(t("password_updated"));
             navigation.goBack();
           })
           .catch((error) => {
@@ -50,7 +52,7 @@ export default function ChangePasswordScreen() {
       })
       .catch((error) => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert("Update fail!", `${error}`);
+        Alert.alert(t("update_fail"), `${error}`);
       });
   };
 
@@ -64,10 +66,7 @@ export default function ChangePasswordScreen() {
         password: !passwordIsValid,
         confirmPassword: !confirmPasswordIsValid,
       });
-      return Alert.alert(
-        "Invalid input",
-        "Please check your entered password."
-      );
+      return Alert.alert(t("invalid_input"), t("check_password"));
     }
   }
 
@@ -82,8 +81,8 @@ export default function ChangePasswordScreen() {
       <TextInput
         mode="outlined"
         style={{ marginTop: 16 }}
-        label="Old Password"
-        placeholder="Type your old password"
+        label={t("old_password")}
+        placeholder={t("old_password_ph")}
         value={oldPassword}
         onChangeText={(text) => setOldPassword(text)}
         secureTextEntry
@@ -92,8 +91,8 @@ export default function ChangePasswordScreen() {
       <TextInput
         mode="outlined"
         style={{ marginTop: 16 }}
-        label="Password"
-        placeholder="Type your password"
+        label={t("password")}
+        placeholder={t("password_ph")}
         value={password}
         onChangeText={(text) => setPassword(text)}
         secureTextEntry
@@ -104,14 +103,13 @@ export default function ChangePasswordScreen() {
         variant="bodySmall"
         style={{ marginTop: 4, color: theme.colors.onSurface }}
       >
-        Your password must contain a combination of letters, numbers, and
-        symbols, with at least 6 numbers included.
+        {t("password_requirements")}
       </Text>
       <TextInput
         mode="outlined"
         style={{ marginTop: 16 }}
-        label="Confirm Password"
-        placeholder="Retype your password"
+        label={t("confirm_password")}
+        placeholder={t("confirm_password_ph")}
         value={confirmPassword}
         onChangeText={(text) => setConfirmPassword(text)}
         secureTextEntry
@@ -124,7 +122,7 @@ export default function ChangePasswordScreen() {
           onPress={() => changePassword(oldPassword, password)}
           style={{ marginLeft: 16 }}
         >
-          Update
+          {t("update")}
         </Button>
         <Button
           mode="contained-tonal"
@@ -132,7 +130,7 @@ export default function ChangePasswordScreen() {
             navigation.goBack();
           }}
         >
-          Cancel
+          {t("cancel")}
         </Button>
       </View>
     </View>
