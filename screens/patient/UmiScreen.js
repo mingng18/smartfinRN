@@ -1,9 +1,11 @@
+import { useTranslation } from "react-i18next";
 import { KeyboardAvoidingView, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Chip, Text, TextInput, useTheme } from "react-native-paper";
 
 function UmiScreen() {
   const theme = useTheme();
+  const { t } = useTranslation("patient");
 
   return (
     <KeyboardAvoidingView>
@@ -22,9 +24,9 @@ function UmiScreen() {
             borderRadius: 8,
           }}
         >
-          <Text variant="titleLarge">Umi Chatbot</Text>
+          <Text variant="titleLarge">{t("umi_chatbot")}</Text>
           <Text variant="bodyLarge" style={{ marginTop: 4 }}>
-            Have any problem? Chat Now!
+            {t("have_any_problem_chat_now")}
           </Text>
         </View>
         <ScrollView
@@ -43,19 +45,20 @@ function UmiScreen() {
           ))}
         </ScrollView>
         <TextInput
-          mode="outlined"
-          style={{ marginBottom: 16 }}
-          placeholder="Type your question here"
-          right={
-            <TextInput.Icon
-              icon="arrow-right"
-              color={theme.colors.outline}
-              onPress={() => {
-                //Send message here
-              }}
-            />
-          }
-        />
+  mode="outlined"
+  style={{ marginBottom: 16 }}
+  placeholder={t("type_your_question_here")}
+  right={
+    <TextInput.Icon
+      icon="arrow-right"
+      color={theme.colors.outline}
+      onPress={() => {
+        // Send message here
+      }}
+    />
+  }
+/>
+
       </View>
     </KeyboardAvoidingView>
   );

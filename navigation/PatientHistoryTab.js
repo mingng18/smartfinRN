@@ -8,6 +8,7 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import AllAppointmentScreen from "../screens/patient/patientHomeStack/AllAppointmentScreen";
 import AllSideEffectScreen from "../screens/patient/patientHomeStack/AllSideEffectScreen";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 const TopTabs = createMaterialTopTabNavigator();
 
@@ -15,10 +16,11 @@ const TopTabs = createMaterialTopTabNavigator();
 const PatientHistoryTab = () => {
   const theme = useTheme();
   const navigation = useNavigation();
+  const { t } = useTranslation("patient");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "History",
+      headerTitle: t("history"),
     });
   });
 
@@ -41,14 +43,14 @@ const PatientHistoryTab = () => {
       style={{ margin: 0, padding: 0 }}
     >
       <TopTabs.Screen
-        name="Appointment"
+        name={t("appointment_title")}
         component={AllAppointmentScreen}
         options={{
           headerShown: false,
         }}
       />
       <TopTabs.Screen
-        name="Side Effect"
+        name={t("side_effect_title")}
         component={AllSideEffectScreen}
         options={{
           headerShown: false,

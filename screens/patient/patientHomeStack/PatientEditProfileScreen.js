@@ -8,11 +8,13 @@ import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
 import TreatmentInfoForm from "../../../components/Auth/TreatmentInfoForm";
 import UploadProfilePicModal from "../../common/UploadProfilePicModal";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 function PatientEditProfileScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const user = useSelector((state) => state.authObject);
+  const { t } = useTranslation("patient");
 
   // modal ref
   const bottomSheetModalRef = useRef(null);
@@ -22,9 +24,9 @@ function PatientEditProfileScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Edit Profile",
+      headerTitle: t("edit_profile_header_title"),
     });
-  });
+  }, [t]);
 
   return (
     <View
@@ -47,24 +49,24 @@ function PatientEditProfileScreen() {
             style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
           />
           <Button onPress={() => bottomSheetModalRef.current?.present()}>
-            Change Profile Picture
+            {t("change_profile_picture_text")}
           </Button>
         </View>
         {/* ====================== Sign In Info =================== */}
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Sign In Info
+          {t("sign_in_info_text")}
         </Text>
         <TextInput
           mode="outlined"
-          label="Email"
-          placeholder="Type your email"
+          label={t("email_label")}
+          placeholder={t("type_email_placeholder")}
           value={user.email}
           maxLength={100}
           style={{ marginTop: 16 }}
           disabled
         />
         <Text variant="bodySmall" style={{ marginTop: 4 }}>
-          You cannot change your email, please contact developer
+          {t("cannot_change_email_text")}
         </Text>
         <View style={{ flexDirection: "row-reverse", marginTop: 24 }}>
           <Button
@@ -73,12 +75,12 @@ function PatientEditProfileScreen() {
               navigation.navigate("ChangePasswordScreen");
             }}
           >
-            Change Password
+            {t("change_password_button_text")}
           </Button>
         </View>
         {/* ====================== Personal Information =================== */}
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
-          Personal Information
+          {t("personal_information_text")}
         </Text>
         <PersonalInfoForm isEditing={true} />
         <View style={{ marginTop: 32 }} />

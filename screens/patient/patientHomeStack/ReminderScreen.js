@@ -18,10 +18,12 @@ import React, { useState, useMemo } from "react";
 import TextListButton from "../../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
 import { TimePickerModal } from "react-native-paper-dates";
+import { useTranslation } from "react-i18next";
 
 export default function ReminderScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const { t } = useTranslation("patient");
 
   const [videoReminder, setVideoReminder] = React.useState(true);
   const [appointmentReminder, setAppointmentReminder] = React.useState(true);
@@ -31,9 +33,9 @@ export default function ReminderScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Reminder",
+      headerTitle: t("reminder_header_title"),
     });
-  });
+  }, [t]);
 
   //Time Picker
   const onDismiss = React.useCallback(() => {
@@ -55,11 +57,11 @@ export default function ReminderScreen() {
   const handleReminderSubmission = () => {
     //TODO submit new reminder
     Alert.alert(
-      "Reminder updated!",
-      `New reminder set at ${hour} : ${minute} daily`,
+      t("reminder_updated_title"),
+      t("new_reminder_set_message", { hour, minute }),
       [
         {
-          text: "OK",
+          text: t("ok_button_text"),
           onPress: () => {
             navigation.goBack();
           },
@@ -86,7 +88,7 @@ export default function ReminderScreen() {
             onPress={() => setAppointmentReminder(!appointmentReminder)}
           >
             <View style={styles.row}>
-              <Text variant="bodyLarge">Appointment Reminder</Text>
+              <Text variant="bodyLarge">{t("appointment_reminder_text")}</Text>
               <View pointerEvents="none">
                 <Switch value={appointmentReminder} />
               </View>
@@ -94,7 +96,7 @@ export default function ReminderScreen() {
           </TouchableRipple>
           <TouchableRipple onPress={() => setVideoReminder(!videoReminder)}>
             <View style={styles.row}>
-              <Text variant="bodyLarge">Video Upload Reminder</Text>
+              <Text variant="bodyLarge">{t("video_upload_reminder_text")}</Text>
               <View pointerEvents="none">
                 <Switch value={videoReminder} />
               </View>
@@ -104,16 +106,16 @@ export default function ReminderScreen() {
         {videoReminder && (
           <>
             <Text variant="titleLarge" style={{ marginTop: 32 }}>
-              Set the time for video upload reminder
+              {t("video_upload_reminder_title")}
             </Text>
             <Pressable onPress={() => setTimePickerOpen(true)}>
               <View pointerEvents="none">
                 <TextInput
                   mode="outlined"
                   style={{ marginTop: 8 }}
-                  label="Time"
-                  placeholder="Starting date of the symptoms"
-                  value={hour == "" ? `` : `${hour} : ${minute}`}
+                  label={t("time_input_label")}
+                  placeholder={t("time_input_placeholder")}
+                  value={hour === "" ? "" : `${hour}:${minute}`}
                   onChangeText={(value) => setDate(value)}
                   right={
                     <TextInput.Icon
@@ -128,13 +130,8 @@ export default function ReminderScreen() {
           </>
         )}
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-          <Button
-            mode="contained"
-            onPress={() => {
-              handleReminderSubmission();
-            }}
-          >
-            Update
+          <Button mode="contained" onPress={handleReminderSubmission}>
+            {t("update_button_text")}
           </Button>
         </View>
       </View>

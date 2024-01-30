@@ -17,11 +17,13 @@ import {
   APPOINTMENT_TIME,
   FIREBASE_COLLECTION,
 } from "../../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
+  const { t } = useTranslation("patient");
 
   const bookedAppointmentDates = useSelector(
     (state) => state.bookedAppointmentDateObject.bookedAppointmentDates
@@ -54,9 +56,9 @@ export default function BookAppointmentScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Book Appointment",
+      headerTitle: t("book_appointment_header_title"),
     });
-  });
+  }, [t]);
 
   function disableTimeSlotsBasedOnDate(params, isReschedule) {
     let selectedDate = null;
@@ -203,7 +205,7 @@ export default function BookAppointmentScreen() {
   const handleAppointmentSubmission = async () => {
     if (date == undefined || time == null) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Invalid Input", "Please fill in all the input");
+      Alert.alert(t("invalid_input_text"), t("fill_all_input_text"));
     }
 
     if (isReschedule) {
@@ -229,11 +231,11 @@ export default function BookAppointmentScreen() {
     addDocument(FIREBASE_COLLECTION.APPOINTMENT, newAppointment);
     // setBookedDialogVisible(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    if (isReschedule) {
-      Alert.alert("Reschedule Successful!");
-    } else {
-      Alert.alert("Booked Successful!");
-    }
+    Alert.alert(
+      isReschedule
+        ? t("reschedule_successful_text")
+        : t("booked_successful_text")
+    );
     dispatch(
       createAppointment({
         patient_id: storedUid,
@@ -256,16 +258,15 @@ export default function BookAppointmentScreen() {
       }}
     >
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
-        Please select starting date and time
+        {t("select_starting_date_time_text")}
       </Text>
-
       <Pressable onPress={() => setCalendarOpen(true)}>
         <View pointerEvents="none">
           <TextInput
             mode="outlined"
             style={{ marginTop: 16 }}
-            label="Date"
-            placeholder="Starting date of the symptoms"
+            label={t("date_label")}
+            placeholder={t("starting_date_placeholder")}
             value={date}
             right={
               <TextInput.Icon
@@ -285,23 +286,18 @@ export default function BookAppointmentScreen() {
         setValue={setTime}
         items={items}
         setItems={setItems}
-        placeholder="Pick a Time"
+        placeholder={t("pick_a_time_placeholder")}
       />
       <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-        <Button
-          mode="contained"
-          onPress={() => {
-            handleAppointmentSubmission(); // TODO: Fix this Show the dialog to be able to function in ios as well
-          }}
-        >
-          {isReschedule ? "Reschedule" : "Book"}
+        <Button mode="contained" onPress={handleAppointmentSubmission}>
+          {isReschedule ? t("reschedule_button_text") : t("book_button_text")}
         </Button>
         <Button
           mode="contained-tonal"
           style={{ marginRight: 16 }}
           onPress={() => navigation.goBack()}
         >
-          Cancel
+          {t("cancel_button_text")}
         </Button>
       </View>
       <View style={{ justifyContent: "center", flex: 1, alignItems: "center" }}>

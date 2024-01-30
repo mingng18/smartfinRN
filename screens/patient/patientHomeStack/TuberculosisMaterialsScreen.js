@@ -5,12 +5,14 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Button, List, Searchbar, Text, useTheme } from "react-native-paper";
 import TextListButton from "../../../components/ui/TextListButton";
 import YoutubePlayer from "react-native-youtube-iframe";
+import { useTranslation } from "react-i18next";
 
 export default function TuberculosisMaterialsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = React.useState("");
   const [playing, setPlaying] = useState(false);
+  const { t } = useTranslation("patient");
 
   const onStateChange = useCallback(
     (state) => {
@@ -27,7 +29,7 @@ export default function TuberculosisMaterialsScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "TB Materials",
+      headerTitle: t("tb_materials"),
     });
   });
 
@@ -113,7 +115,7 @@ export default function TuberculosisMaterialsScreen() {
         }}
       >
         <Searchbar
-          placeholder="Search"
+          placeholder={t("search")}
           onChangeText={(query) => setSearchQuery(query)}
           value={searchQuery}
           style={{ marginTop: 16 }}
@@ -128,27 +130,25 @@ export default function TuberculosisMaterialsScreen() {
             />
           ))}
         </List.Section>
-        <View style={{ flexDirection: "row", marginTop: 24 }}>
-          <Text variant="titleLarge">More Materials</Text>
-          {/* <Button
-            mode="contained"
-            onPress={() => navigate("")}
-          >
-            More Materials
-          </Button> */}
-        </View>
-        <View style={{ flexDirection: "row", marginTop: 16, flexWrap: "wrap" }}>
-          <Button
-            mode="contained"
-            style={{ marginRight: 16, marginBottom: 16 }}
-            onPress={() => {}}
-          >
-            About TB
-          </Button>
-          <Button mode='contained-tonal' style={{ marginBottom: 16 }} onPress={() => {}}>
-            About MyTBCompanion
-          </Button>
-        </View>
+        <Text style={{ marginTop: 24 }} variant="titleLarge">
+  {t("more_materials")}
+</Text>
+<View style={{ flexDirection: "row", marginTop: 16, flexWrap: "wrap" }}>
+  <Button
+    mode="contained"
+    style={{ marginRight: 16, marginBottom: 16 }}
+    onPress={() => {}}
+  >
+    {t("about_tb")}
+  </Button>
+  <Button
+    mode="contained-tonal"
+    style={{ marginBottom: 16 }}
+    onPress={() => {}}
+  >
+    {t("about_my_tb_companion")}
+  </Button>
+</View>
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
     </View>

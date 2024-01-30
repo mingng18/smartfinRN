@@ -5,22 +5,24 @@ import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { VIDEO_STATUS } from "../../../constants/constants";
 import UploadVideoModal from "./UploadVideoModal";
+import { useTranslation } from "react-i18next";
 
 export default function VideoDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
   const currentVideo = params.video;
+  const { t } = useTranslation("patient");
 
   //Set the Appointment Status to change layout
   React.useLayoutEffect(() => {
-    var headerTitle = "Video Details";
+    let headerTitle = t("video_details");
     if (currentVideo.status === VIDEO_STATUS.PENDING) {
-      headerTitle = "Video Submitted";
+      headerTitle = t("video_submitted");
     } else if (currentVideo.status === VIDEO_STATUS.ACCEPTED) {
-      headerTitle = "Video Accepted";
+      headerTitle = t("video_accept");
     } else if (currentVideo.status === VIDEO_STATUS.REJECTED) {
-      headerTitle = "Video Rejected";
+      headerTitle = t("video_rejected");
     }
 
     navigation.setOptions({
@@ -31,7 +33,7 @@ export default function VideoDetailsScreen() {
   function PendingVideoCard() {
     return (
       <Text variant="bodyLarge" style={{ marginTop: 32 }}>
-        The video is pending to be reviewed by the healthcare.
+        {t("video_pending_review")}
       </Text>
     );
   }
@@ -40,7 +42,7 @@ export default function VideoDetailsScreen() {
     return (
       <View>
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Verified Date
+          {t("verified_date")}
         </Text>
         <View
           style={{
@@ -65,7 +67,7 @@ export default function VideoDetailsScreen() {
           </Text>
         </View>
         <Text variant="bodyLarge" style={{ marginTop: 32 }}>
-          The video has been approved by doctor.
+          {t("video_approved_by_doctor")}
         </Text>
       </View>
     );
@@ -86,22 +88,22 @@ export default function VideoDetailsScreen() {
     return (
       <View>
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Remarks
+          {t("remarks")}
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
           {currentVideo.rejected_reason
             ? currentVideo.rejected_reason
-            : "The healthcare didn't give any reason"}
+            : t("no_rejected_reason")}
         </Text>
         {isToday() ? (
           <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
             <Button mode="contained" onPress={handlePresentModalPress}>
-              Resubmit
+              {t("resubmit")}
             </Button>
           </View>
         ) : (
           <Text variant="bodyLarge" style={{ marginTop: 32 }}>
-            You have miss the time to resubmit
+            {t("missed_resubmit_time")}
           </Text>
         )}
       </View>
@@ -123,7 +125,7 @@ export default function VideoDetailsScreen() {
       }}
     >
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
-        Date and time submitted
+        {t("date_time_submitted")}
       </Text>
       <View
         style={{

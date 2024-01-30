@@ -22,8 +22,6 @@ import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
   LOGO_BLACK_TYPE,
-  LOGO_NO_TYPE,
-  LOGO_WHITE_TYPE,
   USER_TYPE,
   VIDEO_STATUS,
 } from "../../constants/constants";
@@ -38,6 +36,7 @@ import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
 import { fetchBookedAppointmentDates } from "../../store/redux/bookedAppointmentDateSlice";
+import { useTranslation } from "react-i18next";
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
@@ -51,11 +50,17 @@ function PatientHomeScreen() {
   );
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
+  const { t } = useTranslation("patient");
+
   const [pendingAppointmentsCount, setPendingAppointmentsCount] =
     React.useState(0);
   const [rejectedVideo, setRejectedVideo] = React.useState(null);
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
+
+  // React.useLayoutEffect(() => {
+  //   navigate("TuberculosisMaterialsScreen");
+  // });
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -80,9 +85,9 @@ function PatientHomeScreen() {
   };
 
   React.useEffect(() => {
-    console.log("the diagnosis date: " + user.date_of_diagnosis);
-    console.log("the user : " + user.first_name + " " + user.last_name);
-    console.log("the profile pic : " + user.profile_pic_url);
+    // console.log("the diagnosis date: " + user.date_of_diagnosis);
+    // console.log("the user : " + user.first_name + " " + user.last_name);
+    // console.log("the profile pic : " + user.profile_pic_url);
     //Check the count of the pending appointment
     const calculatePendingAppointmentsCount = () => {
       const appointmentData = appointments.filter(
@@ -155,15 +160,15 @@ function PatientHomeScreen() {
   const handlePresentModalPress = () => {
     if (!rejectedVideo && hasAteMedicine) {
       return Alert.alert(
-        "You have already uploaded today",
-        "You have already uploaded a video today. If you upload again, it will replace the previous video.",
+        t("already_uploaded_title"),
+        t("already_uploaded_message"),
         [
           {
-            text: "Continue",
+            text: t("continue_button"),
             onPress: () => bottomSheetModalRef.current?.present(),
           },
           {
-            text: "Cancel",
+            text: t("cancel_button"),
             onPress: () => {
               return;
             },
@@ -218,7 +223,7 @@ function PatientHomeScreen() {
             />
           )}
           <View style={[styles.headerText]}>
-            <Text variant="bodyLarge">Hello</Text>
+            <Text variant="bodyLarge">{t("hello_text")}</Text>
             <Text variant="headlineLarge">
               {capitalizeFirstLetter(user.first_name)}
             </Text>
@@ -243,7 +248,7 @@ function PatientHomeScreen() {
           >
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
-                Pending
+                {t("pending_text")}
               </Text>
               <View
                 style={{
@@ -272,7 +277,7 @@ function PatientHomeScreen() {
                     flexWrap: "wrap",
                   }}
                 >
-                  Congratulations! Your to-do lists have been cleared!
+                  {t("congratulations_message")}
                 </Text>
               ) : (
                 <ScrollView
@@ -282,7 +287,7 @@ function PatientHomeScreen() {
                 >
                   {!hasAteMedicine && (
                     <ToDoCard
-                      title={"You haven’t take\nmedication yet today"}
+                      title={t("medication_not_taken_title")}
                       icon="medical-bag"
                       count={0}
                       onPressedCallback={() =>
@@ -292,7 +297,7 @@ function PatientHomeScreen() {
                   )}
                   {pendingAppointmentsCount > 0 && (
                     <ToDoCard
-                      title={"Appointment"}
+                      title={t("appointment_title")}
                       icon="calendar"
                       count={pendingAppointmentsCount}
                       onPressedCallback={() => navigate("AllAppointmentScreen")}
@@ -300,7 +305,7 @@ function PatientHomeScreen() {
                   )}
                   {rejectedVideo && (
                     <ToDoCard
-                      title={"Video Rejected"}
+                      title={t("video_rejected_title")}
                       icon="play"
                       count={"1"}
                       onPressedCallback={() => {
@@ -325,19 +330,18 @@ function PatientHomeScreen() {
           {/* ================== CTA buttons ============== */}
           <View style={{ paddingVertical: 32 }}>
             <Text variant="titleLarge" style={{ marginHorizontal: 16 }}>
-              Are you up for something?
+              {t("up_for_something_text")}
             </Text>
             <View style={[{ flexDirection: "row", marginTop: 16 }]}>
-              {/* TODO change the navigation screen for each */}
               <CTAButton
                 icon="upload"
-                title="Upload Video"
+                title={t("upload_video_title")}
                 color={theme.colors.primary}
                 onPressedCallback={handlePresentModalPress}
               />
               <CTAButton
                 icon="emoticon-sick"
-                title="Side Effect"
+                title={t("side_effect_title")}
                 color={theme.colors.secondary}
                 onPressedCallback={() => {
                   navigate("ReportSideEffectScreen");
@@ -345,7 +349,7 @@ function PatientHomeScreen() {
               />
               <CTAButton
                 icon="calendar-blank"
-                title="Appointment"
+                title={t("appointment_title")}
                 color={theme.colors.tertiary}
                 onPressedCallback={() => navigate("BookAppointmentScreen")}
                 isLastItem={true}
@@ -363,14 +367,14 @@ function PatientHomeScreen() {
               variant="titleLarge"
               style={{ marginHorizontal: 16, alignSelf: "center" }}
             >
-              Materials
+              {t("materials_title")}
             </Text>
             <Button
               mode="contained"
               onPress={() => navigate("TuberculosisMaterialsScreen")}
               style={{ marginHorizontal: 16, marginTop: 16 }}
             >
-              Learn more
+              {t("learn_more_button")}
             </Button>
           </View>
           <View

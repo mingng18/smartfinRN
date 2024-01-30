@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { Alert, Modal, Pressable, View } from "react-native";
 import {
   Button,
@@ -15,7 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
 import * as Haptics from "expo-haptics";
-import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
+// import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
 import { serverTimestamp, Timestamp } from "firebase/firestore";
 import {
@@ -25,13 +25,17 @@ import {
 } from "../../../constants/constants";
 import { useDispatch } from "react-redux";
 import { createSideEffect } from "../../../store/redux/sideEffectSlice";
+import { useTranslation } from "react-i18next";
 
 function ReportSideEffectScreen() {
   const navigation = useNavigation();
   const { key, name, params, path } = useRoute();
   const theme = useTheme();
+  const { t } = useTranslation("patient");
+
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [timePickerOpen, setTimePickerOpen] = React.useState(false);
+  const [calendarLocale, setCalendarLocale] = React.useState("");
 
   const [date, setDate] = React.useState(undefined);
   const [submitDate, setSubmitDate] = React.useState(undefined);
@@ -49,8 +53,16 @@ function ReportSideEffectScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Report for Side Effect",
+      headerTitle: t("report_for_side_effect_header_title"),
     });
+
+    const loadCalendarLocale = async () => {
+      const locale = await SecureStore.getItemAsync("locale");
+      console.log(locale);
+      setCalendarLocale(locale);
+    };
+
+    loadCalendarLocale();
   });
 
   //Calendar
@@ -171,19 +183,16 @@ function ReportSideEffectScreen() {
     ) {
       if (
         (!submitDate || hour === "" || minute === "") &&
-        symptoms.length == 0 &&
+        symptoms.length === 0 &&
         otherSymptom === ""
       ) {
-        Alert.alert("Error", "Please fill in all the details");
-      } else if (symptoms.length == 0 && otherSymptom === "") {
-        Alert.alert("Symptom Error", "Please fill in the symptoms");
+        Alert.alert(t("error_title"), t("error_fill_details_message"));
+      } else if (symptoms.length === 0 && otherSymptom === "") {
+        Alert.alert(t("symptom_error_title"), t("symptom_error_message"));
       } else if (!submitDate || hour === "" || minute === "") {
-        Alert.alert("Date Time Error", "Please fill in the date and time");
+        Alert.alert(t("date_time_error_title"), t("date_time_error_message"));
       } else {
-        Alert.alert(
-          "Something Wrong",
-          "Please check all the details and try again"
-        );
+        Alert.alert(t("something_wrong_title"), t("something_wrong_message"));
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       return;
@@ -213,11 +222,11 @@ function ReportSideEffectScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       if (symptoms.some((s) => s.grade > 1)) {
         Alert.alert(
-          "Successfully submited",
-          "Please seek medical assistance at nearest hospital."
+          t("successfully_submitted_title"),
+          t("medical_assistance_message")
         );
       } else {
-        Alert.alert("Success", "Side Effects successfully reported.");
+        Alert.alert(t("success_title"), t("side_effects_reported_message"));
       }
       dispatch(
         createSideEffect({
@@ -235,7 +244,7 @@ function ReportSideEffectScreen() {
       navigation.popToTop();
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert("Error Submitting", "Please try again later");
+      Alert.alert(t("error_submitting_title"), t("try_again_later_message"));
       console.error("Error submitting data to database:", error);
       // Handle the error here (e.g., show an error message to the user)
     }
@@ -255,6 +264,25 @@ function ReportSideEffectScreen() {
     }).filter((disabledDate) => disabledDate !== null), // Disable all days after today
   };
 
+  const tuberculosisSymptoms = [
+    t("eyesight_worsening"),
+    t("yellowing_of_eyes"),
+    t("ringing_sound"),
+    t("tingling_sensation"),
+    t("bruises"),
+    t("bleeding"),
+    t("joint_pains"),
+    t("rashes"),
+    t("mood_worsening_changes"),
+    t("weight_loss"),
+    t("tiredness"),
+    t("seizures"),
+    t("itchiness"),
+    t("dark_urine"),
+    t("orange_urine"),
+    t("stomach_pain_particularly_right_upper_area"),
+  ];
+
   return (
     <>
       <ScrollView
@@ -271,14 +299,14 @@ function ReportSideEffectScreen() {
             height: "100%",
           }}
         >
-          <Text variant="titleLarge">When did these symptoms start?</Text>
+          <Text variant="titleLarge">{t("symptoms_start_question")}</Text>
           <Pressable onPress={() => setCalendarOpen(true)}>
             <View pointerEvents="none">
               <TextInput
                 mode="outlined"
                 style={{ marginTop: 16 }}
-                label="Date"
-                placeholder="Starting date of the symptoms"
+                label={t("date_label")}
+                placeholder={t("date_placeholder")}
                 value={date}
                 onChangeText={(value) => setDate(value)}
                 right={
@@ -296,9 +324,9 @@ function ReportSideEffectScreen() {
               <TextInput
                 mode="outlined"
                 style={{ marginTop: 16 }}
-                label="Time"
-                placeholder="Starting date of the symptoms"
-                value={hour == "" ? `` : `${hour} : ${minute}`}
+                label={t("time_label")}
+                placeholder={t("time_placeholder")}
+                value={hour === "" ? "" : `${hour}:${minute}`}
                 onChangeText={(value) => setDate(value)}
                 right={
                   <TextInput.Icon
@@ -319,22 +347,24 @@ function ReportSideEffectScreen() {
             }}
           >
             <Text variant="titleLarge" style={{}}>
-              Symptoms
+              {t("symptoms_title")}
             </Text>
             <IconButton
               icon="information-outline"
               size={24}
               onPress={() =>
                 Alert.alert(
-                  "Grade Classification",
-                  "Grade 1\nEffects mild and generally not bothersome\n\nGrade 2\nEffects are bothersome and may interfere with doing some activities but are not dangerous\n\nGrade 3\nEffects are serious and interfere with a person’s ability to do basic things like eat or get dressed"
+                  t("grade_classification_title"),
+                  `${t("grade_1_description")}\n\n${t(
+                    "grade_2_description"
+                  )}\n\n${t("grade_3_description")}`
                 )
               }
               // onPress={showModal}
             />
           </View>
-          <Text variant="titleLarge" style={{ marginBottom: 8 }}>
-            (Choose all applicable)
+          <Text variant="titleMedium" style={{ marginBottom: 8 }}>
+            {t("choose_all_applicable")}
           </Text>
           <View
             style={{
@@ -347,19 +377,19 @@ function ReportSideEffectScreen() {
               variant="labelSmall"
               style={{ marginRight: 16, marginBottom: 4 }}
             >
-              Grade 1 : Mild
+              {t("grade_1_desc")}
             </Text>
             <Text
               variant="labelSmall"
               style={{ marginRight: 16, marginBottom: 4 }}
             >
-              Grade 2 : Moderate
+              {t("grade_2_desc")}
             </Text>
             <Text
               variant="labelSmall"
               style={{ marginRight: 16, marginBottom: 4 }}
             >
-              Grade 3 : Serious
+              {t("grade_3_desc")}
             </Text>
           </View>
           {tuberculosisSymptoms.map((symptom, i) => {
@@ -465,7 +495,7 @@ function ReportSideEffectScreen() {
             style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
           >
             <DatePickerModal
-              locale="en-GB"
+              locale={calendarLocale}
               mode="single"
               visible={calendarOpen}
               onDismiss={onDismissSingle}
@@ -475,7 +505,7 @@ function ReportSideEffectScreen() {
               validRange={validRange}
             />
             <TimePickerModal
-              locale="en-GB"
+              locale={calendarLocale}
               visible={timePickerOpen}
               onDismiss={onDismiss}
               onConfirm={onConfirm}

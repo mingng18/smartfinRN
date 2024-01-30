@@ -6,12 +6,14 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 export default function UploadVideoModal({ bottomSheetModalRef }) {
   const { navigate } = useNavigation();
   const snapPoints = React.useMemo(() => ["30%"], []);
   const theme = useTheme();
   const [dialogVisible, setDialogVisible] = React.useState(false);
+  const { t } = useTranslation("patient");
 
   const handleClosePress = () => bottomSheetModalRef.current.close();
 
@@ -45,7 +47,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
             justifyContent: "space-between",
           }}
         >
-          <Text variant="labelLargeProminent">Upload Video</Text>
+          <Text variant="labelLargeProminent">{t("upload_video")}</Text>
           <View
             style={{
               backgroundColor: theme.colors.primary,
@@ -61,7 +63,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
               bottomSheetModalRef.current.close();
             }}
           >
-            Upload Video from Storage
+            {t("upload_video_from_storage")}
           </Button>
           <Button
             mode="text"
@@ -70,7 +72,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
               bottomSheetModalRef.current.close();
             }}
           >
-            Take Video
+            {t("take_video")}
           </Button>
           <View
             style={{
@@ -81,7 +83,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
             }}
           />
           <Button mode="text" onPress={handleClosePress}>
-            Cancel
+            {t("cancel")}
           </Button>
         </View>
       </BottomSheetModal>

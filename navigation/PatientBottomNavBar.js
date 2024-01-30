@@ -5,19 +5,22 @@ import PatientProfileScreen from "../screens/patient/PatientProfileScreen";
 import UmiScreen from "../screens/patient/UmiScreen";
 import PatientCalendarScreen from "../screens/patient/PatientCalendarScreen";
 import PatientHomeScreen from "../screens/patient/PatientHomeScreen";
+import { useTranslation } from "react-i18next";
 
 const Tab = createMaterialBottomTabNavigator();
 
 //Create Bottom Navigation Bar for Patient Module
 const PatientBottomNavBar = () => {
   const theme = useTheme();
+  const { t } = useTranslation("patient");
+
 
   //Routes for Bottom Nav Bar
-  const [routes, setRoutes] = React.useState([
+  const routes = [
     {
       index: 0,
       key: "patientHome",
-      title: "Home",
+      title: t("home"), // Update the title here
       focusedIcon: "home",
       component: PatientHomeScreen,
       unfocusedIcon: "home-outline",
@@ -25,7 +28,7 @@ const PatientBottomNavBar = () => {
     {
       index: 1,
       key: "patientCalendar",
-      title: "My Calendar",
+      title: t("my_calendar"), // Update the title here
       focusedIcon: "calendar-blank",
       component: PatientCalendarScreen,
       unfocusedIcon: "calendar-blank-outline",
@@ -33,7 +36,7 @@ const PatientBottomNavBar = () => {
     {
       index: 2,
       key: "umi",
-      title: "Umi",
+      title: t("umi"), // Update the title here
       focusedIcon: "robot",
       component: UmiScreen,
       unfocusedIcon: "robot-outline",
@@ -41,12 +44,12 @@ const PatientBottomNavBar = () => {
     {
       index: 3,
       key: "patientProfile",
-      title: "Profile",
+      title: t("profile"), // Update the title here
       focusedIcon: "account",
       component: PatientProfileScreen,
       unfocusedIcon: "account-outline",
     },
-  ]);
+  ];
 
   return (
     <Tab.Navigator
@@ -56,7 +59,7 @@ const PatientBottomNavBar = () => {
       barStyle={{ backgroundColor: theme.colors.primary }}
       activeColor={theme.colors.onPrimary}
       inactiveColor={theme.colors.primaryContainer}
-      initialRouteName="Home"
+      // initialRouteName="patientHome"
       backBehavior="none"
       style={{ margin: 0, padding: 0 }}
     >

@@ -10,9 +10,8 @@ import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Navigation from "./navigation/Navigation";
-import { baseVariants, customVariants } from "./constants/customFonts";
+import { customVariants } from "./constants/customFonts";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { enGB, registerTranslation } from "react-native-paper-dates";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./store/redux/store";
@@ -29,10 +28,10 @@ import { fetchSideEffects } from "./store/redux/sideEffectSlice";
 import { fetchVideos } from "./store/redux/videoSlice";
 import { USER_TYPE } from "./constants/constants";
 import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
-import DropDownPicker from "react-native-dropdown-picker";
 import { LogBox } from "react-native";
-import { I18nextProvider } from "react-i18next";
+import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./i18n";
+import calendarLocales from "./util/calendarLocales";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();
@@ -43,6 +42,8 @@ SplashScreen.preventAutoHideAsync();
 function Root() {
   const [isTryingLogin, setIsTryingLogin] = useState(true);
   const dispatch = useDispatch();
+  const { i18n } = useTranslation();
+
 
   LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
   LogBox.ignoreAllLogs();
@@ -137,8 +138,8 @@ function Root() {
       setIsTryingLogin(false);
     }
 
-    // Initialise the React Native Paper Calendar library
-    registerTranslation("en-GB", enGB);
+    //Initialise Calendar Locale
+    calendarLocales(i18n);
 
     fetchToken();
   }, []);

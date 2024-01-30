@@ -23,6 +23,7 @@ import * as SecureStore from "expo-secure-store";
 import { createVideo } from "../../../store/redux/videoSlice";
 import { addDocumentWithId } from "../../../util/firestoreWR";
 import { VIDEO_STATUS } from "../../../constants/constants";
+import { useTranslation } from "react-i18next";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
@@ -33,6 +34,7 @@ function PreviewVideoScreen() {
   const videoRef = React.useRef(null);
   const dispatch = useDispatch();
   const { key, name, params, path } = route;
+  const { t } = useTranslation("patient");
 
   const [video, setVideo] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
@@ -40,11 +42,11 @@ function PreviewVideoScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Upload Video",
+      headerTitle: t("upload_video_header_title"),
     });
     setVideo(params.uri);
     // console.log(video);
-  });
+  }, [params, t]);
 
   const pickImage = async () => {
     //No permission when launching image library
@@ -69,14 +71,18 @@ function PreviewVideoScreen() {
 
       if (uid === null || uid === undefined || uid === "") {
         return Alert.alert(
-          "Error",
-          "Something wrong, please login again and try again"
+          t("unauthorized_alert_title"),
+          t("unauthorized_alert_message")
         );
       }
 
       if (video === null || video === undefined || video === "") {
-        return Alert.alert("Video error", "Please choose another video");
+        return Alert.alert(
+          t("video_error_alert_title"),
+          t("video_error_alert_message")
+        );
       }
+
       const videoData = await fetch(video);
       const videoBlob = await videoData.blob();
       const videoRef = ref(
@@ -85,6 +91,7 @@ function PreviewVideoScreen() {
           uid +
           Timestamp.now().toDate().toISOString().slice(0, 10)
       );
+
       uploadTask = uploadBytesResumable(videoRef, videoBlob);
       uploadTask.on(
         "state_changed",
@@ -95,26 +102,32 @@ function PreviewVideoScreen() {
           setUploadProgress(progress.toFixed());
         },
         (error) => {
-          switch (error.code) {
-            case "storage/unauthorized":
-              // User doesn't have permission to access the object
-              Alert.alert(
-                "Unauthorized",
-                "Error uploading video, please login again and try again"
-              );
-              break;
-
-            case "storage/canceled":
-              // User canceled the upload
-              Alert.alert("Cancelled", "Video upload cancelled");
-              break;
-
-            case "storage/unknown":
-              // Unknown error occurred, inspect error.serverResponse
-              Alert.alert("Error", "Error uploading video, please try again");
-              break;
-          }
           setIsLoading(false);
+          throw error;
+          // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+          // switch (error.code) {
+          //   case "storage/unauthorized":
+          //     // User doesn't have permission to access the object
+          //     Alert.alert(
+          //       t("unauthorized_alert_title"),
+          //       t("unauthorized_alert_message")
+          //     );
+          //     break;
+
+          //   case "storage/canceled":
+          //     Alert.alert(
+          //       t("cancelled_alert_title"),
+          //       t("cancelled_alert_message")
+          //     );
+          //     break;
+
+          //   case "storage/unknown":
+          //     Alert.alert(
+          //       t("unknown_error_alert_title"),
+          //       t("unknown_error_alert_message")
+          //     );
+          //     break;
+          // }
         },
         (snapshot) => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -135,7 +148,10 @@ function PreviewVideoScreen() {
                     Haptics.notificationAsync(
                       Haptics.NotificationFeedbackType.Success
                     );
-                    Alert.alert("Success", "Video successfully uploaded.");
+                    Alert.alert(
+                      t("success_alert_title"),
+                      t("success_alert_message")
+                    );
                     dispatch(
                       createVideo({
                         medical_checklist: "",
@@ -159,7 +175,10 @@ function PreviewVideoScreen() {
                 console.log(
                   `Error while getting metadata and writing to firestore: ${error}`
                 );
-                Alert.alert("Error", "Error uploading video, please try again");
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Error
+                );
+                Alert.alert(t("error_alert_title"), t("error_alert_message"));
               });
           });
         },
@@ -168,29 +187,30 @@ function PreviewVideoScreen() {
         }
       );
     } catch (error) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       switch (error.code) {
         case "storage/unauthorized":
           // User doesn't have permission to access the object
           Alert.alert(
-            "Unauthorized",
-            "Error uploading video, please login again and try again"
+            t("unauthorized_alert_title"),
+            t("unauthorized_alert_message")
           );
           break;
 
         case "storage/canceled":
           // User canceled the upload
-          Alert.alert("Cancelled", "Video upload cancelled");
+          Alert.alert(t("cancelled_alert_title"), t("cancelled_alert_message"));
           break;
 
-        case "storage/unknown":
+        default:
           // Unknown error occurred, inspect error.serverResponse
-          Alert.alert("Error", "Error uploading video, please try again");
+          Alert.alert(
+            t("unknown_error_alert_title"),
+            t("unknown_error_alert_message")
+          );
           break;
       }
-
       setIsLoading(false);
-      setIsLoading(false);
-      Alert.alert("Error", "Error uploading video, please try again");
       console.error("Error uploading video:", error);
     }
   };
@@ -201,7 +221,7 @@ function PreviewVideoScreen() {
         paddingHorizontal: 16,
         backgroundColor: theme.colors.background,
         flex: 1,
-        position: "relative", // Position the container relative to its normal position
+        position: "relative",
       }}
     >
       <View
@@ -254,7 +274,7 @@ function PreviewVideoScreen() {
           style={{ marginLeft: 16, marginBottom: 16 }}
           disabled={isLoading ? true : false}
         >
-          Upload
+          {t("upload_button_text")}
         </Button>
         <Button
           mode="contained-tonal"
@@ -262,7 +282,7 @@ function PreviewVideoScreen() {
           style={{ marginBottom: 16 }}
           disabled={isLoading ? true : false}
         >
-          Choose Another Video
+          {t("choose_another_video_button_text")}
         </Button>
       </View>
     </View>

@@ -21,6 +21,7 @@ import { clearAppointmentSlice } from "../../store/redux/appointmentSlice";
 import { clearSideEffectSlice } from "../../store/redux/sideEffectSlice";
 import { clearVideoSlice } from "../../store/redux/videoSlice";
 import { clearSignupSlice } from "../../store/redux/signupSlice";
+import { useTranslation } from "react-i18next";
 
 function PatientProfileScreen() {
   const theme = useTheme();
@@ -30,6 +31,7 @@ function PatientProfileScreen() {
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
   const today = new Date();
+  const { t } = useTranslation("patient");
 
   // React.useLayoutEffect(() => {
   //   navigate("PatientEditProfileScreen");
@@ -45,9 +47,9 @@ function PatientProfileScreen() {
   }
 
   function signOutHandler() {
-    Alert.alert("Signing out", "Are you sure want to sign out?", [
+    Alert.alert(t("signing_out_message"), t("confirmation_message"), [
       {
-        text: "Sign Out",
+        text: t("sign_out_button_label"),
         onPress: () => {
           signOut(auth)
             .then(async () => {
@@ -58,12 +60,15 @@ function PatientProfileScreen() {
             .catch((error) => {
               // An error occurred during sign out
               console.error("Error signing out:", error);
-              Alert.alert("Error signing out", "Please check your connection and try again later");
+              Alert.alert(
+                t("error_signing_out_title"),
+                t("error_signing_out_message")
+              );
             });
         },
       },
       {
-        text: "Cancel",
+        text: t("cancel_button_label"),
         style: "cancel",
       },
     ]);
@@ -202,11 +207,11 @@ function PatientProfileScreen() {
         <View style={[styles.headerText]}>
           <View style={{ flexDirection: "row" }}>
             <Text variant="bodyLarge">
-              {streakCounter() == 7
-                ? "Keep it up!"
+              {streakCounter() === 7
+                ? t("keep_it_up_message")
                 : streakCounter() > 1
-                ? "Take your Medication"
-                : "You can do better"}
+                ? t("take_medication_message")
+                : t("you_can_do_better_message")}
             </Text>
           </View>
           <Text variant="headlineLarge">
@@ -230,7 +235,7 @@ function PatientProfileScreen() {
           style={{ width: "60%" }}
         />
         <InformationChip
-          text={capitalizeFirstLetter(user.gender)}
+          text={t(user.gender.toLowerCase())}
           icon={"gender-male-female"}
           style={{ width: "40%" }}
         />
@@ -286,23 +291,24 @@ function PatientProfileScreen() {
           {(fill) => (
             <>
               <Text variant="headlineLarge">{fill}%</Text>
-              <Text variant="titleMedium">Progress Completion</Text>
+              <Text variant="titleMedium">
+                {t("progress_completion_title")}
+              </Text>
               <Text variant="labelSmall">
                 {`${getTotalVideosForCurrentMonth()} video submitted for `}
                 {monthsSinceDiagnosis}
                 {monthsSinceDiagnosis === 1
-                  ? "st"
+                  ? t("st_suffix")
                   : monthsSinceDiagnosis === 2
-                  ? "nd"
+                  ? t("nd_suffix")
                   : monthsSinceDiagnosis === 3
-                  ? "rd"
-                  : "th"}
+                  ? t("rd_suffix")
+                  : t("th_suffix")}
                 {` month`}
               </Text>
-              <Text
-                variant="labelSmall"
-                style={{ opacity: 1 }}
-              >{`${videos.length} video submitted in total`}</Text>
+              <Text variant="labelSmall" style={{ opacity: 1 }}>
+                {`${videos.length}${t("video_submitted_in_total_text")}`}
+              </Text>
               <Text variant="labelLarge" style={{ opacity: 0 }} />
               <Text variant="labelLarge" style={{ opacity: 0 }} />
               <Text variant="labelLarge" style={{ opacity: 0 }} />
@@ -312,11 +318,11 @@ function PatientProfileScreen() {
       </View>
       {/* ========================== Settings ======================= */}
       <TextListButton
-        text={"Settings"}
+        text={t("settings")}
         onPressCallback={() => navigate("PatientSettingsScreen")}
       />
       <TextListButton
-        text={"History"}
+        text={t("history")}
         onPressCallback={() => navigate("PatientHistoryTab")}
       />
       <Button
@@ -324,7 +330,7 @@ function PatientProfileScreen() {
         style={{ marginTop: 24 }}
         onPress={() => signOutHandler()}
       >
-        Sign Out
+        {t("sign_out")}
       </Button>
     </SafeAreaView>
   );

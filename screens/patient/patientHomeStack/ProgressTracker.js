@@ -7,6 +7,7 @@ import { VIDEO_STATUS } from "../../../constants/constants";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import Legend from "../../../components/ui/Legend";
+import { useTranslation } from "react-i18next";
 
 export default function ProgressTracker() {
   const theme = useTheme();
@@ -14,12 +15,13 @@ export default function ProgressTracker() {
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
   const navigation = useNavigation();
   const user = useSelector((state) => state.authObject);
+  const { t } = useTranslation("patient");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Progress Tracker",
+      headerTitle: t("progress_tracker_header_title"),
     });
-  });
+  }, [t]);
 
   React.useEffect(() => {
     //Check if the patient has ate medicine today
@@ -117,19 +119,18 @@ export default function ProgressTracker() {
         >
           <Legend
             color={theme.colors.greenContainer}
-            text={"Video Submitted"}
+            text={t("video_submitted_legend_text")}
           />
-          <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
-          {/* <Legend
-            color={theme.colors.surfaceContainerHigh}
-            text={"Video Pending"}
-          /> */}
+          <Legend
+            color={theme.colors.errorContainer}
+            text={t("video_missed_legend_text")}
+          />
         </View>
         <Divider />
         <Text variant="bodyLarge" style={{ marginTop: 24 }}>
           {hasAteMedicine
-            ? "You have completed your medication today!"
-            : "You haven't complete your medication today."}
+            ? t("completed_medication_text")
+            : t("incomplete_medication_text")}
         </Text>
       </View>
     </KeyboardAvoidingView>

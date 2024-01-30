@@ -15,11 +15,13 @@ import {
 } from "../../constants/constants";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import { sideEffectGradeText } from "../../util/sideEffectUtil";
+import { useTranslation } from "react-i18next";
 
 function PatientCalendarScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
   const bottomSheetModalRef = useRef(null);
+  const { t } = useTranslation("patient");
 
   //Data state
   const [highlightedDates, setHighlightedDates] = React.useState([]);
@@ -96,12 +98,13 @@ function PatientCalendarScreen() {
         >
           <Text variant="labelLarge">
             {matchedVideo.status === "accepted"
-              ? "Video submitted and accepted"
+              ? t("video_accepted")
               : matchedVideo.status === "pending"
-              ? "Video submitted"
-              : "Video Rejected"}
+              ? t("video_pending")
+              : t("video_rejected")}
           </Text>
           {matchedVideo.rejected_reason && (
+            //TODO translate reason
             <Text variant="bodyMedium">{matchedVideo.rejected_reason}</Text>
           )}
         </Pressable>
@@ -129,7 +132,7 @@ function PatientCalendarScreen() {
                 marginBottom: 16,
               }}
             >
-              <Text variant="labelLarge">You have yet to upload</Text>
+              <Text variant="labelLarge">{t("you_have_yet_to_upload")}</Text>
             </View>
           </Pressable>
         );
@@ -146,7 +149,7 @@ function PatientCalendarScreen() {
               marginBottom: 16,
             }}
           >
-            <Text variant="labelLarge">You missed your medication!</Text>
+            <Text variant="labelLarge">{t("you_missed_your_medication")}</Text>
           </View>
         );
       } else if (
@@ -163,7 +166,7 @@ function PatientCalendarScreen() {
             }}
           >
             <Text variant="labelLarge">
-              Come back later to upload your video!
+              {t("come_back_later_to_upload_video")}
             </Text>
           </View>
         );
@@ -241,7 +244,7 @@ function PatientCalendarScreen() {
                   appointment.healthcare_first_name === "" ||
                     appointment.healthcare_first_name === null ||
                     appointment.healthcare_first_name === undefined
-                    ? "Appointment"
+                    ? t("appointment_title")
                     : appointment.healthcare_first_name
                 )}
                 status={capitalizeFirstLetter(appointment.appointment_status)}

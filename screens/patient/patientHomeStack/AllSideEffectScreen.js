@@ -11,6 +11,7 @@ import {
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 function AllSideEffectScreen() {
   const navigation = useNavigation();
@@ -18,6 +19,7 @@ function AllSideEffectScreen() {
   const sideEffects = useSelector(
     (state) => state.sideEffectObject.sideEffects
   );
+  const { t } = useTranslation("patient");
 
   const sortedSideEffects = [...sideEffects].sort((a, b) => {
     const timestampA = new Date(a.side_effect_occuring_timestamp);
@@ -47,11 +49,13 @@ function AllSideEffectScreen() {
           sortedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              subject={sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
-                ? "Grade 1"
-                : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
-                ? "Grade 2"
-                : "Grade 3"}
+              subject={
+                sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
+                  ? t("grade_1")
+                  : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
+                  ? t("grade_2")
+                  : t("grade_3")
+              }
               date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
               time={new Date(
                 sideEffect.side_effect_occuring_timestamp
@@ -70,9 +74,7 @@ function AllSideEffectScreen() {
             />
           ))
         ) : (
-          <Text variant="bodyLarge">
-            You don't have any reported side effects
-          </Text>
+          <Text variant="bodyLarge">{t("no_reported_side_effects")}</Text>
         )}
       </ScrollView>
       <View style={{ marginBottom: 38 }} />

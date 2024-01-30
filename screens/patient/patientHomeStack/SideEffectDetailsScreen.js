@@ -12,24 +12,25 @@ import {
 import { SIDE_EFFECT_STATUS } from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import SideEffectChip from "../../../components/ui/SideEffectChip";
+import { useTranslation } from "react-i18next";
 
 export default function SideEffectDetailsScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { params } = useRoute();
   const currentSideEffect = params.sideEffect;
+  const { t } = useTranslation("patient");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Side Effect",
+      headerTitle: t("side_effect_title"),
     });
   });
 
   function PendingSideEffectCard() {
     return (
       <Text variant="bodyLarge" style={{ marginTop: 24 }}>
-        Please wait patiently as your report is currently under reviewed by the
-        healthcare.
+        {t("wait_patients_report_reviewed")}
       </Text>
     );
   }
@@ -38,11 +39,11 @@ export default function SideEffectDetailsScreen() {
     return (
       <View>
         <Text variant="titleLarge" style={{ marginTop: 24 }}>
-          Remarks
+          {t("remarks_title")}
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
           {currentSideEffect.remarks === ""
-            ? "No remarks given"
+            ? t("no_remarks_given")
             : currentSideEffect.remarks}
         </Text>
       </View>
@@ -58,7 +59,7 @@ export default function SideEffectDetailsScreen() {
       }}
     >
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
-        Date and time reported
+        {t("date_time_reported_title")}
       </Text>
       <View
         style={{
@@ -81,7 +82,7 @@ export default function SideEffectDetailsScreen() {
         </Text>
       </View>
       <Text variant="titleLarge" style={{ marginTop: 32 }}>
-        Symptoms
+        {t("symptoms_title")}
       </Text>
       <View style={{ marginTop: 8, flexDirection: "row", flexWrap: "wrap" }}>
         {currentSideEffect.symptoms.map((symptom, i) => {

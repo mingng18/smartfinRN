@@ -1,8 +1,15 @@
 import { Chip, useTheme } from "react-native-paper";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
+import { useTranslation } from "react-i18next";
 
 export default function SideEffectChip({ symptom }) {
   const theme = useTheme();
+  const { t } = useTranslation("patient");
+
+  function formatSymptomKey(symptom) {
+    // Replace spaces with underscores and convert to lowercase
+    return symptom.toLowerCase().replace(/\s+/g, "_");
+  }
 
   return (
     <Chip
@@ -18,8 +25,8 @@ export default function SideEffectChip({ symptom }) {
       }}
     >
       {symptom.grade == 0
-        ? capitalizeFirstLetter(symptom.label)
-        : `${capitalizeFirstLetter(symptom.label)} : ${symptom.grade}`}
+        ? t(formatSymptomKey(symptom.label))
+        : `${t(formatSymptomKey(symptom.label))} : ${symptom.grade}`}
     </Chip>
   );
 }

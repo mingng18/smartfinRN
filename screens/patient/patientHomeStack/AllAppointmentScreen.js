@@ -18,6 +18,7 @@ import { FAB, Text, useTheme } from "react-native-paper";
 import { Timestamp } from "firebase/firestore";
 import * as SecureStore from "expo-secure-store";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 function AllAppointmentScreen() {
   const navigation = useNavigation();
@@ -26,6 +27,7 @@ function AllAppointmentScreen() {
     (state) => state.appointmentObject.appointments
   );
   const dispatch = useDispatch();
+  const { t } = useTranslation("patient");
 
   const [acceptedAppointment, setAcceptedAppointment] = React.useState([]);
   const [pendingAppointment, setPendingAppointment] = React.useState([]);
@@ -33,13 +35,19 @@ function AllAppointmentScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "All Appointments",
+      headerTitle: t("all_appointments"),
     });
   });
 
   React.useEffect(() => {
+    const fetchAppointmentFromFirebase = async () => {
+      const storedUid = await SecureStore.getItemAsync("uid");
+      dispatch(
+        fetchAppointments({ userId: storedUid, userType: USER_TYPE.PATIENT })
+      );
+    };
     fetchAppointmentFromFirebase();
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, []);
 
   //Seperate the appointment into accepeted, pending and completed
@@ -68,13 +76,6 @@ function AllAppointmentScreen() {
     );
   }, [appointments]);
 
-  const fetchAppointmentFromFirebase = async () => {
-    const storedUid = await SecureStore.getItemAsync("uid");
-    dispatch(
-      fetchAppointments({ userId: storedUid, userType: USER_TYPE.PATIENT })
-    );
-  };
-
   //Determine the container color
   //If it is accepted, the color is blue
   //otherwise it is grey color
@@ -101,7 +102,7 @@ function AllAppointmentScreen() {
               profilePic={appointment.healthcare_profile_picture}
               subject={capitalizeFirstLetter(
                 appointment.healthcare_first_name === ""
-                  ? "Appointment"
+                  ? t("appointment_title")
                   : appointment.healthcare_first_name
               )}
               status={capitalizeFirstLetter(appointment.appointment_status)}
@@ -130,9 +131,9 @@ function AllAppointmentScreen() {
               key={`pending-${appointment.id}`}
               subject={capitalizeFirstLetter(
                 appointment.healthcare_first_name === "" ||
-                  appointment.healthcare_first_name === null || 
+                  appointment.healthcare_first_name === null ||
                   appointment.healthcare_first_name === undefined
-                  ? "Appointment"
+                  ? t("appointment_title")
                   : appointment.healthcare_first_name
               )}
               status={capitalizeFirstLetter(appointment.appointment_status)}
@@ -158,11 +159,11 @@ function AllAppointmentScreen() {
         })}
         {pendingAppointment.length == 0 && acceptedAppointment.length == 0 && (
           <Text variant="bodyLarge" style={{ marginBottom: 16 }}>
-            You dont have any pending appointment
+            {t("no_pending")}
           </Text>
         )}
         <Text variant="titleLarge" style={{ marginVertical: 16 }}>
-          Past Appointments
+          {t("past_appointment")}
         </Text>
         {completedAppointment.length > 0 ? (
           completedAppointment.map((appointment) => {
@@ -195,7 +196,7 @@ function AllAppointmentScreen() {
           })
         ) : (
           <Text variant="bodyLarge" style={{ marginBottom: 16 }}>
-            You dont have any completed appointment
+            {t("no_completed_appointment")}
           </Text>
         )}
         <View style={{ marginBottom: 38 }} />
@@ -204,7 +205,7 @@ function AllAppointmentScreen() {
         <FAB
           icon="calendar"
           size="small"
-          label="Book Appointment"
+          label={t("book_appointment")}
           onPress={() => {
             navigation.navigate("BookAppointmentScreen");
           }}

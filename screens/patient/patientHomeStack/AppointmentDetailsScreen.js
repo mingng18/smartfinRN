@@ -12,6 +12,7 @@ import { editDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updateAppointment } from "../../../store/redux/appointmentSlice";
 import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 
 export default function AppointmentDetailsScreen() {
   const navigation = useNavigation();
@@ -19,14 +20,16 @@ export default function AppointmentDetailsScreen() {
   const { params } = useRoute();
   const currentAppointment = params.appointment;
   const dispatch = useDispatch();
+  const { t } = useTranslation("patient");
+
   // const [dialogVisible, setDialogVisible] = React.useState(false);
 
   //Set the Appointment Status to change layout
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Appointment",
+      headerTitle: t("appointment_title"),
     });
-  });
+  }, [t]);
 
   //Determine the container color
   function containerColor(appointment) {
@@ -57,23 +60,23 @@ export default function AppointmentDetailsScreen() {
             onPress={rescheduleAppointment}
             style={{ marginLeft: 16, marginBottom: 16 }}
           >
-            Reschedule
+            {t("reschedule_button_text")}
           </Button>
           <Button
             mode="contained-tonal"
             style={{ marginLeft: 16, marginBottom: 16 }}
             onPress={() => {
               Alert.alert(
-                "Cancel Appointment?",
-                "Are you sure want to cancel the appointment?",
+                t("cancel_appointment_title"),
+                t("cancel_appointment_message"),
                 [
                   {
-                    text: "No",
+                    text: t("no_button_text"),
                     onPress: () => {},
                     style: "cancel",
                   },
                   {
-                    text: "Yes",
+                    text: t("yes_button_text"),
                     onPress: () => {
                       cancelAppointment();
                     },
@@ -86,7 +89,7 @@ export default function AppointmentDetailsScreen() {
               );
             }}
           >
-            Cancel Appointment
+            {t("cancel_appointment_text")}
           </Button>
         </View>
       </View>
@@ -112,33 +115,33 @@ export default function AppointmentDetailsScreen() {
         >
           <Button
             mode="contained"
-            onPress={handleVideoCall()}
+            onPress={handleVideoCall}
             style={{ marginLeft: 16, marginBottom: 16 }}
           >
-            Video Call
+            {t("video_call_button_text")}
           </Button>
           <Button
             mode="contained-tonal"
             onPress={rescheduleAppointment}
             style={{ marginLeft: 16, marginBottom: 16 }}
           >
-            Reschedule
+            {t("reschedule_button_text")}
           </Button>
           <Button
             mode="contained-tonal"
             style={{ marginLeft: 16, marginBottom: 16 }}
             onPress={() => {
               Alert.alert(
-                "Cancel Appointment?",
-                "Are you sure want to cancel the appointment?",
+                t("cancel_appointment_title"),
+                t("cancel_appointment_message"),
                 [
                   {
-                    text: "Go Back",
+                    text: t("go_back_button_text"),
                     onPress: () => {},
                     style: "cancel",
                   },
                   {
-                    text: "Cancel",
+                    text: t("cancel_button_text"),
                     onPress: () => {
                       cancelAppointment();
                     },
@@ -151,7 +154,7 @@ export default function AppointmentDetailsScreen() {
               );
             }}
           >
-            Cancel Appointment
+            {t("cancel_appointment_text")}
           </Button>
         </View>
       </View>
@@ -165,11 +168,11 @@ export default function AppointmentDetailsScreen() {
           This appointment is completed.
         </Text> */}
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Remarks/Notes
+          {t("remarks_notes_text")}
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
           {currentAppointment.remarks === ""
-            ? "No remarks"
+            ? t("no_remarks_text")
             : currentAppointment.remarks}
         </Text>
       </View>
@@ -183,11 +186,11 @@ export default function AppointmentDetailsScreen() {
           This appointment has been cancelled by the healthcare.
         </Text> */}
         <Text variant="titleLarge" style={{ marginTop: 32 }}>
-          Cancellation Reasons
+          {t("cancellation_reasons_text")}
         </Text>
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
           {currentAppointment.remarks === ""
-            ? "No remarks"
+            ? t("no_remarks_text")
             : currentAppointment.remarks}
         </Text>
       </View>
@@ -222,7 +225,7 @@ export default function AppointmentDetailsScreen() {
       })
       .catch((error) => {
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert("Error cancelling", "Please try again later");
+        Alert.alert(t("error_cancelling_text"), t("try_again_later_text"));
         console.log("Error cancelling" + error);
       });
   };
@@ -250,7 +253,7 @@ export default function AppointmentDetailsScreen() {
           currentAppointment.healthcare_first_name === "" ||
             currentAppointment.healthcare_first_name === null ||
             currentAppointment.healthcare_first_name === undefined
-            ? "Appointment"
+            ? t("appointment_title")
             : currentAppointment.healthcare_first_name
         )}
         status={capitalizeFirstLetter(currentAppointment.appointment_status)}

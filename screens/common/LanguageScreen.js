@@ -5,6 +5,7 @@ import TextListButton from "../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
 import { LANGUAGE } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
+import { changeCalendarsLocales, changePaperLocales } from "../../util/calendarLocales";
 
 export default function LanguageScreen() {
   const theme = useTheme();
@@ -16,6 +17,7 @@ export default function LanguageScreen() {
     navigation.setOptions({
       headerTitle: "Language",
     });
+    console.log(i18n.language);
   });
 
   const handleLanguageSubmission = () => {
@@ -28,6 +30,8 @@ export default function LanguageScreen() {
           text: "OK",
           onPress: () => {
             i18n.changeLanguage(language);
+            changeCalendarsLocales(i18n);
+            changePaperLocales(language);
             navigation.goBack();
           },
           style: "cancel",

@@ -5,6 +5,7 @@ import { Chip, useTheme } from "react-native-paper";
 import { CALENDAR_ENTITIES } from "../../constants/constants";
 import Legend from "./Legend";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 export default function CustomCalendar({
   video,
@@ -19,6 +20,7 @@ export default function CustomCalendar({
   const theme = useTheme();
   const user = useSelector((state) => state.authObject);
   const today = new Date();
+  const { t } = useTranslation("patient");
   // console.log(today);
   // console.log(today.slice(0, 10));
 
@@ -41,6 +43,11 @@ export default function CustomCalendar({
             : theme.colors.background,
           selectedTextColor: theme.colors.onBackground,
         };
+        acc[today.toISOString().slice(0, 10)] = {
+          selected: true,
+          selectedColor: theme.colors.background,
+          selectedTextColor: theme.colors.onBackground,
+        };
       }
 
       //Appointment is selected
@@ -55,6 +62,11 @@ export default function CustomCalendar({
           selectedColor: appointmentMatch
             ? theme.colors.secondaryContainer
             : theme.colors.background,
+          selectedTextColor: theme.colors.onBackground,
+        };
+        acc[today.toISOString().slice(0, 10)] = {
+          selected: true,
+          selectedColor: theme.colors.background,
           selectedTextColor: theme.colors.onBackground,
         };
       }
@@ -91,7 +103,7 @@ export default function CustomCalendar({
               selectedTextColor: theme.colors.onBackground,
             };
           }
-          startDate.setDate(startDate.getDate() + 1); // Move to the next date
+          startDate.setDate(startDate.getDate() + 1);
         }
       }
       return acc;
@@ -116,17 +128,20 @@ export default function CustomCalendar({
             colors: { secondaryContainer: theme.colors.secondaryContainer },
           }}
         >
-          Appointment
+          {t("appointment_label")}
         </Chip>
         <Chip
           mode={currentSelected !== CALENDAR_ENTITIES.VIDEO && "outlined"}
-          onPress={() => setCurrentSelected(CALENDAR_ENTITIES.VIDEO)}
+          onPress={() => {
+            setCurrentSelected(CALENDAR_ENTITIES.VIDEO);
+            setSelectedDate("");
+          }}
           style={[styles.chip, styles.secondChip]}
           theme={{
             colors: { secondaryContainer: theme.colors.primaryFixedDim },
           }}
         >
-          Video
+          {t("video_label")}
         </Chip>
         <Chip
           mode={currentSelected !== CALENDAR_ENTITIES.SIDE_EFFECT && "outlined"}
@@ -136,12 +151,12 @@ export default function CustomCalendar({
             colors: { secondaryContainer: theme.colors.yellowContainer },
           }}
         >
-          Side Effect
+          {t("side_effect_label")}
         </Chip>
       </View>
       <Calendar
-      // initialDate=""
-      // context={{ date : '' }}
+        // initialDate=""
+        // context={{ date : '' }}
         theme={{
           calendarBackground: theme.colors.background,
           monthTextColor: theme.colors.onBackground,
@@ -152,20 +167,16 @@ export default function CustomCalendar({
           selectedDayBackgroundColor: theme.colors.primary,
           selectedDayTextColor: theme.colors.onPrimary,
         }}
-        onDayPress={(day) => setSelectedDate(day.dateString)}
+        onDayPress={(day) =>
+          currentSelected !== CALENDAR_ENTITIES.VIDEO &&
+          setSelectedDate(day.dateString)
+        }
         markedDates={{
           ...marked,
           [selectedDate]: {
-            selected:
-              currentSelected === CALENDAR_ENTITIES.VIDEO ? false : true,
-            selectedColor: theme.colors.onBackground,
-            // selectedTextColor: theme.colors.onBackground,
+            selected: true,
+            selectedColor: theme.colors.primary,
           },
-          // ['2024-01-27']: {
-          //   selected: true,
-          //   selectedColor: theme.colors.onBackground,
-          //   selectedTextColor: theme.colors.onBackground,
-          // },
         }}
       />
       {currentSelected === CALENDAR_ENTITIES.VIDEO && (
@@ -179,9 +190,12 @@ export default function CustomCalendar({
         >
           <Legend
             color={theme.colors.greenContainer}
-            text={"Video Submitted"}
+            text={t("video_submitted_label")}
           />
-          <Legend color={theme.colors.errorContainer} text={"Video Missed"} />
+          <Legend
+            color={theme.colors.errorContainer}
+            text={t("video_missed_label")}
+          />
         </View>
       )}
     </>

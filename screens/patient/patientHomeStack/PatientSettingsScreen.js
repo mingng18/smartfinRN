@@ -3,16 +3,18 @@ import { Button, Text, useTheme } from "react-native-paper";
 import React, { useState, useMemo } from "react";
 import TextListButton from "../../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 export default function PatientSettingsScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
+  const { t } = useTranslation("patient");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Settings",
+      headerTitle: t("settings_header_title"),
     });
-  });
+  }, [t]);
 
   return (
     <KeyboardAvoidingView>
@@ -24,13 +26,13 @@ export default function PatientSettingsScreen() {
         }}
       >
         <TextListButton
-          text={"Reminder"}
+          text={t("reminder_button_text")}
           onPressCallback={() => {
             navigation.navigate("ReminderScreen");
           }}
         />
         <TextListButton
-          text={"Language"}
+          text={t("language_button_text")}
           onPressCallback={() => {
             navigation.navigate("LanguageScreen");
           }}
