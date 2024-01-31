@@ -9,10 +9,10 @@
   "video": "Video",
   "side_effect": "Kesan Sampingan",
   "analytics": "Analitik",
-  "number_of_videos_submitted_this_month": "Jumlah video yang dihantar bulan ini",
+  "number_of_videos_submitted_this_month": "Jumlah video yang dihantar bulan ini, {{month}}",
   "day": "Hari",
   "number_of_videos": "Bilangan Video",
-  "side_effects_submitted_this_month": "Kesan sampingan yang dilaporkan bulan ini",
+  "side_effects_submitted_this_month": "Kesan sampingan yang dilaporkan bulan ini, {{month}}",
   "number_of_side_effects": "Bilangan Kesan Sampingan",
   "grade_3": "Gred 3",
   "grade_2": "Gred 2",
@@ -110,5 +110,18 @@
   "provide_reasons": "Sila berikan alasan",
   "reviewing_video_title": "Mengkaji Video",
   "home": "Laman Utama",
-  "profile": "Profil"
+  "profile": "Profil",
+
+  "0": "Januari",
+  "1": "Februari",
+  "2": "Mac",
+  "3": "April",
+  "4": "Mei",
+  "5": "Jun",
+  "6": "Julai",
+  "7": "Ogos",
+  "8": "September",
+  "9": "Oktober",
+  "10": "November",
+  "11": "Disember"
 }

@@ -1,6 +1,19 @@
+import React from "react";
+import HealthcareToDoCard from "../../components/ui/ToDoCard_Healthcare";
+import CTAButton from "../../components/ui/CTAButton";
+import CachedImage from "expo-cached-image";
+import SideEffectSubmittedGraph from "../../components/ui/SideEffectSubmittedGraph";
+import VideoSubmittedGraph from "../../components/ui/VideoSubmittedGraph";
+import * as Haptics from "expo-haptics";
+import * as SecureStore from "expo-secure-store";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import React from "react";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
+import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Text, useTheme } from "react-native-paper";
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -11,52 +24,27 @@ import {
   RefreshControl,
   Platform,
   Image,
-  Dimensions,
 } from "react-native";
-import { Text, useTheme } from "react-native-paper";
 import {
   capitalizeFirstLetter,
   getLastTenCharacters,
 } from "../../util/wordUtil";
 import {
   BLANK_PROFILE_PIC,
-  FIREBASE_COLLECTION,
   LOGO_BLACK_TYPE,
-  SIDE_EFFECT_SEVERITY,
   USER_TYPE,
 } from "../../constants/constants";
-import HealthcareToDoCard from "../../components/ui/ToDoCard_Healthcare";
-import CTAButton from "../../components/ui/CTAButton";
-import { fetchAppointments } from "../../store/redux/appointmentSlice";
-import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
-import { fetchVideos } from "../../store/redux/videoSlice";
-import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
-import { SafeAreaView } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
-import CachedImage from "expo-cached-image";
-import * as SecureStore from "expo-secure-store";
-import {
-  VictoryAxis,
-  VictoryBar,
-  VictoryChart,
-  VictoryLabel,
-  VictoryLegend,
-  VictoryLine,
-  VictoryStack,
-  VictoryTheme,
-} from "victory-native";
-import { Timestamp } from "firebase/firestore";
-import { fetchCollection } from "../../util/firestoreWR";
-import Legend from "../../components/ui/Legend";
 import { useTranslation } from "react-i18next";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
-  const { navigate } = navigation;
   const theme = useTheme();
   const dispatch = useDispatch();
+  const { navigate } = navigation;
   const { t } = useTranslation("healthcare");
-  
+  const sideEffectSubmittedGraphRef = React.useRef();
+  const videoSubmittedGraphRef = React.useRef();
+
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
@@ -69,19 +57,14 @@ function HealthcareHomeScreen() {
   const sideEffects = useSelector(
     (state) => state.sideEffectObject.sideEffects
   );
+
   const [appointmentsCount, setAppointmentsCount] = React.useState(0);
   const [patientAmount, setPatientAmount] = React.useState(0);
   const [videosToBeReviewedCount, setVideosToBeReviewedCount] =
     React.useState(0);
   const [sideEffectsAlertCount, setSideEffectsAlertCount] = React.useState(0);
+
   const [refreshing, setRefreshing] = React.useState(false);
-  const [videoAnalytic, setVideoAnalytic] = React.useState([]);
-  const [sideEffectGrade1Analytic, setSideEffectGrade1Analytic] =
-    React.useState([]);
-  const [sideEffectGrade2Analytic, setSideEffectGrade2Analytic] =
-    React.useState([]);
-  const [sideEffectGrade3Analytic, setSideEffectGrade3Analytic] =
-    React.useState([]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -110,107 +93,13 @@ function HealthcareHomeScreen() {
       fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
     );
 
-    fetchVideoSubmittedThisMonth();
-    fetchSideEffectSubmittedThisMonth();
+    videoSubmittedGraphRef.current.fetchData();
+    sideEffectSubmittedGraphRef.current.fetchData();
   };
 
-  async function fetchVideoSubmittedThisMonth() {
-    try {
-      // const videos = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
-      const videoData = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
-      const videoCountByDay = new Map();
-      const today = new Date();
-
-      videoData.forEach((video) => {
-        const videoDate = video.uploaded_timestamp.toDate();
-
-        // console.log('lol ol ' + video.uploaded_timestamp);
-        // console.log('lol ol ' + videoDate.getMonth());
-        // console.log('lol ol ' + new Date().getMonth());
-
-        if (
-          videoDate.getMonth() === today.getMonth() &&
-          videoDate.getFullYear() === today.getFullYear()
-        ) {
-          // console.log("yay");
-          const day = videoDate.getDate();
-          videoCountByDay.set(day, (videoCountByDay.get(day) || 0) + 1);
-        }
-      });
-
-      // Convert the map to the desired format
-      const formattedData = Array.from(videoCountByDay).map(([x, y]) => ({
-        x,
-        y,
-      }));
-      // formattedData.sort((a, b) => a.day - b.day);
-      // console.log("video length is " + JSON.stringify(formattedData));
-      setVideoAnalytic(formattedData);
-    } catch (error) {
-      throw new Error("Failed to fetch collection size: " + error.message);
-    }
-  }
-
-  async function fetchSideEffectSubmittedThisMonth() {
-    try {
-      // const videos = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
-      const sideEffectData = await fetchCollection(
-        FIREBASE_COLLECTION.SIDE_EFFECT
-      );
-      var grade1 = new Map();
-      var grade2 = new Map();
-      var grade3 = new Map();
-      const today = new Date();
-
-      sideEffectData.forEach((sideEffect) => {
-        const sideEffectDate =
-          sideEffect.side_effect_occuring_timestamp.toDate();
-
-        console.log("lol ol " + sideEffectDate);
-        console.log("lol ol " + sideEffectDate.getMonth());
-        console.log("lol ol " + new Date().getMonth());
-
-        if (
-          sideEffectDate.getMonth() === today.getMonth() &&
-          sideEffectDate.getFullYear() === today.getFullYear()
-        ) {
-          console.log("yayyy");
-          const day = sideEffectDate.getDate();
-          if (sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1) {
-            grade1.set(day, (grade1.get(day) || 0) + 1);
-          } else if (sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2) {
-            grade2.set(day, (grade2.get(day) || 0) + 1);
-          } else if (sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_3) {
-            grade3.set(day, (grade3.get(day) || 0) + 1);
-          }
-        }
-      });
-
-      grade1 = Array.from(grade1)
-        .map(([x, y]) => ({ x, y }))
-        .sort((a, b) => a.x - b.x);
-      grade2 = Array.from(grade2)
-        .map(([x, y]) => ({ x, y }))
-        .sort((a, b) => a.x - b.x);
-      grade3 = Array.from(grade3)
-        .map(([x, y]) => ({ x, y }))
-        .sort((a, b) => a.x - b.x);
-
-      setSideEffectGrade1Analytic(grade1);
-      setSideEffectGrade2Analytic(grade2);
-      setSideEffectGrade3Analytic(grade3);
-
-      // formattedData.sort((a, b) => a.day - b.day);
-      console.log("sideEffect1 are " + JSON.stringify(grade1));
-      console.log("sideEffect2 are " + JSON.stringify(grade2));
-      console.log("sideEffect3 are " + JSON.stringify(grade3));
-    } catch (error) {
-      throw new Error("Failed to fetch collection size: " + error.message);
-    }
-  }
   React.useEffect(() => {
-    fetchVideoSubmittedThisMonth();
-    fetchSideEffectSubmittedThisMonth();
+    videoSubmittedGraphRef.current.fetchData();
+    sideEffectSubmittedGraphRef.current.fetchData();
   }, []);
 
   //Calculate total patients, videos to review, appointment, side effects alerts here
@@ -223,7 +112,6 @@ function HealthcareHomeScreen() {
 
   React.useEffect(() => {
     const calculatePatientCount = () => {
-      console.log("patients: ", patients.length);
       setPatientAmount(patients.length);
     };
     calculatePatientCount();
@@ -351,13 +239,7 @@ function HealthcareHomeScreen() {
             </View>
           </View>
           {/* ================== CTA buttons ============== */}
-          <View
-            style={[
-              {
-                paddingVertical: 16,
-              },
-            ]}
-          >
+          <View style={{ paddingVertical: 16 }}>
             <Text
               variant="titleLarge"
               style={{ marginHorizontal: 16, marginTop: 16 }}
@@ -365,7 +247,6 @@ function HealthcareHomeScreen() {
               {t("are_you_up_for_something")}
             </Text>
             <View style={[{ flexDirection: "row", marginVertical: 16 }]}>
-              {/* TODO change the navigation screen for each */}
               <CTAButton
                 icon="video"
                 title={t("video")}
@@ -399,76 +280,8 @@ function HealthcareHomeScreen() {
           >
             {t("analytics")}
           </Text>
-          <Text
-            variant="labelLarge"
-            style={{
-              paddingTop: 4,
-              marginHorizontal: 16,
-            }}
-          >
-            {t("number_of_videos_submitted_this_month")}
-          </Text>
-          <VictoryChart theme={VictoryTheme.material}>
-            {/* X Axis */}
-            <VictoryAxis
-              label={t("day")}
-              style={{
-                axisLabel: { padding: 30 },
-              }}
-            />
-            {/* Y Axis */}
-            <VictoryAxis
-              dependentAxis
-              label={t("number_of_videos")}
-              style={{
-                axisLabel: { padding: 30 },
-              }}
-              tickFormat={(tick) => {
-                return Number.isInteger(tick) ? tick.toString() : "";
-              }}
-            />
-            <VictoryBar
-              data={videoAnalytic}
-              style={{
-                data: { fill: theme.colors.primary },
-              }}
-            />
-          </VictoryChart>
-          <Text
-            variant="labelLarge"
-            style={{
-              paddingTop: 32,
-              marginHorizontal: 16,
-            }}
-          >
-            {t("side_effects_submitted_this_month")}
-          </Text>
-          <VictoryStack
-            theme={VictoryTheme.material}
-            colorScale={[
-              theme.colors.primary,
-              theme.colors.yellow,
-              theme.colors.error,
-            ]}
-          >
-            <VictoryBar data={sideEffectGrade1Analytic} />
-            <VictoryBar data={sideEffectGrade2Analytic} />
-            <VictoryBar data={sideEffectGrade3Analytic} />
-            <VictoryAxis />
-            <VictoryAxis
-              dependentAxis
-              label={t("number_of_side_effects")}
-              axisLabelComponent={<VictoryLabel dy={-16} />}
-              tickFormat={(tick) => {
-                return Number.isInteger(tick) ? tick.toString() : "";
-              }}
-            />
-          </VictoryStack>
-          <View style={{ flexDirection: "row-reverse" }}>
-            <Legend text={t("grade_3")} color={theme.colors.error} />
-            <Legend text={t("grade_2")} color={theme.colors.yellow} />
-            <Legend text={t("grade_1")} color={theme.colors.primary} />
-          </View>
+          <VideoSubmittedGraph ref={videoSubmittedGraphRef} />
+          <SideEffectSubmittedGraph ref={sideEffectSubmittedGraphRef} />
         </View>
         <View
           style={[

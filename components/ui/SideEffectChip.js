@@ -8,7 +8,7 @@ export default function SideEffectChip({ symptom }) {
 
   function formatSymptomKey(symptom) {
     // Replace spaces with underscores and convert to lowercase
-    return symptom.toLowerCase().replace(/\s+/g, "_");
+    return symptom.toLowerCase().replace(/\s+/g, "_").replace(/\(|\)/g, "");;
   }
 
   return (
@@ -23,7 +23,7 @@ export default function SideEffectChip({ symptom }) {
             ? theme.colors.errorContainer
             : theme.colors.surfaceContainer,
       }}
-    >
+    >{console.log(formatSymptomKey(symptom.label))}
       {symptom.grade == 0
         ? symptom.label
         : `${t(formatSymptomKey(symptom.label))} : ${symptom.grade}`}

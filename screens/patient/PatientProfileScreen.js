@@ -22,6 +22,7 @@ import { clearSideEffectSlice } from "../../store/redux/sideEffectSlice";
 import { clearVideoSlice } from "../../store/redux/videoSlice";
 import { clearSignupSlice } from "../../store/redux/signupSlice";
 import { useTranslation } from "react-i18next";
+import { ScrollView } from "react-native-gesture-handler";
 
 function PatientProfileScreen() {
   const theme = useTheme();
@@ -186,152 +187,154 @@ function PatientProfileScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: theme.colors.background,
-        height: "100%",
-        paddingHorizontal: 16,
-        paddingTop: 8,
-      }}
-    >
-      {/* ===================HEADER==================== */}
-      <View style={[styles.homeHeader]}>
-        {user.profile_pic_url && (
-          <CachedImage
-            source={{ uri: user.profile_pic_url }}
-            cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
-            defaultSource={BLANK_PROFILE_PIC}
-            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-          />
-        )}
-        <View style={[styles.headerText]}>
-          <View style={{ flexDirection: "row" }}>
-            <Text variant="bodyLarge">
-              {streakCounter() === 7
-                ? t("keep_it_up_message")
-                : streakCounter() > 1
-                ? t("take_medication_message")
-                : t("you_can_do_better_message")}
-            </Text>
-          </View>
-          <Text variant="headlineLarge">
-            {capitalizeFirstLetter(user.first_name)}
-          </Text>
-        </View>
-        <IconButton
-          icon="pencil"
-          size={24}
-          onPress={() => {
-            navigate("PatientEditProfileScreen");
-          }}
-        />
-      </View>
-      {/* ========================PERSONAL INFO======================= */}
-      {/* TODO change the personal information */}
-      <View style={{ marginTop: 16, flexDirection: "row", flexWrap: "wrap" }}>
-        <InformationChip
-          text={user.nric_passport}
-          icon={"card-account-details"}
-          style={{ width: "60%" }}
-        />
-        <InformationChip
-          text={t(user.gender.toLowerCase())}
-          icon={"gender-male-female"}
-          style={{ width: "40%" }}
-        />
-        <InformationChip
-          text={user.phone_number}
-          icon={"phone"}
-          style={{ width: "60%" }}
-        />
-        <InformationChip
-          text={user.age}
-          icon={"face-man"}
-          style={{ width: "40%" }}
-        />
-        <InformationChip
-          text={user.nationality}
-          icon={"flag"}
-          style={{ width: "60%" }}
-        />
-      </View>
-      {/* ======================= Progress Tracker =================== */}
-      <View
+    <SafeAreaView edges={["right", "left", "top"]}>
+      <ScrollView
         style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          marginTop: 32,
-          marginBottom: 24,
-          // backgroundColor: theme.colors.surfaceContainerLow,
-          height: "22%",
+          backgroundColor: theme.colors.background,
+          height: "100%",
+          paddingHorizontal: 16,
+          paddingTop: 8,
         }}
       >
-        <IconButton
-          style={{ position: "absolute", right: "0%", top: "0%" }}
-          icon="arrow-top-right"
-          size={24}
-          onPress={() => {
-            navigate("ProgressTracker");
-          }}
-        />
-        <AnimatedCircularProgress
-          size={280}
-          width={15}
-          prefill={calculateProgress()}
-          fill={calculateProgress()}
-          tintColor={
-            calculateProgress() > 70
-              ? theme.colors.greenContainer
-              : theme.colors.primary
-          }
-          backgroundColor={theme.colors.primaryContainer}
-          arcSweepAngle={180}
-          rotation={270}
-        >
-          {(fill) => (
-            <>
-              <Text variant="headlineLarge">{fill}%</Text>
-              <Text variant="titleMedium">
-                {t("progress_completion_title")}
-              </Text>
-              <Text variant="labelSmall">
-                {`${getTotalVideosForCurrentMonth()} video submitted for `}
-                {monthsSinceDiagnosis}
-                {monthsSinceDiagnosis === 1
-                  ? t("st_suffix")
-                  : monthsSinceDiagnosis === 2
-                  ? t("nd_suffix")
-                  : monthsSinceDiagnosis === 3
-                  ? t("rd_suffix")
-                  : t("th_suffix")}
-                {` month`}
-              </Text>
-              <Text variant="labelSmall" style={{ opacity: 1 }}>
-                {`${videos.length}${t("video_submitted_in_total_text")}`}
-              </Text>
-              <Text variant="labelLarge" style={{ opacity: 0 }} />
-              <Text variant="labelLarge" style={{ opacity: 0 }} />
-              <Text variant="labelLarge" style={{ opacity: 0 }} />
-            </>
+        {/* ===================HEADER==================== */}
+        <View style={[styles.homeHeader]}>
+          {user.profile_pic_url && (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
           )}
-        </AnimatedCircularProgress>
-      </View>
-      {/* ========================== Settings ======================= */}
-      <TextListButton
-        text={t("settings")}
-        onPressCallback={() => navigate("PatientSettingsScreen")}
-      />
-      <TextListButton
-        text={t("history")}
-        onPressCallback={() => navigate("PatientHistoryTab")}
-      />
-      <Button
-        mode="contained"
-        style={{ marginTop: 24 }}
-        onPress={() => signOutHandler()}
-      >
-        {t("sign_out")}
-      </Button>
+          <View style={[styles.headerText]}>
+            <View style={{ flexDirection: "row" }}>
+              <Text variant="bodyLarge">
+                {streakCounter() === 7
+                  ? t("keep_it_up_message")
+                  : streakCounter() > 1
+                  ? t("take_medication_message")
+                  : t("you_can_do_better_message")}
+              </Text>
+            </View>
+            <Text variant="headlineLarge">
+              {capitalizeFirstLetter(user.first_name)}
+            </Text>
+          </View>
+          <IconButton
+            icon="pencil"
+            size={24}
+            onPress={() => {
+              navigate("PatientEditProfileScreen");
+            }}
+          />
+        </View>
+        {/* ========================PERSONAL INFO======================= */}
+        {/* TODO change the personal information */}
+        <View style={{ marginTop: 16, flexDirection: "row", flexWrap: "wrap" }}>
+          <InformationChip
+            text={user.nric_passport}
+            icon={"card-account-details"}
+            style={{ width: "60%" }}
+          />
+          <InformationChip
+            text={t(user.gender.toLowerCase())}
+            icon={"gender-male-female"}
+            style={{ width: "40%" }}
+          />
+          <InformationChip
+            text={user.phone_number}
+            icon={"phone"}
+            style={{ width: "60%" }}
+          />
+          <InformationChip
+            text={user.age}
+            icon={"face-man"}
+            style={{ width: "40%" }}
+          />
+          <InformationChip
+            text={user.nationality}
+            icon={"flag"}
+            style={{ width: "60%" }}
+          />
+        </View>
+        {/* ======================= Progress Tracker =================== */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginTop: 32,
+            // marginBottom: 24,
+            // backgroundColor: theme.colors.surfaceContainerLow,
+            height: "22%",
+          }}
+        >
+          <IconButton
+            style={{ position: "absolute", right: "0%", top: "0%" }}
+            icon="arrow-top-right"
+            size={24}
+            onPress={() => {
+              navigate("ProgressTracker");
+            }}
+          />
+          <AnimatedCircularProgress
+            size={280}
+            width={15}
+            prefill={calculateProgress()}
+            fill={calculateProgress()}
+            tintColor={
+              calculateProgress() > 70
+                ? theme.colors.greenContainer
+                : theme.colors.primary
+            }
+            backgroundColor={theme.colors.primaryContainer}
+            arcSweepAngle={180}
+            rotation={270}
+          >
+            {(fill) => (
+              <>
+                <Text variant="headlineLarge">{fill}%</Text>
+                <Text variant="titleMedium">
+                  {t("progress_completion_title")}
+                </Text>
+                <Text variant="labelSmall">
+                  {`${getTotalVideosForCurrentMonth()} video submitted for `}
+                  {monthsSinceDiagnosis}
+                  {monthsSinceDiagnosis === 1
+                    ? t("st_suffix")
+                    : monthsSinceDiagnosis === 2
+                    ? t("nd_suffix")
+                    : monthsSinceDiagnosis === 3
+                    ? t("rd_suffix")
+                    : t("th_suffix")}
+                  {` month`}
+                </Text>
+                <Text variant="labelSmall" style={{ opacity: 1 }}>
+                  {`${videos.length}${t("video_submitted_in_total_text")}`}
+                </Text>
+                <Text variant="labelLarge" style={{ opacity: 0 }} />
+                <Text variant="labelLarge" style={{ opacity: 0 }} />
+                <Text variant="labelLarge" style={{ opacity: 0 }} />
+              </>
+            )}
+          </AnimatedCircularProgress>
+        </View>
+        {/* ========================== Settings ======================= */}
+        <TextListButton
+          text={t("settings")}
+          onPressCallback={() => navigate("PatientSettingsScreen")}
+        />
+        <TextListButton
+          text={t("history")}
+          onPressCallback={() => navigate("PatientHistoryTab")}
+        />
+        <Button
+          mode="contained"
+          style={{ marginTop: 24 }}
+          onPress={() => signOutHandler()}
+        >
+          {t("sign_out")}
+        </Button>
+      </ScrollView>
     </SafeAreaView>
   );
 }

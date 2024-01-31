@@ -9,10 +9,10 @@
   "video": "Video",
   "side_effect": "Side Effect",
   "analytics": "Analytics",
-  "number_of_videos_submitted_this_month": "Number of videos submitted this month",
+  "number_of_videos_submitted_this_month": "Number of videos submitted this month, {{month}}",
   "day": "Day",
   "number_of_videos": "Number of Videos",
-  "side_effects_submitted_this_month": "Side effects submitted this month",
+  "side_effects_submitted_this_month": "Side effects submitted this month, {{month}}",
   "number_of_side_effects": "Number of Side Effects",
   "grade_3": "Grade 3",
   "grade_2": "Grade 2",
@@ -120,5 +120,18 @@
   "reviewing_video_title": "Reviewing Video",
 
   "home": "Home",
-  "profile": "Profile"
+  "profile": "Profile",
+
+  "0": "January",
+  "1": "February",
+  "2": "March",
+  "3": "April",
+  "4": "May",
+  "5": "June",
+  "6": "July",
+  "7": "August",
+  "8": "September",
+  "9": "October",
+  "10": "November",
+  "11": "December"
 }

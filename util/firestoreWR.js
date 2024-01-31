@@ -49,36 +49,6 @@ export async function fetchCollection(collectionName) {
   }
 }
 
-// export async function fetchVideoSubmittedThisMonth() {
-//   try {
-//     // const videos = await fetchCollection(FIREBASE_COLLECTION.VIDEO);
-//     const sampleVideo
-//     const videoCountByDay = new Map();
-
-//     videos.forEach((video) => {
-//       const videoDate = new Date(video.uploaded_timestamp);
-//       if (videoDate.getMonth() === new Date().getMonth) {
-//         console.log("yay");
-//         const day = new Date(video.uploaded_timestamp).getDate();
-//         videoCountByDay.set(day, (videoCountByDay.get(day) || 0) + 1);
-//       }
-//     });
-//     console.log("video length is " + videoCountByDay.size);
-
-//     // Convert the map to the desired format
-//     const formattedData = Array.from(videoCountByDay).map(([day, videos]) => ({
-//       day,
-//       videos,
-//     }));
-//     // formattedData.sort((a, b) => a.day - b.day);
-//     console.log("video length is " + JSON.stringify(formattedData));
-
-//     return formattedData;
-//   } catch (error) {
-//     throw new Error("Failed to fetch collection size: " + error.message);
-//   }
-// }
-
 export async function addDocument(collectionName, documentData) {
   try {
     const collectionRef = collection(db, collectionName);
@@ -442,6 +412,9 @@ export async function fetchSideEffectsAlertHealthcare() {
               : "",
             patient_first_name: patientDoc.first_name
               ? patientDoc.first_name
+              : "",
+            patient_phone_number: patientDoc.phone_number
+              ? patientDoc.phone_number
               : "",
             ...data,
           });

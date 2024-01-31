@@ -129,6 +129,6 @@ export function changeCalendarsLocales(i18n) {
 }
 
 export async function changePaperLocales(language) {
-  console.log(language);
-  await SecureStore.setItemAsync("locale", language);
+  // console.log(typeof(language));
+  await SecureStore.setItemAsync("locale", language.toString());
 }

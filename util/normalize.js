@@ -5,9 +5,6 @@ const deviceHeight = Dimensions.get("window").height;
 const deviceWidth = Dimensions.get("window").width;
 
 const normalize = (size) => {
-    console.log('Pixel Ratio is ' + pixelRatio)
-    console.log('deviceHeight is ' + deviceHeight)
-    console.log('deviceWidth is ' + deviceWidth)
   if (pixelRatio >= 2 && pixelRatio < 3) {
     // iphone 5s and older Androids
     if (deviceWidth < 360) {

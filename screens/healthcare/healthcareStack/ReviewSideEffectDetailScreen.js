@@ -18,6 +18,7 @@ import { deleteSideEffect } from "../../../store/redux/sideEffectSlice";
 import SideEffectChip from "../../../components/ui/SideEffectChip";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 import { useTranslation } from "react-i18next";
+import * as Linking from "expo-linking";
 
 export default function ReviewSideEffectDetailScreen() {
   const navigation = useNavigation();
@@ -64,6 +65,10 @@ export default function ReviewSideEffectDetailScreen() {
       setIsLoading(false);
       Alert.alert(t("submit_error_title"), t("submit_error_message"));
     }
+  };
+
+  const call = () => {
+    Linking.openURL(`tel:${currentSideEffect.patient_phone_number}`);
   };
 
   return (
@@ -139,7 +144,7 @@ export default function ReviewSideEffectDetailScreen() {
           <Button
             mode="contained-tonal"
             style={{ marginLeft: 16 }}
-            onPress={() => {}}
+            onPress={call}
           >
             {t("call_patient")}
           </Button>
