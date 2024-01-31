@@ -259,10 +259,7 @@ export const NUMBER_OF_TABLETS = [
   { label: "5", value: 5 },
 ];
 
-export const NOTES = [
-  { label: "Continue VOTS", value: "Continue VOTS" },
-  { label: "Switch to DOTS", value: "Switch to DOTS" },
-];
+
 
 export const SIDE_EFFECT_GRADE = [
   { label: "Grade 1", value: 1 },

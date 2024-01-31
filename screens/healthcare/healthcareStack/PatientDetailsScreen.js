@@ -4,7 +4,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { IconButton, RadioButton, Text, useTheme } from "react-native-paper";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
-import { DIAGNOSIS, NOTES, TREATMENT } from "../../../constants/constants";
+import { DIAGNOSIS, TREATMENT } from "../../../constants/constants";
 import InformationChip from "../../../components/ui/InformationChip";
 import PatientDetailsTab from "../../../navigation/PatientDetailsTab";
 import { debounce } from "lodash";
@@ -36,7 +36,11 @@ export default function PatientDetailsScreen() {
 
   const [notesOpen, setNotesOpen] = React.useState(false);
   const [notes, setNotes] = React.useState("government_hospital");
-  const [notesData, setNotesData] = React.useState(NOTES);
+  const [notesData, setNotesData] = React.useState([
+    { label: t("continue_vots"), value: "continue_vots" },
+    { label: t("switch_to_dots"), value: "switch_to_dots" },
+    { label: t("appointment_to_see_dr"), value: "appointment_to_see_dr" },
+  ]);
 
   const updateNotes = async (note) => {
     console.log("clicked");
@@ -176,42 +180,6 @@ export default function PatientDetailsScreen() {
           <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
             {t("notes")}
           </Text>
-          {/* <View style={{ flexDirection: "row" }}>
-            <Pressable
-              style={{
-                flexDirection: "row",
-                marginRight: 24,
-                alignItems: "center",
-              }}
-              onPress={() => handleNotesChange(NOTES.VOTS)}
-            >
-              <RadioButton.Android
-                value={NOTES.VOTS}
-                status={
-                  currentPatient.notes === NOTES.VOTS ? "checked" : "unchecked"
-                }
-                onPress={() => handleNotesChange(NOTES.VOTS)}
-              />
-              <Text variant="labelLarge">{NOTES.VOTS}</Text>
-            </Pressable>
-            <Pressable
-              style={{
-                flexDirection: "row",
-                marginRight: 16,
-                alignItems: "center",
-              }}
-              onPress={() => handleNotesChange(NOTES.DOTS)}
-            >
-              <RadioButton.Android
-                value={NOTES.DOTS}
-                status={
-                  currentPatient.notes === NOTES.DOTS ? "checked" : "unchecked"
-                }
-                onPress={() => handleNotesChange(NOTES.DOTS)}
-              />
-              <Text variant="labelLarge">{NOTES.DOTS}</Text>
-            </Pressable>
-          </View> */}
           <CustomDropDownPicker
             listMode="SCROLLVIEW"
             zIndex={3000}

@@ -22,6 +22,8 @@ import React from "react";
 import UserPreviewProfilePicScreen from "../screens/common/UserPreviewProfilePicScreen";
 import LanguageScreen from "../screens/common/LanguageScreen";
 import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
+import AboutMyTBScreen from "../screens/patient/patientHomeStack/AboutMyTBScreen";
+import AboutTBScreen from "../screens/patient/patientHomeStack/AboutTBScreen";
 
 const PatientStack = createNativeStackNavigator();
 
@@ -173,6 +175,20 @@ export default function PatientStackGroup() {
       <PatientStack.Screen
         name="TuberculosisMaterialsScreen"
         component={TuberculosisMaterialsScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="AboutMyTBScreen"
+        component={AboutMyTBScreen}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="AboutTBScreen"
+        component={AboutTBScreen}
         options={{
           headerShown: true,
         }}

@@ -36,8 +36,6 @@ import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 
 export default function TreatmentInfoForm({ isEditing }) {
-  //TODO handle editing case
-
   const navigation = useNavigation();
   const theme = useTheme();
   const { key, name, params, path } = useRoute();
@@ -49,6 +47,7 @@ export default function TreatmentInfoForm({ isEditing }) {
   const { t } = useTranslation("auth");
 
   const [calendarOpen, setCalendarOpen] = React.useState(false);
+  const [calendarLocale, setCalendarLocale] = React.useState("");
 
   const [diagnosisDate, setDiagnosisDate] = React.useState("");
   //Diagnosis Drop down
@@ -77,6 +76,16 @@ export default function TreatmentInfoForm({ isEditing }) {
   const [submitDate, setSubmitDate] = React.useState("");
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
+
+  React.useEffect(() => {
+    const loadCalendarLocale = async () => {
+      const locale = await SecureStore.getItemAsync("locale");
+      console.log(locale);
+      setCalendarLocale(locale);
+    };
+
+    loadCalendarLocale();
+  },[])
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {
@@ -523,7 +532,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         </View>
       )}
       <DatePickerModal
-        locale="en-GB"
+        locale={calendarLocale}
         mode="single"
         visible={calendarOpen}
         onDismiss={onDismissSingle}

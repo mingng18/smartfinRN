@@ -1,14 +1,12 @@
+import React from "react";
+import MaterialListCard from "../../../components/ui/MaterialListCard";
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useLayoutEffect, useState } from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import { Button, List, Searchbar, Text, useTheme } from "react-native-paper";
-import TextListButton from "../../../components/ui/TextListButton";
-import YoutubePlayer from "react-native-youtube-iframe";
+import { List, Searchbar, useTheme } from "react-native-paper";
 import { useTranslation } from "react-i18next";
-import MaterialListCard from "../../../components/ui/MaterialListCard";
 
-export default function TuberculosisMaterialsScreen() {
+export default function AboutTBScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -16,7 +14,7 @@ export default function TuberculosisMaterialsScreen() {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: t("tb_materials"),
+      headerTitle: t("more_tb_materials"),
     });
   });
 
@@ -26,12 +24,24 @@ export default function TuberculosisMaterialsScreen() {
       description: t("tb_definition_description"),
     },
     {
+      title: t("tb_signs_symptoms_title"),
+      description: t("tb_signs_symptoms_description"),
+    },
+    {
       title: t("tb_spread_title"),
       description: t("tb_spread_description"),
     },
     {
+      title: t("tb_cure_title"),
+      description: t("tb_cure_description"),
+    },
+    {
       title: t("tb_dot_title"),
       description: t("tb_dot_description"),
+    },
+    {
+      title: t("tb_vot_title"),
+      description: t("tb_vot_description"),
     },
     {
       title: t("video_example_title"),
@@ -39,6 +49,7 @@ export default function TuberculosisMaterialsScreen() {
       videoId: "iee2TATGMyI",
     },
   ];
+  
 
   const filteredAccordionData = accordionData.filter(
     (item) =>
@@ -75,25 +86,6 @@ export default function TuberculosisMaterialsScreen() {
             />
           ))}
         </List.Section>
-        <Text style={{ marginTop: 24 }} variant="titleLarge">
-          {t("more_materials")}
-        </Text>
-        <View style={{ flexDirection: "row", marginTop: 16, flexWrap: "wrap" }}>
-          <Button
-            mode="contained"
-            style={{ marginRight: 16, marginBottom: 16 }}
-            onPress={() => navigation.navigate("AboutTBScreen")}
-          >
-            {t("about_tb")}
-          </Button>
-          <Button
-            mode="contained-tonal"
-            style={{ marginBottom: 16 }}
-            onPress={() => navigation.navigate("AboutMyTBScreen")}
-          >
-            {t("about_my_tb_companion")}
-          </Button>
-        </View>
         <View style={{ marginBottom: 54 }} />
       </ScrollView>
     </View>

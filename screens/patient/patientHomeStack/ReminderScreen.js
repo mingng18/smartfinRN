@@ -30,11 +30,20 @@ export default function ReminderScreen() {
   const [timePickerOpen, setTimePickerOpen] = React.useState(false);
   const [hour, setHour] = React.useState("");
   const [minute, setMinute] = React.useState("");
+  const [calendarLocale, setCalendarLocale] = React.useState("");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: t("reminder_header_title"),
     });
+
+    const loadCalendarLocale = async () => {
+      const locale = await SecureStore.getItemAsync("locale");
+      console.log(locale);
+      setCalendarLocale(locale);
+    };
+
+    loadCalendarLocale();
   }, [t]);
 
   //Time Picker
@@ -136,7 +145,7 @@ export default function ReminderScreen() {
         </View>
       </View>
       <TimePickerModal
-        locale="en-GB"
+        locale={calendarLocale}
         visible={timePickerOpen}
         onDismiss={onDismiss}
         onConfirm={onConfirm}

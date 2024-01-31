@@ -223,7 +223,7 @@ function ReportSideEffectScreen() {
       if (symptoms.some((s) => s.grade > 1)) {
         Alert.alert(
           t("successfully_submitted_title"),
-          t("medical_assistance_message")
+          t("symptom_grade_message")
         );
       } else {
         Alert.alert(t("success_title"), t("side_effects_reported_message"));
@@ -466,8 +466,8 @@ function ReportSideEffectScreen() {
           <TextInput
             mode="outlined"
             style={{ flex: 1, marginLeft: 24, marginTop: 4 }}
-            label="Other Symptom"
-            placeholder="Leave blank if no other symptoms"
+            label={t("other_symptom_label")}
+            placeholder={t("other_symptom_placeholder")}
             maxLength={100}
             value={otherSymptom}
             onChangeText={(value) => setOtherSymptom(value)}
@@ -477,8 +477,7 @@ function ReportSideEffectScreen() {
               variant="bodyMedium"
               style={{ color: theme.colors.error, marginTop: 16 }}
             >
-              You have at least one symptoms that is in grade 2 or 3. Please
-              seek medical assistance at nearest hospital.
+              {t("symptom_grade_message")}
             </Text>
           )}
           <View style={{ alignItems: "flex-end" }}>
@@ -487,7 +486,7 @@ function ReportSideEffectScreen() {
               style={{ marginTop: 40, marginBottom: 56 }}
               onPress={() => submitDataToDatabase()}
             >
-              Report
+              {t("report_button")}
             </Button>
           </View>
           {/* Modal for date picker and time picker */}

@@ -155,8 +155,6 @@ export default function CustomCalendar({
         </Chip>
       </View>
       <Calendar
-        // initialDate=""
-        // context={{ date : '' }}
         theme={{
           calendarBackground: theme.colors.background,
           monthTextColor: theme.colors.onBackground,
@@ -170,10 +168,10 @@ export default function CustomCalendar({
         onDayPress={(day) => setSelectedDate(day.dateString)}
         markedDates={{
           ...marked,
-          [selectedDate]: {
-            selected: true,
-            selectedColor: theme.colors.primary,
-          },
+          // [selectedDate] : {
+          //   selected: true,
+          //   selectedColor: theme.colors.primary,
+          // },
         }}
       />
       {currentSelected === CALENDAR_ENTITIES.VIDEO && (

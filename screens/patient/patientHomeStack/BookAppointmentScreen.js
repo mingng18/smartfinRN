@@ -31,6 +31,7 @@ export default function BookAppointmentScreen() {
 
   const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [calendarLocale, setCalendarLocale] = React.useState("");
 
   const [isReschedule, setIsReschedule] = React.useState();
   const [lastAppointment, setLastAppointment] = React.useState();
@@ -58,6 +59,14 @@ export default function BookAppointmentScreen() {
     navigation.setOptions({
       headerTitle: t("book_appointment_header_title"),
     });
+
+    const loadCalendarLocale = async () => {
+      const locale = await SecureStore.getItemAsync("locale");
+      console.log(locale);
+      setCalendarLocale(locale);
+    };
+
+    loadCalendarLocale();
   }, [t]);
 
   function disableTimeSlotsBasedOnDate(params, isReschedule) {
@@ -302,7 +311,7 @@ export default function BookAppointmentScreen() {
       </View>
       <View style={{ justifyContent: "center", flex: 1, alignItems: "center" }}>
         <DatePickerModal
-          locale="en-GB"
+          locale={calendarLocale}
           mode="single"
           visible={calendarOpen}
           onDismiss={onDismissSingle}

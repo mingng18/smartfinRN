@@ -123,5 +123,9 @@
   "8": "September",
   "9": "Oktober",
   "10": "November",
-  "11": "Desember"
+  "11": "Desember",
+
+  "continue_vots": "Lanjutkan VOTS",
+  "switch_to_dots": "Beralih ke DOTS",
+  "appointment_to_see_dr": "Janji untuk bertemu dengan Dr"
 }

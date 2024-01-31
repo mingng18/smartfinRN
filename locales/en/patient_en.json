@@ -143,7 +143,6 @@
   "something_wrong_title": "Something Wrong",
   "something_wrong_message": "Please check all the details and try again",
   "successfully_submitted_title": "Successfully submitted",
-  "medical_assistance_message": "Please seek medical assistance at nearest hospital.",
   "success_title": "Success",
   "side_effects_reported_message": "Side Effects successfully reported.",
   "error_submitting_title": "Error Submitting",
@@ -161,6 +160,10 @@
   "grade_1_desc": "Grade 1 : Mild",
   "grade_2_desc": "Grade 2 : Moderate",
   "grade_3_desc": "Grade 3 : Serious",
+  "other_symptom_label": "Other Symptom",
+  "other_symptom_placeholder": "Leave blank if no other symptoms",
+  "symptom_grade_message": "You have at least one symptom that is in grade 2 or 3. Please seek medical assistance at the nearest hospital.",
+  "report_button": "Report",
 
   "eyesight_worsening": "Eyesight Worsening",
   "yellowing_of_eyes": "Yellowing of Eyes",
@@ -210,5 +213,23 @@
   "home": "Home",
   "my_calendar": "My Calendar",
   "umi": "Umi",
-  "profile": "Profile"
+  "profile": "Profile",
+
+  "more_tb_materials": "More TB Materials",
+  "my_tb_materials": "My TB Materials",
+
+  "tb_definition_title": "What is Tuberculosis (TB)?",
+  "tb_definition_description": "Tuberculosis (TB) is an infectious disease that most often affects the lungs. TB is caused by a type of bacteria. It spreads through the air when infected people cough, sneeze, or spit.",
+  "tb_signs_symptoms_title": "What are the common signs and symptoms of TB?",
+  "tb_signs_symptoms_description": "The most common symptoms of TB include:\n• A cough that lasts for more than two (2) weeks\n• Cough with sputum which is occasionally bloodstained\n• Loss of appetite and loss of weight\n• Fever\n• Dyspnea, night sweats, chest pain, and hoarseness of voice.",
+  "tb_spread_title": "How does TB spread?",
+  "tb_spread_description": "Infection is usually by direct airborne transmission from person to person.",
+  "tb_cure_title": "Can TB be cured?",
+  "tb_cure_description": "The vast majority of TB cases can be cured when medicines are provided and taken properly.",
+  "tb_dot_title": "What is Direct Observed Therapy (DOT)?",
+  "tb_dot_description": "DOT is a strategy used to ensure TB patient adherence to and tolerability of the prescribed treatment regimen; a health care worker or another designated person watches the TB patient swallow each dose of the prescribed drugs.",
+  "tb_vot_title": "What is Video Observed Therapy (VOT)?",
+  "tb_vot_description": "VOT is the use of a videophone or other video/computer equipment to observe tuberculosis (TB) patients taking their medications remotely.",
+  "video_example_title": "Video example",
+  "video_example_description": "Video example"
 }

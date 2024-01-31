@@ -143,7 +143,6 @@
   "something_wrong_title": "Ada yang Salah",
   "something_wrong_message": "Sila semak semua butiran dan cuba lagi",
   "successfully_submitted_title": "Berjaya dihantar",
-  "medical_assistance_message": "Sila dapatkan bantuan perubatan di hospital terdekat.",
   "success_title": "Berjaya",
   "side_effects_reported_message": "Kesan sampingan berjaya dilaporkan.",
   "error_submitting_title": "Ralat Menghantar",
@@ -161,6 +160,10 @@
   "grade_1_desc": "Gred 1 : Ringan",
   "grade_2_desc": "Gred 2 : Sederhana",
   "grade_3_desc": "Gred 3 : Serius",
+  "other_symptom_label": "Simptom Lain",
+  "other_symptom_placeholder": "Kosongkan jika tiada simptom lain",
+  "symptom_grade_message": "Anda mempunyai sekurang-kurangnya satu simptom yang berada dalam gred 2 atau 3. Sila dapatkan bantuan perubatan di hospital terdekat.",
+  "report_button": "Laporkan",
 
   "eyesight_worsening": "Penglihatan Menurun",
   "yellowing_of_eyes": "Kuning Mata",
@@ -210,5 +213,23 @@
   "home": "Laman Utama",
   "my_calendar": "Kalendar",
   "umi": "Umi",
-  "profile": "Profil"
+  "profile": "Profil",
+
+  "more_tb_materials": "Bahan TB Tambahan",
+  "my_tb_materials": "Bahan MyTB",
+
+  "tb_definition_title": "Apakah Tuberkulosis (TB)?",
+  "tb_definition_description": "Tuberkulosis (TB) adalah penyakit berjangkit yang paling sering menjejaskan paru-paru. TB disebabkan oleh jenis bakteria. Ia tersebar melalui udara apabila orang yang dijangkiti batuk, bersin, atau meludah.",
+  "tb_signs_symptoms_title": "Apakah tanda dan gejala biasa TB?",
+  "tb_signs_symptoms_description": "Simptom-simptom TB yang paling biasa termasuk:\n• Batuk yang berlangsung lebih dari dua (2) minggu\n• Batuk dengan sputum yang kadang-kadang berdarah\n• Kehilangan selera makan dan berat badan\n• Demam\n• Dyspnea, peluh malam, sakit dada, dan suara serak.",
+  "tb_spread_title": "Bagaimana TB tersebar?",
+  "tb_spread_description": "Biasanya, jangkitan berlaku melalui penularan udara langsung dari orang ke orang.",
+  "tb_cure_title": "Bolehkah TB dipulihkan?",
+  "tb_cure_description": "Kebanyakan kes TB boleh dipulihkan apabila ubat-ubatan disediakan dan diambil dengan betul.",
+  "tb_dot_title": "Apakah Terapi Pantauan Langsung (DOT)?",
+  "tb_dot_description": "DOT aFdalah strategi yang digunakan untuk memastikan kepatuhan pesakit TB terhadap regimen rawatan yang ditetapkan; pekerja kesihatan atau orang lain yang ditetapkan mengawasi pesakit TB menelan setiap dos ubat yang ditetapkan.",
+  "tb_vot_title": "Apakah Terapi Pantauan Video (VOT)?",
+  "tb_vot_description": "VOT adalah penggunaan videophone atau peralatan video/komputer lain untuk mengawasi pesakit tuberkulosis (TB) mengambil ubat mereka dari jauh.",
+  "video_example_title": "Contoh Video",
+  "video_example_description": "Contoh Video"
 }
