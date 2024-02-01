@@ -8,6 +8,7 @@ import sideEffectReducer from "./sideEffectSlice";
 import videoReducer from "./videoSlice";
 import patientDataReducer from "./patientDataSlice";
 import bookedAppointmentDateReducer from "./bookedAppointmentDateSlice";
+import umiChatReducer from "./umiChatSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     videoObject: videoReducer,
     patientDataObject: patientDataReducer,
     bookedAppointmentDateObject: bookedAppointmentDateReducer,
+    umiChatObject: umiChatReducer,
   },
 });
