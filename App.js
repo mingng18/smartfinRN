@@ -14,6 +14,8 @@ import { customVariants } from "./constants/customFonts";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
+import 'expo-dev-client';
+
 import { store } from "./store/redux/store";
 import {
   authenticateStoreNative,

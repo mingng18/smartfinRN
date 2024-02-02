@@ -19,6 +19,7 @@ import TextListButton from "../../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
 import { TimePickerModal } from "react-native-paper-dates";
 import { useTranslation } from "react-i18next";
+import notifee from '@notifee/react-native';
 
 export default function ReminderScreen() {
   const theme = useTheme();
@@ -46,6 +47,31 @@ export default function ReminderScreen() {
     loadCalendarLocale();
   }, [t]);
 
+  async function onDisplayNotification() {
+    // Request permissions (required for iOS)
+    await notifee.requestPermission()
+
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      name: 'Default Channel',
+    });
+
+    // Display a notification
+    await notifee.displayNotification({
+      title: 'Notification Title',
+      body: 'Main body content of the notification',
+      android: {
+        channelId,
+        // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+        // pressAction is needed if you want the notification to open the app when pressed
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
+  }
+
   //Time Picker
   const onDismiss = React.useCallback(() => {
     setTimePickerOpen(false);
@@ -63,6 +89,8 @@ export default function ReminderScreen() {
     [setTimePickerOpen]
   );
 
+  
+
   const handleReminderSubmission = () => {
     //TODO submit new reminder
     Alert.alert(
@@ -72,6 +100,7 @@ export default function ReminderScreen() {
         {
           text: t("ok_button_text"),
           onPress: () => {
+            onDisplayNotification();
             navigation.goBack();
           },
           style: "cancel",
