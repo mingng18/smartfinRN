@@ -25,6 +25,9 @@ export default function calendarLocales(i18n) {
     typeInDate: "Taip tarikh",
     pickDateFromCalendar: "Pilih tarikh dari kalendar",
     close: "Tutup",
+    hour: "Jam",
+    minute: "Minit",
+    entertime: "Masukkan masa"
   });
   registerTranslation("id-ID", {
     save: "Simpan",
@@ -43,11 +46,14 @@ export default function calendarLocales(i18n) {
     typeInDate: "Ketik tanggal",
     pickDateFromCalendar: "Pilih tanggal dari kalender",
     close: "Tutup",
+    hour: "Jam",
+    minute: "Menit",
+    entertime: "Masukkan waktu"
   });
 
   //Initialise locale of React Native Calendars
   LocaleConfig.locales.en = LocaleConfig.locales[""];
-  LocaleConfig.locales["ms"] = {
+  LocaleConfig.locales["ms-MY"] = {
     monthNames: [
       "Januari",
       "Februari",
@@ -80,7 +86,7 @@ export default function calendarLocales(i18n) {
     dayNamesShort: ["Ahd", "Isn", "Sel", "Rab", "Kha", "Jum", "Sab"],
     today: "Hari ini",
   };
-  LocaleConfig.locales["id"] = {
+  LocaleConfig.locales["id-ID"] = {
     monthNames: [
       "Januari",
       "Februari",
@@ -118,13 +124,13 @@ export default function calendarLocales(i18n) {
   changePaperLocales(i18n);
 }
 
-export function changeCalendarsLocales(i18n) {
-  if (i18n.language === LANGUAGE.ENGLISH) {
+export function changeCalendarsLocales(language) {
+  if (language === LANGUAGE.ENGLISH) {
     LocaleConfig.defaultLocale = "en";
-  } else if (i18n.language === LANGUAGE.BAHASA_MELAYU) {
-    LocaleConfig.defaultLocale = "ms";
-  } else if (i18n.language === LANGUAGE.BAHASA_INDONESIA) {
-    LocaleConfig.defaultLocale = "id";
+  } else if (language === LANGUAGE.BAHASA_MELAYU) {
+    LocaleConfig.defaultLocale = "ms-MY";
+  } else if (language === LANGUAGE.BAHASA_INDONESIA) {
+    LocaleConfig.defaultLocale = "id-ID";
   }
 }
 

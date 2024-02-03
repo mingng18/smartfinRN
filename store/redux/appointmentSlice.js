@@ -29,7 +29,7 @@ export const fetchAppointments = createAsyncThunk(
 
       if (userType === "patient") {
         appointments = appointments.map((appointment) => {
-          console.log("current is " + appointment);
+          // console.log("current is " + appointment);
           const updatedAppointment = {
             ...appointment,
             created_timestamp: appointment.created_timestamp
@@ -46,7 +46,7 @@ export const fetchAppointments = createAsyncThunk(
 
       if (userType === "healthcare") {
         appointments = appointments.map((appointment) => {
-          console.log("current is " + appointment);
+          // console.log("current is " + appointment);
           const updatedAppointment = {
             ...appointment,
             created_timestamp: appointment.created_timestamp

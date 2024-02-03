@@ -148,7 +148,7 @@ export async function fetchAppointmentsForPatient(patientId) {
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    console.log("firebase appointments mauhaha", appointments.length);
+    // console.log("firebase appointments mauhaha", appointments.length);
     return appointments;
   } catch (error) {
     throw new Error("Failed to fetch appointments: " + error.message);
@@ -175,20 +175,20 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
-      console.log("Firestore Timestamp:", data.scheduled_timestamp);
-      console.log(
-        "Converted to ISOString:",
-        data.scheduled_timestamp.toDate().toISOString()
-      );
-      console.log(
-        "data.scheduled_timestamp.toDate().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })",
-        data.scheduled_timestamp.toDate().toLocaleTimeString("en-US")
-      );
+      // console.log("Firestore Timestamp:", data.scheduled_timestamp);
+      // console.log(
+      //   "Converted to ISOString:",
+      //   data.scheduled_timestamp.toDate().toISOString()
+      // );
+      // console.log(
+      //   "data.scheduled_timestamp.toDate().toLocaleString('en-US', { timeZone: 'Asia/Tokyo' })",
+      //   data.scheduled_timestamp.toDate().toLocaleTimeString("en-US")
+      // );
       bookedAppointmentDates.push(
         data.scheduled_timestamp.toDate().toISOString()
       );
     });
-    console.log("bookedAppointmentDates", bookedAppointmentDates);
+    // console.log("bookedAppointmentDates", bookedAppointmentDates);
     return bookedAppointmentDates;
   } catch (error) {
     console.log("error in fetchBookedDateOfAppointment", error);

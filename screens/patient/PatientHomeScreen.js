@@ -111,7 +111,7 @@ function PatientHomeScreen() {
 
         return video.status === VIDEO_STATUS.REJECTED && isToday;
       });
-      console.log("rejected vid " + vid);
+      // console.log("rejected vid " + vid);
 
       if (vid == null || vid == undefined) {
         setRejectedVideo();

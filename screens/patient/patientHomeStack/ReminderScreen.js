@@ -3,7 +3,6 @@ import {
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
-  TextComponent,
   View,
 } from "react-native";
 import {
@@ -14,23 +13,23 @@ import {
   TouchableRipple,
   useTheme,
 } from "react-native-paper";
-import React, { useState, useMemo } from "react";
-import TextListButton from "../../../components/ui/TextListButton";
+import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { TimePickerModal } from "react-native-paper-dates";
 import { useTranslation } from "react-i18next";
-import notifee from '@notifee/react-native';
+import notifee, { RepeatFrequency, TriggerType } from "@notifee/react-native";
+import * as SecureStore from "expo-secure-store";
 
 export default function ReminderScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation("patient");
 
-  const [videoReminder, setVideoReminder] = React.useState(true);
-  const [appointmentReminder, setAppointmentReminder] = React.useState(true);
+  const [medicationReminder, setMedicationReminder] = React.useState(false);
+  const [appointmentReminder, setAppointmentReminder] = React.useState(false);
   const [timePickerOpen, setTimePickerOpen] = React.useState(false);
-  const [hour, setHour] = React.useState("");
-  const [minute, setMinute] = React.useState("");
+  const [hour, setHour] = React.useState("12");
+  const [minute, setMinute] = React.useState("00");
   const [calendarLocale, setCalendarLocale] = React.useState("");
 
   React.useLayoutEffect(() => {
@@ -39,38 +38,190 @@ export default function ReminderScreen() {
     });
 
     const loadCalendarLocale = async () => {
-      const locale = await SecureStore.getItemAsync("locale");
-      console.log(locale);
-      setCalendarLocale(locale);
+      await SecureStore.getItemAsync("locale").then((locale) => {
+        console.log(locale);
+        setCalendarLocale(locale);
+      });
+    };
+
+    const loadMedicationReminderTime = async () => {
+      await SecureStore.getItemAsync("medicationTime").then((time) => {
+        if (time) {
+          const [hour, minute] = time.split("-");
+          setHour(hour);
+          setMinute(minute);
+          console.log("Time is " + time);
+        }
+      });
     };
 
     loadCalendarLocale();
+    loadMedicationReminderTime();
+
+    notifee.getTriggerNotificationIds().then((ids) => {
+      console.log("All trigger notifications: ", ids);
+      if (ids.includes("medication")) {
+        setMedicationReminder(true);
+      }
+      if (ids.includes("appointment")) {
+        setAppointmentReminder(true);
+      }
+    });
   }, [t]);
 
-  async function onDisplayNotification() {
+  React.useEffect(() => {
+    //Check if the patient has ate medicine today
+    const retrievePermissions = async () => {
+      // const settings = notifee.getNotificationSettings();
+      // if (settings.android.alarm == AndroidNotificationSetting.ENABLED) {
+      //   //Create timestamp trigger
+      // } else {
+      //   // Show some user information to educate them on what exact alarm permission is,
+      //   // and why it is necessary for your app functionality, then send them to system preferences:
+      //   await notifee.openAlarmPermissionSettings();
+      // }
+    };
+
+    retrievePermissions();
+  }, []);
+
+  async function onCreateMedicationNotification() {
+    if (!appointmentReminder) {
+      // Request permissions (required for iOS)
+      await notifee.requestPermission();
+
+      // Create a channel (required for Android)
+      const channelId = await notifee.createChannel({
+        id: "medication-channel",
+        name: "Medication Channel",
+      });
+
+      const date = new Date();
+      date.setHours(Number(hour));
+      date.setMinutes(Number(minute));
+
+      const trigger = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: date.getTime(),
+        repeatFrequency: RepeatFrequency.DAILY,
+      };
+
+      await notifee.createTriggerNotification(
+        {
+          id: "medication",
+          title: "Medication Alert",
+          body: "Remember to take your medication",
+          android: {
+            channelId,
+            // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
+            // pressAction is needed if you want the notification to open the app when pressed
+            pressAction: {
+              id: "default",
+            },
+          },
+        },
+        trigger
+      );
+    } else {
+      setMedicationReminder(!medicationReminder);
+      cancel("medication");
+    }
+  }
+
+  async function updateMedicationTime() {
+    await SecureStore.setItemAsync("medicationTime", `${hour}-${minute}`);
     // Request permissions (required for iOS)
-    await notifee.requestPermission()
+    await notifee.requestPermission();
 
     // Create a channel (required for Android)
     const channelId = await notifee.createChannel({
-      id: 'default',
-      name: 'Default Channel',
+      id: "medication-channel",
+      name: "Medication Channel",
     });
 
-    // Display a notification
-    await notifee.displayNotification({
-      title: 'Notification Title',
-      body: 'Main body content of the notification',
-      android: {
-        channelId,
-        // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
-        // pressAction is needed if you want the notification to open the app when pressed
-        pressAction: {
-          id: 'default',
+    const date = new Date();
+    date.setHours(Number(hour));
+    date.setMinutes(Number(minute));
+
+    const trigger = {
+      type: TriggerType.TIMESTAMP,
+      timestamp: date.getTime(),
+      repeatFrequency: RepeatFrequency.DAILY,
+    };
+
+    await notifee
+      .createTriggerNotification(
+        {
+          id: "medication",
+          title: "Medication Alert",
+          body: "Remember to take your medication",
+          android: {
+            channelId,
+            // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
+            // pressAction is needed if you want the notification to open the app when pressed
+            pressAction: {
+              id: "default",
+            },
+          },
         },
-      },
-    });
-  }
+        trigger
+      )
+      .then(() => {
+        Alert.alert(t("reminder_updated_title"));
+      });
+  }
+
+  async function onCreateAppointmentNotification() {
+    if (!appointmentReminder) {
+      // Request permissions (required for iOS)
+      await notifee.requestPermission();
+
+      // Create a channel (required for Android)
+      const channelId = await notifee.createChannel({
+        id: "appointment-channel",
+        name: "Appointment Channel",
+      });
+
+      const date = new Date();
+      date.setHours(11);
+      date.setMinutes(31);
+
+      // Create a time-based trigger
+      const trigger = {
+        type: TriggerType.TIMESTAMP,
+        timestamp: date.getTime(),
+      };
+
+      // Create a trigger notification
+      await notifee
+        .createTriggerNotification(
+          {
+            id: "appointment",
+            title: "Appointment Reminder",
+            body: "Today at 11:30am",
+            android: {
+              channelId,
+              // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
+              // pressAction is needed if you want the notification to open the app when pressed
+              pressAction: {
+                id: "default",
+              },
+            },
+          },
+          trigger
+        )
+        .then(() => {
+          setAppointmentReminder(!appointmentReminder);
+        });
+    } else {
+      setAppointmentReminder(!appointmentReminder);
+      cancel("appointment");
+    }
+  }
+
+  async function cancel(notificationId) {
+    await notifee.cancelNotification(notificationId);
+  }
 
   //Time Picker
   const onDismiss = React.useCallback(() => {
@@ -89,29 +240,6 @@ export default function ReminderScreen() {
     [setTimePickerOpen]
   );
 
-  
-
-  const handleReminderSubmission = () => {
-    //TODO submit new reminder
-    Alert.alert(
-      t("reminder_updated_title"),
-      t("new_reminder_set_message", { hour, minute }),
-      [
-        {
-          text: t("ok_button_text"),
-          onPress: () => {
-            onDisplayNotification();
-            navigation.goBack();
-          },
-          style: "cancel",
-        },
-      ],
-      {
-        cancelable: false,
-      }
-    );
-  };
-
   return (
     <KeyboardAvoidingView>
       <View
@@ -122,9 +250,7 @@ export default function ReminderScreen() {
         }}
       >
         <View style={{ marginTop: 16 }}>
-          <TouchableRipple
-            onPress={() => setAppointmentReminder(!appointmentReminder)}
-          >
+          <TouchableRipple onPress={() => onCreateAppointmentNotification()}>
             <View style={styles.row}>
               <Text variant="bodyLarge">{t("appointment_reminder_text")}</Text>
               <View pointerEvents="none">
@@ -132,16 +258,16 @@ export default function ReminderScreen() {
               </View>
             </View>
           </TouchableRipple>
-          <TouchableRipple onPress={() => setVideoReminder(!videoReminder)}>
+          <TouchableRipple onPress={() => onCreateMedicationNotification()}>
             <View style={styles.row}>
               <Text variant="bodyLarge">{t("video_upload_reminder_text")}</Text>
               <View pointerEvents="none">
-                <Switch value={videoReminder} />
+                <Switch value={medicationReminder} />
               </View>
             </View>
           </TouchableRipple>
         </View>
-        {videoReminder && (
+        {medicationReminder && (
           <>
             <Text variant="titleLarge" style={{ marginTop: 32 }}>
               {t("video_upload_reminder_title")}
@@ -165,13 +291,15 @@ export default function ReminderScreen() {
                 />
               </View>
             </Pressable>
+            <Button
+              mode="contained"
+              onPress={() => updateMedicationTime()}
+              style={{ alignSelf: "flex-end", marginTop: 40 }}
+            >
+              {t("update_button_text")}
+            </Button>
           </>
         )}
-        <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
-          <Button mode="contained" onPress={handleReminderSubmission}>
-            {t("update_button_text")}
-          </Button>
-        </View>
       </View>
       <TimePickerModal
         locale={calendarLocale}

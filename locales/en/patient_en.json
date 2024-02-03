@@ -58,9 +58,9 @@
   "past_appointment": "Past Appointments",
   "no_completed_appointment": "You don't have any completed appointment",
   "book_appointment": "Book Appointment",
-  "grade_1": "Grade 1",
-  "grade_2": "Grade 2",
-  "grade_3": "Grade 3",
+  "grade1": "Grade 1",
+  "grade2": "Grade 2",
+  "grade3": "Grade 3",
   "no_reported_side_effects": "You don't have any reported side effects",
   "reschedule_button_text": "Reschedule",
   "cancel_appointment_title": "Cancel Appointment?",
@@ -231,5 +231,10 @@
   "tb_vot_title": "What is Video Observed Therapy (VOT)?",
   "tb_vot_description": "VOT is the use of a videophone or other video/computer equipment to observe tuberculosis (TB) patients taking their medications remotely.",
   "video_example_title": "Video example",
-  "video_example_description": "Video example"
+  "video_example_description": "Video example",
+
+  "accepted": "Accepted",
+  "pending": "Pending",
+  "completed": "Completed",
+  "cancelled": "Cancelled"
 }

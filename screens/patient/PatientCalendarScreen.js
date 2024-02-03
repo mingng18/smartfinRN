@@ -246,7 +246,7 @@ function PatientCalendarScreen() {
                     ? t("appointment_title")
                     : appointment.healthcare_first_name
                 )}
-                status={capitalizeFirstLetter(appointment.appointment_status)}
+                status={t(appointment.appointment_status)}
                 date={new Date(appointment.scheduled_timestamp)
                   .toISOString()
                   .slice(0, 10)}
