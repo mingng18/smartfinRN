@@ -24,6 +24,8 @@ import LanguageScreen from "../screens/common/LanguageScreen";
 import ChangePasswordScreen from "../screens/common/ChangePasswordScreen";
 import AboutMyTBScreen from "../screens/patient/patientHomeStack/AboutMyTBScreen";
 import AboutTBScreen from "../screens/patient/patientHomeStack/AboutTBScreen";
+import VideoCallScreen from "../screens/common/VideoCallScreen";
+import JoinVideoCallScreen from "../screens/common/JoinVideoCallScreen";
 
 const PatientStack = createNativeStackNavigator();
 
@@ -191,6 +193,13 @@ export default function PatientStackGroup() {
         component={AboutTBScreen}
         options={{
           headerShown: true,
+        }}
+      />
+      <PatientStack.Screen
+        name="JoinVideoCallScreen"
+        component={JoinVideoCallScreen}
+        options={{
+          headerShown: false,
         }}
       />
     </PatientStack.Navigator>

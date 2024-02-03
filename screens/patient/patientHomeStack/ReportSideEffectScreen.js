@@ -494,7 +494,7 @@ function ReportSideEffectScreen() {
             style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
           >
             <DatePickerModal
-              locale={calendarLocale}
+              // locale={calendarLocale}
               mode="single"
               visible={calendarOpen}
               onDismiss={onDismissSingle}

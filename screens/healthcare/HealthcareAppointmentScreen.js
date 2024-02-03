@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { Alert, View } from "react-native";
+import React, { useEffect } from "react";
+import { Alert, DeviceEventEmitter, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { ScrollView } from "react-native-gesture-handler";
 import {
@@ -29,10 +29,11 @@ import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 import { useTranslation } from "react-i18next";
 
 export default function HealthcareAppointmentScreen() {
-  const { navigate } = useNavigation();
+  const navigation  = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
   const { t } = useTranslation("healthcare");
+
 
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
@@ -62,8 +63,14 @@ export default function HealthcareAppointmentScreen() {
     setCallingAppointmentNotes("");
   }
 
+  useEffect(() => {
+    DeviceEventEmitter.removeAllListeners("onCallOrJoin");
+  }, []);
+
   function showAppointmentNotesRecorderHandler(appointmentData) {
-    showAppointmentNoteModal(true);
+    console.log("checking here")
+    console.log(appointmentData.scheduled_timestamp);
+    showAppointmentNoteModal();
     setcallingAppointment(appointmentData);
     setcallingAppointmentDate(
       new Date(appointmentData.scheduled_timestamp).toISOString().slice(0, 10)
@@ -79,6 +86,12 @@ export default function HealthcareAppointmentScreen() {
       )
     );
   }
+
+  const onCallOrJoin = async (meeting_room_id, appointment) => {
+    if (meeting_room_id != null || meeting_room_id != "") {
+      navigation.navigate("VideoCallScreen", {roomId: meeting_room_id, currentAppointment: appointment});
+    }
+  };
 
   async function submitAppointmentNotesHandler() {
     setIsLoading(true);
@@ -185,7 +198,10 @@ export default function HealthcareAppointmentScreen() {
                     : theme.colors.secondaryContainer
                 }
                 onPressedCallback={() => {
-                  navigate("HealthcareAppointmentDetailsScreen", {
+                  DeviceEventEmitter.addListener("onCallOrJoin", (appointment) => {
+                    showAppointmentNotesRecorderHandler(appointment)
+                  });
+                  navigation.navigate("HealthcareAppointmentDetailsScreen", {
                     appointment: appointment,
                   });
                 }}
@@ -194,8 +210,12 @@ export default function HealthcareAppointmentScreen() {
                     ? HORIZONTAL_CARD_TYPE.DEFAULT
                     : HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT
                 }
-                iconOnPressedCallBack={() => {
-                  showAppointmentNotesRecorderHandler(appointment);
+                iconOnPressedCallBack={async () => {
+                  DeviceEventEmitter.addListener("onCallOrJoin", (appointment) => {
+                    showAppointmentNotesRecorderHandler(appointment)
+                  });
+                  onCallOrJoin(appointment.meeting_room_id, appointment);
+                  // showAppointmentNotesRecorderHandler(appointment);
                 }}
               />
             );

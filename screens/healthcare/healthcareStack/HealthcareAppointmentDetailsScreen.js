@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, DeviceEventEmitter, StyleSheet, View } from "react-native";
 import {
   Button,
   Dialog,
@@ -42,6 +42,7 @@ export default function HealthcareAppointmentDetailsScreen() {
   const hideDialog = () => setVisible(false);
   const [reason, setReason] = React.useState("");
   const [reasonError, setReasonError] = React.useState(false);
+  const [roomId, setRoomId] = React.useState("");
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -55,13 +56,31 @@ export default function HealthcareAppointmentDetailsScreen() {
       : theme.colors.surfaceContainer;
   }
 
+  const onCallOrJoin = (meeting_room_id) => {
+    if (meeting_room_id != null || meeting_room_id != "") {
+      navigation.navigate("VideoCallScreen", {roomId: meeting_room_id, currentAppointment: currentAppointment});
+    }
+  };
+
   async function handleAccept() {
     const storedUid = await SecureStore.getItemAsync("uid");
+
+    const generateRandomId = () => {
+      const characters = "abcdefghijklmnopqrstuvwxyz";
+      let result = "";
+      for (let i = 0; i < 7; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        result += characters.charAt(randomIndex);
+      }
+      return setRoomId(result);
+    };
+    console.log(generateRandomId());
 
     try {
       const updatedAppointment = {
         healthcare_id: storedUid,
         appointment_status: APPOINTMENT_STATUS.ACCEPTED,
+        meeting_room_id: roomId,
       };
 
       await editDocument(
@@ -86,7 +105,10 @@ export default function HealthcareAppointmentDetailsScreen() {
     }
   }
 
-  function videoCall() {}
+  function videoCall() {
+    console.log("Video Calling this room : " + currentAppointment.meeting_room_id);
+    onCallOrJoin(currentAppointment.meeting_room_id);
+  }
 
   async function cancelAppointment() {
     if (reason === "") {

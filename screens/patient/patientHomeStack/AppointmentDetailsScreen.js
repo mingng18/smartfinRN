@@ -8,11 +8,12 @@ import {
   HORIZONTAL_CARD_TYPE,
 } from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
-import { editDocument } from "../../../util/firestoreWR";
+import { editDocument, fetchDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updateAppointment } from "../../../store/redux/appointmentSlice";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function AppointmentDetailsScreen() {
   const navigation = useNavigation();
@@ -197,8 +198,34 @@ export default function AppointmentDetailsScreen() {
     );
   }
 
+  const onCallOrJoin = (meeting_room_id) => {
+    if (meeting_room_id != null || meeting_room_id != "") {
+      navigation.navigate("JoinVideoCallScreen", {roomId: meeting_room_id});
+    }
+  };
+
   //TODO Handle Video Call
-  const handleVideoCall = () => {};
+  const handleVideoCall = async () => {
+    console.log("Video Call Pressed on appointment: " + currentAppointment.id);
+    console.log("roomID " + currentAppointment.meeting_room_id);
+
+
+    if (currentAppointment.meeting_room_id) {
+      if (
+        currentAppointment.meeting_room_id === "" ||
+        currentAppointment.meeting_room_id === null||
+        currentAppointment.meeting_room_id === undefined
+      ) {
+        // console.log(`Room ${roomId} does not exist.`);
+        Alert.alert("The meeting room does not exist.");
+        return;
+      } else {
+        onCallOrJoin( currentAppointment.meeting_room_id);
+      }
+    } else {
+      Alert.alert("Provide a valid Room ID.");
+    }
+  };
 
   //TODO Reschedule Appointment
   const rescheduleAppointment = () => {
