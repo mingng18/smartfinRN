@@ -33,7 +33,7 @@ export default function LanguageScreen() {
           text: "OK",
           onPress: () => {
             i18n.changeLanguage(language);
-            changeCalendarsLocales(i18n);
+            changeCalendarsLocales(language);
             changePaperLocales(language);
             navigation.goBack();
           },

@@ -49,13 +49,7 @@ function AllSideEffectScreen() {
           sortedSideEffects.map((sideEffect, i) => (
             <HorizontalCard
               key={i}
-              subject={
-                sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_1
-                  ? t("grade_1")
-                  : sideEffect.severity === SIDE_EFFECT_SEVERITY.GRADE_2
-                  ? t("grade_2")
-                  : t("grade_3")
-              }
+              subject={t(sideEffect.severity)}
               date={sideEffect.side_effect_occuring_timestamp.slice(0, 10)}
               time={new Date(
                 sideEffect.side_effect_occuring_timestamp
