@@ -7,7 +7,6 @@ import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { DIAGNOSIS, TREATMENT } from "../../../constants/constants";
 import InformationChip from "../../../components/ui/InformationChip";
 import PatientDetailsTab from "../../../navigation/PatientDetailsTab";
-import { debounce } from "lodash";
 import { editDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updatePatientData } from "../../../store/redux/patientDataSlice";
