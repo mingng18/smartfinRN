@@ -2,12 +2,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
 import { Alert, Image, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+// import {
+//   getDownloadURL,
+//   getStorage,
+//   ref,
+//   uploadBytesResumable,
+// } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
 import { editDocument } from "../../util/firestoreWR";
 import { FIREBASE_COLLECTION, USER_TYPE } from "../../constants/constants";
@@ -16,13 +16,14 @@ import * as Haptics from "expo-haptics";
 import { CacheManager } from "expo-cached-image";
 import { getLastTenCharacters } from "../../util/wordUtil";
 import { useTranslation } from "react-i18next";
+import storage from "@react-native-firebase/storage";
 
 export default function UserPreviewProfilePicScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const { key, name, params, path } = useRoute();
   const user = useSelector((state) => state.authObject);
-  const storage = getStorage();
+  // const storage = getStorage();
   const dispatch = useDispatch();
   const { t } = useTranslation("common");
 
@@ -43,30 +44,33 @@ export default function UserPreviewProfilePicScreen() {
       userType === USER_TYPE.PATIENT
         ? "patientProfilePicture/"
         : "healthcareProfilePicture/";
-    const ppStorageRef = ref(storage, storageStr + user.user_uid);
+    const ppStorageRef = storage().ref(storageStr + user.user_uid);
+    // const ppStorageRef = ref(storage, storageStr + user.user_uid);
 
     try {
       if (uri == "" || uri == null) {
         return Alert.alert(t("no_image_selected"), t("select_an_image"));
       }
 
-      const imageData = await fetch(uri);
-      const imageBlob = await imageData.blob();
+      // const imageData = await fetch(uri);
+      // const imageBlob = await imageData.blob();
 
       // Compress the image
       // const compressedImage = await compressImage(imageBlob);
-      uploadTask = uploadBytesResumable(ppStorageRef, imageBlob);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          setUploadProgress(progress.toFixed(2));
-        },
-        (error) => {},
-        (snapshot) => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+      const uploadTask = ppStorageRef.putFile(uri);
+      // uploadTask = uploadBytesResumable(ppStorageRef, imageBlob);
+      uploadTask.on("state_changed", (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is " + progress + "% done");
+        setUploadProgress(progress.toFixed(2));
+      });
+      uploadTask.then(() => {
+        storage()
+          .ref(storageStr + user.user_uid)
+          .getDownloadURL()
+          .then(async (downloadURL) => {
+            // getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
             console.log("File available at ", downloadURL);
 
             //Add url to patient or healthcare docs
@@ -92,8 +96,7 @@ export default function UserPreviewProfilePicScreen() {
             Alert.alert(t("profile_pic_updated"));
             navigation.goBack();
           });
-        }
-      );
+      });
     } catch (error) {
       setIsUploading(false);
       console.log("Update profile pic failed: " + error);

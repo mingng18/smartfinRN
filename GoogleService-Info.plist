@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>73133667345-q06ea163ukiqag1lfpk4a22sqb4f86gg.apps.googleusercontent.com</string>
+	<string>73133667345-p2ikmgue5kjbth8urrepnqauj2mn2ckf.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.73133667345-q06ea163ukiqag1lfpk4a22sqb4f86gg</string>
+	<string>com.googleusercontent.apps.73133667345-p2ikmgue5kjbth8urrepnqauj2mn2ckf</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>73133667345-5uaf93rgiseqrgnmh6c8mohgjpse0bcr.apps.googleusercontent.com</string>
+	<string>73133667345-2a2ms41bq0k859t598s7pkqdj4d03d2p.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyA3wdKeyt7CC8Abj2JhF3_v_bS3KJeINbA</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.mytbcompanion</string>
+	<string>com.mytbcompanion.MyTBCompanion</string>
 	<key>PROJECT_ID</key>
 	<string>mytbcompanion</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:73133667345:ios:397a80f7bac591d594edb0</string>
+	<string>1:73133667345:ios:9eac6c177f6a05b294edb0</string>
 </dict>
 </plist>

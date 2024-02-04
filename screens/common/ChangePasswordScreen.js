@@ -2,20 +2,21 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useLayoutEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-import {
-  updatePassword,
-  reauthenticateWithCredential,
-  getAuth,
-  EmailAuthProvider,
-} from "firebase/auth";
+// import {
+//   updatePassword,
+//   reauthenticateWithCredential,
+//   getAuth,
+//   EmailAuthProvider,
+// } from "firebase/auth";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
+import { firebase } from "@react-native-firebase/auth";
 
 export default function ChangePasswordScreen() {
   const navigation = useNavigation();
   const { key, name, params, path } = useRoute();
   const theme = useTheme();
-  const auth = getAuth();
+  // const auth = getAuth();
   const { t } = useTranslation("common");
 
   const [oldPassword, setOldPassword] = useState("");
@@ -34,13 +35,18 @@ export default function ChangePasswordScreen() {
 
   const changePassword = (currentPassword, newPassword) => {
     checkInput();
-    const credentials = EmailAuthProvider.credential(
+
+    const emailCred = firebase.auth.EmailAuthProvider.credential(
       auth.currentUser.email,
       currentPassword
     );
-    reauthenticateWithCredential(auth.currentUser, credentials)
+    firebase
+      .auth()
+      .currentUser.reauthenticateWithCredential(emailCred)
       .then(() => {
-        updatePassword(auth.currentUser, newPassword)
+        firebase
+          .auth()
+          .currentUser.updatePassword(newPassword)
           .then(() => {
             Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             Alert.alert(t("password_updated"));

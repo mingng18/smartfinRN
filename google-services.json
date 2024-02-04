@@ -100,6 +100,50 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73133667345:android:f970a6c61f0a8c8c94edb0",
+        "android_client_info": {
+          "package_name": "com.mytbcompanion.MyTBCompanion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "73133667345-2a2ms41bq0k859t598s7pkqdj4d03d2p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mytbcompanion.MyTBCompanion",
+            "certificate_hash": "9f31f90e80c8b39b2c9c1646796f822cc6f73169"
+          }
+        },
+        {
+          "client_id": "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1mcKv55Tr_bBKg2k4o9XuU0PdIO3yo_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "73133667345-cdhd2hp3p81m2d3ssse199spafj1ik5v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.mytbcompanion.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"
