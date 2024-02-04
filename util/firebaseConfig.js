@@ -31,12 +31,9 @@ if (firebase.apps.length === 0) {
     app = firebase.app()
 }
 
-
+  
 // export const db = getFirestore(app);
 // export const auth = initializeAuth(app, {
 //   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 // });
 // const storage = getStorage(app);
-
-
-

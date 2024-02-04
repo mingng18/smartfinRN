@@ -8,14 +8,15 @@ import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import Navigation from "./navigation/Navigation";
-import { customVariants } from "./constants/customFonts";
+// import { getAuth, onAuthStateChanged } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { Provider, useDispatch } from "react-redux";
 import "expo-dev-client";
 
+import Navigation from "./navigation/Navigation";
+import { customVariants } from "./constants/customFonts";
 import { store } from "./store/redux/store";
 import {
   authenticateStoreNative,
@@ -45,9 +46,8 @@ SplashScreen.preventAutoHideAsync();
 //Fetching the user token from thee local storage of the device if available.
 //While fetching, display loading screen.
 function Root() {
-  const [isTryingLogin, setIsTryingLogin] = useState(true);
-  const dispatch = useDispatch();
   const { i18n } = useTranslation();
+  const dispatch = useDispatch();
   // const messaging = getMessaging();
   // if (!firebase.apps.length) {
   // }
@@ -72,67 +72,36 @@ function Root() {
   //     });
   // }, []);
 
-  LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
-  LogBox.ignoreAllLogs();
+  const [isTryingLogin, setIsTryingLogin] = useState(true);
+  const [user, setUser] = useState();
+  const [initializing, setInitializing] = useState(true);
 
-  // const requestUserPermission = async () => {
-  //   try {
-  //     if (Platform.OS === "android") {
-  //       const granted = await PermissionsAndroid.request(
-  //         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
-  //         {
-  //           title: "Permission to receive notifications",
-  //           message: "We need your permission to receive notifications",
-  //           buttonPositive: "OK",
-  //         }
-  //       );
-  //       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-  //         console.log("Permission granted");
-  //         return true;
-  //       } else {
-  //         console.log("Permission denied");
-  //         return false;
-  //       }
-  //     } else if (Platform.OS === "ios") {
-        
-  //       const authStatus = await messaging().requestPermission();
-  //       const enabled =
-  //         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-  //         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-  //       console.log("Authorization status:", authStatus);
-  //       return enabled;
-  //     }
-  //   } catch (error) {
-  //     console.error("Error requesting permission:", error);
-  //     return false;
-  //   }
-  // };
+  // Ignore log notification by message
+  // LogBox.ignoreLogs(["Warning: ..."]);
+  // LogBox.ignoreAllLogs();
+
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
 
   useEffect(() => {
     async function fetchToken() {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      // console.log("User now: " + user.uid);
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          async (user) => {
-            const token = await user.getIdTokenResult().token;
-            console.log("Starting token: " + token);
-          };
-          // console.log("Display name: " + user.getIdTokenResult());
-          // dispatch(authenticateStoreNative(await user.getIdTokenResult()), user.uid);
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/auth.user
-          // const uid = user.uid;
-          // ...
-        } else {
-          async (user) => {
-            const token = await user.getIdTokenResult().token;
-            console.log("Starting token: " + token);
-          };
-          // console.log("Display name: " + user.getIdTokenResult());
-        }
-      });
+      // const auth = getAuth();
+      // const user = auth.currentUser;
+
+      if (user) {
+        const token = await user.getIdToken();
+        console.log("Starting token: " + token);
+      } else {
+        console.log("No user");
+      }
+
       const storedToken = await SecureStore.getItemAsync("token");
       console.log("Initialized token:" + storedToken);
       if (storedToken != "" && storedToken != null) {
@@ -140,6 +109,7 @@ function Root() {
         console.log("Initialized uid:" + storedUid);
         try {
           const patientUser = await fetchDocument("patient", storedUid);
+
           console.log("Fetching patient");
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
           dispatch(
@@ -167,6 +137,7 @@ function Root() {
             FIREBASE_COLLECTION.HEALTHCARE,
             storedUid
           );
+
           console.log(
             "healthcare email from firebase is: " + healthcareUser.email
           );
@@ -332,7 +303,6 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
-        {/* <AuthContextProvider> */}
         <I18nextProvider i18n={i18n}>
           <PaperProvider theme={lightTheme}>
             <BottomSheetModalProvider>
@@ -342,7 +312,6 @@ export default function App() {
           </PaperProvider>
         </I18nextProvider>
       </Provider>
-      {/* </AuthContextProvider> */}
     </GestureHandlerRootView>
   );
 }

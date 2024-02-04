@@ -6,8 +6,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Pressable, View, Alert, StyleSheet } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
+import * as Haptics from "expo-haptics";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
 import {
   authenticateStoreNative,
   fetchPatientData,
@@ -32,8 +36,6 @@ import {
   TREATMENT,
   USER_TYPE,
 } from "../../constants/constants";
-import * as Haptics from "expo-haptics";
-import { useTranslation } from "react-i18next";
 
 export default function TreatmentInfoForm({ isEditing }) {
   const navigation = useNavigation();
@@ -85,7 +87,7 @@ export default function TreatmentInfoForm({ isEditing }) {
     };
 
     loadCalendarLocale();
-  },[])
+  }, []);
 
   //Calendar
   const onDismissSingle = React.useCallback(() => {
@@ -290,12 +292,19 @@ export default function TreatmentInfoForm({ isEditing }) {
     //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
       //Create user
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // const userCredential = await createUserWithEmailAndPassword(
+      //   auth,
+      //   signupInfo.email,
+      //   signupInfo.password
+      // );
+
+      // const user = userCredential.user;
+      
+      const user = auth().createUserWithEmailAndPassword(
         signupInfo.email,
         signupInfo.password
       );
-      const user = userCredential.user;
+
       const token = await user.getIdTokenResult();
       dispatch(
         updateMedicalInformation({

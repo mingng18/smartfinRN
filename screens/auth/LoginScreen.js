@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import { Alert } from "react-native";
 import { useDispatch } from "react-redux";
 import { FirebaseError } from "firebase/app";
+import auth from "@react-native-firebase/auth";
+import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+// import {
+//   fetchSignInMethodsForEmail,
+//   getAuth,
+//   signInWithEmailAndPassword,
+//   linkWithCredential,
+// } from "firebase/auth";
 
 import LoginContentForm from "../../components/Auth/LoginContentForm";
 import LoadingOverlay from "../../components/ui/LoadingOverlay";
@@ -10,12 +19,6 @@ import {
   fetchHealthcareData,
   fetchPatientData,
 } from "../../store/redux/authSlice";
-import {
-  fetchSignInMethodsForEmail,
-  getAuth,
-  signInWithEmailAndPassword,
-  linkWithCredential,
-} from "firebase/auth";
 import { fetchDocument } from "../../util/firestoreWR";
 import { USER_TYPE } from "../../constants/constants";
 import { FIREBASE_COLLECTION } from "../../constants/constants";
@@ -23,8 +26,6 @@ import { fetchAppointments } from "../../store/redux/appointmentSlice";
 import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
-import { useNavigation } from "@react-navigation/native";
-import { useTranslation } from "react-i18next";
 
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
@@ -38,64 +39,126 @@ function LoginScreen() {
   });
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
+
+    // try {
+    //   const userCredential = await signInWithEmailAndPassword(
+    //     auth,
+    //     email,
+    //     password
+    //   );
+    //   const user = userCredential.user;
+    //   const token = await user.getIdTokenResult();
+    //   try {
+    //     const isPatient = await fetchDocument(
+    //       FIREBASE_COLLECTION.PATIENT,
+    //       user.uid
+    //     );
+    //     dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
+    //     dispatch(
+    //       fetchPatientData({
+    //         ...isPatient,
+    //         date_of_diagnosis: isPatient.date_of_diagnosis
+    //           .toDate()
+    //           .toISOString(),
+    //       })
+    //     );
+    //     dispatch(
+    //       fetchAppointments({
+    //         userId: user.uid,
+    //         userType: USER_TYPE.PATIENT,
+    //       })
+    //     );
+    //     dispatch(
+    //       fetchSideEffects({ userId: user.uid, userType: USER_TYPE.PATIENT })
+    //     );
+    //     dispatch(
+    //       fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
+    //     );
+    //   } catch (error) {
+    //     const isHealthcare = await fetchDocument(
+    //       FIREBASE_COLLECTION.HEALTHCARE,
+    //       user.uid
+    //     );
+    //     dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
+    //     dispatch(fetchHealthcareData({ ...isHealthcare }));
+    //     dispatch(fetchPatientCollectionData());
+    //     dispatch(
+    //       fetchAppointments({
+    //         userId: user.uid,
+    //         userType: USER_TYPE.HEALTHCARE,
+    //       })
+    //     );
+    //     dispatch(
+    //       fetchSideEffects({
+    //         userId: user.uid,
+    //         userType: USER_TYPE.HEALTHCARE,
+    //       })
+    //     );
+    //     dispatch(
+    //       fetchVideos({ userId: user.uid, userType: USER_TYPE.HEALTHCARE })
+    //     );
+    //   }
     try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      const token = await user.getIdTokenResult();
-      try {
-        const isPatient = await fetchDocument(
-          FIREBASE_COLLECTION.PATIENT,
-          user.uid
-        );
-        dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
-        dispatch(
-          fetchPatientData({
-            ...isPatient,
-            date_of_diagnosis: isPatient.date_of_diagnosis
-              .toDate()
-              .toISOString(),
-          })
-        );
-        dispatch(
-          fetchAppointments({
-            userId: user.uid,
-            userType: USER_TYPE.PATIENT,
-          })
-        );
-        dispatch(
-          fetchSideEffects({ userId: user.uid, userType: USER_TYPE.PATIENT })
-        );
-        dispatch(
-          fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
-        );
-      } catch (error) {
-        const isHealthcare = await fetchDocument(
-          FIREBASE_COLLECTION.HEALTHCARE,
-          user.uid
-        );
-        dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
-        dispatch(fetchHealthcareData({ ...isHealthcare }));
-        dispatch(fetchPatientCollectionData());
-        dispatch(
-          fetchAppointments({
-            userId: user.uid,
-            userType: USER_TYPE.HEALTHCARE,
-          })
-        );
-        dispatch(
-          fetchSideEffects({
-            userId: user.uid,
-            userType: USER_TYPE.HEALTHCARE,
-          })
-        );
-        dispatch(
-          fetchVideos({ userId: user.uid, userType: USER_TYPE.HEALTHCARE })
-        );
-      }
+      auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(async (user) => {
+          const token = await user.getIdToken();
+          try {
+            const isPatient = await fetchDocument(
+              FIREBASE_COLLECTION.PATIENT,
+              user.uid
+            );
+            dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
+            dispatch(
+              fetchPatientData({
+                ...isPatient,
+                date_of_diagnosis: isPatient.date_of_diagnosis
+                  .toDate()
+                  .toISOString(),
+              })
+            );
+            dispatch(
+              fetchAppointments({
+                userId: user.uid,
+                userType: USER_TYPE.PATIENT,
+              })
+            );
+            dispatch(
+              fetchSideEffects({
+                userId: user.uid,
+                userType: USER_TYPE.PATIENT,
+              })
+            );
+            dispatch(
+              fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
+            );
+          } catch (error) {
+            const isHealthcare = await fetchDocument(
+              FIREBASE_COLLECTION.HEALTHCARE,
+              user.uid
+            );
+            dispatch(
+              authenticateStoreNative(token.token, user.uid, "healthcare")
+            );
+            dispatch(fetchHealthcareData({ ...isHealthcare }));
+            dispatch(fetchPatientCollectionData());
+            dispatch(
+              fetchAppointments({
+                userId: user.uid,
+                userType: USER_TYPE.HEALTHCARE,
+              })
+            );
+            dispatch(
+              fetchSideEffects({
+                userId: user.uid,
+                userType: USER_TYPE.HEALTHCARE,
+              })
+            );
+            dispatch(
+              fetchVideos({ userId: user.uid, userType: USER_TYPE.HEALTHCARE })
+            );
+          }
+        });
     } catch (error) {
       switch (error.code) {
         //General Error

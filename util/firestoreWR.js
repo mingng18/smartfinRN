@@ -594,25 +594,14 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
   try {
     const bookedAppointmentDates = [];
 
-    firestore()
-      .collection(FIREBASE_COLLECTION.APPOINTMENT)
-      .where(
-        Filter.or(
-          Filter("appointment_status", "==", "pending"),
-          Filter("appointment_status", "==", "accepted")
-        )
-      )
-      .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          bookedAppointmentDates.push(
-            data.scheduled_timestamp.toDate().toISOString()
-          );
-        });
-      });
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
 
-    // console.log("bookedAppointmentDates", bookedAppointmentDates);
+      bookedAppointmentDates.push(
+        data.scheduled_timestamp.toDate().toISOString()
+      );
+    });
+
     return bookedAppointmentDates;
   } catch (error) {
     console.log("error in fetchBookedDateOfAppointment", error);
