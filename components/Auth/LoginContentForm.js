@@ -38,8 +38,8 @@ function LoginContentForm({ onAuthenticate }) {
     password: false,
   });
 
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [enteredPassword, setEnteredPassword] = useState("");
+  const [enteredEmail, setEnteredEmail] = useState("kwanyang29@gmail.com");
+  const [enteredPassword, setEnteredPassword] = useState("Abc123@");
   const [hidePassword, setHidePassword] = useState(true);
 
   function updateInputValueHandler(inputType, enteredValue) {

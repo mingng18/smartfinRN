@@ -11,25 +11,18 @@ import firebase from '@react-native-firebase/app';
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-export const firebaseConfig = {
-  apiKey: "AIzaSyDsTk8C4uhIeaqXsO8w5rn18gp-b-Tatzc",
-  authDomain: "mytbcompanion.firebaseapp.com",
-  projectId: "mytbcompanion",
-  storageBucket: "mytbcompanion.appspot.com",
-  messagingSenderId: "73133667345",
-  appId: "1:73133667345:web:26d7d1e0158b7ad894edb0",
-};
+// export const firebaseConfig = {
+//   apiKey: "AIzaSyDsTk8C4uhIeaqXsO8w5rn18gp-b-Tatzc",
+//   authDomain: "mytbcompanion.firebaseapp.com",
+//   projectId: "mytbcompanion",
+//   storageBucket: "mytbcompanion.appspot.com",
+//   messagingSenderId: "73133667345",
+//   appId: "1:73133667345:web:26d7d1e0158b7ad894edb0",
+// };
 
 // Initialize Firebase
 // const app = initializeApp(firebaseConfig);
 // const app = firebase.initializeApp(firebaseConfig);
-
-let app;
-if (firebase.apps.length === 0) {
-    app = firebase.initializeApp(firebaseConfig )
-} else {
-    app = firebase.app()
-}
 
   
 // export const db = getFirestore(app);

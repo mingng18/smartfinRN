@@ -30,7 +30,7 @@ import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
   const dispatch = useDispatch();
-  const auth = getAuth();
+  // const auth = getAuth();
   const { navigate } = useNavigation();
   const { t } = useTranslation("auth");
 
@@ -101,14 +101,18 @@ function LoginScreen() {
     try {
       auth()
         .signInWithEmailAndPassword(email, password)
-        .then(async (user) => {
+        .then(async (userCredential) => {
+          const user = userCredential.user;
           const token = await user.getIdToken();
+
+          console.log("token is : " + token);
+
           try {
             const isPatient = await fetchDocument(
               FIREBASE_COLLECTION.PATIENT,
               user.uid
             );
-            dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
+            dispatch(authenticateStoreNative(token, user.uid, "patient"));
             dispatch(
               fetchPatientData({
                 ...isPatient,
@@ -133,12 +137,13 @@ function LoginScreen() {
               fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
             );
           } catch (error) {
+            console.log("Check hereee")
             const isHealthcare = await fetchDocument(
               FIREBASE_COLLECTION.HEALTHCARE,
               user.uid
             );
             dispatch(
-              authenticateStoreNative(token.token, user.uid, "healthcare")
+              authenticateStoreNative(token, user.uid, "healthcare")
             );
             dispatch(fetchHealthcareData({ ...isHealthcare }));
             dispatch(fetchPatientCollectionData());

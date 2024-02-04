@@ -110,7 +110,10 @@ function Root() {
         try {
           const patientUser = await fetchDocument("patient", storedUid);
 
+
           console.log("Fetching patient");
+          console.log(patientUser.age);
+          console.log(patientUser.date_of_diagnosis.toDate().toISOString());
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
           dispatch(
             fetchPatientData({
@@ -133,6 +136,7 @@ function Root() {
             fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
           );
         } catch (error) {
+          console.log("Check hereee if helathcare section is run " + error)
           const healthcareUser = await fetchDocument(
             FIREBASE_COLLECTION.HEALTHCARE,
             storedUid
