@@ -13,8 +13,6 @@ import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
 import { ResizeMode, Video } from "expo-av";
 import { Alert, StyleSheet, View } from "react-native";
-import { deleteObject, getStorage, ref } from "firebase/storage";
-import { Timestamp, serverTimestamp } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
@@ -24,6 +22,7 @@ import { editDocument } from "../../../util/firestoreWR";
 import { deleteVideo } from "../../../store/redux/videoSlice";
 import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 import { useTranslation } from "react-i18next";
+import storage from "@react-native-firebase/storage";
 
 export default function ReviewVideoDetailsScreen() {
   const navigation = useNavigation();
@@ -33,7 +32,7 @@ export default function ReviewVideoDetailsScreen() {
   const { t } = useTranslation("healthcare");
 
   const videoRef = React.useRef(null);
-  const storageRef = getStorage();
+  // const storageRef = getStorage();
   const dispatch = useDispatch();
 
   //Treatment Drop down
@@ -67,16 +66,14 @@ export default function ReviewVideoDetailsScreen() {
           reviewer_id: storedUid,
           status: VIDEO_STATUS.ACCEPTED,
           submitter_id: currentVideo.submitter_id,
-          uploaded_timestamp: Timestamp.fromDate(
-            new Date(currentVideo.uploaded_timestamp)
-          ),
+          uploaded_timestamp: new Date(currentVideo.uploaded_timestamp),
           video_url: "",
         };
 
         await editDocument("video", currentVideo.id, updatedVideo);
 
         // Delete the video file from firebase storage
-        deleteVideo(currentVideo.id);
+        deleteVideoFromFirestore(currentVideo.id);
 
         // Dispatch the updateVideo action to update the Redux state
         dispatch(deleteVideo({ id: currentVideo.id }));
@@ -95,13 +92,11 @@ export default function ReviewVideoDetailsScreen() {
           const updatedVideo = {
             medical_checklist: treatment,
             rejected_reason: reason,
-            reviewed_timestamp: serverTimestamp(),
+            reviewed_timestamp: new Date(),
             reviewer_id: storedUid,
             status: VIDEO_STATUS.REJECTED,
             submitter_id: currentVideo.submitter_id,
-            uploaded_timestamp: Timestamp.fromDate(
-              new Date(currentVideo.uploaded_timestamp)
-            ),
+            uploaded_timestamp: new Date(currentVideo.uploaded_timestamp),
             video_url: "",
           };
           await editDocument("video", currentVideo.id, updatedVideo);
@@ -126,9 +121,9 @@ export default function ReviewVideoDetailsScreen() {
   };
 
   function deleteVideoFromFirestore(vidId) {
-    const videoRef = ref(storageRef, `patientTreatmentVideo/${vidId}`);
-
-    deleteObject(videoRef)
+    const reference = storage().ref(`patientTreatmentVideo/${vidId}`);
+    reference
+      .delete()
       .then(() => console.log("Delete Video success"))
       .catch((error) => {
         throw error;

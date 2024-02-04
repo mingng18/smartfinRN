@@ -1,23 +1,18 @@
 import {} from "../../../assets/blank-profile-pic.png";
 import {
   APPOINTMENT_STATUS,
-  BLANK_PROFILE_PIC,
   HORIZONTAL_CARD_TYPE,
   USER_TYPE,
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDocument } from "../../../util/firestoreWR";
 import { fetchAppointments } from "../../../store/redux/appointmentSlice";
-
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { FAB, Text, useTheme } from "react-native-paper";
-import { Timestamp } from "firebase/firestore";
 import * as SecureStore from "expo-secure-store";
-import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 
 function AllAppointmentScreen() {

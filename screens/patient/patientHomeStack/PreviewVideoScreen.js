@@ -17,19 +17,19 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
-import { Timestamp } from "firebase/firestore";
 import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
 import { createVideo } from "../../../store/redux/videoSlice";
 import { addDocumentWithId } from "../../../util/firestoreWR";
 import { VIDEO_STATUS } from "../../../constants/constants";
 import { useTranslation } from "react-i18next";
+import storage from "@react-native-firebase/storage";
 
 function PreviewVideoScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const theme = useTheme();
-  const storageRef = getStorage();
+  // const storageRef = getStorage();
   const uid = useSelector((state) => state.authObject.user_uid);
   const videoRef = React.useRef(null);
   const dispatch = useDispatch();
@@ -64,7 +64,6 @@ function PreviewVideoScreen() {
   };
 
   //Upload video to firestore
-  //TODO : more specific error handling
   const handleVideoSubmit = async () => {
     try {
       setIsLoading(true);
@@ -83,17 +82,12 @@ function PreviewVideoScreen() {
         );
       }
 
-      const videoData = await fetch(video);
-      const videoBlob = await videoData.blob();
-      const videoRef = ref(
-        storageRef,
-        "patientTreatmentVideo/" +
-          uid +
-          Timestamp.now().toDate().toISOString().slice(0, 10)
-      );
+      const refStr =
+        "patientTreatmentVideo/" + uid + new Date().toISOString().slice(0, 10);
+      const reference = storage().ref(refStr);
+      const task = reference.putFile(video);
 
-      uploadTask = uploadBytesResumable(videoRef, videoBlob);
-      uploadTask.on(
+      task.on(
         "state_changed",
         (snapshot) => {
           const progress =
@@ -104,106 +98,78 @@ function PreviewVideoScreen() {
         (error) => {
           setIsLoading(false);
           throw error;
-          // Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-          // switch (error.code) {
-          //   case "storage/unauthorized":
-          //     // User doesn't have permission to access the object
-          //     Alert.alert(
-          //       t("unauthorized_alert_title"),
-          //       t("unauthorized_alert_message")
-          //     );
-          //     break;
-
-          //   case "storage/canceled":
-          //     Alert.alert(
-          //       t("cancelled_alert_title"),
-          //       t("cancelled_alert_message")
-          //     );
-          //     break;
-
-          //   case "storage/unknown":
-          //     Alert.alert(
-          //       t("unknown_error_alert_title"),
-          //       t("unknown_error_alert_message")
-          //     );
-          //     break;
-          // }
-        },
-        (snapshot) => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            getMetadata(videoRef)
-              .then(async (metadata) => {
-                const storedUid = await SecureStore.getItemAsync("uid");
-                addDocumentWithId("video", metadata.name, {
-                  medical_checklist: "",
-                  rejected_reason: null,
-                  reviewed_timestamp: null,
-                  reviewer_id: null,
-                  status: VIDEO_STATUS.PENDING,
-                  submitter_id: uid,
-                  uploaded_timestamp: Timestamp.now(),
-                  video_url: downloadURL,
-                })
-                  .then(() => {
-                    Haptics.notificationAsync(
-                      Haptics.NotificationFeedbackType.Success
-                    );
-                    Alert.alert(
-                      t("success_alert_title"),
-                      t("success_alert_message")
-                    );
-                    dispatch(
-                      createVideo({
-                        medical_checklist: "",
-                        rejected_reason: null,
-                        reviewed_timestamp: null,
-                        reviewer_id: null,
-                        status: VIDEO_STATUS.PENDING,
-                        submitter_id: uid,
-                        uploaded_timestamp: new Date().toISOString(),
-                        video_url: downloadURL,
-                      })
-                    );
-                    navigation.popToTop();
-                  })
-                  .catch((error) => {
-                    throw error;
-                  });
-              })
-              .catch((error) => {
-                // Uh-oh, an error occurred!
-                console.log(
-                  `Error while getting metadata and writing to firestore: ${error}`
-                );
-                Haptics.notificationAsync(
-                  Haptics.NotificationFeedbackType.Error
-                );
-                Alert.alert(t("error_alert_title"), t("error_alert_message"));
-              });
-          });
-        },
-        () => {
-          setIsLoading(false);
         }
       );
+
+      task.then(async () => {
+        const downloadURL = await reference.getDownloadURL();
+        reference
+          .getMetadata()
+          .then(async (metadata) => {
+            addDocumentWithId("video", metadata.name, {
+              medical_checklist: "",
+              rejected_reason: null,
+              reviewed_timestamp: null,
+              reviewer_id: null,
+              status: VIDEO_STATUS.PENDING,
+              submitter_id: uid,
+              uploaded_timestamp: new Date(),
+              video_url: downloadURL,
+            })
+              .then(() => {
+                Haptics.notificationAsync(
+                  Haptics.NotificationFeedbackType.Success
+                );
+                Alert.alert(
+                  t("success_alert_title"),
+                  t("success_alert_message")
+                );
+                dispatch(
+                  createVideo({
+                    medical_checklist: "",
+                    rejected_reason: null,
+                    reviewed_timestamp: null,
+                    reviewer_id: null,
+                    status: VIDEO_STATUS.PENDING,
+                    submitter_id: uid,
+                    uploaded_timestamp: new Date().toISOString(),
+                    video_url: downloadURL,
+                  })
+                );
+                setIsLoading(false);
+                navigation.popToTop();
+              })
+              .catch((error) => {
+                throw error;
+              });
+          })
+          .catch((error) => {
+            // Uh-oh, an error occurred!
+            console.log(
+              `Error while getting metadata and writing to firestore: ${error}`
+            );
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            Alert.alert(t("error_alert_title"), t("error_alert_message"));
+          });
+      });
     } catch (error) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       switch (error.code) {
+        // User doesn't have permission to access the object
         case "storage/unauthorized":
-          // User doesn't have permission to access the object
           Alert.alert(
             t("unauthorized_alert_title"),
             t("unauthorized_alert_message")
           );
           break;
 
+        // User canceled the upload
         case "storage/canceled":
-          // User canceled the upload
           Alert.alert(t("cancelled_alert_title"), t("cancelled_alert_message"));
           break;
 
+        // Unknown error occurred, inspect error.serverResponse
         default:
-          // Unknown error occurred, inspect error.serverResponse
           Alert.alert(
             t("unknown_error_alert_title"),
             t("unknown_error_alert_message")

@@ -2,7 +2,6 @@ import { KeyboardAvoidingView, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Button, Divider, Icon, Text, useTheme } from "react-native-paper";
 import React, { useState, useMemo } from "react";
-import { Timestamp } from "firebase/firestore";
 import { VIDEO_STATUS } from "../../../constants/constants";
 import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";

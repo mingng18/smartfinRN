@@ -1,15 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Text, useTheme } from "react-native-paper";
 import {} from "../../../assets/blank-profile-pic.png";
 import {
-  BLANK_PROFILE_PIC,
   HORIZONTAL_CARD_TYPE,
   SIDE_EFFECT_SEVERITY,
 } from "../../../constants/constants";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
-import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 

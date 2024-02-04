@@ -8,12 +8,11 @@ import {
   HORIZONTAL_CARD_TYPE,
 } from "../../../constants/constants";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
-import { editDocument, fetchDocument } from "../../../util/firestoreWR";
+import { editDocument } from "../../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updateAppointment } from "../../../store/redux/appointmentSlice";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
-import { doc, getDoc } from "firebase/firestore";
 
 export default function AppointmentDetailsScreen() {
   const navigation = useNavigation();

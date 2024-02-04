@@ -1,10 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback, useLayoutEffect, useState } from "react";
+import React from "react";
 import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, List, Searchbar, Text, useTheme } from "react-native-paper";
-import TextListButton from "../../../components/ui/TextListButton";
-import YoutubePlayer from "react-native-youtube-iframe";
 import { useTranslation } from "react-i18next";
 import MaterialListCard from "../../../components/ui/MaterialListCard";
 

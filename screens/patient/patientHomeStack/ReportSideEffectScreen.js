@@ -1,11 +1,10 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, { useEffect, useLayoutEffect } from "react";
-import { Alert, Modal, Pressable, View } from "react-native";
+import React, {  useLayoutEffect } from "react";
+import { Alert, Pressable, View } from "react-native";
 import {
   Button,
   Checkbox,
   IconButton,
-  Portal,
   RadioButton,
   Text,
   TextInput,
@@ -15,9 +14,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { DatePickerModal, TimePickerModal } from "react-native-paper-dates";
 import * as SecureStore from "expo-secure-store";
 import * as Haptics from "expo-haptics";
-// import { tuberculosisSymptoms } from "../../../assets/data/symptoms.json";
 import { addDocument } from "../../../util/firestoreWR";
-import { serverTimestamp, Timestamp } from "firebase/firestore";
 import {
   SIDE_EFFECT_GRADE,
   SIDE_EFFECT_SEVERITY,
@@ -207,8 +204,8 @@ function ReportSideEffectScreen() {
       }
 
       const newSideEffect = {
-        created_timestamp: serverTimestamp(),
-        side_effect_occuring_timestamp: Timestamp.fromDate(submitDate),
+        created_timestamp: new Date(),
+        side_effect_occuring_timestamp: new Date(submitDate),
         reviewed_timestamp: null,
         healthcare_id: null,
         patient_id: storedUid,

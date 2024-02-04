@@ -2,12 +2,6 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useLayoutEffect, useState } from "react";
 import { Alert, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-// import {
-//   updatePassword,
-//   reauthenticateWithCredential,
-//   getAuth,
-//   EmailAuthProvider,
-// } from "firebase/auth";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import { firebase } from "@react-native-firebase/auth";

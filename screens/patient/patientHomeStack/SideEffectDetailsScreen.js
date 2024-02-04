@@ -1,17 +1,9 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import {
-  Button,
-  Chip,
-  Dialog,
-  Portal,
-  Text,
-  useTheme,
-} from "react-native-paper";
-import { SIDE_EFFECT_STATUS } from "../../../constants/constants";
-import { capitalizeFirstLetter } from "../../../util/wordUtil";
 import SideEffectChip from "../../../components/ui/SideEffectChip";
+import { View } from "react-native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { Text, useTheme } from "react-native-paper";
+import { SIDE_EFFECT_STATUS } from "../../../constants/constants";
 import { useTranslation } from "react-i18next";
 
 export default function SideEffectDetailsScreen() {

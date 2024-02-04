@@ -112,8 +112,8 @@ function Root() {
 
 
           console.log("Fetching patient");
-          console.log(patientUser.age);
-          console.log(patientUser.date_of_diagnosis.toDate().toISOString());
+          // console.log(patientUser.age);
+          // console.log(patientUser.date_of_diagnosis.toDate().toISOString());
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
           dispatch(
             fetchPatientData({

@@ -2,7 +2,7 @@ import { Alert, Image, Pressable, StyleSheet, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import { Button, Chip, IconButton, Text, useTheme } from "react-native-paper";
 import TextListButton from "../../components/ui/TextListButton";
-import { getAuth, signOut } from "firebase/auth";
+// import { getAuth, signOut } from "firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,10 +23,10 @@ import { clearVideoSlice } from "../../store/redux/videoSlice";
 import { clearSignupSlice } from "../../store/redux/signupSlice";
 import { useTranslation } from "react-i18next";
 import { ScrollView } from "react-native-gesture-handler";
+import auth from "@react-native-firebase/auth";
 
 function PatientProfileScreen() {
   const theme = useTheme();
-  const auth = getAuth();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const user = useSelector((state) => state.authObject);
@@ -52,10 +52,10 @@ function PatientProfileScreen() {
       {
         text: t("sign_out_button_label"),
         onPress: () => {
-          signOut(auth)
-            .then(async () => {
-              // Sign out successful
-              console.log("User signed out successfully");
+          auth()
+            .signOut()
+            .then(() => {
+              console.log("User signed out!");
               clearLocalData();
             })
             .catch((error) => {

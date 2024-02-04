@@ -1,5 +1,4 @@
 import { useNavigation } from "@react-navigation/native";
-import { getAuth, signOut } from "firebase/auth";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,11 +13,12 @@ import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { clearPatientDataSlice } from "../../store/redux/patientDataSlice";
 import { useTranslation } from "react-i18next";
+import auth from "@react-native-firebase/auth";
 
 export default function HealthcareProfileScreen() {
   const theme = useTheme();
   const user = useSelector((state) => state.authObject);
-  const auth = getAuth();
+  // const auth = getAuth();
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const { t } = useTranslation("healthcare");
@@ -37,18 +37,15 @@ export default function HealthcareProfileScreen() {
       {
         text: t("sign_out"),
         onPress: () => {
-          signOut(auth)
-            .then(async () => {
-              // Sign out successful
-              console.log("User signed out successfully");
+          auth()
+            .signOut()
+            .then(() => {
+              console.log("User signed out!");
               clearLocalData();
-              // navigation.navigate("Login");
-              // Add any additional logic or navigation here
             })
             .catch((error) => {
               // An error occurred during sign out
               console.error("Error signing out:", error);
-              // Handle the error or display an error message
             });
         },
       },
