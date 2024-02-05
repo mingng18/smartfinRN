@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 import {
   ActivityIndicator,
   Button,
@@ -41,10 +41,15 @@ export default function HorizontalCard({
         style={[styles.cardContainer]}
       >
         {/* {console.log(profilePic)} */}
-        {cardType === HORIZONTAL_CARD_TYPE.NO_PIC ||
+        {cardType === HORIZONTAL_CARD_TYPE.NO_PIC ? (
+          <></>
+        ) : (
           profilePic === null ||
           (profilePic === "" ? (
-            <></>
+            <Image
+              source={BLANK_PROFILE_PIC}
+              style={styles.profilePicStyle}
+            />
           ) : (
             <CachedImage
               source={{ uri: profilePic }}
@@ -59,7 +64,8 @@ export default function HorizontalCard({
                 />
               }
             />
-          ))}
+          ))
+        )}
         <View style={{ flexDirection: "column", flex: 1 }}>
           <View style={styles.textContainer}>
             <Text variant="titleMedium">{subject}</Text>

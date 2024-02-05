@@ -28,5 +28,8 @@
   "preview_profile_picture": "Pratonton gambar profil",
   "back": "Kembali",
 
-  "no_access_camera": "Tiada akses kepada kamera"
+  "no_access_camera": "Tiada akses kepada kamera",
+
+  "change_language": "Tukar Bahasa",
+  "confirm_change_language": "Adakah anda pasti ingin menukar bahasa?"
 }

@@ -42,12 +42,19 @@ function PatientEditProfileScreen() {
         automaticallyAdjustKeyboardInsets
       >
         <View style={{ marginTop: 16, alignItems: "center" }}>
-          <Image
-            source={{ uri: user.profile_pic_url }}
-            cacheKey={`${user.profile_pic_url}-thumb`}
-            defaultSource={BLANK_PROFILE_PIC}
-            style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-          />
+          {user.profile_pic_url && user.profile_pic_url !== "" ? (
+            <CachedImage
+              source={{ uri: user.profile_pic_url }}
+              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
+              defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          ) : (
+            <Image
+              source={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          )}
           <Button onPress={() => bottomSheetModalRef.current?.present()}>
             {t("change_profile_picture_text")}
           </Button>

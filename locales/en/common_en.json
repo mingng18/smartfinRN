@@ -28,5 +28,8 @@
   "preview_profile_picture": "Preview profile picture",
   "back": "Back",
 
-  "no_access_camera": "No access to the camera"
+  "no_access_camera": "No access to the camera",
+
+  "change_language": "Change Language",
+  "confirm_change_language": "Are you sure want to change language?"
 }

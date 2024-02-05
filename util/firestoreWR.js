@@ -219,8 +219,10 @@ export async function fetchVideosToBeReviewedForHealthcare() {
 
     const querySnapshot = await firestore()
       .collection(FIREBASE_COLLECTION.VIDEO)
-      .where("reviewer_id", "in", ["", null])
+      .where("reviewer_id", "==", null)
       .get();
+
+    console.log(querySnapshot.size + " nani");
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
@@ -263,11 +265,16 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
     const appointments = [];
     const pendingAppointments = [];
     const promises = [];
+    console.log("fetching healthcare appointment");
+    console.log(healthcareId);
 
     const queryAppointmentSnapshot = await firestore()
       .collection(FIREBASE_COLLECTION.APPOINTMENT)
-      .where("healthcare_id", "in", [healthcareId, "", null])
-      .get();
+      .where("healthcare_id", "in", [healthcareId, null])
+      .get().then((queryAppointmentSnapshot) => {
+
+        console.log("size is " + queryAppointmentSnapshot.size);
+      });
 
     queryAppointmentSnapshot.forEach((doc) => {
       const data = doc.data();

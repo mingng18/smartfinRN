@@ -81,9 +81,10 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   React.useEffect(() => {
     const loadCalendarLocale = async () => {
-      const locale = await SecureStore.getItemAsync("locale");
-      console.log(locale);
-      setCalendarLocale(locale);
+      SecureStore.getItemAsync("storedLocale").then((locale) => {
+        console.log(locale + "Report side effect");
+        setCalendarLocale(locale);
+      });
     };
 
     loadCalendarLocale();

@@ -276,13 +276,11 @@ export default function AppointmentDetailsScreen() {
       <HorizontalCard
         profilePic={currentAppointment.healthcare_profile_picture}
         subject={capitalizeFirstLetter(
-          currentAppointment.healthcare_first_name === "" ||
-            currentAppointment.healthcare_first_name === null ||
-            currentAppointment.healthcare_first_name === undefined
+          currentAppointment.healthcare_first_name === ""
             ? t("appointment_title")
             : currentAppointment.healthcare_first_name
         )}
-        status={capitalizeFirstLetter(currentAppointment.appointment_status)}
+        status={t(currentAppointment.appointment_status)}
         date={new Date(currentAppointment.scheduled_timestamp)
           .toISOString()
           .slice(0, 10)}

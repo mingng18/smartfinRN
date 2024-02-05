@@ -20,6 +20,7 @@ export const fetchAppointments = createAsyncThunk(
       if (userType === "patient") {
         appointments = await fetchAppointmentsForPatient(userId);
       } else {
+        console.log("fetch healthcare")
         [appointments, pendingAppointments] =
           await fetchAppointmentsForHealthcare(userId);
       }

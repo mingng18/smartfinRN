@@ -198,11 +198,16 @@ function PatientProfileScreen() {
       >
         {/* ===================HEADER==================== */}
         <View style={[styles.homeHeader]}>
-          {user.profile_pic_url && (
+          {user.profile_pic_url && user.profile_pic_url !== "" ? (
             <CachedImage
               source={{ uri: user.profile_pic_url }}
               cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
               defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          ) : (
+            <Image
+              source={BLANK_PROFILE_PIC}
               style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
             />
           )}
@@ -297,16 +302,16 @@ function PatientProfileScreen() {
                   {t("progress_completion_title")}
                 </Text>
                 <Text variant="labelSmall">
-                  {`${getTotalVideosForCurrentMonth()} video submitted for `}
-                  {monthsSinceDiagnosis}
+                  {`${getTotalVideosForCurrentMonth()} ${t(
+                    "video_submitted_for_text"
+                  )} `}
                   {monthsSinceDiagnosis === 1
-                    ? t("st_suffix")
+                    ? t("month_one", { count: 1 })
                     : monthsSinceDiagnosis === 2
-                    ? t("nd_suffix")
+                    ? t("month_two", { count: 2 })
                     : monthsSinceDiagnosis === 3
-                    ? t("rd_suffix")
-                    : t("th_suffix")}
-                  {` month`}
+                    ? t("month_three", { count: 3 })
+                    : t("month_four", { count: monthsSinceDiagnosis })}
                 </Text>
                 <Text variant="labelSmall" style={{ opacity: 1 }}>
                   {`${videos.length}${t("video_submitted_in_total_text")}`}

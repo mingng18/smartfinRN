@@ -26,8 +26,8 @@ export default function LanguageScreen() {
   const handleLanguageSubmission = () => {
     //TODO submit new language
     Alert.alert(
-      "Change Language",
-      "Are you sure want to change language?",
+      t("change_language"),
+      t("confirm_change_language"),
       [
         {
           text: "OK",
@@ -40,7 +40,7 @@ export default function LanguageScreen() {
           style: "cancel",
         },
         {
-          text: "Cancel",
+          text: t("cancel"),
           onPress: () => {},
           style: "cancel",
         },

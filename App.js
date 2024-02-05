@@ -117,6 +117,7 @@ function Root() {
             storedUid
           );
 
+          console.log("basuhdhas");
           dispatch(
             authenticateStoreNative(storedToken, storedUid, "healthcare")
           );
@@ -191,7 +192,7 @@ function Root() {
               FIREBASE_COLLECTION.HEALTHCARE,
               storedUid
             );
-            editDocument(FIREBASE_COLLECTION.PATIENT, healthcareUser.id, {
+            editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
               pushNotificationToken: token,
             });
             console.log("Token updated in Healthcare");

@@ -38,8 +38,8 @@ export default function ReminderScreen() {
     });
 
     const loadCalendarLocale = async () => {
-      await SecureStore.getItemAsync("locale").then((locale) => {
-        console.log(locale);
+      SecureStore.getItemAsync("storedLocale").then((locale) => {
+        console.log(locale + "Report side effect");
         setCalendarLocale(locale);
       });
     };

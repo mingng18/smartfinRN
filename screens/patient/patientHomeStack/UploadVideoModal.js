@@ -92,8 +92,8 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
         close={() => {
           setDialogVisible(false);
         }}
-        title={"Uploading Video"}
-        bodyText={"Please wait while your video is being uploaded"}
+        title={t("upload_video")}
+        bodyText={t("wait_upload")}
       />
     </>
   );
