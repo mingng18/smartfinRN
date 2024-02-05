@@ -20,7 +20,6 @@ export const fetchAppointments = createAsyncThunk(
       if (userType === "patient") {
         appointments = await fetchAppointmentsForPatient(userId);
       } else {
-        console.log("fetch healthcare")
         [appointments, pendingAppointments] =
           await fetchAppointmentsForHealthcare(userId);
       }
@@ -46,6 +45,7 @@ export const fetchAppointments = createAsyncThunk(
       }
 
       if (userType === "healthcare") {
+        console.log("healthing");
         appointments = appointments.map((appointment) => {
           // console.log("current is " + appointment);
           const updatedAppointment = {
@@ -149,7 +149,7 @@ export const appointmentSlice = createSlice({
       state.pendingAppointments = [];
       state.status = "idle";
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder

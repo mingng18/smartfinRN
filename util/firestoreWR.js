@@ -1,4 +1,4 @@
-import firestore from "@react-native-firebase/firestore";
+import firestore, { Filter } from "@react-native-firebase/firestore";
 import { FIREBASE_COLLECTION } from "../constants/constants";
 
 export async function fetchDocument(collectionName, documentId) {
@@ -219,7 +219,7 @@ export async function fetchVideosToBeReviewedForHealthcare() {
 
     const querySnapshot = await firestore()
       .collection(FIREBASE_COLLECTION.VIDEO)
-      .where("reviewer_id", "==", null)
+      .where("status", "==", "pending")
       .get();
 
     console.log(querySnapshot.size + " nani");
@@ -270,11 +270,8 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
 
     const queryAppointmentSnapshot = await firestore()
       .collection(FIREBASE_COLLECTION.APPOINTMENT)
-      .where("healthcare_id", "in", [healthcareId, null])
-      .get().then((queryAppointmentSnapshot) => {
-
-        console.log("size is " + queryAppointmentSnapshot.size);
-      });
+      .where("healthcare_id", "==", healthcareId)
+      .get();
 
     queryAppointmentSnapshot.forEach((doc) => {
       const data = doc.data();
@@ -284,26 +281,42 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
         data.patient_id
       )
         .then((patientDoc) => {
-          if (
-            data.healthcare_id === healthcareId &&
-            data.appointment_status === "accepted"
-          ) {
-            appointments.push({
-              id: doc.id,
-              patient_data: patientDoc,
-              ...data,
-            });
-          } else if (data.appointment_status === "pending") {
-            pendingAppointments.push({
-              id: doc.id,
-              patient_data: patientDoc,
-              ...data,
-            });
-          }
+          appointments.push({
+            id: doc.id,
+            patient_data: patientDoc,
+            ...data,
+          });
         })
         .catch((error) => {
           console.error("Failed to fetch healthcare document:", error);
-          throw error; // Rethrow the error to propagate it
+          throw error;
+        });
+
+      promises.push(promise);
+    });
+
+    const queryPendingAppointment = await firestore()
+      .collection(FIREBASE_COLLECTION.APPOINTMENT)
+      .where("appointment_status", "==", "pending")
+      .get();
+
+    queryPendingAppointment.forEach((doc) => {
+      const data = doc.data();
+
+      const promise = fetchDocument(
+        FIREBASE_COLLECTION.PATIENT,
+        data.patient_id
+      )
+        .then((patientDoc) => {
+          pendingAppointments.push({
+            id: doc.id,
+            patient_data: patientDoc,
+            ...data,
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to fetch healthcare document:", error);
+          throw error;
         });
 
       promises.push(promise);
@@ -328,7 +341,7 @@ export async function fetchSideEffectsAlertHealthcare() {
 
     const querySnapshot = await firestore()
       .collection(FIREBASE_COLLECTION.SIDE_EFFECT)
-      .where("healthcare_id", "in", ["", null])
+      .where("se_status", "==", "pending")
       .get();
 
     querySnapshot.forEach((doc) => {
@@ -362,6 +375,7 @@ export async function fetchSideEffectsAlertHealthcare() {
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
+    // console.log("Side Effects are " + JSON.stringify(sideEffects));
     return sideEffects;
   } catch (error) {
     throw new Error("Failed to fetch side effects: " + error.message);
