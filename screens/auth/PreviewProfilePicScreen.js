@@ -3,14 +3,12 @@ import React from "react";
 import { Alert, Image, StyleSheet, View } from "react-native";
 import { ActivityIndicator, Button, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { updateProfilePictureURI } from "../../store/redux/signupSlice";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import * as Haptics from "expo-haptics";
+
+import { clearSignupSlice, updateProfilePictureURI } from "../../store/redux/signupSlice";
+import storage from "@react-native-firebase/storage";
+import auth from "@react-native-firebase/auth";
+
 import {
   authenticateStoreNative,
   fetchHealthcareData,
@@ -26,8 +24,7 @@ export default function PreviewProfilePicScreen() {
   const theme = useTheme();
   const { key, name, params, path } = useRoute();
   const dispatch = useDispatch();
-  const storage = getStorage();
-  const auth = getAuth();
+
   const signupMode = useSelector((state) => state.signupObject.signupMode);
   const signupInfo = useSelector((state) => state.signupObject);
   const { t } = useTranslation("auth");
@@ -59,43 +56,48 @@ export default function PreviewProfilePicScreen() {
     setIsUploading(true);
     console.log("Uploading image to " + uri);
     console.log("User is  " + userId);
-    const imageData = await fetch(uri);
-    const imageBlob = await imageData.blob();
 
-    uploadTask = uploadBytesResumable(path, imageBlob);
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log("Upload is " + progress + "% done");
-        setUploadProgress(progress.toFixed(2));
-      },
-      (error) => {},
-      (snapshot) => {
-        getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-          console.log("File available at ", downloadURL);
-          dispatch(setUserType({ user_type: signupInfo.signupMode }));
-          dispatch(
-            fetchHealthcareData({
-              category: signupInfo.category,
-              email: signupInfo.email,
-              first_name: signupInfo.firstName,
-              last_name: signupInfo.lastName,
-              role: signupInfo.role,
-              mpm_Id: signupInfo.mpmId,
-              profile_pic_url: downloadURL,
-            })
-          );
-          //Save user data to firestore
-          await saveUserDateToFirestore("healthcare", userId, downloadURL);
-          //Save userToken, userId and userType to redux
-          dispatch(authenticateStoreNative(token, userId, "healthcare"));
-          setIsUploading(false);
-        });
-      },
-      () => {}
-    );
+    imageData = await fetch(uri);
+    imageBlob = await imageData.blob();
+    uploadTask = await path.put(imageBlob);
+
+    path.getDownloadURL().then(async (downloadURL) => {
+      console.log("File available at ", downloadURL);
+      dispatch(setUserType({ user_type: signupInfo.signupMode }));
+      dispatch(
+        fetchHealthcareData({
+          category: signupInfo.category,
+          email: signupInfo.email,
+          first_name: signupInfo.firstName,
+          last_name: signupInfo.lastName,
+          role: signupInfo.role,
+          mpm_Id: signupInfo.mpmId,
+          profile_pic_url: downloadURL,
+        })
+      );
+
+      dispatch(clearSignupSlice());
+      await saveUserDateToFirestore("healthcare", userId, downloadURL);
+      dispatch(authenticateStoreNative(token, userId, "healthcare"));
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      setIsUploading(false);
+      Alert.alert(
+        t("sign_up_successful"),
+        t("thanks_for_signing_up"),
+        [
+          {
+            text: "OK",
+            onPress: () => {},
+            style: "cancel",
+          },
+        ],
+        {
+          cancelable: false,
+        }
+      );
+    });
+
   }
 
   async function signupHealthcare() {
@@ -114,23 +116,19 @@ export default function PreviewProfilePicScreen() {
 
     try {
       //Create user
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      const userCredential = await auth().createUserWithEmailAndPassword(
         signupInfo.email,
         signupInfo.password
       );
       const user = userCredential.user;
-      const token = await user.getIdTokenResult();
+      const token = await user.getIdToken();
 
       //Upload profile picture
-      const ppStorageRef = ref(storage, "healthcareProfilePicture/" + user.uid);
-      setIsUploading(true);
-      const donwloadURL = await uploadImage(
-        uri,
-        ppStorageRef,
-        user.uid,
-        token.token
+      const ppStorageRef = storage().ref(
+        "healthcareProfilePicture/" + user.uid
       );
+      setIsUploading(true);
+      const donwloadURL = await uploadImage(uri, ppStorageRef, user.uid, token);
       setIsUploading(false);
     } catch (error) {
       Alert.alert(t("sign_up_failed"));

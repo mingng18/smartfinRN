@@ -57,7 +57,7 @@ export default function PersonalInfoForm({ isEditing }) {
   );
 
   const [nationalityOpen, setNationalityOpen] = React.useState(false);
-  const [nationality, setNationality] = React.useState("Malaysian");
+  const [nationality, setNationality] = React.useState("Malaysia");
   const [nationalityData, setNationalityData] = React.useState(
     NATIONALITY.sort((a, b) => a.label.localeCompare(b.label))
   );

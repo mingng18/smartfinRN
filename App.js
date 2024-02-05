@@ -8,7 +8,6 @@ import { useFonts } from "expo-font";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
-// import { getAuth, onAuthStateChanged } from "firebase/auth";
 import auth from "@react-native-firebase/auth";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -72,11 +71,10 @@ function Root() {
     async function fetchToken() {
       // const auth = getAuth();
       // const user = auth.currentUser;
-
-      if (user) {
+      try {
         const token = await user.getIdToken();
-        console.log("Starting token: " + token);
-      } else {
+
+      } catch (error) {
         console.log("No user");
       }
 
@@ -243,7 +241,7 @@ function Root() {
   }, []);
 
   //Close Splash screen after fetched token
-  if (isTryingLogin) {
+  if (isTryingLogin || initializing) {
     SplashScreen.hideAsync();
   }
 

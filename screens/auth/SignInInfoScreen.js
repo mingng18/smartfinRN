@@ -2,24 +2,24 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
 import { View, Alert } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
-
-import { createUser } from "../../util/firebaseAuth";
-import LoadingOverlay from "../../components/ui/LoadingOverlay";
 import { useDispatch } from "react-redux";
-
 import {
   updateSignInCredentials,
   updateSignupMode,
 } from "../../store/redux/signupSlice";
-import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
+import auth from "@react-native-firebase/auth";
+
 import { useTranslation } from "react-i18next";
+
+import { createUser } from "../../util/firebaseAuth";
+import LoadingOverlay from "../../components/ui/LoadingOverlay";
 import { USER_TYPE } from "../../constants/constants";
 
 export default function SignInInfoScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
-  const auth = getAuth();
+
   const { params } = useRoute();
   const signupMode = params.signupMode;
   const { t } = useTranslation("auth");
@@ -79,7 +79,8 @@ export default function SignInInfoScreen() {
       }
     }
     //Check if email already exists
-    const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+
+    const signInMethods = await auth().fetchSignInMethodsForEmail(email);
     if (signInMethods.length > 0) {
       Alert.alert(t("email_existed"), t("email_existed_message"));
       return setIsAuthenticating(false);
