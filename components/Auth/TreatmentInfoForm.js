@@ -1,7 +1,4 @@
 import React from "react";
-import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
-import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
-
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Pressable, View, Alert, StyleSheet } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
@@ -10,23 +7,22 @@ import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import auth from "@react-native-firebase/auth";
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import storage from "@react-native-firebase/storage";
+import * as SecureStore from "expo-secure-store";
+
+import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
+import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
 
 import {
   authenticateStoreNative,
   fetchPatientData,
+  setUserType,
 } from "../../store/redux/authSlice";
 import { addDocumentWithId, editDocument } from "../../util/firestoreWR";
 import {
   clearSignupSlice,
   updateMedicalInformation,
 } from "../../store/redux/signupSlice";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
 import {
   BLANK_PROFILE_PIC,
   COMPLIANCE_STATUS,
@@ -41,11 +37,9 @@ export default function TreatmentInfoForm({ isEditing }) {
   const navigation = useNavigation();
   const theme = useTheme();
   const { key, name, params, path } = useRoute();
-  const auth = getAuth();
   const signupInfo = useSelector((state) => state.signupObject);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authObject);
-  const storage = getStorage();
   const { t } = useTranslation("auth");
 
   const [calendarOpen, setCalendarOpen] = React.useState(false);
@@ -187,73 +181,92 @@ export default function TreatmentInfoForm({ isEditing }) {
       let imageData = "";
       let imageBlob = "";
       if (uri == "" || uri == null) {
-        imageBlob = BLANK_PROFILE_PIC;
+
+        dispatch(setUserType({ user_type: signupInfo.signupMode }));
+        dispatch(
+          fetchPatientData({
+            age: signupInfo.age,
+            compliance_status: COMPLIANCE_STATUS.GOOD,
+            date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
+            diagnosis: diagnosis,
+            email: signupInfo.email,
+            first_name: signupInfo.firstName,
+            gender: signupInfo.gender,
+            last_name: signupInfo.lastName,
+            nationality: signupInfo.nationality,
+            notes: "",
+            nric_passport: signupInfo.nric_passport,
+            number_of_tablets: numberOfTablets,
+            phone_number: signupInfo.phoneNumber,
+            profile_pic_url: "",
+            treatment: treatment,
+            treatment_duration_months: durationOfTreatment,
+          })
+        );
+
+        dispatch(clearSignupSlice());
+        dispatch(authenticateStoreNative(token, userId, "patient")),
+        await saveUserDateToFirestore("patient", userId, "");
+        
+
       } else {
         imageData = await fetch(uri);
         imageBlob = await imageData.blob();
+        uploadTask = await path.put(imageBlob);
+
+        path.getDownloadURL().then(async (downloadURL) => {
+          console.log("File available at ", downloadURL);
+          dispatch(setUserType({ user_type: signupInfo.signupMode }));
+          dispatch(
+            fetchPatientData({
+              age: signupInfo.age,
+              compliance_status: COMPLIANCE_STATUS.GOOD,
+              date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
+              diagnosis: diagnosis,
+              email: signupInfo.email,
+              first_name: signupInfo.firstName,
+              gender: signupInfo.gender,
+              last_name: signupInfo.lastName,
+              nationality: signupInfo.nationality,
+              notes: "",
+              nric_passport: signupInfo.nric_passport,
+              number_of_tablets: numberOfTablets,
+              phone_number: signupInfo.phoneNumber,
+              profile_pic_url: downloadURL,
+              treatment: treatment,
+              treatment_duration_months: durationOfTreatment,
+            })
+          );
+  
+          dispatch(clearSignupSlice());
+          dispatch(authenticateStoreNative(token, userId, "patient")),
+          await saveUserDateToFirestore("patient", userId, downloadURL);
+          
+        
+          });
       }
 
-      uploadTask = uploadBytesResumable(path, imageBlob);
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          setUploadProgress(progress.toFixed(2));
-        },
-        (error) => {},
-        (snapshot) => {
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            //Update redux store
-            dispatch(
-              fetchPatientData({
-                age: signupInfo.age,
-                compliance_status: COMPLIANCE_STATUS.GOOD,
-                date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
-                diagnosis: diagnosis,
-                email: signupInfo.email,
-                first_name: signupInfo.firstName,
-                gender: signupInfo.gender,
-                last_name: signupInfo.lastName,
-                nationality: signupInfo.nationality,
-                notes: "",
-                nric_passport: signupInfo.nric_passport,
-                number_of_tablets: numberOfTablets,
-                phone_number: signupInfo.phoneNumber,
-                profile_pic_url: downloadURL,
-                treatment: treatment,
-                treatment_duration_months: durationOfTreatment,
-              })
-            );
-
-            dispatch(clearSignupSlice());
-            setIsUploading(false);
-            dispatch(authenticateStoreNative(token, userId, "patient")),
-              await saveUserDateToFirestore("patient", userId, downloadURL);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-            Alert.alert(
-              t("sign_up_successful"),
-              t("thanks_for_signing_up"),
-              [
-                {
-                  text: "OK",
-                  onPress: () => {},
-                  style: "cancel",
-                },
-              ],
-              {
-                cancelable: false,
-              }
-            );
-          });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setIsUploading(false);
+      Alert.alert(
+        t("sign_up_successful"),
+        t("thanks_for_signing_up"),
+        [
+          {
+            text: "OK",
+            onPress: () => {},
+            style: "cancel",
+          },
+        ],
+        {
+          cancelable: false,
         }
-      );
+        );
+      
     } catch (error) {
       console.log(error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
+      setIsUploading(false);
       return Alert.alert(
         t("profile_picture_upload_failed"),
         t("try_again_later")
@@ -292,38 +305,32 @@ export default function TreatmentInfoForm({ isEditing }) {
     //Calling APIs to create user, upload profile picture, then add user data to firestore
     try {
       //Create user
-      // const userCredential = await createUserWithEmailAndPassword(
-      //   auth,
-      //   signupInfo.email,
-      //   signupInfo.password
-      // );
+      auth()
+        .createUserWithEmailAndPassword(signupInfo.email, signupInfo.password)
+        .then(async (userCredential) => {
+          const user = userCredential.user;
+          const token = await user.getIdToken();
+          dispatch(
+            updateMedicalInformation({
+              diagnosis: diagnosis,
+              durationOfTreatment: durationOfTreatment,
+              currentTreatment: treatment,
+              numberOfTablets: numberOfTablets,
+            })
+          );
 
-      // const user = userCredential.user;
-      
-      const user = auth().createUserWithEmailAndPassword(
-        signupInfo.email,
-        signupInfo.password
-      );
-
-      const token = await user.getIdTokenResult();
-      dispatch(
-        updateMedicalInformation({
-          diagnosis: diagnosis,
-          durationOfTreatment: durationOfTreatment,
-          currentTreatment: treatment,
-          numberOfTablets: numberOfTablets,
-        })
-      );
-
-      //Upload profile picture
-      const ppStorageRef = ref(storage, "patientProfilePicture/" + user.uid);
-      setIsUploading(true);
-      await uploadImage(
-        signupInfo.profilePictureURI,
-        ppStorageRef,
-        user.uid,
-        token.token
-      );
+          //Upload profile picture
+          const ppStorageRef = storage().ref(
+            "patientProfilePicture/" + user.uid
+          );
+          setIsUploading(true);
+          await uploadImage(
+            signupInfo.profilePictureURI,
+            ppStorageRef,
+            user.uid,
+            token
+          );
+        });
     } catch (error) {
       switch (error.code) {
         case "auth/email-already-in-use":

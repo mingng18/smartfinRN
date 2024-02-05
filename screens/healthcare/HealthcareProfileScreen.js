@@ -14,6 +14,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { clearPatientDataSlice } from "../../store/redux/patientDataSlice";
 import { useTranslation } from "react-i18next";
 import auth from "@react-native-firebase/auth";
+import { clearAppointmentDateSlice } from "../../store/redux/bookedAppointmentDateSlice";
+import { clearSideEffectSlice } from "../../store/redux/sideEffectSlice";
+import { clearVideoSlice } from "../../store/redux/videoSlice";
+import { clearSignupSlice } from "../../store/redux/signupSlice";
 
 export default function HealthcareProfileScreen() {
   const theme = useTheme();
@@ -25,7 +29,7 @@ export default function HealthcareProfileScreen() {
 
   function clearLocalData() {
     dispatch(logoutDeleteNative());
-    dispatch(clearAppointmentSlice());
+    dispatch(clearAppointmentDateSlice());
     dispatch(clearSideEffectSlice());
     dispatch(clearVideoSlice());
     dispatch(clearSignupSlice());
