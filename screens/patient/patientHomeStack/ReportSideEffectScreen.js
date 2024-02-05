@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React, {  useLayoutEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { Alert, Pressable, View } from "react-native";
 import {
   Button,
@@ -54,9 +54,10 @@ function ReportSideEffectScreen() {
     });
 
     const loadCalendarLocale = async () => {
-      const locale = await SecureStore.getItemAsync("locale");
-      console.log(locale);
-      setCalendarLocale(locale);
+      SecureStore.getItemAsync("storedLocale").then((locale) => {
+        console.log(locale + "Report side effect");
+        setCalendarLocale(locale);
+      });
     };
 
     loadCalendarLocale();
@@ -491,7 +492,7 @@ function ReportSideEffectScreen() {
             style={{ justifyContent: "center", flex: 1, alignItems: "center" }}
           >
             <DatePickerModal
-              // locale={calendarLocale}
+              locale={calendarLocale}
               mode="single"
               visible={calendarOpen}
               onDismiss={onDismissSingle}

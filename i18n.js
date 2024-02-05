@@ -34,22 +34,27 @@ const languageDetector = {
   },
 
   init: async () => {
-    const locale = await SecureStore.getItemAsync("locale");
-    console.log("Current locale is " + JSON.stringify(locale));
+    const locale = await SecureStore.getItemAsync("storedLocale");
+    console.log("Locale retrieved from SecureStore:", locale, typeof locale);
 
-    const currentLocale =
-      Localization.locale.slice(0, 2) == "en" ? "en-MY" : Localization.locale;
-
-    // User change language and register locale before
-    if (locale === "en-MY" || locale === "ms-MY" || locale === "id-ID") {
+    // User register locale before
+    if (locale) {
       console.log("User used the app, registering locale");
       i18n.changeLanguage(locale);
-      changeCalendarsLocales(locale); 
-      // changePaperLocales(currentLocale);
+      changeCalendarsLocales(locale);
     } else {
       // User first time opening the app
       console.log("User first time using the app, registering locale");
-      await SecureStore.setItemAsync("locale", currentLocale);
+      const currentLocale =
+        Localization.locale.slice(0, 2) == "en" ? "en-MY" : Localization.locale;
+      await SecureStore.setItemAsync(
+        "storedLocale",
+        currentLocale.toString()
+      ).then(() => {
+        SecureStore.getItemAsync("storedLocale").then((locale) => {
+          console.log(locale + " locale now is ");
+        });
+      });
     }
   },
 
