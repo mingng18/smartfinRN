@@ -17,6 +17,7 @@ import * as Haptics from "expo-haptics";
 
 import {
   APPOINTMENT_STATUS,
+  BLANK_PROFILE_PIC,
   FIREBASE_COLLECTION,
   HORIZONTAL_CARD_TYPE,
 } from "../../constants/constants";
@@ -29,11 +30,10 @@ import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 import { useTranslation } from "react-i18next";
 
 export default function HealthcareAppointmentScreen() {
-  const navigation  = useNavigation();
+  const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
   const { t } = useTranslation("healthcare");
-
 
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
@@ -68,7 +68,7 @@ export default function HealthcareAppointmentScreen() {
   }, []);
 
   function showAppointmentNotesRecorderHandler(appointmentData) {
-    console.log("checking here")
+    console.log("checking here");
     console.log(appointmentData.scheduled_timestamp);
     showAppointmentNoteModal();
     setcallingAppointment(appointmentData);
@@ -89,7 +89,10 @@ export default function HealthcareAppointmentScreen() {
 
   const onCallOrJoin = async (meeting_room_id, appointment) => {
     if (meeting_room_id != null || meeting_room_id != "") {
-      navigation.navigate("VideoCallScreen", {roomId: meeting_room_id, currentAppointment: appointment});
+      navigation.navigate("VideoCallScreen", {
+        roomId: meeting_room_id,
+        currentAppointment: appointment,
+      });
     }
   };
 
@@ -173,11 +176,7 @@ export default function HealthcareAppointmentScreen() {
             return (
               <HorizontalCard
                 key={i}
-                profilePic={
-                  appointment.patient_data.profile_pic_url
-                    ? appointment.patient_data.profile_pic_url
-                    : BLANK_PROFILE_PIC
-                }
+                profilePic={appointment.patient_data.profile_pic_url}
                 subject={capitalizeFirstLetter(
                   appointment.patient_data.first_name
                 )}
@@ -198,9 +197,12 @@ export default function HealthcareAppointmentScreen() {
                     : theme.colors.secondaryContainer
                 }
                 onPressedCallback={() => {
-                  DeviceEventEmitter.addListener("onCallOrJoin", (appointment) => {
-                    showAppointmentNotesRecorderHandler(appointment)
-                  });
+                  DeviceEventEmitter.addListener(
+                    "onCallOrJoin",
+                    (appointment) => {
+                      showAppointmentNotesRecorderHandler(appointment);
+                    }
+                  );
                   navigation.navigate("HealthcareAppointmentDetailsScreen", {
                     appointment: appointment,
                   });
@@ -211,9 +213,12 @@ export default function HealthcareAppointmentScreen() {
                     : HORIZONTAL_CARD_TYPE.VIDEO_CALL_APPOINTMENT
                 }
                 iconOnPressedCallBack={async () => {
-                  DeviceEventEmitter.addListener("onCallOrJoin", (appointment) => {
-                    showAppointmentNotesRecorderHandler(appointment)
-                  });
+                  DeviceEventEmitter.addListener(
+                    "onCallOrJoin",
+                    (appointment) => {
+                      showAppointmentNotesRecorderHandler(appointment);
+                    }
+                  );
                   onCallOrJoin(appointment.meeting_room_id, appointment);
                   // showAppointmentNotesRecorderHandler(appointment);
                 }}

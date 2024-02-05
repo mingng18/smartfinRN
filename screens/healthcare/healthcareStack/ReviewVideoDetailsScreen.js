@@ -178,6 +178,7 @@ export default function ReviewVideoDetailsScreen() {
           items={treatmentData}
           setItems={setTreatmentData}
           placeholder={t("treatment")}
+          listMode="SCROLLVIEW"
         />
         <View
           style={{

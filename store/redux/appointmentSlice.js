@@ -45,7 +45,6 @@ export const fetchAppointments = createAsyncThunk(
       }
 
       if (userType === "healthcare") {
-        console.log("healthing");
         appointments = appointments.map((appointment) => {
           // console.log("current is " + appointment);
           const updatedAppointment = {

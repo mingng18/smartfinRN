@@ -324,8 +324,8 @@ export async function fetchAppointmentsForHealthcare(healthcareId) {
 
     await Promise.all(promises); // Wait for all fetchDocument calls to complete
 
-    console.log("appointments firebase ", appointments);
-    console.log("pendingAppointments firebase ", pendingAppointments);
+    // console.log("appointments firebase ", appointments);
+    // console.log("pendingAppointments firebase ", pendingAppointments);
     return [appointments, pendingAppointments];
   } catch (error) {
     throw new Error(
