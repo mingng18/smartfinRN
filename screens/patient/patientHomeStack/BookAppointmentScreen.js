@@ -61,9 +61,10 @@ export default function BookAppointmentScreen() {
     });
 
     const loadCalendarLocale = async () => {
-      const locale = await SecureStore.getItemAsync("locale");
-      console.log(locale);
-      setCalendarLocale(locale);
+      SecureStore.getItemAsync("storedLocale").then((locale) => {
+        console.log(locale + "Booked appointment");
+        setCalendarLocale(locale);
+      });
     };
 
     loadCalendarLocale();

@@ -1,17 +1,9 @@
 import React, { useState } from "react";
 import { Alert } from "react-native";
 import { useDispatch } from "react-redux";
-import { FirebaseError } from "firebase/app";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-// import {
-//   fetchSignInMethodsForEmail,
-//   getAuth,
-//   signInWithEmailAndPassword,
-//   linkWithCredential,
-// } from "firebase/auth";
-
 import LoginContentForm from "../../components/Auth/LoginContentForm";
 import LoadingOverlay from "../../components/ui/LoadingOverlay";
 import {

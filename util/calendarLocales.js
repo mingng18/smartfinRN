@@ -6,7 +6,6 @@ import * as SecureStore from "expo-secure-store";
 
 export default function calendarLocales(i18n) {
   // Initialise the locale of React Native Paper Dates library
-  registerTranslation("en-GB", enGB);
   registerTranslation("en-MY", enGB);
   registerTranslation("ms-MY", {
     save: "Simpan",
@@ -120,8 +119,12 @@ export default function calendarLocales(i18n) {
     today: "Hari ini",
   };
 
-  changeCalendarsLocales(i18n);
-  changePaperLocales(i18n);
+  changeCalendarsLocales(i18n.language);
+}
+
+export async function changePaperLocales(language) {
+  console.log(typeof(language));
+  await SecureStore.setItemAsync("storedLocale", language.toString());
 }
 
 export function changeCalendarsLocales(language) {
@@ -134,7 +137,3 @@ export function changeCalendarsLocales(language) {
   }
 }
 
-export async function changePaperLocales(language) {
-  console.log(typeof(language));
-  await SecureStore.setItemAsync("locale", language.toString());
-}

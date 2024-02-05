@@ -23,7 +23,7 @@ import {
   fetchPatientData,
 } from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
-import { fetchDocument } from "./util/firestoreWR";
+import { editDocument, fetchDocument } from "./util/firestoreWR";
 import { fetchAppointments } from "./store/redux/appointmentSlice";
 import { FIREBASE_COLLECTION } from "./constants/constants";
 import { fetchSideEffects } from "./store/redux/sideEffectSlice";
@@ -33,9 +33,11 @@ import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
 import { Alert, LogBox, PermissionsAndroid, Platform } from "react-native";
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./i18n";
-import calendarLocales from "./util/calendarLocales";
-import messaging, { firebase } from "@react-native-firebase/messaging";
-import { firebaseConfig } from "./util/firebaseConfig";
+import calendarLocales, {
+  changeCalendarsLocales,
+} from "./util/calendarLocales";
+import messaging from "@react-native-firebase/messaging";
+import { firebase } from "@react-native-firebase/firestore";
 // import { getMessaging, getToken } from "firebase/messaging";
 
 //Open SplashScreen for loading
@@ -47,30 +49,6 @@ SplashScreen.preventAutoHideAsync();
 function Root() {
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
-  // const messaging = getMessaging();
-  // if (!firebase.apps.length) {
-  // }
-
-  // useEffect(() => {
-  //   const messaging = getMessaging();
-  //   getToken(messaging, { vapidKey: "<YOUR_PUBLIC_VAPID_KEY_HERE>" })
-  //     .then((currentToken) => {
-  //       if (currentToken) {
-  //         // Send the token to your server and update the UI if necessary
-  //         console.log(currentToken);
-  //       } else {
-  //         // Show permission request UI
-  //         console.log(
-  //           "No registration token available. Request permission to generate one."
-  //         );
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log("An error occurred while retrieving token. ", err);
-  //       // ...
-  //     });
-  // }, []);
-
   const [isTryingLogin, setIsTryingLogin] = useState(true);
   const [user, setUser] = useState();
   const [initializing, setInitializing] = useState(true);
@@ -106,10 +84,10 @@ function Root() {
         const storedUid = await SecureStore.getItemAsync("uid");
         console.log("Initialized uid:" + storedUid);
         try {
-          const patientUser = await fetchDocument("patient", storedUid);
-
-
-          console.log("Fetching patient");
+          const patientUser = await fetchDocument(
+            FIREBASE_COLLECTION.PATIENT,
+            storedUid
+          );
           dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
           dispatch(
             fetchPatientData({
@@ -132,17 +110,10 @@ function Root() {
             fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
           );
         } catch (error) {
-          console.log("Check hereee if helathcare section is run " + error)
           const healthcareUser = await fetchDocument(
             FIREBASE_COLLECTION.HEALTHCARE,
             storedUid
           );
-
-          console.log(
-            "healthcare email from firebase is: " + healthcareUser.email
-          );
-          console.log("got error? " + error);
-          console.log("Fetching healthcare");
 
           dispatch(
             authenticateStoreNative(storedToken, storedUid, "healthcare")
@@ -174,58 +145,99 @@ function Root() {
     calendarLocales(i18n);
   }, []);
 
+  //Request permission for android
+  const requestUserPermission = async () => {
+    try {
+      if (Platform.OS === "android") {
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        );
+      } else if (Platform.OS === "ios") {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+        console.log("Authorization status:", authStatus);
+        return enabled;
+      }
+    } catch (error) {
+      console.error("Error requesting permission:", error);
+      return false;
+    }
+  };
+
   //Firebase Messaging inititalisation
-  // useEffect(() => {
-  //   //Firebase FCM
-  //   if (requestUserPermission()) {
-  //     messaging()
-  //       .getToken()
-  //       .then((token) => {
-  //         console.log(token);
-  //       });
-  //   } else {
-  //     console.log("Failed token status", authStatus);
-  //   }
+  useEffect(() => {
+    //Firebase FCM
+    if (requestUserPermission()) {
+      messaging()
+        .getToken()
+        .then(async (token) => {
+          console.log("The notification token is " + token);
+          const storedUid = await SecureStore.getItemAsync("uid");
+          try {
+            const patientUser = await fetchDocument(
+              FIREBASE_COLLECTION.PATIENT,
+              storedUid
+            );
+            editDocument(FIREBASE_COLLECTION.PATIENT, patientUser.id, {
+              pushNotificationToken: token,
+            });
+            console.log("Token updated in Patient");
+          } catch (error) {
+            const healthcareUser = await fetchDocument(
+              FIREBASE_COLLECTION.HEALTHCARE,
+              storedUid
+            );
+            editDocument(FIREBASE_COLLECTION.PATIENT, healthcareUser.id, {
+              pushNotificationToken: token,
+            });
+            console.log("Token updated in Healthcare");
+          }
+        });
+    } else {
+      console.log("Failed token status", authStatus);
+    }
 
-  //   //Check whether an the notification is open from app quit state
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then((message) => {
-  //       console.log(
-  //         "Notification caused app to open from quit state",
-  //         message.notification
-  //       );
-  //       // const deeplinkURL = buildDeepLinkFromNotificationData(message?.data);
-  //       // if (typeof deeplinkURL === "string") {
-  //       //   return deeplinkURL;
-  //       // }
-  //     });
+    //Check whether an the notification is open from app quit state
+    messaging()
+      .getInitialNotification()
+      .then((message) => {
+        console.log(
+          "Notification caused app to open from quit state",
+          message.notification
+        );
+        // const deeplinkURL = buildDeepLinkFromNotificationData(message?.data);
+        // if (typeof deeplinkURL === "string") {
+        //   return deeplinkURL;
+        // }
+      });
 
-  //   //Check whether the notification is opened from app background state
-  //   messaging().onNotificationOpenedApp((remoteMessage) => {
-  //     console.log(
-  //       "Notification caused app to open from background state",
-  //       remoteMessage.notification
-  //     );
-  //     // const url = buildDeepLinkFromNotificationData(remoteMessage.data);
-  //     // if (typeof url === "string") {
-  //     //   listener(url);
-  //     // }
-  //   });
+    //Check whether the notification is opened from app background state
+    messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log(
+        "Notification caused app to open from background state",
+        remoteMessage.notification
+      );
+      //TODO link the meeting link here
+      // const url = buildDeepLinkFromNotificationData(remoteMessage.data);
+      // if (typeof url === "string") {
+      //   listener(url);
+      // }
+    });
 
-  //   // Register background handler for app in background and quit state
-  //   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  //     console.log("Message handled in the background!", remoteMessage);
-  //   });
+    // Register background handler for app in background and quit state
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
+    });
 
-  //   //Handle notification in foreground state
-  //   const unsubscribe = messaging().onMessage(async remoteMessage => {
-  //     Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  //   });
+    //Handle notification in foreground state
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+    });
 
-  //   return unsubscribe;
-
-  // }, []);
+    return unsubscribe;
+  }, []);
 
   //Close Splash screen after fetched token
   if (isTryingLogin || initializing) {
