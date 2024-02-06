@@ -21,6 +21,12 @@ export const fetchPatientCollectionData = createAsyncThunk(
           date_of_diagnosis: patient.date_of_diagnosis
             ? patient.date_of_diagnosis.toDate().toISOString()
             : "",
+          treatment_start_date: patient.treatment_start_date
+            ? patient.treatment_start_date.toDate().toISOString()
+            : "",
+          treatment_end_date: patient.treatment_end_date
+            ? patient.treatment_end_date.toDate().toISOString()
+            : "",
         };
         return updatedPatient;
       });
