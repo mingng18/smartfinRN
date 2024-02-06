@@ -26,6 +26,10 @@ const authSlice = createSlice({
     profile_pic_url: null,
     treatment: null,
     treatment_duration_months: null,
+    treatment_start_date: null,
+    treatment_end_date: null,
+    medication_reminder: null,
+    appointment_reminder: null,
     //healthcare data below:
     category: null,
     role: null,
@@ -63,12 +67,15 @@ const authSlice = createSlice({
       state.profile_pic_url = null;
       state.treatment = null;
       state.treatment_duration_months = null;
+      state.treatment_start_date = null;
+      state.treatment_end_date = null;
+      state.medication_reminder = null;
+      state.appointment_reminder = null;
 
       //healthcare data below:
       state.category = null;
       state.role = null;
       state.mpm_id = null;
-
     },
     setFirstTimeLogin: (state, action) => {
       state.first_time_login = action.payload.first_time_login;
@@ -91,6 +98,10 @@ const authSlice = createSlice({
       state.treatment = action.payload.treatment;
       state.treatment_duration_months =
         action.payload.treatment_duration_months;
+      state.treatment_start_date = action.payload.treatment_start_date;
+      state.treatment_end_date = action.payload.treatment_end_date;
+      state.medication_reminder = action.payload.medication_reminder;
+      state.appointment_reminder = action.payload.appointment_reminder;
     },
     fetchHealthcareData: (state, action) => {
       state.email = action.payload.email;

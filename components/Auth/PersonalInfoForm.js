@@ -306,7 +306,17 @@ export default function PersonalInfoForm({ isEditing }) {
           placeholder={t("gender_placeholder")}
           listMode="SCROLLVIEW"
         />
-
+        <View style={{ marginTop: 16 }} />
+        <CustomDropDownPicker
+          open={nationalityOpen}
+          setOpen={setNationalityOpen}
+          value={nationality}
+          setValue={setNationality}
+          items={nationalityData}
+          setItems={setNationalityData}
+          placeholder={t("nationality_placeholder")}
+          listMode="MODAL"
+        />
         <View
           style={{
             flexDirection: "row",
@@ -338,20 +348,10 @@ export default function PersonalInfoForm({ isEditing }) {
             keyboardType="numeric"
           />
         </View>
-        <CustomDropDownPicker
-          open={nationalityOpen}
-          setOpen={setNationalityOpen}
-          value={nationality}
-          setValue={setNationality}
-          items={nationalityData}
-          setItems={setNationalityData}
-          placeholder={t("nationality_placeholder")}
-          listMode="SCROLLVIEW"
-        />
         {nationality == "Malaysia" ? (
           <TextInput
             mode="outlined"
-            style={{ marginTop: 16 }}
+            // style={{ marginTop: 16 }}
             label="NRIC"
             placeholder={t("nric_placeholder")}
             maxLength={12}
@@ -363,7 +363,7 @@ export default function PersonalInfoForm({ isEditing }) {
         ) : (
           <TextInput
             mode="outlined"
-            style={{ marginTop: 16 }}
+            // style={{ marginTop: 16 }}
             label={t("passport_label")}
             maxLength={12}
             value={passport}

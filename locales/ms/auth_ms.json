@@ -101,6 +101,8 @@
   "diagnosis": "Diagnosis Saya",
   "diagnosis_date": "Tarikh Diagnosis",
   "diagnosis_date_ph": "Tarikh mula diagnosis",
+  "treatment_start_date": "Tarikh Mula Rawatan",
+  "treatment_end_date": "Tarikh Akhir Rawatan",
   "diagnosis_duration": "Tempoh Diagnosis (bulan)",
   "my_treatment": "Rawatan Saya",
   "tablet_no": "Bilangan Tablet",

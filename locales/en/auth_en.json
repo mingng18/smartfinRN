@@ -101,6 +101,8 @@
   "diagnosis": "My Diagnosis",
   "diagnosis_date": "Date of Diagnosis",
   "diagnosis_date_ph": "Starting date of diagnosis",
+  "treatment_start_date": "Treatment Starting Date",
+  "treatment_end_date": "Treatment Ending Date",
   "diagnosis_duration": "Duration of Diagnosis (months)",
   "my_treatment": "My Current Treatment",
   "tablet_no": "Number of Tablets",

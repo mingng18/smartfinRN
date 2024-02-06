@@ -24,6 +24,8 @@ const signupSlice = createSlice({
     mpmId: "",
     role: "",
     category: "",
+    treatmentStartDate: null,
+    treatmentStartDate: null,
   },
   reducers: {
     updateSignupMode: (state, action) => {
@@ -58,6 +60,8 @@ const signupSlice = createSlice({
       state.durationOfTreatment = action.payload.durationOfTreatment;
       state.currentTreatment = action.payload.currentTreatment;
       state.numberOfTablets = action.payload.numberOfTablets;
+      state.treatmentStartDate = action.payload.treatmentStartDate;
+      state.treatmentEndDate = action.payload.treatmentEndDate;
     },
     clearSignupSlice: (state) => {
       state.firstName = "";

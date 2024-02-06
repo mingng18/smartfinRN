@@ -22,74 +22,15 @@ import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 function LoginScreen() {
   const [isAuthenticating, setIsAuthenticating] = useState();
   const dispatch = useDispatch();
-  // const auth = getAuth();
   const { navigate } = useNavigation();
   const { t } = useTranslation("auth");
 
   React.useLayoutEffect(() => {
-    // navigate("HealthcareInformationScreen");
+    // navigate("TreatmentInfoScreen");
   });
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);
 
-    // try {
-    //   const userCredential = await signInWithEmailAndPassword(
-    //     auth,
-    //     email,
-    //     password
-    //   );
-    //   const user = userCredential.user;
-    //   const token = await user.getIdTokenResult();
-    //   try {
-    //     const isPatient = await fetchDocument(
-    //       FIREBASE_COLLECTION.PATIENT,
-    //       user.uid
-    //     );
-    //     dispatch(authenticateStoreNative(token.token, user.uid, "patient"));
-    //     dispatch(
-    //       fetchPatientData({
-    //         ...isPatient,
-    //         date_of_diagnosis: isPatient.date_of_diagnosis
-    //           .toDate()
-    //           .toISOString(),
-    //       })
-    //     );
-    //     dispatch(
-    //       fetchAppointments({
-    //         userId: user.uid,
-    //         userType: USER_TYPE.PATIENT,
-    //       })
-    //     );
-    //     dispatch(
-    //       fetchSideEffects({ userId: user.uid, userType: USER_TYPE.PATIENT })
-    //     );
-    //     dispatch(
-    //       fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
-    //     );
-    //   } catch (error) {
-    //     const isHealthcare = await fetchDocument(
-    //       FIREBASE_COLLECTION.HEALTHCARE,
-    //       user.uid
-    //     );
-    //     dispatch(authenticateStoreNative(token.token, user.uid, "healthcare"));
-    //     dispatch(fetchHealthcareData({ ...isHealthcare }));
-    //     dispatch(fetchPatientCollectionData());
-    //     dispatch(
-    //       fetchAppointments({
-    //         userId: user.uid,
-    //         userType: USER_TYPE.HEALTHCARE,
-    //       })
-    //     );
-    //     dispatch(
-    //       fetchSideEffects({
-    //         userId: user.uid,
-    //         userType: USER_TYPE.HEALTHCARE,
-    //       })
-    //     );
-    //     dispatch(
-    //       fetchVideos({ userId: user.uid, userType: USER_TYPE.HEALTHCARE })
-    //     );
-    //   }
     try {
       auth()
         .signInWithEmailAndPassword(email, password)

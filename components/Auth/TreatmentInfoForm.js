@@ -42,10 +42,25 @@ export default function TreatmentInfoForm({ isEditing }) {
   const user = useSelector((state) => state.authObject);
   const { t } = useTranslation("auth");
 
-  const [calendarOpen, setCalendarOpen] = React.useState(false);
   const [calendarLocale, setCalendarLocale] = React.useState("");
 
+  const [diagnosisCalendarOpen, setDiagnosisCalendarOpen] =
+    React.useState(false);
   const [diagnosisDate, setDiagnosisDate] = React.useState("");
+  const [diagnosisSubmitDate, setDiagnosisSubmitDate] = React.useState("");
+
+  const [treatmentStartCalendarOpen, setTreatmentStartCalendarOpen] =
+    React.useState(false);
+  const [treatmentStartDate, setTreatmentStartDate] = React.useState("");
+  const [treatmentStartSubmitDate, setTreatmentStartSubmitDate] =
+    React.useState("");
+
+  const [treatmentEndCalendarOpen, setTreatmentEndCalendarOpen] =
+    React.useState(false);
+  const [treatmentEndDate, setTreatmentEndDate] = React.useState("");
+  const [treatmentEndSubmitDate, setTreatmentEndSubmitDate] =
+    React.useState("");
+
   //Diagnosis Drop down
   const [diagnosisOpen, setDiagnosisOpen] = React.useState(false);
   const [diagnosis, setDiagnosis] = React.useState("SPPTB");
@@ -68,8 +83,9 @@ export default function TreatmentInfoForm({ isEditing }) {
     durationOfTreatment: false,
     numberOfTablets: false,
     diagnosisDate: false,
+    treatmentStartDate: false,
+    treatmentEndDate: false,
   });
-  const [submitDate, setSubmitDate] = React.useState("");
   const [isUploading, setIsUploading] = React.useState(false);
   const [uploadProgress, setUploadProgress] = React.useState(0);
 
@@ -84,53 +100,57 @@ export default function TreatmentInfoForm({ isEditing }) {
   }, []);
 
   //Calendar
-  const onDismissSingle = React.useCallback(() => {
-    setCalendarOpen(false);
-  }, [setCalendarOpen]);
+  const onDismissSingle = () => {
+    setDiagnosisCalendarOpen(false);
+    setTreatmentStartCalendarOpen(false);
+    setTreatmentEndCalendarOpen(false);
+  };
 
-  const onConfirmSingle = React.useCallback(
-    (params) => {
-      setCalendarOpen(false);
+  const onConfirmDiagnosisSingle = React.useCallback((params) => {
+    setDiagnosisCalendarOpen(false);
+    if (params.date == null) {
+      return;
+    }
+    //Format iosDate to date
+    const dateObject = new Date(params.date);
+    setDiagnosisDate(formatDate(dateObject));
+    setDiagnosisSubmitDate(dateObject);
+  }, []);
 
-      //If user did not select a date, default to today's date
-      if (
-        params.date == null ||
-        params.date == undefined ||
-        params.date == ""
-      ) {
-        //Format iosDate to date
-        const dateObject = new Date();
-        dateObject.setHours(0, 0, 0, 0);
-        console.log(dateObject);
-        console.log(dateObject.toISOString());
-        const formattedDate = `${dateObject.getFullYear()}-${(
-          dateObject.getMonth() + 1
-        )
-          .toString()
-          .padStart(2, "0")}-${dateObject
-          .getDate()
-          .toString()
-          .padStart(2, "0")}`;
-        setDiagnosisDate(formattedDate);
-        setSubmitDate(dateObject);
-        return;
-      }
+  const onConfirmTreatmentStartSingle = React.useCallback((params) => {
+    setTreatmentStartCalendarOpen(false);
+    if (params.date == null) {
+      return;
+    }
+    //Format iosDate to date
+    const dateObject = new Date(params.date);
+    setTreatmentStartDate(formatDate(dateObject));
+    setTreatmentStartSubmitDate(dateObject);
+  }, []);
 
-      //Format iosDate to date
-      const dateObject = new Date(params.date);
-      dateObject.setHours(0, 0, 0, 0);
-      console.log(dateObject);
-      console.log(dateObject.toISOString());
-      const formattedDate = `${dateObject.getFullYear()}-${(
-        dateObject.getMonth() + 1
-      )
-        .toString()
-        .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
-      setDiagnosisDate(formattedDate);
-      setSubmitDate(dateObject);
-    },
-    [setCalendarOpen, setDiagnosisDate, setSubmitDate]
-  );
+  const onConfirmTreatmentEndSingle = React.useCallback((params) => {
+    setTreatmentEndCalendarOpen(false);
+    if (params.date == null) {
+      return;
+    }
+    //Format iosDate to date
+    const dateObject = new Date(params.date);
+    setTreatmentEndDate(formatDate(dateObject));
+    setTreatmentEndSubmitDate(dateObject);
+  }, []);
+
+  function formatDate(dateObject) {
+    dateObject.setHours(0, 0, 0, 0);
+    console.log(dateObject);
+    console.log(dateObject.toISOString());
+    const formattedDate = `${dateObject.getFullYear()}-${(
+      dateObject.getMonth() + 1
+    )
+      .toString()
+      .padStart(2, "0")}-${dateObject.getDate().toString().padStart(2, "0")}`;
+
+    return formattedDate;
+  }
 
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
     //Debug use---------------------------------------------------------------
@@ -160,7 +180,9 @@ export default function TreatmentInfoForm({ isEditing }) {
         phone_number: signupInfo.phoneNumber,
         nric_passport: signupInfo.nric_passport,
         age: signupInfo.age,
-        date_of_diagnosis: submitDate,
+        date_of_diagnosis: diagnosisSubmitDate,
+        treatment_start_date: treatmentStartSubmitDate,
+        treatment_end_date: treatmentEndSubmitDate,
         diagnosis: diagnosis,
         treatment_duration_months: parseInt(durationOfTreatment),
         treatment: treatment,
@@ -170,6 +192,8 @@ export default function TreatmentInfoForm({ isEditing }) {
         gender: signupInfo.gender,
         nationality: signupInfo.nationality,
         notes: "",
+        medication_reminder: true,
+        appointment_reminder: true,
       });
     } catch (error) {
       return Alert.alert(t("error_saving_user_data"), t("try_again_later"));
@@ -181,13 +205,16 @@ export default function TreatmentInfoForm({ isEditing }) {
       let imageData = "";
       let imageBlob = "";
       if (uri == "" || uri == null) {
-
         dispatch(setUserType({ user_type: signupInfo.signupMode }));
         dispatch(
           fetchPatientData({
             age: signupInfo.age,
             compliance_status: COMPLIANCE_STATUS.GOOD,
-            date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
+            date_of_diagnosis: diagnosisSubmitDate.setDate(
+              diagnosisSubmitDate.getDate() + 1
+            ),
+            treatment_start_date: treatmentStartSubmitDate,
+            treatment_end_date: treatmentEndSubmitDate,
             diagnosis: diagnosis,
             email: signupInfo.email,
             first_name: signupInfo.firstName,
@@ -201,14 +228,14 @@ export default function TreatmentInfoForm({ isEditing }) {
             profile_pic_url: "",
             treatment: treatment,
             treatment_duration_months: durationOfTreatment,
+            medication_reminder: true,
+            appointment_reminder: true,
           })
         );
 
         dispatch(clearSignupSlice());
         dispatch(authenticateStoreNative(token, userId, "patient")),
-        await saveUserDateToFirestore("patient", userId, "");
-        
-
+          await saveUserDateToFirestore("patient", userId, "");
       } else {
         imageData = await fetch(uri);
         imageBlob = await imageData.blob();
@@ -221,7 +248,11 @@ export default function TreatmentInfoForm({ isEditing }) {
             fetchPatientData({
               age: signupInfo.age,
               compliance_status: COMPLIANCE_STATUS.GOOD,
-              date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
+              date_of_diagnosis: diagnosisSubmitDate.setDate(
+                diagnosisSubmitDate.getDate() + 1
+              ),
+              treatment_start_date: treatmentStartSubmitDate,
+              treatment_end_date: treatmentEndSubmitDate,
               diagnosis: diagnosis,
               email: signupInfo.email,
               first_name: signupInfo.firstName,
@@ -235,15 +266,15 @@ export default function TreatmentInfoForm({ isEditing }) {
               profile_pic_url: downloadURL,
               treatment: treatment,
               treatment_duration_months: durationOfTreatment,
+              medication_reminder: true,
+              appointment_reminder: true,
             })
           );
-  
+
           dispatch(clearSignupSlice());
           dispatch(authenticateStoreNative(token, userId, "patient")),
-          await saveUserDateToFirestore("patient", userId, downloadURL);
-          
-        
-          });
+            await saveUserDateToFirestore("patient", userId, downloadURL);
+        });
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -261,8 +292,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         {
           cancelable: false,
         }
-        );
-      
+      );
     } catch (error) {
       console.log(error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -280,25 +310,32 @@ export default function TreatmentInfoForm({ isEditing }) {
     const durationOfTreatmentRegex = /^[0-9]{1,3}$/; //1-3 digits
     const numberOfTabletsRegex = /^(?!0\d)\d{1,2}$/; //1-2 digits, cannot start with 0
     const diagnosisDateRegex = /.+/; //Any character, cannot blank
+    const treatmentStartDateRegex = /.+/; //Any character, cannot blank
+    const treatmentEndDateRegex = /.+/; //Any character, cannot blank
 
     const isDurationOfTreatmentValid =
       durationOfTreatmentRegex.test(durationOfTreatment);
     const isNumberOfTabletsValid = numberOfTabletsRegex.test(numberOfTablets);
     const isDiagnosisDateValid = diagnosisDateRegex.test(diagnosisDate);
+    const isTreatmentStartDateValid = treatmentStartDateRegex.test(treatmentStartDate);
+    const isTreatmentEndDateValid = treatmentEndDateRegex.test(treatmentEndDate);
 
     setCredentialsInvalid({
       durationOfTreatment: !isDurationOfTreatmentValid,
       numberOfTablets: !isNumberOfTabletsValid,
       diagnosisDate: !isDiagnosisDateValid,
+      treatmentStartDate: !isTreatmentStartDateValid,
+      treatmentEndDate: !isTreatmentEndDateValid,
     });
 
     if (
       !isDurationOfTreatmentValid ||
       !isNumberOfTabletsValid ||
+      !treatmentStartDate ||
+      !treatmentEndDate ||
       !isDiagnosisDateValid
     ) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
       return Alert.alert(t("invalid_input"), t("check_entered_details"));
     }
 
@@ -316,6 +353,7 @@ export default function TreatmentInfoForm({ isEditing }) {
               durationOfTreatment: durationOfTreatment,
               currentTreatment: treatment,
               numberOfTablets: numberOfTablets,
+              
             })
           );
 
@@ -360,13 +398,14 @@ export default function TreatmentInfoForm({ isEditing }) {
     if (isEditing) {
       //treatment
       // setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
-      setDiagnosis(user.diagnosis);
-      // console.log(typeof Number(user.treatment_duration_months)); // Debug use
-      setDurationOfTreatment(parseInt(user.treatment_duration_months));
       setDiagnosisDate(
         new Date(user.date_of_diagnosis).toISOString().slice(0, 10)
       );
-      setSubmitDate(new Date(user.date_of_diagnosis));
+      setDiagnosisSubmitDate(new Date(user.date_of_diagnosis));
+
+      setDiagnosis(user.diagnosis);
+      setDurationOfTreatment(parseInt(user.treatment_duration_months));
+
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
     }
@@ -391,7 +430,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           // notes: user.notes,
           // profile_pic_url: user.profile_pic_url,
           //changed part
-          date_of_diagnosis: submitDate.toISOString(),
+          date_of_diagnosis: diagnosisSubmitDate.toISOString(),
           diagnosis: diagnosis,
           treatment_duration_months: durationOfTreatment,
           treatment: treatment,
@@ -412,7 +451,9 @@ export default function TreatmentInfoForm({ isEditing }) {
             notes: user.notes,
             profile_pic_url: user.profile_pic_url,
             //changed part
-            date_of_diagnosis: submitDate.setDate(submitDate.getDate() + 1),
+            date_of_diagnosis: diagnosisSubmitDate.setDate(
+              diagnosisSubmitDate.getDate() + 1
+            ),
             diagnosis: diagnosis,
             treatment_duration_months: durationOfTreatment,
             treatment: treatment,
@@ -431,9 +472,18 @@ export default function TreatmentInfoForm({ isEditing }) {
   }
 
   const today = new Date();
+  const validEndRange = {
+    startDate: treatmentStartSubmitDate,
+    endDate: undefined,
+  };
+  const validStartRange = {
+    startDate: diagnosisSubmitDate,
+    endDate: today,
+  };
+
   const validRange = {
     startDate: undefined,
-    endDate: today,
+    endDate: undefined,
     disabledDates: Array.from({ length: 365 }, (_, i) => {
       const date = new Date(
         today.getFullYear(),
@@ -449,7 +499,11 @@ export default function TreatmentInfoForm({ isEditing }) {
       <Text variant="titleLarge" style={{ marginTop: 16 }}>
         {t("diagnosis")}
       </Text>
-      <Pressable onPress={() => setCalendarOpen(true)}>
+      <Pressable
+        onPress={() => {
+          setDiagnosisCalendarOpen(true);
+        }}
+      >
         <View pointerEvents="none">
           <TextInput
             mode="outlined"
@@ -481,7 +535,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       <TextInput
         mode="outlined"
         label={t("diagnosis_duration")}
-        style={{ marginTop: 16 }}
+        style={{ marginTop: 12 }}
         placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
         maxLength={2}
         value={`${durationOfTreatment}`}
@@ -492,6 +546,52 @@ export default function TreatmentInfoForm({ isEditing }) {
       <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
         {t("my_treatment")}
       </Text>
+      <Pressable
+        onPress={() => {
+          setTreatmentStartCalendarOpen(true);
+        }}
+      >
+        <View pointerEvents="none">
+          <TextInput
+            mode="outlined"
+            style={{ marginBottom: 12 }}
+            label={t("treatment_start_date")}
+            placeholder={t("treatment_start_date")}
+            value={treatmentStartDate}
+            right={
+              <TextInput.Icon
+                icon="calendar-blank"
+                color={theme.colors.onBackground}
+              />
+            }
+            maxLength={20}
+            error={credentialsInvalid.diagnosisDate}
+          />
+        </View>
+      </Pressable>
+      <Pressable
+        onPress={() => {
+          setTreatmentEndCalendarOpen(true);
+        }}
+      >
+        <View pointerEvents="none">
+          <TextInput
+            mode="outlined"
+            style={{ marginBottom: 16 }}
+            label={t("treatment_end_date")}
+            placeholder={t("treatment_end_date")}
+            value={treatmentEndDate}
+            right={
+              <TextInput.Icon
+                icon="calendar-blank"
+                color={theme.colors.onBackground}
+              />
+            }
+            maxLength={20}
+            error={credentialsInvalid.diagnosisDate}
+          />
+        </View>
+      </Pressable>
       <CustomDropDownPicker
         zIndex={3000}
         zIndexInverse={1000}
@@ -553,11 +653,29 @@ export default function TreatmentInfoForm({ isEditing }) {
       <DatePickerModal
         locale={calendarLocale}
         mode="single"
-        visible={calendarOpen}
+        visible={diagnosisCalendarOpen}
         onDismiss={onDismissSingle}
-        onConfirm={onConfirmSingle}
+        onConfirm={onConfirmDiagnosisSingle}
         presentationStyle="pageSheet"
         validRange={validRange}
+      />
+      <DatePickerModal
+        locale={calendarLocale}
+        mode="single"
+        visible={treatmentStartCalendarOpen}
+        onDismiss={onDismissSingle}
+        onConfirm={onConfirmTreatmentStartSingle}
+        presentationStyle="pageSheet"
+        validRange={validStartRange}
+      />
+      <DatePickerModal
+        locale={calendarLocale}
+        mode="single"
+        visible={treatmentEndCalendarOpen}
+        onDismiss={onDismissSingle}
+        onConfirm={onConfirmTreatmentEndSingle}
+        presentationStyle="pageSheet"
+        validRange={validEndRange}
       />
       <LoadingIndicatorDialog
         visible={isUploading}
