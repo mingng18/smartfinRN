@@ -85,6 +85,76 @@ export default function ReminderScreen() {
     retrievePermissions();
   }, []);
 
+  const scheduleNotifications = async () => {
+    const startHour = 10; // Start hour (10:00 AM)
+    const endHour = 21; // End hour (9:00 PM)
+    
+    const now = new Date();
+    const currentHour = now.getHours();
+    
+    if (currentHour >= startHour && currentHour <= endHour) {
+      // Schedule notifications every hour within the specified time range
+      const intervalMs = 60 * 60 * 1000; // 1 hour in milliseconds
+      
+      // Calculate the delay to the next hour
+      const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), currentHour + 1, 0, 0, 0);
+      const delayMs = nextHour.getTime() - now.getTime();
+      
+      // Schedule the first notification
+      await notifee.createTriggerNotification({
+        id: 'hourly-notification',
+        title: 'Hourly Reminder',
+        body: 'This is an hourly reminder.',
+        android: {
+          channelId: 'hourly-reminder-channel',
+          smallIcon: 'ic_notification',
+        },
+        ios: {
+          sound: 'default',
+        },
+      });
+
+      await notifee.createTriggerNotification(
+        {
+          id: "medication",
+          title: "Medication Alert",
+          body: "Remember to take your medication",
+          android: {
+            channelId,
+            // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
+            // pressAction is needed if you want the notification to open the app when pressed
+            pressAction: {
+              id: "default",
+            },
+          },
+        },
+        trigger
+      );
+  
+      // Schedule subsequent notifications
+      const intervalId = setInterval(async () => {
+        await notifee.createNotification({
+          id: 'hourly-notification',
+          title: 'Hourly Reminder',
+          body: 'This is an hourly reminder.',
+          android: {
+            channelId: 'hourly-reminder-channel',
+            smallIcon: 'ic_notification',
+          },
+          ios: {
+            sound: 'default',
+          },
+        });
+      }, intervalMs);
+      
+      // Schedule the clear notification action to stop notifications after 9:00 PM
+      setTimeout(() => {
+        clearInterval(intervalId);
+        notifee.cancelNotification('hourly-notification');
+      }, delayMs);
+    }
+  };
+
   async function onCreateMedicationNotification() {
     if (!appointmentReminder) {
       // Request permissions (required for iOS)

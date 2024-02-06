@@ -108,59 +108,7 @@ function ReportSideEffectScreen() {
     [setTimePickerOpen]
   );
 
-  //Symptoms Checkbox
-  const handleCheckboxChange = (value) => {
-    console.log("symptom now is " + value);
-    const isSymptomSelected = symptoms.some((item) => item.label === value);
-
-    if (isSymptomSelected) {
-      // If the symptom is already selected, remove it from the array
-      console.log("removing symptom");
-      const updatedSymptoms = symptoms.filter((item) => item.label !== value);
-      console.log(
-        "symptoms are " +
-          updatedSymptoms.map((symptom) => {
-            return `${symptom.label}: ${symptom.grade}`;
-          })
-      );
-      setSymptoms(updatedSymptoms);
-    } else {
-      console.log("adding symptom");
-      const updatedSymptoms = [...symptoms, { label: value, grade: 1 }];
-      console.log(
-        "symptoms are " +
-          updatedSymptoms.map((symptom) => {
-            return `${symptom.label}: ${symptom.grade}`;
-          })
-      );
-      setSymptoms(updatedSymptoms);
-    }
-  };
-
-  const handleGradeChange = (symptomName, newGrade) => {
-    const symptomIndex = symptoms.findIndex((s) => s.label === symptomName);
-
-    if (symptomIndex !== -1) {
-      // If the symptom is found in the array, update its grade
-      const updatedSymptoms = [...symptoms];
-      updatedSymptoms[symptomIndex] = {
-        ...updatedSymptoms[symptomIndex],
-        grade: newGrade,
-      };
-      console.log(
-        "updated grade are " +
-          updatedSymptoms.map((symptom) => {
-            return `${symptom.label}: ${symptom.grade}`;
-          })
-      );
-
-      // Update the state with the new array of symptoms
-      setSymptoms(updatedSymptoms);
-    } else {
-      // If the symptom is not found, log an error message or handle as per your requirement
-      console.log(`Symptom "${symptomName}" not found in symptoms array.`);
-    }
-  };
+ 
 
   //TODO calculate severity
   function calculateSeverity() {
@@ -262,24 +210,79 @@ function ReportSideEffectScreen() {
     }).filter((disabledDate) => disabledDate !== null), // Disable all days after today
   };
 
+   //Symptoms Checkbox
+   const handleCheckboxChange = (value) => {
+    console.log("symptom now is " + value);
+    const isSymptomSelected = symptoms.some((item) => item.label === value);
+
+    if (isSymptomSelected) {
+      // If the symptom is already selected, remove it from the array
+      console.log("removing symptom");
+      const updatedSymptoms = symptoms.filter((item) => item.label !== value);
+      console.log(
+        "symptoms are " +
+          updatedSymptoms.map((symptom) => {
+            return `${symptom.label}: ${symptom.grade}`;
+          })
+      );
+      setSymptoms(updatedSymptoms);
+    } else {
+      console.log("adding symptom");
+      const updatedSymptoms = [...symptoms, { label: value, grade: 1 }];
+      console.log(
+        "symptoms are " +
+          updatedSymptoms.map((symptom) => {
+            return `${symptom.label}: ${symptom.grade}`;
+          })
+      );
+      setSymptoms(updatedSymptoms);
+    }
+  };
+
+  const handleGradeChange = (symptomName, newGrade) => {
+    const symptomIndex = symptoms.findIndex((s) => s.label === symptomName);
+
+    if (symptomIndex !== -1) {
+      // If the symptom is found in the array, update its grade
+      const updatedSymptoms = [...symptoms];
+      updatedSymptoms[symptomIndex] = {
+        ...updatedSymptoms[symptomIndex],
+        grade: newGrade,
+      };
+      console.log(
+        "updated grade are " +
+          updatedSymptoms.map((symptom) => {
+            return `${symptom.label}: ${symptom.grade}`;
+          })
+      );
+
+      // Update the state with the new array of symptoms
+      setSymptoms(updatedSymptoms);
+    } else {
+      // If the symptom is not found, log an error message or handle as per your requirement
+      console.log(`Symptom "${symptomName}" not found in symptoms array.`);
+    }
+  };
+
   const tuberculosisSymptoms = [
-    t("eyesight_worsening"),
-    t("yellowing_of_eyes"),
-    t("ringing_sound"),
-    t("tingling_sensation"),
-    t("bruises"),
-    t("bleeding"),
-    t("joint_pains"),
-    t("rashes"),
-    t("mood_worsening_changes"),
-    t("weight_loss"),
-    t("tiredness"),
-    t("seizures"),
-    t("itchiness"),
-    t("dark_urine"),
-    t("orange_urine"),
-    t("stomach_pain_particularly_right_upper_area"),
+    { key: "eyesight_worsening", label: t("eyesight_worsening") },
+    { key: "yellowing_of_eyes", label: t("yellowing_of_eyes") },
+    { key: "ringing_sound", label: t("ringing_sound") },
+    { key: "tingling_sensation", label: t("tingling_sensation") },
+    { key: "bruises", label: t("bruises") },
+    { key: "bleeding", label: t("bleeding") },
+    { key: "joint_pains", label: t("joint_pains") },
+    { key: "rashes", label: t("rashes") },
+    { key: "mood_worsening_changes", label: t("mood_worsening_changes") },
+    { key: "weight_loss", label: t("weight_loss") },
+    { key: "tiredness", label: t("tiredness") },
+    { key: "seizures", label: t("seizures") },
+    { key: "itchiness", label: t("itchiness") },
+    { key: "dark_urine", label: t("dark_urine") },
+    { key: "orange_urine", label: t("orange_urine") },
+    { key: "stomach_pain_particularly_right_upper_area", label: t("stomach_pain_particularly_right_upper_area") },
   ];
+  
 
   return (
     <>
@@ -391,76 +394,68 @@ function ReportSideEffectScreen() {
             </Text>
           </View>
           {tuberculosisSymptoms.map((symptom, i) => {
-            const [checked, setChecked] = React.useState(1);
-            return (
-              <View key={`checkbox-${i}`}>
-                <Checkbox.Item
-                  label={symptom}
-                  accessibilityLabel={symptom}
-                  mode="android"
-                  status={
-                    symptoms.some((s) => s.label === symptom)
-                      ? "checked"
-                      : "unchecked"
-                  }
-                  onPress={() => handleCheckboxChange(symptom)}
-                  style={{ justifyContent: "flex-start" }}
-                  labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
-                  position="leading"
-                />
-                {symptoms.some((s) => s.label === symptom) && (
-                  <View
-                    key={`view-${i}`}
-                    style={[
-                      {
-                        flexDirection: "row",
-                        alignItems: "flex-end",
-                        justifyContent: "flex-end",
-                        width: "100%",
-                      },
-                    ]}
-                  >
-                    {SIDE_EFFECT_GRADE.map((grade, j) => {
-                      const isLast = j === SIDE_EFFECT_GRADE.length - 1;
-                      const isFirst = j === 0;
-                      return (
-                        <Pressable
-                          key={`pressable-${j}`}
-                          style={[
-                            {
-                              flexDirection: "row",
-                              alignItems: "center",
-                              backgroundColor: theme.colors.secondaryContainer,
-                              paddingLeft: 16,
-                              paddingRight: isLast ? 16 : 0,
-                              paddingVertical: 4,
-                              borderTopRightRadius: isLast ? 16 : 0,
-                              borderBottomRightRadius: isLast ? 16 : 0,
-                              borderBottomLeftRadius: isFirst ? 16 : 0,
-                            },
-                          ]}
-                          onPress={() => {
-                            setChecked(grade.value);
-                            handleGradeChange(symptom, grade.value);
-                          }}
-                        >
-                          <RadioButton.Android
-                            value={grade.value}
-                            status={
-                              checked === grade.value ? "checked" : "unchecked"
-                            }
-                            pointerEvents="none"
-                          />
+  const isChecked = symptoms.some((s) => s.label === symptom.key);
+  const selectedSymptom = symptoms.find((s) => s.label === symptom.key);
+  const selectedGrade = selectedSymptom ? selectedSymptom.grade : 1;
 
-                          <Text variant="labelSmall">{grade.label}</Text>
-                        </Pressable>
-                      );
-                    })}
-                  </View>
-                )}
-              </View>
+  return (
+    <View key={`checkbox-${i}`}>
+      <Checkbox.Item
+        label={symptom.label}
+        accessibilityLabel={symptom.label}
+        mode="android"
+        status={isChecked ? "checked" : "unchecked"}
+        onPress={() => handleCheckboxChange(symptom.key)}
+        style={{ justifyContent: "flex-start" }}
+        labelStyle={{ textAlign: "left", flexGrow: 0, marginLeft: 8 }}
+        position="leading"
+      />
+      {isChecked && (
+        <View
+          key={`view-${i}`}
+          style={{
+            flexDirection: "row",
+            alignItems: "flex-end",
+            justifyContent: "flex-end",
+            width: "100%",
+          }}
+        >
+          {SIDE_EFFECT_GRADE.map((grade, j) => {
+            const isLast = j === SIDE_EFFECT_GRADE.length - 1;
+            const isFirst = j === 0;
+            return (
+              <Pressable
+                key={`pressable-${j}`}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  backgroundColor: theme.colors.secondaryContainer,
+                  paddingLeft: 16,
+                  paddingRight: isLast ? 16 : 0,
+                  paddingVertical: 4,
+                  borderTopRightRadius: isLast ? 16 : 0,
+                  borderBottomRightRadius: isLast ? 16 : 0,
+                  borderBottomLeftRadius: isFirst ? 16 : 0,
+                }}
+                onPress={() => {
+                  handleGradeChange(symptom.key, grade.value);
+                }}
+              >
+                <RadioButton.Android
+                  value={grade.value}
+                  status={selectedGrade === grade.value ? "checked" : "unchecked"}
+                  pointerEvents="none"
+                />
+                <Text variant="labelSmall">{grade.label}</Text>
+              </Pressable>
             );
           })}
+        </View>
+      )}
+    </View>
+  );
+})}
+
           <TextInput
             mode="outlined"
             style={{ flex: 1, marginLeft: 24, marginTop: 4 }}

@@ -296,7 +296,8 @@ function PatientHomeScreen() {
                       icon="medical-bag"
                       count={0}
                       onPressedCallback={() =>
-                        bottomSheetModalRef.current?.present()
+                        // bottomSheetModalRef.current?.present()
+                        navigate("CameraScreen", { isVideo: true })
                       }
                     />
                   )}
@@ -342,7 +343,10 @@ function PatientHomeScreen() {
                 icon="upload"
                 title={t("upload_video_title")}
                 color={theme.colors.primary}
-                onPressedCallback={handlePresentModalPress}
+                onPressedCallback={
+                  // handlePresentModalPress
+                  () => navigate("CameraScreen", { isVideo: true })
+                }
               />
               <CTAButton
                 icon="emoticon-sick"

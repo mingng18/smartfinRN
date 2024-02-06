@@ -95,7 +95,7 @@ export default function PatientDetailsScreen() {
               </Text>
               <Text variant="bodyLarge" style={[styles.headerText]}>
                 {currentPatient.notes
-                  ? capitalizeFirstLetter(currentPatient.notes)
+                  ? t(currentPatient.notes)
                   : t("no_notes")}
               </Text>
             </View>

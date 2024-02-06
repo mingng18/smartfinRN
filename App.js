@@ -192,7 +192,7 @@ function Root() {
               storedUid
             );
             editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
-              pushNotificationToken: token,
+              push_notification_token: token,
             });
             console.log("Token updated in Healthcare");
           }

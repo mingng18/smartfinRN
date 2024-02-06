@@ -35,11 +35,6 @@ export default function ReviewVideoDetailsScreen() {
   // const storageRef = getStorage();
   const dispatch = useDispatch();
 
-  //Treatment Drop down
-  const [treatmentOpen, setTreatmentOpen] = React.useState(false);
-  const [treatment, setTreatment] = React.useState("akurit4");
-  const [treatmentData, setTreatmentData] = React.useState(TREATMENT);
-
   //Dialog
   const [visible, setVisible] = React.useState(false);
   const showDialog = () => setVisible(true);
@@ -60,7 +55,7 @@ export default function ReviewVideoDetailsScreen() {
     try {
       if (isAccepted) {
         const updatedVideo = {
-          medical_checklist: treatment,
+          medical_checklist: currentVideo.treatment,
           rejected_reason: "",
           reviewed_timestamp: new Date(),
           reviewer_id: storedUid,
@@ -90,7 +85,7 @@ export default function ReviewVideoDetailsScreen() {
           Alert.alert("Error occured", "Please fill in reason");
         } else {
           const updatedVideo = {
-            medical_checklist: treatment,
+            medical_checklist: currentVideo.treatment,
             rejected_reason: reason,
             reviewed_timestamp: new Date(),
             reviewer_id: storedUid,
@@ -170,16 +165,13 @@ export default function ReviewVideoDetailsScreen() {
         <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 8 }}>
           {t("medication_checklists")}
         </Text>
-        <CustomDropDownPicker
-          open={treatmentOpen}
-          setOpen={setTreatmentOpen}
-          value={treatment}
-          setValue={setTreatment}
-          items={treatmentData}
-          setItems={setTreatmentData}
-          placeholder={t("treatment")}
-          listMode="SCROLLVIEW"
-        />
+        <Text variant="bodyLarge">
+          {
+            TREATMENT.find(
+              (treatment) => treatment.value === currentVideo.patient_treatment
+            ).label
+          }
+        </Text>
         <View
           style={{
             marginTop: 40,

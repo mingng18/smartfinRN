@@ -56,7 +56,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
               marginVertical: 8,
             }}
           />
-          <Button
+          {/* <Button
             mode="text"
             onPress={() => {
               pickVideo();
@@ -64,7 +64,7 @@ export default function UploadVideoModal({ bottomSheetModalRef }) {
             }}
           >
             {t("upload_video_from_storage")}
-          </Button>
+          </Button> */}
           <Button
             mode="text"
             onPress={() => {

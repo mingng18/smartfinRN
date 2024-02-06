@@ -14,9 +14,7 @@ import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme } from "react-native-paper";
-import {
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   View,
   StyleSheet,
@@ -203,7 +201,25 @@ function HealthcareHomeScreen() {
               { backgroundColor: theme.colors.surfaceContainerLow },
             ]}
           >
-            <Text variant="titleLarge">{t("pending")}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text variant="titleLarge" style={{ marginRight: 16 }}>
+                {t("pending")}
+              </Text>
+              <View
+                style={{
+                  backgroundColor: theme.colors.error,
+                  borderRadius: 100,
+                  width: 24,
+                  height: 24,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ color: theme.colors.onError }}>
+                  {appointmentsCount + videosToBeReviewedCount + sideEffectsAlertCount}
+                </Text>
+              </View>
+            </View>
             <View style={[{ flexDirection: "row", marginTop: 16 }]}>
               <HealthcareToDoCard
                 title={t("total_patient")}

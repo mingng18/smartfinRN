@@ -239,6 +239,7 @@ export async function fetchVideosToBeReviewedForHealthcare() {
             patient_first_name: patientDoc.first_name
               ? patientDoc.first_name
               : "",
+            patient_treatment: patientDoc.treatment,
             ...data,
           });
         })

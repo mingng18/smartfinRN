@@ -36,11 +36,11 @@ export default function CustomCalendar({
               .toISOString()
               .slice(0, 10) === date
         );
-        // acc[today.toISOString().slice(0, 10)] = {
-        //   selected: true,
-        //   selectedColor: theme.colors.background,
-        //   selectedTextColor: theme.colors.onBackground,
-        // };
+        acc[today.toISOString().slice(0, 10)] = {
+          selected: true,
+          selectedColor: theme.colors.background,
+          selectedTextColor: theme.colors.onBackground,
+        };
         acc[date] = {
           selected: true,
           selectedColor: sideEffectMatch
@@ -57,6 +57,11 @@ export default function CustomCalendar({
             new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
             date
         );
+        acc[today.toISOString().slice(0, 10)] = {
+          selected: true,
+          selectedColor: theme.colors.background,
+          selectedTextColor: theme.colors.onBackground,
+        };
         acc[date] = {
           selected: true,
           selectedColor: appointmentMatch
@@ -64,11 +69,6 @@ export default function CustomCalendar({
             : theme.colors.background,
           selectedTextColor: theme.colors.onBackground,
         };
-        // acc[today.toISOString().slice(0, 10)] = {
-        //   selected: true,
-        //   selectedColor: theme.colors.background,
-        //   selectedTextColor: theme.colors.onBackground,
-        // };
       }
 
       //Video is selected

@@ -122,7 +122,7 @@ function PatientCalendarScreen() {
 
       if (today.getDate() === new Date(selectedDate).getDate()) {
         return (
-          <Pressable onPress={() => bottomSheetModalRef.current?.present()}>
+          <Pressable onPress={() => navigate("CameraScreen", { isVideo: true })}>
             <View
               style={{
                 backgroundColor: theme.colors.surfaceContainerHigh,
