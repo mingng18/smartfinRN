@@ -95,13 +95,14 @@ export default function HealthcareProfileScreen() {
             )}`}
           </Text>
         </View>
-        <IconButton
-          icon="pencil"
-          size={24}
+        <Button
+          mode="text"
           onPress={() => {
             navigate("HealthcareEditProfileScreen");
           }}
-        />
+        >
+          Edit
+        </Button>
       </View>
       <TextListButton
         text={t("language")}

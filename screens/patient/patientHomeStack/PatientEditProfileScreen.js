@@ -9,6 +9,8 @@ import TreatmentInfoForm from "../../../components/Auth/TreatmentInfoForm";
 import UploadProfilePicModal from "../../common/UploadProfilePicModal";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import CachedImage from "expo-cached-image";
+import { getLastTenCharacters } from "../../../util/wordUtil";
 
 function PatientEditProfileScreen() {
   const navigation = useNavigation();

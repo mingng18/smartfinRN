@@ -225,13 +225,14 @@ function PatientProfileScreen() {
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
-          <IconButton
-            icon="pencil"
-            size={24}
+          <Button
             onPress={() => {
               navigate("PatientEditProfileScreen");
             }}
-          />
+            mode="text"
+          >
+            Edit
+          </Button>
         </View>
         {/* ========================PERSONAL INFO======================= */}
         {/* TODO change the personal information */}
@@ -304,7 +305,7 @@ function PatientProfileScreen() {
                 <Text variant="labelSmall">
                   {`${getTotalVideosForCurrentMonth()} ${t(
                     "video_submitted_for_text"
-                  )} `}
+                  )}`}
                   {monthsSinceDiagnosis === 1
                     ? t("month_one", { count: 1 })
                     : monthsSinceDiagnosis === 2
