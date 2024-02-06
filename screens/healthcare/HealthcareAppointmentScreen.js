@@ -14,18 +14,23 @@ import {
 } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as Haptics from "expo-haptics";
+import * as SecureStore from "expo-secure-store";
 
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
   FIREBASE_COLLECTION,
   HORIZONTAL_CARD_TYPE,
+  USER_TYPE,
 } from "../../constants/constants";
 import TextListButton from "../../components/ui/TextListButton";
 import HorizontalCard from "../../components/ui/HorizontalCard";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { editDocument } from "../../util/firestoreWR";
-import { updateAppointment } from "../../store/redux/appointmentSlice";
+import {
+  fetchAppointments,
+  updateAppointment,
+} from "../../store/redux/appointmentSlice";
 import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 import { useTranslation } from "react-i18next";
 
@@ -33,6 +38,7 @@ export default function HealthcareAppointmentScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const dispatch = useDispatch();
+
   const { t } = useTranslation("healthcare");
 
   const appointments = useSelector(
@@ -42,7 +48,7 @@ export default function HealthcareAppointmentScreen() {
     (state) => state.appointmentObject.pendingAppointments
   );
   const today = new Date();
-
+  
   const [selectedDate, setSelectedDate] = React.useState("");
   const [callingAppointment, setcallingAppointment] = React.useState(null);
   const [callingAppointmentDate, setcallingAppointmentDate] =
@@ -66,6 +72,13 @@ export default function HealthcareAppointmentScreen() {
   useEffect(() => {
     DeviceEventEmitter.removeAllListeners("onCallOrJoin");
   }, []);
+
+  async function fetchAppointmentOnIntialize() {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    dispatch(
+      fetchAppointments({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+  }
 
   function showAppointmentNotesRecorderHandler(appointmentData) {
     console.log("checking here");
@@ -94,6 +107,8 @@ export default function HealthcareAppointmentScreen() {
         currentAppointment: appointment,
       });
     }
+
+    fetchAppointmentOnIntialize();
   };
 
   async function submitAppointmentNotesHandler() {
@@ -140,7 +155,7 @@ export default function HealthcareAppointmentScreen() {
     return allDates.reduce((acc, date) => {
       const appointmentMatch = appointments.some(
         (item) =>
-          new Date(item.scheduled_timestamp).toISOString().slice(0, 10) === date
+          new Date(item.scheduled_timestamp).toISOString().slice(0, 10) === date && (item.appointment_status === APPOINTMENT_STATUS.ACCEPTED )
       );
       const pendingAppointmentMatch = pendingAppointments.some(
         (item) =>

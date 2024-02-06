@@ -16,7 +16,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme } from "react-native-paper";
 import {
   GestureHandlerRootView,
-  ScrollView,
 } from "react-native-gesture-handler";
 import {
   View,
@@ -24,6 +23,7 @@ import {
   RefreshControl,
   Platform,
   Image,
+  ScrollView,
 } from "react-native";
 import {
   capitalizeFirstLetter,
@@ -145,6 +145,7 @@ function HealthcareHomeScreen() {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
+            enabled={true}
             refreshing={refreshing}
             onRefresh={onRefresh}
             colors={[theme.colors.primary]}
@@ -169,16 +170,11 @@ function HealthcareHomeScreen() {
             },
           ]}
         >
-          {user.profile_pic_url && user.profile_pic_url !== "" ? (
+          {user.profile_pic_url && (
             <CachedImage
               source={{ uri: user.profile_pic_url }}
               cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
               defaultSource={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          ) : (
-            <Image
-              source={BLANK_PROFILE_PIC}
               style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
             />
           )}

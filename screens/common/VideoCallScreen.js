@@ -25,7 +25,10 @@ import {
 import CallActionBox from "../../components/ui/CallActionBox";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { addDocument } from "../../util/firestoreWR";
+import { addDocument, editDocument } from "../../util/firestoreWR";
+import { useDispatch } from "react-redux";
+import { updateAppointment } from "../../store/redux/appointmentSlice";
+import { APPOINTMENT_STATUS, FIREBASE_COLLECTION } from "../../constants/constants";
 
 const configuration = {
   iceServers: [
@@ -38,6 +41,7 @@ const configuration = {
 
 export default function VideoCallScreen({ route }) {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [localStream, setLocalStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
@@ -71,7 +75,10 @@ export default function VideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    roomRef.update({ answer: deleteField() });
+    roomRef.update({ answer: firestore.FieldValue.delete() });
+
+    dispatch(updateAppointment({ ...currentAppointment, changes:{appointment_status: APPOINTMENT_STATUS.COMPLETED} }));
+    editDocument(FIREBASE_COLLECTION.APPOINTMENT, currentAppointment.id, { appointment_status: APPOINTMENT_STATUS.COMPLETED });
     // const roomRef = doc(db, "room", roomId);
     // await updateDoc(roomRef, { answer: deleteField() });
 

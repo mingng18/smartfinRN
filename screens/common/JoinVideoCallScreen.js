@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 
 import {
   RTCPeerConnection,
@@ -25,8 +25,11 @@ import {
 import CallActionBox from "../../components/ui/CallActionBox";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { addDocument, fetchDocument } from "../../util/firestoreWR";
+import { addDocument, editDocument, fetchDocument } from "../../util/firestoreWR";
 import { firebase } from "@react-native-firebase/auth";
+import { useDispatch } from "react-redux";
+import { updateAppointment } from "../../store/redux/appointmentSlice";
+import { APPOINTMENT_STATUS } from "../../constants/constants";
 
 const configuration = {
   iceServers: [
@@ -39,6 +42,7 @@ const configuration = {
 
 export default function JoinVideoCallScreen({ route }) {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [localStream, setLocalStream] = useState();
   const [remoteStream, setRemoteStream] = useState();
@@ -70,7 +74,9 @@ export default function JoinVideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    roomRef.update({ answer: deleteField() });
+    roomRef.update({ answer: firestore.FieldValue.delete() });
+
+   
     // const roomRef = doc(db, "room", roomId);
     // await updateDoc(roomRef, { answer: deleteField() });
 
@@ -116,8 +122,10 @@ export default function JoinVideoCallScreen({ route }) {
     // const roomRef = doc(db, "room", id);
     // const roomSnapshot = await getDoc(roomRef);
 
-    if (!roomSnapshot.exists) console.log("Room not found");
-    if (!roomSnapshot.exists) return;
+    if (!roomSnapshot.exists){
+      Alert.alert("Room not found");
+      navigation.goBack();
+    } 
     const localPC = new RTCPeerConnection(configuration);
     localStream.getTracks().forEach((track) => {
       localPC.addTrack(track, localStream);
@@ -125,8 +133,6 @@ export default function JoinVideoCallScreen({ route }) {
 
     const callerCandidatesCollection = firestore().collection("room").doc(id).collection("callerCandidates");
     const calleeCandidatesCollection = firestore().collection("room").doc(id).collection("calleeCandidates");
-    // const callerCandidatesCollection = collection(roomRef, "callerCandidates");
-    // const calleeCandidatesCollection = collection(roomRef, "calleeCandidates");
 
     localPC.addEventListener("icecandidate", (e) => {
       if (!e.candidate) {
@@ -134,8 +140,6 @@ export default function JoinVideoCallScreen({ route }) {
         return;
       }
       calleeCandidatesCollection.add(e.candidate.toJSON());
-      // addDocument(calleeCandidatesCollection, e.candidate.toJSON());
-      // addDoc(calleeCandidatesCollection, e.candidate.toJSON());
     });
 
     localPC.ontrack = (e) => {
