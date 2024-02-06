@@ -79,11 +79,19 @@ export default function SignInInfoScreen() {
       }
     }
     //Check if email already exists
-
-    const signInMethods = await auth().fetchSignInMethodsForEmail(email);
-    if (signInMethods.length > 0) {
-      Alert.alert(t("email_existed"), t("email_existed_message"));
-      return setIsAuthenticating(false);
+    try {
+      const signInMethods = await auth().fetchSignInMethodsForEmail(email);
+      if (signInMethods.length > 0) {
+        Alert.alert(t("email_existed"), t("email_existed_message"));
+        return setIsAuthenticating(false);
+      }
+    } catch (error) {
+      switch (error.code) {
+        case "auth/unknown":
+          Alert.alert(t("unknown_error"), t("unknown_error_message"));
+          setIsAuthenticating(false);
+          break;
+      }
     }
 
     //Local state update and error handling

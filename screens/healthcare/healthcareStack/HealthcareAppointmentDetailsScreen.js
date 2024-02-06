@@ -65,22 +65,20 @@ export default function HealthcareAppointmentDetailsScreen() {
   async function handleAccept() {
     const storedUid = await SecureStore.getItemAsync("uid");
 
-    const generateRandomId = () => {
+
       const characters = "abcdefghijklmnopqrstuvwxyz";
-      let result = "";
+      let roomIdResult = "";
       for (let i = 0; i < 7; i++) {
         const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters.charAt(randomIndex);
+        roomIdResult += characters.charAt(randomIndex);
       }
-      return setRoomId(result);
-    };
-    console.log(generateRandomId());
+      setRoomId(roomIdResult);
 
     try {
       const updatedAppointment = {
         healthcare_id: storedUid,
         appointment_status: APPOINTMENT_STATUS.ACCEPTED,
-        meeting_room_id: roomId,
+        meeting_room_id: roomIdResult,
       };
 
       await editDocument(

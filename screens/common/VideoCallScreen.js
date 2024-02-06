@@ -9,7 +9,8 @@ import {
   RTCSessionDescription,
   MediaStream,
 } from "react-native-webrtc";
-import { db } from "../../util/firebaseConfig";
+import firestore from "@react-native-firebase/firestore";
+// import { db } from "../../util/firebaseConfig";
 import {
   addDoc,
   collection,
@@ -24,6 +25,7 @@ import {
 import CallActionBox from "../../components/ui/CallActionBox";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import { addDocument } from "../../util/firestoreWR";
 
 const configuration = {
   iceServers: [
@@ -68,8 +70,10 @@ export default function VideoCallScreen({ route }) {
       cachedLocalPC.close();
     }
 
-    const roomRef = doc(db, "room", roomId);
-    await updateDoc(roomRef, { answer: deleteField() });
+    const roomRef = firestore().collection("room").doc(roomId);
+    roomRef.update({ answer: deleteField() });
+    // const roomRef = doc(db, "room", roomId);
+    // await updateDoc(roomRef, { answer: deleteField() });
 
     setLocalStream();
     setRemoteStream(); // set remoteStream to null or empty when callee leaves the call
@@ -114,16 +118,22 @@ export default function VideoCallScreen({ route }) {
       localPC.addTrack(track, localStream);
     });
 
-    const roomRef = doc(db, "room", id);
-    const callerCandidatesCollection = collection(roomRef, "callerCandidates");
-    const calleeCandidatesCollection = collection(roomRef, "calleeCandidates");
+    const roomRef = firestore().collection("room").doc(id);
+    const callerCandidatesCollection = firestore().collection("room").doc(id).collection("callerCandidates");
+    const calleeCandidatesCollection = firestore().collection("room").doc(id).collection("calleeCandidates");
+
+    // const roomRef = doc(db, "room", id);
+    // const callerCandidatesCollection = collection(roomRef, "callerCandidates");
+    // const calleeCandidatesCollection = collection(roomRef, "calleeCandidates");
 
     localPC.addEventListener("icecandidate", (e) => {
       if (!e.candidate) {
         console.log("Got final candidate!");
         return;
       }
-      addDoc(callerCandidatesCollection, e.candidate.toJSON());
+      callerCandidatesCollection.add(e.candidate.toJSON());
+      // addDocument(callerCandidatesCollection, e.candidate.toJSON());
+      // addDoc(callerCandidatesCollection, e.candidate.toJSON());
     });
 
     localPC.ontrack = (e) => {
@@ -138,30 +148,52 @@ export default function VideoCallScreen({ route }) {
     const offer = await localPC.createOffer();
     await localPC.setLocalDescription(offer);
 
-    await setDoc(roomRef, { offer, connected: false }, { merge: true });
+    await roomRef.set({ offer, connected:false }, { merge: true });
+    // await setDoc(roomRef, { offer, connected: false }, { merge: true });
+
 
     // Listen for remote answer
-    onSnapshot(roomRef, (doc) => {
+    roomRef.onSnapshot((doc) => {
       const data = doc.data();
       if (!localPC.currentRemoteDescription && data.answer) {
-        console.log("Got remote answer");
+        console.log("Got remote answer--------------------------------------------------------------------------------------------------------------------------------------------------");
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         localPC.setRemoteDescription(rtcSessionDescription);
       } else {
         console.log("No remote answer");
         setRemoteStream(null);
       }
-    });
+    })
+
+    // onSnapshot(roomRef, (doc) => {
+    //   const data = doc.data();
+    //   if (!localPC.currentRemoteDescription && data.answer) {
+    //     console.log("Got remote answer");
+    //     const rtcSessionDescription = new RTCSessionDescription(data.answer);
+    //     localPC.setRemoteDescription(rtcSessionDescription);
+    //   } else {
+    //     console.log("No remote answer");
+    //     setRemoteStream(null);
+    //   }
+    // });
 
     // when answered, add candidate to peer connection
-    onSnapshot(calleeCandidatesCollection, (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          let data = change.doc.data();
-          localPC.addIceCandidate(new RTCIceCandidate(data));
+    calleeCandidatesCollection.onSnapshot((querySnapshot) => {
+      querySnapshot.forEach((snapshot) => {
+        if(snapshot.data()) {
+          const candidate = new RTCIceCandidate(snapshot.data());
+          localPC.addIceCandidate(candidate);
         }
-      });
-    });
+      })
+    })
+    // onSnapshot(calleeCandidatesCollection, (snapshot) => {
+    //   snapshot.docChanges().forEach((change) => {
+    //     if (change.type === "added") {
+    //       let data = change.doc.data();
+    //       localPC.addIceCandidate(new RTCIceCandidate(data));
+    //     }
+    //   });
+    // });
 
     setCachedLocalPC(localPC);
   };

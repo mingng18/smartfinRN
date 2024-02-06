@@ -129,14 +129,12 @@ function LoginScreen() {
               fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
             );
           } catch (error) {
-            console.log("Check hereee")
+            console.log("Check hereee");
             const isHealthcare = await fetchDocument(
               FIREBASE_COLLECTION.HEALTHCARE,
               user.uid
             );
-            dispatch(
-              authenticateStoreNative(token, user.uid, "healthcare")
-            );
+            dispatch(authenticateStoreNative(token, user.uid, "healthcare"));
             dispatch(fetchHealthcareData({ ...isHealthcare }));
             dispatch(fetchPatientCollectionData());
             dispatch(
@@ -200,6 +198,8 @@ function LoginScreen() {
         case "auth/invalid-credential": //Indicates the supplied credential is invalid. This could happen if it has expired or it is malformed.
           Alert.alert(t("invalid_credential"), t("invalid_credential_message"));
           break;
+        case "auth/unknown":
+          Alert.alert(t("unknown_error"), t("unknown_error_message"));
         default: //Other error
           console.log(error.code);
           Alert.alert(t("unknown_error"), t("unknown_error_message"));
