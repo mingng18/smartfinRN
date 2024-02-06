@@ -304,6 +304,7 @@ export default function PersonalInfoForm({ isEditing }) {
           items={genderData}
           setItems={setGenderData}
           placeholder={t("gender_placeholder")}
+          listMode="SCROLLVIEW"
         />
 
         <View
@@ -345,6 +346,7 @@ export default function PersonalInfoForm({ isEditing }) {
           items={nationalityData}
           setItems={setNationalityData}
           placeholder={t("nationality_placeholder")}
+          listMode="SCROLLVIEW"
         />
         {nationality == "Malaysia" ? (
           <TextInput

@@ -5,6 +5,7 @@ import { Button, Chip, Text, TextInput, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { createMessage, resetMessage } from "../../store/redux/umiChatSlice";
 import React from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function UmiScreen() {
   const theme = useTheme();
@@ -12,46 +13,43 @@ function UmiScreen() {
   const messages = useSelector((state) => state.umiChatObject.messages);
   const dispatch = useDispatch();
   const [isInitial, setIsInitial] = React.useState(true);
+  const scrollRef = React.useRef(null);
 
   return (
-    <View
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      ref={scrollRef}
       style={{
-        backgroundColor: theme.colors.background,
         height: "100%",
         paddingHorizontal: 16,
-        paddingTop: 56,
+        paddingTop: 40,
       }}
     >
-      <ScrollView
+      <View
         style={{
-          flexGrow: 1,
-          marginVertical: 16,
-          // flexDirection: "column-reverse",
+          backgroundColor: theme.colors.primaryContainer,
+          padding: 16,
+          borderRadius: 8,
+          marginBottom: 8,
         }}
       >
-        <View
-          style={{
-            backgroundColor: theme.colors.primaryContainer,
-            padding: 16,
-            borderRadius: 8,
-          }}
-        >
-          <Text variant="titleLarge">{t("umi_chatbot")}</Text>
-          <Text variant="bodyLarge" style={{ marginTop: 4 }}>
-            {t("have_any_problem_chat_now")}
-          </Text>
-        </View>
-
-        {messages.map((message, index) => (
-          <ChatBubble
-            key={index}
-            isUser={message.isUser}
-            content={message.content}
-            selection={message.selection}
-            setIsInitial={setIsInitial}
-          />
-        ))}
-        {!isInitial && (
+        <Text variant="titleLarge">{t("umi_chatbot")}</Text>
+        <Text variant="bodyLarge" style={{ marginTop: 4 }}>
+          {t("have_any_problem_chat_now")}
+        </Text>
+      </View>
+      {messages.map((message, index) => (
+        <ChatBubble
+          key={index}
+          isUser={message.isUser}
+          content={message.content}
+          selection={message.selection}
+          setIsInitial={setIsInitial}
+          scrollRef={scrollRef}
+        />
+      ))}
+      {!isInitial && (
+        <>
           <Button
             style={{ marginTop: 16, backgroundColor: theme.colors.primary }}
             onPress={() => {
@@ -66,61 +64,22 @@ function UmiScreen() {
               Start from the beginning
             </Text>
           </Button>
-        )}
-
-        {/* <TextInput
-          mode="outlined"
-          style={{ marginBottom: 16 }}
-          placeholder={t("type_your_question_here")}
-          right={
-            <TextInput.Icon
-              icon="arrow-right"
-              color={theme.colors.outline}
-              onPress={() => {
-                // Send message here
-              }}
-            />
-          }
-        /> */}
-      </ScrollView>
-    </View>
+          <View style={{ marginTop: 72 }} />
+        </>
+      )}
+    </ScrollView>
   );
 }
 
-// const messages = [
-//   // { isUser: true, content: "Hello" },
-//   {
-//     isUser: false,
-//     content: "Hi there, how can I help you?",
-//     selection: [
-//       {
-//         title: "1) How to use UMI",
-//         respond: "Just click on the messages",
-//         nextSelections: [{
-//           title: "1.1) How to use UMI",
-//           respond: "Just click on the messages",
-//         }
-//         ,{
-//           title: "1.2) How to upload a video",
-//           respond: "Bruh",
-//         }],
-//       },
-//       { title: "2) How to upload a video", respond: "Bruh", nextSelections: [
-//         {
-//           title: "2.1) How to use UMI",
-//           respond: "Just click on the messages",
-//         },{
-//           title: "2.2) How to upload a video",
-//           respond: "Bruh",
-//         }
-//       ]},
-//     ],
-//   },
-// ];
-
 export default UmiScreen;
 
-const ChatBubble = ({ isUser, content, selection, setIsInitial }) => {
+const ChatBubble = ({
+  isUser,
+  content,
+  selection,
+  setIsInitial,
+  scrollRef,
+}) => {
   const theme = useTheme();
   const dispatch = useDispatch();
 
@@ -165,7 +124,7 @@ const ChatBubble = ({ isUser, content, selection, setIsInitial }) => {
               key={index}
               style={{
                 alignItems: "flex-start",
-                overflow:"visible",
+                overflow: "visible",
               }}
               onPress={() => {
                 dispatch(
@@ -184,6 +143,9 @@ const ChatBubble = ({ isUser, content, selection, setIsInitial }) => {
                 );
                 console.log(item.respond);
                 setIsInitial(false);
+                if (scrollRef.current) {
+                  scrollRef.current.scrollToEnd({ animated: true });
+                }
               }}
             >
               {item.title}

@@ -4,7 +4,7 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { IconButton, RadioButton, Text, useTheme } from "react-native-paper";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
-import { DIAGNOSIS, TREATMENT } from "../../../constants/constants";
+import { BLANK_PROFILE_PIC, DIAGNOSIS, TREATMENT } from "../../../constants/constants";
 import InformationChip from "../../../components/ui/InformationChip";
 import PatientDetailsTab from "../../../navigation/PatientDetailsTab";
 import { editDocument } from "../../../util/firestoreWR";

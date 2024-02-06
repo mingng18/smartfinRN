@@ -176,6 +176,7 @@ export default function HealthcareInfoForm({ isEditing }) {
         items={roleData}
         setItems={setRoleData}
         placeholder={t("role_placeholder")}
+        listMode="SCROLLVIEW"
       />
       <View style={{ marginTop: 16 }} />
       <View style={{ zIndex: -5 }}>
@@ -199,6 +200,7 @@ export default function HealthcareInfoForm({ isEditing }) {
         items={categoryData}
         setItems={setCategoryData}
         placeholder={t("category")}
+        listMode="SCROLLVIEW"
       />
 
       <View

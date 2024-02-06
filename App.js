@@ -169,77 +169,77 @@ function Root() {
   };
 
   //Firebase Messaging inititalisation
-  // useEffect(() => {
-  //   //Firebase FCM
-  //   if (requestUserPermission()) {
-  //     messaging()
-  //       .getToken()
-  //       .then(async (token) => {
-  //         console.log("The notification token is " + token);
-  //         const storedUid = await SecureStore.getItemAsync("uid");
-  //         try {
-  //           const patientUser = await fetchDocument(
-  //             FIREBASE_COLLECTION.PATIENT,
-  //             storedUid
-  //           );
-  //           editDocument(FIREBASE_COLLECTION.PATIENT, patientUser.id, {
-  //             pushNotificationToken: token,
-  //           });
-  //           console.log("Token updated in Patient");
-  //         } catch (error) {
-  //           const healthcareUser = await fetchDocument(
-  //             FIREBASE_COLLECTION.HEALTHCARE,
-  //             storedUid
-  //           );
-  //           editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
-  //             pushNotificationToken: token,
-  //           });
-  //           console.log("Token updated in Healthcare");
-  //         }
-  //       });
-  //   } else {
-  //     console.log("Failed token status", authStatus);
-  //   }
+  useEffect(() => {
+    //Firebase FCM
+    if (requestUserPermission()) {
+      messaging()
+        .getToken()
+        .then(async (token) => {
+          console.log("The notification token is " + token);
+          const storedUid = await SecureStore.getItemAsync("uid");
+          try {
+            const patientUser = await fetchDocument(
+              FIREBASE_COLLECTION.PATIENT,
+              storedUid
+            );
+            editDocument(FIREBASE_COLLECTION.PATIENT, patientUser.id, {
+              pushNotificationToken: token,
+            });
+            console.log("Token updated in Patient");
+          } catch (error) {
+            const healthcareUser = await fetchDocument(
+              FIREBASE_COLLECTION.HEALTHCARE,
+              storedUid
+            );
+            editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
+              pushNotificationToken: token,
+            });
+            console.log("Token updated in Healthcare");
+          }
+        });
+    } else {
+      console.log("Failed token status", authStatus);
+    }
 
-  //   //Check whether an the notification is open from app quit state
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then((message) => {
-  //       console.log(
-  //         "Notification caused app to open from quit state",
-  //         message.notification
-  //       );
-  //       // const deeplinkURL = buildDeepLinkFromNotificationData(message?.data);
-  //       // if (typeof deeplinkURL === "string") {
-  //       //   return deeplinkURL;
-  //       // }
-  //     });
+    //Check whether an the notification is open from app quit state
+    // messaging()
+    //   .getInitialNotification()
+    //   .then((message) => {
+    //     console.log(
+    //       "Notification caused app to open from quit state",
+    //       message.notification
+    //     );
+    //     // const deeplinkURL = buildDeepLinkFromNotificationData(message?.data);
+    //     // if (typeof deeplinkURL === "string") {
+    //     //   return deeplinkURL;
+    //     // }
+    //   });
 
-  //   //Check whether the notification is opened from app background state
-  //   messaging().onNotificationOpenedApp((remoteMessage) => {
-  //     console.log(
-  //       "Notification caused app to open from background state",
-  //       remoteMessage.notification
-  //     );
-  //     //TODO link the meeting link here
-  //     // const url = buildDeepLinkFromNotificationData(remoteMessage.data);
-  //     // if (typeof url === "string") {
-  //     //   listener(url);
-  //     // }
-  //   });
+    // //Check whether the notification is opened from app background state
+    // messaging().onNotificationOpenedApp((remoteMessage) => {
+    //   console.log(
+    //     "Notification caused app to open from background state",
+    //     remoteMessage.notification
+    //   );
+    //   //TODO link the meeting link here
+    //   // const url = buildDeepLinkFromNotificationData(remoteMessage.data);
+    //   // if (typeof url === "string") {
+    //   //   listener(url);
+    //   // }
+    // });
 
-  //   // Register background handler for app in background and quit state
-  //   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  //     console.log("Message handled in the background!", remoteMessage);
-  //   });
+    // Register background handler for app in background and quit state
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background!", remoteMessage);
+    });
 
-  //   //Handle notification in foreground state
-  //   const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-  //     Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
-  //   });
+    //Handle notification in foreground state
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+    });
 
-  //   return unsubscribe;
-  // }, []);
+    return unsubscribe;
+  }, []);
 
   //Close Splash screen after fetched token
   if (isTryingLogin || initializing) {
@@ -249,25 +249,25 @@ function Root() {
   return <Navigation />;
 }
 
-// function buildDeepLinkFromNotificationData(data) {
-//   const navigationId = data?.navigationId;
-//   if (!NAVIGATION_IDS.includes(navigationId)) {
-//     console.warn('Unverified navigationId', navigationId)
-//     return null;
-//   }
-//   if (navigationId === 'home') {
-//     return 'myapp://home';
-//   }
-//   if (navigationId === 'settings') {
-//     return 'myapp://settings';
-//   }
-//   const postId = data?.postId;
-//   if (typeof postId === 'string') {
-//     return `myapp://post/${postId}`
-//   }
-//   console.warn('Missing postId')
-//   return null
-// }
+function buildDeepLinkFromNotificationData(data) {
+  const navigationId = data?.navigationId;
+  if (!NAVIGATION_IDS.includes(navigationId)) {
+    console.warn('Unverified navigationId', navigationId)
+    return null;
+  }
+  if (navigationId === 'home') {
+    return 'myapp://home';
+  }
+  if (navigationId === 'settings') {
+    return 'myapp://settings';
+  }
+  const postId = data?.postId;
+  if (typeof postId === 'string') {
+    return `myapp://post/${postId}`
+  }
+  console.warn('Missing postId')
+  return null
+}
 
 //Define the theme for the app, which is the color and the typography
 const lightThemeColors = require("./constants/light-theme-colors.json");

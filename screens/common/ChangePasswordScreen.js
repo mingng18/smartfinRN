@@ -5,6 +5,7 @@ import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import * as Haptics from "expo-haptics";
 import { useTranslation } from "react-i18next";
 import { firebase } from "@react-native-firebase/auth";
+import auth from "@react-native-firebase/auth";
 
 export default function ChangePasswordScreen() {
   const navigation = useNavigation();
@@ -27,48 +28,43 @@ export default function ChangePasswordScreen() {
     });
   });
 
-  const changePassword = (currentPassword, newPassword) => {
-    checkInput();
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      // Check input validity
+      const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
+      const passwordIsValid = passwordRegex.test(newPassword);
+      const confirmPasswordIsValid = newPassword === confirmPassword;
 
-    const emailCred = firebase.auth.EmailAuthProvider.credential(
-      auth.currentUser.email,
-      currentPassword
-    );
-    firebase
-      .auth()
-      .currentUser.reauthenticateWithCredential(emailCred)
-      .then(() => {
-        firebase
-          .auth()
-          .currentUser.updatePassword(newPassword)
-          .then(() => {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            Alert.alert(t("password_updated"));
-            navigation.goBack();
-          })
-          .catch((error) => {
-            throw error;
-          });
-      })
-      .catch((error) => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        Alert.alert(t("update_fail"), `${error}`);
-      });
-  };
+      if (!passwordIsValid || !confirmPasswordIsValid) {
+        setCredentialsInvalid({
+          password: !passwordIsValid,
+          confirmPassword: !confirmPasswordIsValid,
+        });
+        return; // Exit early if input is invalid
+      }
 
-  function checkInput() {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[^\w\s]).{6,}$/;
-    const passwordIsValid = passwordRegex.test(password);
-    const confirmPasswordIsValid = password === confirmPassword;
+      // Reauthenticate user
+      const user = firebase.auth().currentUser;
+      const credential = firebase.auth.EmailAuthProvider.credential(
+        user.email,
+        currentPassword
+      );
 
-    if (!passwordIsValid || !confirmPasswordIsValid) {
-      setCredentialsInvalid({
-        password: !passwordIsValid,
-        confirmPassword: !confirmPasswordIsValid,
-      });
-      return Alert.alert(t("invalid_input"), t("check_password"));
+      await user.reauthenticateWithCredential(credential);
+
+      // Update password
+      await user.updatePassword(newPassword);
+
+      // Display success message
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert(t("password_updated"));
+      navigation.goBack();
+    } catch (error) {
+      // Display error message
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(t("update_fail"), `${error}`);
     }
-  }
+  };
 
   return (
     <View

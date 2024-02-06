@@ -1,11 +1,11 @@
 {
-  "hello": "Halo",
+  "hello": "Salam",
   "pending": "Belum Selesai",
   "total_patient": "Jumlah Pesakit",
   "appointment": "Janji Temu",
   "review_videos_of_patients": "Tinjau Video\nPesakit",
   "review_patients_side_effects": "Tinjau Kesan\nSampingan Pesakit",
-  "are_you_up_for_something": "Ada masalah? Chat sekarang!",
+  "are_you_up_for_something": "Ingin melakukan sesuatu?",
   "video": "Video",
   "side_effect": "Kesan Sampingan",
   "analytics": "Analitik",

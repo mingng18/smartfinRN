@@ -476,6 +476,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         items={diagnosisData}
         setItems={setDiagnosisData}
         placeholder={t("diagnosis")}
+        listMode="SCROLLVIEW"
       />
       <TextInput
         mode="outlined"
@@ -501,6 +502,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         items={treatmentData}
         setItems={setTreatmentData}
         placeholder={t("my_treatment")}
+        listMode="SCROLLVIEW"
       />
       <View style={{ marginBottom: 16 }} />
       <CustomDropDownPicker
@@ -512,6 +514,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         items={numberOfTabletsData}
         setItems={setNumberOfTabletsData}
         placeholder={t("tablet_no")}
+        listMode="SCROLLVIEW"
       />
       {isEditing ? (
         <View style={{ marginTop: 40, flexDirection: "row-reverse" }}>
