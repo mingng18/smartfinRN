@@ -15,6 +15,8 @@ export const fetchPatientCollectionData = createAsyncThunk(
       let patients = await fetchCollection(FIREBASE_COLLECTION.PATIENT);
 
       // console.log("fetching patient " + patients[0].date_of_diagnosis.toDate().toISOString())
+      console.log("Checking treatmentstartdate " + patients[0].treatment_start_date.toDate().toISOString())
+      console.log("Checking treatmentenddate " + patients[0].treatment_end_date.toDate().toISOString())
       patients = patients.map((patient) => {
         const updatedPatient = {
           ...patient,

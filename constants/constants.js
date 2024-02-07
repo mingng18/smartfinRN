@@ -34,6 +34,10 @@ export const LANGUAGE = {
 };
 
 export const NATIONALITY = [
+  { label: "Indonesia", value: "Indonesia" },
+  { label: "Malaysia", value: "Malaysia" },
+];
+export const NATIONALITYBACKUP = [
   { label: "Andorra", value: "Andorra" },
   { label: "United Arab Emirates", value: "United Arab Emirates" },
   { label: "Afghanistan", value: "Afghanistan" },

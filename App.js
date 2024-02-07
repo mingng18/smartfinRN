@@ -73,7 +73,6 @@ function Root() {
       // const user = auth.currentUser;
       try {
         const token = await user.getIdToken();
-
       } catch (error) {
         console.log("No user");
       }
@@ -93,6 +92,12 @@ function Root() {
             fetchPatientData({
               ...patientUser,
               date_of_diagnosis: patientUser.date_of_diagnosis
+                .toDate()
+                .toISOString(),
+              treatment_start_date: patientUser.treatment_start_date
+                .toDate()
+                .toISOString(),
+              treatment_end_date: patientUser.treatment_end_date
                 .toDate()
                 .toISOString(),
             })
@@ -118,8 +123,8 @@ function Root() {
           console.log("basuhdhas");
           dispatch(
             authenticateStoreNative(storedToken, storedUid, "healthcare")
-            );
-            console.log("basuhdhas");
+          );
+          console.log("basuhdhas");
           dispatch(fetchHealthcareData({ ...healthcareUser }));
           dispatch(fetchPatientCollectionData());
           dispatch(
@@ -252,21 +257,21 @@ function Root() {
 function buildDeepLinkFromNotificationData(data) {
   const navigationId = data?.navigationId;
   if (!NAVIGATION_IDS.includes(navigationId)) {
-    console.warn('Unverified navigationId', navigationId)
+    console.warn("Unverified navigationId", navigationId);
     return null;
   }
-  if (navigationId === 'home') {
-    return 'myapp://home';
+  if (navigationId === "home") {
+    return "myapp://home";
   }
-  if (navigationId === 'settings') {
-    return 'myapp://settings';
+  if (navigationId === "settings") {
+    return "myapp://settings";
   }
   const postId = data?.postId;
-  if (typeof postId === 'string') {
-    return `myapp://post/${postId}`
+  if (typeof postId === "string") {
+    return `myapp://post/${postId}`;
   }
-  console.warn('Missing postId')
-  return null
+  console.warn("Missing postId");
+  return null;
 }
 
 //Define the theme for the app, which is the color and the typography

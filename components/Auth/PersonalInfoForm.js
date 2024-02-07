@@ -27,7 +27,7 @@ import {
 } from "../../constants/constants";
 import { fetchPatientData } from "../../store/redux/authSlice";
 import { editDocument } from "../../util/firestoreWR";
-import countryList from "../../assets/data/countryList.json";
+import countryList from "../../assets/data/countryList.json"
 import * as Haptics from "expo-haptics";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
@@ -35,11 +35,9 @@ import { useTranslation } from "react-i18next";
 export default function PersonalInfoForm({ isEditing }) {
   //TODO handle update personal info case
   const navigation = useNavigation();
-  const theme = useTheme();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.authObject);
   const { t } = useTranslation("auth");
-  const millennium = Math.floor(new Date().getFullYear() / 1000) * 1000;
 
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
@@ -108,10 +106,22 @@ export default function PersonalInfoForm({ isEditing }) {
     }
   }, [isEditing]);
 
+  React.useEffect(() => {
+    if (nationality == "Malaysia") {
+      setCountryCode(
+        countryList.find((country) => country.name === "Malaysia")
+      );
+    } else if (nationality == "Indonesia") {
+      setCountryCode(
+        countryList.find((country) => country.name === "Indonesia")
+      );
+    }
+  },[nationality])
+
+
   //Calculate the age based on nric, triggered when nric is changed
   function handlerForAgeInputChange(value) {
     setNric(value);
-
     if (nric !== null) {
       const currentYear = new Date().getFullYear();
 
@@ -429,7 +439,6 @@ export default function PersonalInfoForm({ isEditing }) {
                       setVisible(false);
                       setSearchQuery("");
                       setCountryCode(country);
-                      // setPhoneNumber(country.iso);
                     }}
                   >
                     <Text variant="titleLarge" style={{ paddingRight: 16 }}>

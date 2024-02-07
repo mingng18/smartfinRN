@@ -213,8 +213,8 @@ export default function TreatmentInfoForm({ isEditing }) {
             date_of_diagnosis: diagnosisSubmitDate.setDate(
               diagnosisSubmitDate.getDate() + 1
             ),
-            treatment_start_date: treatmentStartSubmitDate,
-            treatment_end_date: treatmentEndSubmitDate,
+            treatment_start_date: treatmentStartSubmitDate.setDate(treatmentStartSubmitDate.getDate() + 1),
+            treatment_end_date: treatmentEndSubmitDate.setDate(treatmentEndSubmitDate.getDate() + 1),
             diagnosis: diagnosis,
             email: signupInfo.email,
             first_name: signupInfo.firstName,

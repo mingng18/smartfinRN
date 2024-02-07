@@ -16,13 +16,11 @@ const initialState = {
               title: "1.1) What can I know through UMI?",
               respond:
                 "You can learn how to use MyTBCompanion and how it can help you in your treatment journey!",
-              nextSelections: [{}],
             },
             {
               title: "2.1) Can I ask everything using UMI?",
               respond:
                 "You can ask anything about MyTBCompanion, but if you have any medical questions, please consult your doctor!",
-              nextSelections: [{}],
             },
           ],
         },
