@@ -19,11 +19,15 @@ import { TimePickerModal } from "react-native-paper-dates";
 import { useTranslation } from "react-i18next";
 import notifee, { RepeatFrequency, TriggerType } from "@notifee/react-native";
 import * as SecureStore from "expo-secure-store";
+import { editDocument } from "../../../util/firestoreWR";
+import { useSelector } from "react-redux";
+import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 
 export default function ReminderScreen() {
   const theme = useTheme();
   const navigation = useNavigation();
   const { t } = useTranslation("patient");
+  const user = useSelector((state) => state.authObject);
 
   const [medicationReminder, setMedicationReminder] = React.useState(false);
   const [appointmentReminder, setAppointmentReminder] = React.useState(false);
@@ -31,6 +35,7 @@ export default function ReminderScreen() {
   const [hour, setHour] = React.useState("12");
   const [minute, setMinute] = React.useState("00");
   const [calendarLocale, setCalendarLocale] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -88,29 +93,37 @@ export default function ReminderScreen() {
   const scheduleNotifications = async () => {
     const startHour = 10; // Start hour (10:00 AM)
     const endHour = 21; // End hour (9:00 PM)
-    
+
     const now = new Date();
     const currentHour = now.getHours();
-    
+
     if (currentHour >= startHour && currentHour <= endHour) {
       // Schedule notifications every hour within the specified time range
       const intervalMs = 60 * 60 * 1000; // 1 hour in milliseconds
-      
+
       // Calculate the delay to the next hour
-      const nextHour = new Date(now.getFullYear(), now.getMonth(), now.getDate(), currentHour + 1, 0, 0, 0);
+      const nextHour = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        currentHour + 1,
+        0,
+        0,
+        0
+      );
       const delayMs = nextHour.getTime() - now.getTime();
-      
+
       // Schedule the first notification
       await notifee.createTriggerNotification({
-        id: 'hourly-notification',
-        title: 'Hourly Reminder',
-        body: 'This is an hourly reminder.',
+        id: "hourly-notification",
+        title: "Hourly Reminder",
+        body: "This is an hourly reminder.",
         android: {
-          channelId: 'hourly-reminder-channel',
-          smallIcon: 'ic_notification',
+          channelId: "hourly-reminder-channel",
+          smallIcon: "ic_notification",
         },
         ios: {
-          sound: 'default',
+          sound: "default",
         },
       });
 
@@ -130,72 +143,83 @@ export default function ReminderScreen() {
         },
         trigger
       );
-  
+
       // Schedule subsequent notifications
       const intervalId = setInterval(async () => {
         await notifee.createNotification({
-          id: 'hourly-notification',
-          title: 'Hourly Reminder',
-          body: 'This is an hourly reminder.',
+          id: "hourly-notification",
+          title: "Hourly Reminder",
+          body: "This is an hourly reminder.",
           android: {
-            channelId: 'hourly-reminder-channel',
-            smallIcon: 'ic_notification',
+            channelId: "hourly-reminder-channel",
+            smallIcon: "ic_notification",
           },
           ios: {
-            sound: 'default',
+            sound: "default",
           },
         });
       }, intervalMs);
-      
+
       // Schedule the clear notification action to stop notifications after 9:00 PM
       setTimeout(() => {
         clearInterval(intervalId);
-        notifee.cancelNotification('hourly-notification');
+        notifee.cancelNotification("hourly-notification");
       }, delayMs);
     }
   };
 
   async function onCreateMedicationNotification() {
-    if (!appointmentReminder) {
-      // Request permissions (required for iOS)
-      await notifee.requestPermission();
-
-      // Create a channel (required for Android)
-      const channelId = await notifee.createChannel({
-        id: "medication-channel",
-        name: "Medication Channel",
+    setIsLoading(true);
+    try {
+      editDocument("patient", user.user_uid, {
+        medication_reminder: !medicationReminder,
       });
-
-      const date = new Date();
-      date.setHours(Number(hour));
-      date.setMinutes(Number(minute));
-
-      const trigger = {
-        type: TriggerType.TIMESTAMP,
-        timestamp: date.getTime(),
-        repeatFrequency: RepeatFrequency.DAILY,
-      };
-
-      await notifee.createTriggerNotification(
-        {
-          id: "medication",
-          title: "Medication Alert",
-          body: "Remember to take your medication",
-          android: {
-            channelId,
-            // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
-            // pressAction is needed if you want the notification to open the app when pressed
-            pressAction: {
-              id: "default",
-            },
-          },
-        },
-        trigger
-      );
-    } else {
       setMedicationReminder(!medicationReminder);
-      cancel("medication");
+      setIsLoading(false);
+    } catch (error) {
+      Alert.alert("Error setting reminder", "Please try again later");
+      setIsLoading(false);
     }
+    // if (!appointmentReminder) {
+    //   // Request permissions (required for iOS)
+    //   await notifee.requestPermission();
+
+    //   // Create a channel (required for Android)
+    //   const channelId = await notifee.createChannel({
+    //     id: "medication-channel",
+    //     name: "Medication Channel",
+    //   });
+
+    //   const date = new Date();
+    //   date.setHours(Number(hour));
+    //   date.setMinutes(Number(minute));
+
+    //   const trigger = {
+    //     type: TriggerType.TIMESTAMP,
+    //     timestamp: date.getTime(),
+    //     repeatFrequency: RepeatFrequency.DAILY,
+    //   };
+
+    //   await notifee.createTriggerNotification(
+    //     {
+    //       id: "medication",
+    //       title: "Medication Alert",
+    //       body: "Remember to take your medication",
+    //       android: {
+    //         channelId,
+    //         // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
+    //         // pressAction is needed if you want the notification to open the app when pressed
+    //         pressAction: {
+    //           id: "default",
+    //         },
+    //       },
+    //     },
+    //     trigger
+    //   );
+    // } else {
+    //   setMedicationReminder(!medicationReminder);
+    //   cancel("medication");
+    // }
   }
 
   async function updateMedicationTime() {
@@ -242,51 +266,62 @@ export default function ReminderScreen() {
   }
 
   async function onCreateAppointmentNotification() {
-    if (!appointmentReminder) {
-      // Request permissions (required for iOS)
-      await notifee.requestPermission();
-
-      // Create a channel (required for Android)
-      const channelId = await notifee.createChannel({
-        id: "appointment-channel",
-        name: "Appointment Channel",
+    setIsLoading(true);
+    try {
+      editDocument("patient", user.user_uid, {
+        appointment_reminder: !appointmentReminder,
       });
-
-      const date = new Date();
-      date.setHours(11);
-      date.setMinutes(31);
-
-      // Create a time-based trigger
-      const trigger = {
-        type: TriggerType.TIMESTAMP,
-        timestamp: date.getTime(),
-      };
-
-      // Create a trigger notification
-      await notifee
-        .createTriggerNotification(
-          {
-            id: "appointment",
-            title: "Appointment Reminder",
-            body: "Today at 11:30am",
-            android: {
-              channelId,
-              // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
-              // pressAction is needed if you want the notification to open the app when pressed
-              pressAction: {
-                id: "default",
-              },
-            },
-          },
-          trigger
-        )
-        .then(() => {
-          setAppointmentReminder(!appointmentReminder);
-        });
-    } else {
       setAppointmentReminder(!appointmentReminder);
-      cancel("appointment");
+      setIsLoading(false);
+    } catch (error) {
+      Alert.alert("Error setting appointment reminder", "Please try again later");
+      setIsLoading(false);
     }
+    // if (!appointmentReminder) {
+    //   // Request permissions (required for iOS)
+    //   await notifee.requestPermission();
+
+    //   // Create a channel (required for Android)
+    //   const channelId = await notifee.createChannel({
+    //     id: "appointment-channel",
+    //     name: "Appointment Channel",
+    //   });
+
+    //   const date = new Date();
+    //   date.setHours(11);
+    //   date.setMinutes(31);
+
+    //   // Create a time-based trigger
+    //   const trigger = {
+    //     type: TriggerType.TIMESTAMP,
+    //     timestamp: date.getTime(),
+    //   };
+
+    //   // Create a trigger notification
+    //   await notifee
+    //     .createTriggerNotification(
+    //       {
+    //         id: "appointment",
+    //         title: "Appointment Reminder",
+    //         body: "Today at 11:30am",
+    //         android: {
+    //           channelId,
+    //           // smallIcon: "name-of-a-small-icon", // optional, defaults to 'ic_launcher'.
+    //           // pressAction is needed if you want the notification to open the app when pressed
+    //           pressAction: {
+    //             id: "default",
+    //           },
+    //         },
+    //       },
+    //       trigger
+    //     )
+    //     .then(() => {
+    //       setAppointmentReminder(!appointmentReminder);
+    //     });
+    // } else {
+    //   setAppointmentReminder(!appointmentReminder);
+    //   cancel("appointment");
+    // }
   }
 
   async function cancel(notificationId) {
@@ -378,6 +413,11 @@ export default function ReminderScreen() {
         onConfirm={onConfirm}
         use24HourClock={false}
         defaultInputType="keyboard"
+      />
+      <LoadingIndicatorDialog
+        visible={isLoading}
+        title={t("updating_reminder")}
+        bodyText={t("wait_while_updating_reminder")}
       />
     </KeyboardAvoidingView>
   );

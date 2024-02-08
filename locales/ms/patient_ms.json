@@ -238,5 +238,8 @@
   "accepted": "Diterima",
   "pending": "Belum Selesai",
   "completed": "Selesai",
-  "cancelled": "Dibatalkan"
+  "cancelled": "Dibatalkan",
+
+  "updating_reminder":"Sedang Mengemaskini Peringatan",
+  "wait_while_updating_reminder":"Sila tunggu sementara pengingat anda dikemaskini"
 }

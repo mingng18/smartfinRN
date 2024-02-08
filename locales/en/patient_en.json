@@ -238,5 +238,8 @@
   "accepted": "Accepted",
   "pending": "Pending",
   "completed": "Completed",
-  "cancelled": "Cancelled"
+  "cancelled": "Cancelled",
+
+  "updating_reminder":"Updating Reminder",
+  "wait_while_updating_reminder":"Please wait while updating your reminder"
 }
