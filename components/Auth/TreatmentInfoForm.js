@@ -213,8 +213,12 @@ export default function TreatmentInfoForm({ isEditing }) {
             date_of_diagnosis: diagnosisSubmitDate.setDate(
               diagnosisSubmitDate.getDate() + 1
             ),
-            treatment_start_date: new Date(treatmentStartSubmitDate).toISOString(),
-            treatment_end_date: new Date(treatmentEndSubmitDate).toISOString(),
+            treatment_start_date: treatmentStartSubmitDate.setDate(
+              treatmentStartSubmitDate.getDate() + 1
+            ),
+            treatment_end_date: treatmentEndSubmitDate.setDate(
+              treatmentEndSubmitDate.getDate() + 1
+            ),
             diagnosis: diagnosis,
             email: signupInfo.email,
             first_name: signupInfo.firstName,
@@ -251,8 +255,12 @@ export default function TreatmentInfoForm({ isEditing }) {
               date_of_diagnosis: diagnosisSubmitDate.setDate(
                 diagnosisSubmitDate.getDate() + 1
               ),
-              treatment_start_date: treatmentStartSubmitDate,
-              treatment_end_date: treatmentEndSubmitDate,
+              treatment_start_date: treatmentStartSubmitDate.setDate(
+                treatmentStartSubmitDate.getDate() + 1
+              ),
+              treatment_end_date: treatmentEndSubmitDate.setDate(
+                treatmentEndSubmitDate.getDate() + 1
+              ),
               diagnosis: diagnosis,
               email: signupInfo.email,
               first_name: signupInfo.firstName,
@@ -409,6 +417,14 @@ export default function TreatmentInfoForm({ isEditing }) {
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
 
+      console.log(
+        "treatment start date: " +
+          new Date(user.treatment_start_date).toISOString().slice(0, 10)
+      );
+      console.log(
+        "treatment end date: " +
+          new Date(user.treatment_end_date).toISOString().slice(0, 10)
+      );
       setTreatmentStartDate(
         new Date(user.treatment_start_date).toISOString().slice(0, 10)
       );

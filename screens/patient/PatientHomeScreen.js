@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
+import * as SplashScreen from "expo-splash-screen";
 import {
   GestureHandlerRootView,
   ScrollView,
@@ -85,6 +86,7 @@ function PatientHomeScreen() {
   };
 
   React.useEffect(() => {
+    
     // console.log("the diagnosis date: " + user.date_of_diagnosis);
     // console.log("the user : " + user.first_name + " " + user.last_name);
     // console.log("the profile pic : " + user.profile_pic_url);
@@ -138,6 +140,7 @@ function PatientHomeScreen() {
     // console.log("the rejected video: " + rejectedVideo);
     // console.log("the has ate medicine: " + hasAteMedicine);
     // console.log("the pending appointment: " + pendingAppointmentsCount);
+    SplashScreen.hideAsync();
   }, [appointments, videos]);
 
   const pendingNumber = () => {
@@ -181,6 +184,7 @@ function PatientHomeScreen() {
   };
 
   return (
+    
     <GestureHandlerRootView>
       <SafeAreaView
         edges={["right", "left", "top"]}

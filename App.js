@@ -142,6 +142,8 @@ function Root() {
             })
           );
         }
+      } else {
+        dispatch(fetchPatientData({ isAuthenticated: false }));
       }
       setIsTryingLogin(false);
     }
@@ -245,11 +247,11 @@ function Root() {
     return unsubscribe;
   }, []);
 
-  //Close Splash screen after fetched token
-  if (isTryingLogin || initializing) {
-    SplashScreen.hideAsync();
-  }
-
+  // Close Splash screen after fetched token
+  // if (isTryingLogin || initializing) {
+  //   SplashScreen.hideAsync();
+  // }
+  
   return <Navigation />;
 }
 
