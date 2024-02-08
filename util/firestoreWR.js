@@ -222,8 +222,6 @@ export async function fetchVideosToBeReviewedForHealthcare() {
       .where("status", "==", "pending")
       .get();
 
-    console.log(querySnapshot.size + " nani");
-
     querySnapshot.forEach((doc) => {
       const data = doc.data();
       const promise = fetchDocument(

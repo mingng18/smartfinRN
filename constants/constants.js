@@ -126,7 +126,10 @@ export const NATIONALITYBACKUP = [
   { label: "Israel", value: "Israel" },
   { label: "Isle of Man", value: "Isle of Man" },
   { label: "India", value: "India" },
-  { label: "British Indian Ocean Territory", value: "British Indian Ocean Territory" },
+  {
+    label: "British Indian Ocean Territory",
+    value: "British Indian Ocean Territory",
+  },
   { label: "Iraq", value: "Iraq" },
   { label: "Iceland", value: "Iceland" },
   { label: "Italy", value: "Italy" },
@@ -215,7 +218,10 @@ export const NATIONALITYBACKUP = [
   { label: "South Sudan", value: "South Sudan" },
   { label: "El Salvador", value: "El Salvador" },
   { label: "Chad", value: "Chad" },
-  { label: "French Southern Territories", value: "French Southern Territories" },
+  {
+    label: "French Southern Territories",
+    value: "French Southern Territories",
+  },
   { label: "Togo", value: "Togo" },
   { label: "Thailand", value: "Thailand" },
   { label: "Tajikistan", value: "Tajikistan" },
@@ -263,8 +269,6 @@ export const NUMBER_OF_TABLETS = [
   { label: "5", value: 5 },
 ];
 
-
-
 export const SIDE_EFFECT_GRADE = [
   { label: "Grade 1", value: 1 },
   { label: "Grade 2", value: 2 },
@@ -276,6 +280,7 @@ export const HORIZONTAL_CARD_TYPE = {
   NO_PIC: "no-pic",
   VIDEO_CALL_APPOINTMENT: "video-call-appointment",
   PATIENT: "patient",
+  SIDE_EFFECT_PATIENT: "side-effect-patient",
 };
 
 export const COMPLIANCE_STATUS = {
@@ -304,10 +309,10 @@ export const CALENDAR_ENTITIES = {
 };
 
 export const APPOINTMENT_TIME = [
-  { label: "2:00 pm", value: { hour: 2, minute: 0 } , disabled: false},
-  { label: "2:30 pm", value: { hour: 2, minute: 30 } , disabled: false },
-  { label: "3:00 pm", value: { hour: 3, minute: 0 } , disabled: false},
-  { label: "3:30 pm", value: { hour: 3, minute: 30 } , disabled: false },
-  { label: "4:00 pm", value: { hour: 4, minute: 0 } , disabled: false},
-  { label: "4:30 pm", value: { hour: 4, minute: 30 } , disabled: false },
+  { label: "2:00 pm", value: { hour: 2, minute: 0 }, disabled: false },
+  { label: "2:30 pm", value: { hour: 2, minute: 30 }, disabled: false },
+  { label: "3:00 pm", value: { hour: 3, minute: 0 }, disabled: false },
+  { label: "3:30 pm", value: { hour: 3, minute: 30 }, disabled: false },
+  { label: "4:00 pm", value: { hour: 4, minute: 0 }, disabled: false },
+  { label: "4:30 pm", value: { hour: 4, minute: 30 }, disabled: false },
 ];
