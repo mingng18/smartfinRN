@@ -6,6 +6,7 @@ import SideEffectSubmittedGraph from "../../components/ui/SideEffectSubmittedGra
 import VideoSubmittedGraph from "../../components/ui/VideoSubmittedGraph";
 import * as Haptics from "expo-haptics";
 import * as SecureStore from "expo-secure-store";
+import * as SplashScreen from "expo-splash-screen";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
@@ -129,6 +130,7 @@ function HealthcareHomeScreen() {
       setSideEffectsAlertCount(parseInt(sideEffects.length));
     };
     calculateSideEffectsAlertCount();
+    SplashScreen.hideAsync();
   }, [sideEffects]);
 
   //Fetch data for graph
