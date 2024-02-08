@@ -31,5 +31,8 @@
   "no_access_camera": "Tiada akses kepada kamera",
 
   "change_language": "Tukar Bahasa",
-  "confirm_change_language": "Adakah anda pasti ingin menukar bahasa?"
+  "confirm_change_language": "Adakah anda pasti ingin menukar bahasa?",
+
+  "manage": "Mengelola",
+  "change": "Ubah"
 }

@@ -12,6 +12,7 @@ import {
 } from "../../constants/constants";
 import CachedImage from "expo-cached-image";
 import { getLastTenCharacters } from "../../util/wordUtil";
+import { useTranslation } from "react-i18next";
 
 export default function HorizontalCard({
   profilePic,
@@ -23,14 +24,17 @@ export default function HorizontalCard({
   onPressedCallback,
   cardType,
   iconOnPressedCallBack,
+  style,
 }) {
   const theme = useTheme();
+  const { t } = useTranslation("common");
 
   return (
     <View
       style={[
         styles.pressableContainer,
         {
+          ...style,
           backgroundColor: color,
         },
       ]}
@@ -46,10 +50,7 @@ export default function HorizontalCard({
         ) : (
           profilePic === null ||
           (profilePic === "" ? (
-            <Image
-              source={BLANK_PROFILE_PIC}
-              style={styles.profilePicStyle}
-            />
+            <Image source={BLANK_PROFILE_PIC} style={styles.profilePicStyle} />
           ) : (
             <CachedImage
               source={{ uri: profilePic }}
@@ -95,7 +96,12 @@ export default function HorizontalCard({
         )}
         {cardType == HORIZONTAL_CARD_TYPE.PATIENT && (
           <Button mode="outlined" onPress={iconOnPressedCallBack}>
-            Manage
+            {t("manage")}
+          </Button>
+        )}
+        {cardType == HORIZONTAL_CARD_TYPE.SIDE_EFFECT_PATIENT && (
+          <Button mode="outlined" onPress={iconOnPressedCallBack}>
+            {t("change")}
           </Button>
         )}
       </Pressable>

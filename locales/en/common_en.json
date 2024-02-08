@@ -31,5 +31,8 @@
   "no_access_camera": "No access to the camera",
 
   "change_language": "Change Language",
-  "confirm_change_language": "Are you sure want to change language?"
+  "confirm_change_language": "Are you sure want to change language?",
+
+  "manage": "Manage",
+  "change": "Change"
 }
