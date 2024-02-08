@@ -1,21 +1,12 @@
 import React, { forwardRef, useImperativeHandle } from "react";
 import {
   BLANK_PROFILE_PIC,
-  FIREBASE_COLLECTION,
   HORIZONTAL_CARD_TYPE,
 } from "../../constants/constants";
-import {
-  VictoryAxis,
-  VictoryBar,
-  VictoryLabel,
-  VictoryPie,
-  VictoryStack,
-  VictoryTheme,
-} from "victory-native";
+import { VictoryPie } from "victory-native";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
-  Button,
   Modal,
   Portal,
   Searchbar,
@@ -44,9 +35,9 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
   const colorContainer = [
     "#4B5C92",
     "#2F628C",
-    "#1E6586",
     "#BA1A1A",
     "#DBE1FF",
+    "#1E6586",
     "#CEE5FF",
     "#C5E7FF",
     "#FFDAD6",
@@ -121,7 +112,9 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       setSideEffectSymptoms(formattedData);
       setLegend(legendCounts);
     } catch (error) {
-      throw new Error("Failed to fetch collection size: " + error.message);
+      throw new Error(
+        "Failed to fetch side effect of the patient: " + error.message
+      );
     }
   }
 
