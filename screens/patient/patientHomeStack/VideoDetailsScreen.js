@@ -95,7 +95,7 @@ export default function VideoDetailsScreen() {
             ? currentVideo.rejected_reason
             : t("no_rejected_reason")}
         </Text>
-        {isToday() ? (
+        {/* {isToday() ? (
           <View style={{ flexDirection: "row-reverse", marginTop: 40 }}>
             <Button mode="contained" onPress={handlePresentModalPress}>
               {t("resubmit")}
@@ -105,7 +105,7 @@ export default function VideoDetailsScreen() {
           <Text variant="bodyLarge" style={{ marginTop: 32 }}>
             {t("missed_resubmit_time")}
           </Text>
-        )}
+        )} */}
       </View>
     );
   }
