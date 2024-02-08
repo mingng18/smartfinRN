@@ -52,6 +52,12 @@ function LoginScreen() {
                 date_of_diagnosis: isPatient.date_of_diagnosis
                   .toDate()
                   .toISOString(),
+                treatment_start_date: patientUser.treatment_start_date
+                  .toDate()
+                  .toISOString(),
+                treatment_end_date: patientUser.treatment_end_date
+                  .toDate()
+                  .toISOString(),
               })
             );
             dispatch(

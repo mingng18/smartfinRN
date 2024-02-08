@@ -28,6 +28,7 @@ export default function CustomCalendar({
   //Decide which colour to color the container
   const marked = React.useMemo(() => {
     return highlightedDates.reduce((acc, date) => {
+      
       //Side effect is selected
       if (currentSelected === CALENDAR_ENTITIES.SIDE_EFFECT) {
         const sideEffectMatch = sideEffect.some(
@@ -39,13 +40,6 @@ export default function CustomCalendar({
         acc[today.toISOString().slice(0, 10)] = {
           selected: true,
           selectedColor: theme.colors.background,
-          selectedTextColor: theme.colors.onBackground,
-        };
-        acc[date] = {
-          selected: true,
-          selectedColor: sideEffectMatch
-            ? theme.colors.yellowContainer
-            : theme.colors.background,
           selectedTextColor: theme.colors.onBackground,
         };
       }
