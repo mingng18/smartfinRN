@@ -33,6 +33,7 @@ import {
   USER_TYPE,
 } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
+import SideEffectDetailsGraph from "../../components/ui/SideEffectDetailsGraph";
 
 function HealthcareHomeScreen() {
   const navigation = useNavigation();
@@ -42,6 +43,7 @@ function HealthcareHomeScreen() {
   const { t } = useTranslation("healthcare");
   const sideEffectSubmittedGraphRef = React.useRef();
   const videoSubmittedGraphRef = React.useRef();
+  const sideEffectSymptomsGraphRef = React.useRef();
 
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
@@ -85,20 +87,16 @@ function HealthcareHomeScreen() {
       fetchAppointments({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
     );
     dispatch(
-      fetchSideEffects({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
-    );
-    dispatch(
       fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
     );
+    dispatch(
+      fetchSideEffects({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
 
     videoSubmittedGraphRef.current.fetchData();
     sideEffectSubmittedGraphRef.current.fetchData();
+    sideEffectSymptomsGraphRef.current.fetchData();
   };
-
-  React.useEffect(() => {
-    videoSubmittedGraphRef.current.fetchData();
-    sideEffectSubmittedGraphRef.current.fetchData();
-  }, []);
 
   //Calculate total patients, videos to review, appointment, side effects alerts here
   React.useEffect(() => {
@@ -116,13 +114,6 @@ function HealthcareHomeScreen() {
   }, [patients]);
 
   React.useEffect(() => {
-    const calculateSideEffectsAlertCount = () => {
-      setSideEffectsAlertCount(parseInt(sideEffects.length));
-    };
-    calculateSideEffectsAlertCount();
-  }, [sideEffects]);
-
-  React.useEffect(() => {
     const calculateVideosToBeReviewedCount = () => {
       if (videos.length === 0 || videos === undefined || videos === null) {
         setVideosToBeReviewedCount(0);
@@ -132,6 +123,20 @@ function HealthcareHomeScreen() {
     };
     calculateVideosToBeReviewedCount();
   }, [videos]);
+
+  React.useEffect(() => {
+    const calculateSideEffectsAlertCount = () => {
+      setSideEffectsAlertCount(parseInt(sideEffects.length));
+    };
+    calculateSideEffectsAlertCount();
+  }, [sideEffects]);
+
+  //Fetch data for graph
+  React.useEffect(() => {
+    videoSubmittedGraphRef.current.fetchData();
+    sideEffectSubmittedGraphRef.current.fetchData();
+    sideEffectSymptomsGraphRef.current.fetchData();
+  }, []);
 
   return (
     <GestureHandlerRootView>
@@ -216,7 +221,9 @@ function HealthcareHomeScreen() {
                 }}
               >
                 <Text style={{ color: theme.colors.onError }}>
-                  {appointmentsCount + videosToBeReviewedCount + sideEffectsAlertCount}
+                  {appointmentsCount +
+                    videosToBeReviewedCount +
+                    sideEffectsAlertCount}
                 </Text>
               </View>
             </View>
@@ -299,6 +306,7 @@ function HealthcareHomeScreen() {
           </Text>
           <VideoSubmittedGraph ref={videoSubmittedGraphRef} />
           <SideEffectSubmittedGraph ref={sideEffectSubmittedGraphRef} />
+          <SideEffectDetailsGraph ref={sideEffectSymptomsGraphRef} />
         </View>
         <View
           style={[

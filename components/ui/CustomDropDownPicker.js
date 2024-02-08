@@ -20,7 +20,7 @@ export default function CustomDropDownPicker({
   return (
     <DropDownPicker
       listMode={listMode}
-      dropDownDirection={listMode && "TOP"}
+      // dropDownDirection={"TOP"}
       onChangeValue={onChangeValue}
       zIndex={zIndex}
       zIndexInverse={zIndexInverse}

@@ -52,10 +52,10 @@ function LoginScreen() {
                 date_of_diagnosis: isPatient.date_of_diagnosis
                   .toDate()
                   .toISOString(),
-                treatment_start_date: patientUser.treatment_start_date
+                treatment_start_date: isPatient.treatment_start_date
                   .toDate()
                   .toISOString(),
-                treatment_end_date: patientUser.treatment_end_date
+                treatment_end_date: isPatient.treatment_end_date
                   .toDate()
                   .toISOString(),
               })
@@ -76,6 +76,7 @@ function LoginScreen() {
               fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
             );
           } catch (error) {
+            console.log("Error signing patient: " + error);
             console.log("Check hereee");
             const isHealthcare = await fetchDocument(
               FIREBASE_COLLECTION.HEALTHCARE,

@@ -115,16 +115,15 @@ function Root() {
             fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
           );
         } catch (error) {
+          console.log(`Error loging in patient, ${error}`);
           const healthcareUser = await fetchDocument(
             FIREBASE_COLLECTION.HEALTHCARE,
             storedUid
           );
 
-          console.log("basuhdhas");
           dispatch(
             authenticateStoreNative(storedToken, storedUid, "healthcare")
           );
-          console.log("basuhdhas");
           dispatch(fetchHealthcareData({ ...healthcareUser }));
           dispatch(fetchPatientCollectionData());
           dispatch(
@@ -134,13 +133,13 @@ function Root() {
             })
           );
           dispatch(
+            fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+          );
+          dispatch(
             fetchSideEffects({
               userId: storedUid,
               userType: USER_TYPE.HEALTHCARE,
             })
-          );
-          dispatch(
-            fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
           );
         }
       }

@@ -24,11 +24,16 @@ export default function CustomCalendar({
   // console.log(today);
   // console.log(today.slice(0, 10));
 
-  //useMemo to optimise performance
   //Decide which colour to color the container
   const marked = React.useMemo(() => {
+    //New user when they haven't log any report, thus length = 0
+    if (highlightedDates.length == 0) {
+      if (currentSelected === CALENDAR_ENTITIES.VIDEO) {
+        return findVideoMatch();
+      }
+    }
+
     return highlightedDates.reduce((acc, date) => {
-      
       //Side effect is selected
       if (currentSelected === CALENDAR_ENTITIES.SIDE_EFFECT) {
         const sideEffectMatch = sideEffect.some(
@@ -37,11 +42,6 @@ export default function CustomCalendar({
               .toISOString()
               .slice(0, 10) === date
         );
-        acc[today.toISOString().slice(0, 10)] = {
-          selected: true,
-          selectedColor: theme.colors.background,
-          selectedTextColor: theme.colors.onBackground,
-        };
       }
 
       //Appointment is selected
@@ -51,11 +51,6 @@ export default function CustomCalendar({
             new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
             date
         );
-        acc[today.toISOString().slice(0, 10)] = {
-          selected: true,
-          selectedColor: theme.colors.background,
-          selectedTextColor: theme.colors.onBackground,
-        };
         acc[date] = {
           selected: true,
           selectedColor: appointmentMatch
@@ -67,42 +62,49 @@ export default function CustomCalendar({
 
       //Video is selected
       if (currentSelected === CALENDAR_ENTITIES.VIDEO) {
-        const startDate = new Date(user.date_of_diagnosis);
-        const treatmentEndDate = new Date(startDate);
-        treatmentEndDate.setMonth(
-          treatmentEndDate.getMonth() + user.treatment_duration_months
-        );
-        while (startDate <= treatmentEndDate) {
-          const dateString = startDate.toISOString().slice(0, 10);
-          const videoMatch = video.find(
-            (item) => item.uploaded_timestamp.slice(0, 10) === dateString
-          );
-
-          if (videoMatch) {
-            acc[dateString] = {
-              selected: true,
-              selectedColor: theme.colors.greenContainer,
-              selectedTextColor: theme.colors.onBackground,
-            };
-          } else if (!videoMatch && startDate <= today) {
-            acc[dateString] = {
-              selected: true,
-              selectedColor: theme.colors.errorContainer,
-              selectedTextColor: theme.colors.onBackground,
-            };
-          } else {
-            acc[dateString] = {
-              selected: true,
-              selectedColor: theme.colors.surfaceContainerHigh,
-              selectedTextColor: theme.colors.onBackground,
-            };
-          }
-          startDate.setDate(startDate.getDate() + 1);
-        }
+        acc = findVideoMatch();
       }
       return acc;
     }, {});
   }, [highlightedDates, video, appointment, sideEffect, currentSelected]);
+
+  function findVideoMatch() {
+    const startDate = new Date(user.treatment_start_date);
+    const treatmentEndDate = new Date(user.treatment_end_date);
+    var acc = [];
+    while (startDate <= treatmentEndDate) {
+      const dateString = startDate.toISOString().slice(0, 10);
+      const videoMatch = video.find(
+        (item) => item.uploaded_timestamp.slice(0, 10) === dateString
+      );
+
+      if (videoMatch) {
+        acc[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.greenContainer,
+          selectedTextColor: theme.colors.onBackground,
+        };
+      } else if (
+        !videoMatch &&
+        startDate.getDate() < today.getDate() &&
+        startDate.getMonth() == today.getMonth()
+      ) {
+        acc[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.errorContainer,
+          selectedTextColor: theme.colors.onBackground,
+        };
+      } else {
+        acc[dateString] = {
+          selected: true,
+          selectedColor: theme.colors.surfaceContainerHigh,
+          selectedTextColor: theme.colors.onBackground,
+        };
+      }
+      startDate.setDate(startDate.getDate() + 1);
+    }
+    return acc;
+  }
 
   return (
     <>
@@ -161,6 +163,11 @@ export default function CustomCalendar({
         }}
         onDayPress={(day) => setSelectedDate(day.dateString)}
         markedDates={{
+          [today.toISOString().slice(0, 10)]: {
+            selected: true,
+            selectedColor: theme.colors.background,
+            selectedTextColor: theme.colors.onBackground,
+          },
           ...marked,
           // [selectedDate] : {
           //   selected: true,

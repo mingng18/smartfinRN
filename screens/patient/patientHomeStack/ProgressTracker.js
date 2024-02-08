@@ -39,18 +39,9 @@ export default function ProgressTracker() {
 
   const marked = useMemo(() => {
     const markedDates = {};
-    const startDate = new Date(user.date_of_diagnosis);
     const today = new Date();
-
-    //Determine whether the patient has ended the treatment, thus stop tracking
-    const treatmentEndDate = new Date(startDate);
-    treatmentEndDate.setMonth(
-      treatmentEndDate.getMonth() + user.treatment_duration_months
-    );
-
-    //Plus 1 day to include today
-    // const endDate = today >= treatmentEndDate ? treatmentEndDate : today;
-    // endDate.setDate(endDate.getDate() + 1);
+    const startDate = new Date(user.treatment_start_date);
+    const treatmentEndDate = new Date(user.treatment_end_date);
 
     while (startDate <= treatmentEndDate) {
       const dateString = startDate.toISOString().slice(0, 10);
@@ -65,7 +56,11 @@ export default function ProgressTracker() {
           selectedTextColor: theme.colors.onBackground,
           disableTouchEvent: true,
         };
-      } else if (!video && startDate <= today) {
+      } else if (
+        !video &&
+        startDate.getDate() < today.getDate() &&
+        startDate.getMonth() == today.getMonth()
+      ) {
         markedDates[dateString] = {
           selected: true,
           selectedColor: theme.colors.errorContainer,

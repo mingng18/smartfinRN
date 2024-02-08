@@ -6,7 +6,7 @@ import * as SecureStore from "expo-secure-store";
 
 export default function calendarLocales(i18n) {
   // Initialise the locale of React Native Paper Dates library
-  registerTranslation("en-MY", enGB);
+  registerTranslation("en-MY", {...enGB, entertime: "Enter time"});
   registerTranslation("ms-MY", {
     save: "Simpan",
     selectSingle: "Pilih tarikh",

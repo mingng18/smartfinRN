@@ -213,8 +213,12 @@ export default function TreatmentInfoForm({ isEditing }) {
             date_of_diagnosis: diagnosisSubmitDate.setDate(
               diagnosisSubmitDate.getDate() + 1
             ),
-            treatment_start_date: treatmentStartSubmitDate.setDate(treatmentStartSubmitDate.getDate() + 1),
-            treatment_end_date: treatmentEndSubmitDate.setDate(treatmentEndSubmitDate.getDate() + 1),
+            treatment_start_date: treatmentStartSubmitDate.setDate(
+              treatmentStartSubmitDate.getDate() + 1
+            ),
+            treatment_end_date: treatmentEndSubmitDate.setDate(
+              treatmentEndSubmitDate.getDate() + 1
+            ),
             diagnosis: diagnosis,
             email: signupInfo.email,
             first_name: signupInfo.firstName,
@@ -317,8 +321,10 @@ export default function TreatmentInfoForm({ isEditing }) {
       durationOfTreatmentRegex.test(durationOfTreatment);
     const isNumberOfTabletsValid = numberOfTabletsRegex.test(numberOfTablets);
     const isDiagnosisDateValid = diagnosisDateRegex.test(diagnosisDate);
-    const isTreatmentStartDateValid = treatmentStartDateRegex.test(treatmentStartDate);
-    const isTreatmentEndDateValid = treatmentEndDateRegex.test(treatmentEndDate);
+    const isTreatmentStartDateValid =
+      treatmentStartDateRegex.test(treatmentStartDate);
+    const isTreatmentEndDateValid =
+      treatmentEndDateRegex.test(treatmentEndDate);
 
     setCredentialsInvalid({
       durationOfTreatment: !isDurationOfTreatmentValid,
@@ -353,10 +359,8 @@ export default function TreatmentInfoForm({ isEditing }) {
               durationOfTreatment: durationOfTreatment,
               currentTreatment: treatment,
               numberOfTablets: numberOfTablets,
-              
             })
           );
-
           //Upload profile picture
           const ppStorageRef = storage().ref(
             "patientProfilePicture/" + user.uid
@@ -408,6 +412,16 @@ export default function TreatmentInfoForm({ isEditing }) {
 
       setTreatment(user.treatment);
       setNumberOfTablets(parseInt(user.number_of_tablets));
+
+      setTreatmentStartDate(
+        new Date(user.treatment_start_date).toISOString().slice(0, 10)
+      );
+      setTreatmentStartSubmitDate(new Date(user.treatment_start_date));
+
+      setTreatmentEndDate(
+        new Date(user.treatment_end_date).toISOString().slice(0, 10)
+      );
+      setTreatmentEndSubmitDate(new Date(user.treatment_end_date));
     }
   }, [isEditing]);
 
@@ -417,24 +431,13 @@ export default function TreatmentInfoForm({ isEditing }) {
       // console.log("user first name: " + user.first_name);
       try {
         await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
-          //unchanged part
-          // first_name: user.first_name,
-          // last_name: user.last_name,
-          // gender: user.gender,
-          // phone_number: user.phone_number,
-          // nationality: user.nationality,
-          // nric_passport: user.nric_passport,
-          // age: user.age,
-          // compliance_status: user.compliance_status,
-          // email: user.email,
-          // notes: user.notes,
-          // profile_pic_url: user.profile_pic_url,
-          //changed part
-          date_of_diagnosis: diagnosisSubmitDate.toISOString(),
+          date_of_diagnosis: diagnosisSubmitDate,
           diagnosis: diagnosis,
           treatment_duration_months: durationOfTreatment,
           treatment: treatment,
           number_of_tablets: numberOfTablets,
+          treatment_start_date: treatmentStartSubmitDate,
+          treatment_end_date: treatmentEndSubmitDate,
         });
         dispatch(
           fetchPatientData({
@@ -451,13 +454,13 @@ export default function TreatmentInfoForm({ isEditing }) {
             notes: user.notes,
             profile_pic_url: user.profile_pic_url,
             //changed part
-            date_of_diagnosis: diagnosisSubmitDate.setDate(
-              diagnosisSubmitDate.getDate() + 1
-            ),
+            date_of_diagnosis: diagnosisDate,
             diagnosis: diagnosis,
             treatment_duration_months: durationOfTreatment,
             treatment: treatment,
             number_of_tablets: numberOfTablets,
+            treatment_start_date: treatmentStartDate,
+            treatment_end_date: treatmentEndDate,
           })
         );
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -481,7 +484,7 @@ export default function TreatmentInfoForm({ isEditing }) {
     endDate: today,
   };
 
-  const validRange = {
+  const validDiagnosisRange = {
     startDate: undefined,
     endDate: undefined,
     disabledDates: Array.from({ length: 365 }, (_, i) => {
@@ -657,7 +660,7 @@ export default function TreatmentInfoForm({ isEditing }) {
         onDismiss={onDismissSingle}
         onConfirm={onConfirmDiagnosisSingle}
         presentationStyle="pageSheet"
-        validRange={validRange}
+        validRange={validDiagnosisRange}
       />
       <DatePickerModal
         locale={calendarLocale}

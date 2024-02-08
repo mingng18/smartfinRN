@@ -4,7 +4,11 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { IconButton, RadioButton, Text, useTheme } from "react-native-paper";
 import { capitalizeFirstLetter } from "../../../util/wordUtil";
-import { BLANK_PROFILE_PIC, DIAGNOSIS, TREATMENT } from "../../../constants/constants";
+import {
+  BLANK_PROFILE_PIC,
+  DIAGNOSIS,
+  TREATMENT,
+} from "../../../constants/constants";
 import InformationChip from "../../../components/ui/InformationChip";
 import PatientDetailsTab from "../../../navigation/PatientDetailsTab";
 import { editDocument } from "../../../util/firestoreWR";
@@ -94,9 +98,7 @@ export default function PatientDetailsScreen() {
                 )} ${capitalizeFirstLetter(currentPatient.last_name)}`}
               </Text>
               <Text variant="bodyLarge" style={[styles.headerText]}>
-                {currentPatient.notes
-                  ? t(currentPatient.notes)
-                  : t("no_notes")}
+                {currentPatient.notes ? t(currentPatient.notes) : t("no_notes")}
               </Text>
             </View>
           </View>
@@ -160,6 +162,12 @@ export default function PatientDetailsScreen() {
             <Text variant="titleLarge">{t("treatment_information")}</Text>
             {/* <IconButton icon="pencil" size={24} onPress={() => {}} /> */}
           </View>
+          <Text variant="bodyLarge" style={{ marginTop: 8 }}>
+            {`${t('start_from')} ${currentPatient.treatment_start_date.slice(
+              0,
+              10
+            )} until ${currentPatient.treatment_end_date.slice(0, 10)}`}
+          </Text>
           <Text variant="bodyLarge" style={{ marginTop: 8 }}>
             {
               TREATMENT.find(
