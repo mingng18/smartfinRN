@@ -11,13 +11,14 @@ import * as SecureStore from "expo-secure-store";
 import auth from "@react-native-firebase/auth";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import "expo-dev-client";
 
 import Navigation from "./navigation/Navigation";
 import { customVariants } from "./constants/customFonts";
 import { store } from "./store/redux/store";
 import {
+  authenticate,
   authenticateStoreNative,
   fetchHealthcareData,
   fetchPatientData,
@@ -38,6 +39,7 @@ import calendarLocales, {
 } from "./util/calendarLocales";
 import messaging from "@react-native-firebase/messaging";
 import { firebase } from "@react-native-firebase/firestore";
+import { use } from "i18next";
 // import { getMessaging, getToken } from "firebase/messaging";
 
 //Open SplashScreen for loading
@@ -52,6 +54,7 @@ function Root() {
   const [isTryingLogin, setIsTryingLogin] = useState(true);
   const [user, setUser] = useState();
   const [initializing, setInitializing] = useState(true);
+  const userRedux = useSelector((state) => state.authObject);
 
   // Ignore log notification by message
   // LogBox.ignoreLogs(["Warning: ..."]);
@@ -143,7 +146,7 @@ function Root() {
           );
         }
       } else {
-        dispatch(fetchPatientData({ isAuthenticated: false }));
+        dispatch(authenticate({ isAuthenticated: false }));
       }
       setIsTryingLogin(false);
     }
@@ -183,24 +186,26 @@ function Root() {
         .then(async (token) => {
           console.log("The notification token is " + token);
           const storedUid = await SecureStore.getItemAsync("uid");
-          try {
-            const patientUser = await fetchDocument(
-              FIREBASE_COLLECTION.PATIENT,
-              storedUid
-            );
-            editDocument(FIREBASE_COLLECTION.PATIENT, patientUser.id, {
-              pushNotificationToken: token,
-            });
-            console.log("Token updated in Patient");
-          } catch (error) {
-            const healthcareUser = await fetchDocument(
-              FIREBASE_COLLECTION.HEALTHCARE,
-              storedUid
-            );
-            editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
-              push_notification_token: token,
-            });
-            console.log("Token updated in Healthcare");
+          if (storedUid != null && storedUid != "" && storedUid != undefined) {
+            try {
+              const patientUser = await fetchDocument(
+                FIREBASE_COLLECTION.PATIENT,
+                storedUid
+              );
+              editDocument(FIREBASE_COLLECTION.PATIENT, patientUser.id, {
+                pushNotificationToken: token,
+              });
+              console.log("Token updated in Patient");
+            } catch (error) {
+              const healthcareUser = await fetchDocument(
+                FIREBASE_COLLECTION.HEALTHCARE,
+                storedUid
+                );
+                editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
+                  push_notification_token: token,
+                });
+                console.log("Token updated in Healthcare");
+            }
           }
         });
     } else {
@@ -251,7 +256,7 @@ function Root() {
   // if (isTryingLogin || initializing) {
   //   SplashScreen.hideAsync();
   // }
-  
+
   return <Navigation />;
 }
 

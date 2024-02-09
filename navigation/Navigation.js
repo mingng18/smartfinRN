@@ -26,6 +26,11 @@ export default function Navigation() {
     console.log("user type: " + user_type);
     console.log("authenticated: " + authenticated);
   }, [authenticated]);
+
+  React.useEffect(() => {
+    console.log("user type: " + user_type);
+    console.log("authenticated: " + authenticated);
+  }, []);
   // if (authenticated) {
   //   patientExist = fetchDocument("patients", uid);
   //   healthCareExist = fetchDocument("healthcare", uid);
@@ -47,7 +52,7 @@ export default function Navigation() {
   return (
     <NavigationContainer>
       {authenticated == null ? (
-        () => SplashScreen.preventAutoHideAsync()
+        null
       ) : authenticated ? (
         user_type === "patient" ? (
           <PatientStackGroup />
