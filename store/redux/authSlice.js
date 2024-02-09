@@ -38,7 +38,7 @@ const authSlice = createSlice({
   reducers: {
     authenticate: (state, action) => {
       state.token = action.payload.token;
-      state.isAuthenticated = true;
+      state.isAuthenticated = action.payload.isAuthenticated;
       state.user_uid = action.payload.user_uid;
     },
     setUserType: (state, action) => {
@@ -127,7 +127,7 @@ const authSlice = createSlice({
 
 export const authenticateStoreNative = (storedToken, userId, userType) => {
   return async (dispatch) => {
-    dispatch(authenticate({ token: storedToken, user_uid: userId }));
+    dispatch(authenticate({ token: storedToken, user_uid: userId, isAuthenticated: true}));
     dispatch(setUserType({ user_type: userType }));
     try {
       await SecureStore.setItemAsync("token", storedToken);

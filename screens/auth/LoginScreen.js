@@ -5,8 +5,10 @@ import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import LoginContentForm from "../../components/Auth/LoginContentForm";
+import * as SplashScreen from "expo-splash-screen";
 import LoadingOverlay from "../../components/ui/LoadingOverlay";
 import {
+  authenticate,
   authenticateStoreNative,
   fetchHealthcareData,
   fetchPatientData,
@@ -24,6 +26,10 @@ function LoginScreen() {
   const dispatch = useDispatch();
   const { navigate } = useNavigation();
   const { t } = useTranslation("auth");
+
+  React.useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
 
   React.useLayoutEffect(() => {
     // navigate("TreatmentInfoScreen");
@@ -46,6 +52,7 @@ function LoginScreen() {
               user.uid
             );
             dispatch(authenticateStoreNative(token, user.uid, "patient"));
+            
             dispatch(
               fetchPatientData({
                 ...isPatient,
