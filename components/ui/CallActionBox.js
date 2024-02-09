@@ -20,52 +20,56 @@ const CallActionBox = ({ switchCamera, toggleMute, toggleCamera, endCall }) => {
     <View
       style={{
         flexDirection: "row",
-        justifyContent: "space-between",
-        backgroundColor: theme.colors.primary,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderTopEndRadius: 20,
+        justifyContent: "space-around",
+        paddingHorizontal: 24,
+        paddingVertical: 24,
         flex: 1,
       }}
     >
       <Pressable
         onPress={switchCamera}
-        style={{ backgroundColor: "grey", padding: 3, borderRadius: 50 }}
+        style={{
+          backgroundColor: theme.colors.primary,
+          padding: 16,
+          borderRadius: 50,
+        }}
       >
         <Text>
           <Icon
             source={"camera-flip"}
-            size={35}
+            size={32}
             color={theme.colors.onPrimary}
           />
-          {/* <Icon name={"flip-camera-ios"} size={35} color={"white"} /> */}
         </Text>
       </Pressable>
       <Pressable
         onPress={onToggleCamera}
-        style={{ backgroundColor: "grey", padding: 3, borderRadius: 50 }}
+        style={{
+          backgroundColor: theme.colors.primary,
+          padding: 16,
+          borderRadius: 50,
+        }}
       >
         <Text>
           <Icon
             source={isCameraOn ? "video" : "video-off"}
-            size={35}
+            size={32}
             color={theme.colors.onPrimary}
           />
-          {/* <Icon
-            name={isCameraOn ? "videocam" : "videocam-off"}
-            size={35}
-            color={"white"}
-          /> */}
         </Text>
       </Pressable>
       <Pressable
         onPress={onToggleMicrophone}
-        style={{ backgroundColor: "grey", padding: 3, borderRadius: 50 }}
+        style={{
+          backgroundColor: theme.colors.primary,
+          padding: 16,
+          borderRadius: 50,
+        }}
       >
         <Text>
           <Icon
             source={isMicOn ? "microphone" : "microphone-off"}
-            size={35}
+            size={32}
             color={"white"}
           />
         </Text>
@@ -74,12 +78,12 @@ const CallActionBox = ({ switchCamera, toggleMute, toggleCamera, endCall }) => {
         onPress={endCall}
         style={{
           backgroundColor: theme.colors.error,
-          padding: 3,
+          padding: 16,
           borderRadius: 50,
         }}
       >
         <Text>
-          <Icon source={"phone-hangup"} size={35} color={"white"} />
+          <Icon source={"phone-hangup"} size={32} color={"white"} />
         </Text>
       </Pressable>
     </View>

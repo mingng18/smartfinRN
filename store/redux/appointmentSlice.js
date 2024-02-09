@@ -62,6 +62,17 @@ export const fetchAppointments = createAsyncThunk(
                     .toDate()
                     .toISOString()
                 : "",
+              treatment_start_date: appointment.patient_data
+                .treatment_start_date
+                ? appointment.patient_data.treatment_start_date
+                    .toDate()
+                    .toISOString()
+                : "",
+              treatment_end_date: appointment.patient_data.treatment_end_date
+                ? appointment.patient_data.treatment_end_date
+                    .toDate()
+                    .toISOString()
+                : "",
             },
           };
 
@@ -80,6 +91,17 @@ export const fetchAppointments = createAsyncThunk(
               ...appointment.patient_data,
               date_of_diagnosis: appointment.patient_data.date_of_diagnosis
                 ? appointment.patient_data.date_of_diagnosis
+                    .toDate()
+                    .toISOString()
+                : "",
+              treatment_start_date: appointment.patient_data
+                .treatment_start_date
+                ? appointment.patient_data.treatment_start_date
+                    .toDate()
+                    .toISOString()
+                : "",
+              treatment_end_date: appointment.patient_data.treatment_end_date
+                ? appointment.patient_data.treatment_end_date
                     .toDate()
                     .toISOString()
                 : "",

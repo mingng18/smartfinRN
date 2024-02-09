@@ -48,7 +48,7 @@ export default function HealthcareAppointmentScreen() {
     (state) => state.appointmentObject.pendingAppointments
   );
   const today = new Date();
-  
+
   const [selectedDate, setSelectedDate] = React.useState("");
   const [callingAppointment, setcallingAppointment] = React.useState(null);
   const [callingAppointmentDate, setcallingAppointmentDate] =
@@ -60,7 +60,6 @@ export default function HealthcareAppointmentScreen() {
   const [visible, setVisible] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const containerStyle = { backgroundColor: "white", margin: 30, padding: 20 };
   const showAppointmentNoteModal = () => setVisible(true);
   const hideAppointmentNoteModal = () => setVisible(false);
 
@@ -155,7 +154,8 @@ export default function HealthcareAppointmentScreen() {
     return allDates.reduce((acc, date) => {
       const appointmentMatch = appointments.some(
         (item) =>
-          new Date(item.scheduled_timestamp).toISOString().slice(0, 10) === date && (item.appointment_status === APPOINTMENT_STATUS.ACCEPTED )
+          new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
+            date && item.appointment_status === APPOINTMENT_STATUS.ACCEPTED
       );
       const pendingAppointmentMatch = pendingAppointments.some(
         (item) =>
@@ -271,13 +271,17 @@ export default function HealthcareAppointmentScreen() {
           <Modal
             visible={visible}
             onDismiss={() => dismissAppointmentNotesModalHandler()}
-            contentContainerStyle={containerStyle}
+            contentContainerStyle={{
+              backgroundColor: theme.colors.background,
+              margin: 32,
+              padding: 24,
+            }}
           >
             <Text variant="titleLarge" style={{ marginVertical: 8 }}>
               {t("appointment_notes")}
             </Text>
             <View style={{ marginVertical: 16 }}>
-              <Text variant="titleMedium" style={{ marginVertical: 8 }}>
+              <Text variant="titleMedium" style={{ marginTop: 8 }}>
                 {t("patient_information")}
               </Text>
               <Text variant="bodyLarge" style={{ marginVertical: 8 }}>

@@ -83,27 +83,28 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       const sideEffectData = await fetchSideEffectsForPatient(patientId);
       const sideEffectCounts = new Map();
       const legendCounts = [];
+      let totalCount = 0;
 
       sideEffectData.forEach((sideEffect) => {
         sideEffect.symptoms.forEach((symptom) => {
           const count = sideEffectCounts.get(symptom.label) || 0;
           sideEffectCounts.set(symptom.label, count + 1);
+          totalCount++;
         });
       });
 
-      // Convert the map to the desired format
+      // Convert the map to the desired format with percentage values
       const formattedData = Array.from(sideEffectCounts).map(
         ([symptom, count]) => {
-          // console.log("symptom is " + symptom);
-          // console.log("symptom is " + t(symptom));
+          const percentage = (count / totalCount) * 100;
           return {
             x: t(symptom),
-            y: count,
+            y: percentage,
           };
         }
       );
 
-      //Assign the color to legend
+      // Assign the color to legend
       formattedData.forEach((data, i) => {
         legendCounts.push({ text: data.x, color: colorContainer[i] });
       });
@@ -165,7 +166,9 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
         <>
           <VictoryPie
             colorScale={colorContainer}
-            style={{ labels: { fontSize: 0 } }}
+            labels={({ datum }) => `${Math.round(datum.y)}%`}
+            labelRadius={100}
+            style={{ labels: { fontSize: 14, fontFamily: 'DMSans-Bold' } }}
             data={sideEffectSymptoms}
           />
           <View
