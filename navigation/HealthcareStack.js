@@ -16,6 +16,7 @@ import ReviewSideEffectDetailScreen from "../screens/healthcare/healthcareStack/
 import UserPreviewProfilePicScreen from "../screens/common/UserPreviewProfilePicScreen";
 import CameraScreen from "../components/ui/CameraScreen";
 import VideoCallScreen from "../screens/common/VideoCallScreen";
+import AppointmentNotesScreen from "../screens/healthcare/healthcareStack/AppointmentNotesScreen";
 
 const HealthcareStack = createNativeStackNavigator();
 
@@ -99,6 +100,11 @@ export default function HealthcareStackGroup() {
         name = "VideoCallScreen"
         component = {VideoCallScreen}
         options = {{headerShown: false}}
+      />
+      <HealthcareStack.Screen
+        name = "AppointmentNotesScreen"
+        component = {AppointmentNotesScreen}
+        options = {{headerShown: true}}
       />
     </HealthcareStack.Navigator>
   );

@@ -215,7 +215,8 @@ export default function HealthcareAppointmentScreen() {
                   DeviceEventEmitter.addListener(
                     "onCallOrJoin",
                     (appointment) => {
-                      showAppointmentNotesRecorderHandler(appointment);
+                      navigation.navigate("AppointmentNotesScreen", {appointment: appointment})
+                      // showAppointmentNotesRecorderHandler(appointment);
                     }
                   );
                   navigation.navigate("HealthcareAppointmentDetailsScreen", {
@@ -231,7 +232,8 @@ export default function HealthcareAppointmentScreen() {
                   DeviceEventEmitter.addListener(
                     "onCallOrJoin",
                     (appointment) => {
-                      showAppointmentNotesRecorderHandler(appointment);
+                      navigation.navigate("AppointmentNotesScreen", {appointment})
+                      // showAppointmentNotesRecorderHandler(appointment);
                     }
                   );
                   onCallOrJoin(appointment.meeting_room_id, appointment);
@@ -267,7 +269,7 @@ export default function HealthcareAppointmentScreen() {
         automaticallyAdjustKeyboardInsets={true}
         automaticallyAdjustContentInsets={true}
       >
-        <Portal>
+        {/* <Portal>
           <Modal
             visible={visible}
             onDismiss={() => dismissAppointmentNotesModalHandler()}
@@ -326,7 +328,7 @@ export default function HealthcareAppointmentScreen() {
               </Button>
             </View>
           </Modal>
-        </Portal>
+        </Portal> */}
         <Calendar
           theme={{
             calendarBackground: theme.colors.background,
