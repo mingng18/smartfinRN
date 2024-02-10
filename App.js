@@ -38,6 +38,7 @@ import calendarLocales, {
   changeCalendarsLocales,
 } from "./util/calendarLocales";
 import messaging from "@react-native-firebase/messaging";
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { firebase } from "@react-native-firebase/firestore";
 import { use } from "i18next";
 // import { getMessaging, getToken } from "firebase/messaging";
@@ -55,6 +56,10 @@ function Root() {
   const [user, setUser] = useState();
   const [initializing, setInitializing] = useState(true);
   const userRedux = useSelector((state) => state.authObject);
+
+  GoogleSignin.configure({
+    webClientId: '73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com',
+  });
 
   // Ignore log notification by message
   // LogBox.ignoreLogs(["Warning: ..."]);
