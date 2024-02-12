@@ -22,6 +22,7 @@ import {
   authenticateStoreNative,
   fetchHealthcareData,
   fetchPatientData,
+  setFirstTimeLogin,
 } from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
 import { editDocument, fetchDocument } from "./util/firestoreWR";
@@ -34,14 +35,10 @@ import { fetchPatientCollectionData } from "./store/redux/patientDataSlice";
 import { Alert, LogBox, PermissionsAndroid, Platform } from "react-native";
 import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./i18n";
-import calendarLocales, {
-  changeCalendarsLocales,
-} from "./util/calendarLocales";
+import calendarLocales from "./util/calendarLocales";
 import messaging from "@react-native-firebase/messaging";
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { firebase } from "@react-native-firebase/firestore";
-import { use } from "i18next";
-// import { getMessaging, getToken } from "firebase/messaging";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { updateSignInCredentials } from "./store/redux/signupSlice";
 
 //Open SplashScreen for loading
 SplashScreen.preventAutoHideAsync();
@@ -58,72 +55,69 @@ function Root() {
   const userRedux = useSelector((state) => state.authObject);
 
   GoogleSignin.configure({
-    webClientId: '73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com',
+    webClientId:
+      "73133667345-re6vfs3dn3mfrv3fjkpcvb3prro9r4dd.apps.googleusercontent.com",
   });
 
   // Ignore log notification by message
   // LogBox.ignoreLogs(["Warning: ..."]);
   // LogBox.ignoreAllLogs();
 
-  function onAuthStateChanged(user) {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  }
-
+  //Check the log in status of the user by using listener to the firebase auth
   useEffect(() => {
+    async function onAuthStateChanged(user) {
+      if (user != null || user != undefined) {
+        setUser(user);
+        console.log("App.js user is : " + user.uid);
+        const token = await user.getIdToken();
+        console.log("App.js token is : " + token);
+        dispatch(authenticateStoreNative(token, user.uid, "unknown"));
+      }
+      if (initializing) setInitializing(false);
+    }
+
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);
 
+  //Check the log in status of the user, then fetch the user data from the firestore
   useEffect(() => {
-    async function fetchToken() {
-      // const auth = getAuth();
-      // const user = auth.currentUser;
+    async function autoLoginAndFetchFromDatabase(storedUid, storedToken) {
       try {
-        const token = await user.getIdToken();
+        const patientUser = await fetchDocument(
+          FIREBASE_COLLECTION.PATIENT,
+          storedUid
+        );
+        dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
+        dispatch(
+          fetchPatientData({
+            ...patientUser,
+            date_of_diagnosis: patientUser.date_of_diagnosis
+              .toDate()
+              .toISOString(),
+            treatment_start_date: patientUser.treatment_start_date
+              .toDate()
+              .toISOString(),
+            treatment_end_date: patientUser.treatment_end_date
+              .toDate()
+              .toISOString(),
+          })
+        );
+        dispatch(
+          fetchAppointments({
+            userId: storedUid,
+            userType: USER_TYPE.PATIENT,
+          })
+        );
+        dispatch(
+          fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
+        );
+        dispatch(
+          fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
+        );
       } catch (error) {
-        console.log("No user");
-      }
-
-      const storedToken = await SecureStore.getItemAsync("token");
-      console.log("Initialized token:" + storedToken);
-      if (storedToken != "" && storedToken != null) {
-        const storedUid = await SecureStore.getItemAsync("uid");
-        console.log("Initialized uid:" + storedUid);
         try {
-          const patientUser = await fetchDocument(
-            FIREBASE_COLLECTION.PATIENT,
-            storedUid
-          );
-          dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
-          dispatch(
-            fetchPatientData({
-              ...patientUser,
-              date_of_diagnosis: patientUser.date_of_diagnosis
-                .toDate()
-                .toISOString(),
-              treatment_start_date: patientUser.treatment_start_date
-                .toDate()
-                .toISOString(),
-              treatment_end_date: patientUser.treatment_end_date
-                .toDate()
-                .toISOString(),
-            })
-          );
-          dispatch(
-            fetchAppointments({
-              userId: storedUid,
-              userType: USER_TYPE.PATIENT,
-            })
-          );
-          dispatch(
-            fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
-          );
-          dispatch(
-            fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
-          );
-        } catch (error) {
-          console.log(`Error loging in patient, ${error}`);
+          console.log("Trying to login as a Healthcare Login");
           const healthcareUser = await fetchDocument(
             FIREBASE_COLLECTION.HEALTHCARE,
             storedUid
@@ -149,8 +143,34 @@ function Root() {
               userType: USER_TYPE.HEALTHCARE,
             })
           );
+        } catch (error) {
+          console.log("No related user found, first time login");
+
+          console.log("check email here : " + auth().currentUser.email);
+          dispatch(
+            updateSignInCredentials({ email: auth().currentUser.email })
+          );
+          dispatch(setFirstTimeLogin({ first_time_login: true }));
+          // dispatch(authenticate({ isAuthenticated: true }));
         }
+      }
+    }
+
+    //Try to fetch the token from the local storage to check if the user is already logged in
+    /*If there's a token stored locally, then try to fetch the user data from the firestore
+        This will check if the user is a patient or healthcare
+        If not both, then the user is first time login and the user will be directed to the choose account type screen */
+    //If there's no token stored locally, then set the log in status to false
+    async function fetchToken() {
+      const storedToken = await SecureStore.getItemAsync("token");
+      if (storedToken != "" && storedToken != null) {
+        const storedUid = await SecureStore.getItemAsync("uid");
+
+        //This function will first try to login as a patient, if not, then try to login as a healthcare
+        //If not both, then the user is first time login
+        autoLoginAndFetchFromDatabase(storedUid, storedToken);
       } else {
+        //The user is not logged in
         dispatch(authenticate({ isAuthenticated: false }));
       }
       setIsTryingLogin(false);
@@ -205,11 +225,11 @@ function Root() {
               const healthcareUser = await fetchDocument(
                 FIREBASE_COLLECTION.HEALTHCARE,
                 storedUid
-                );
-                editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
-                  push_notification_token: token,
-                });
-                console.log("Token updated in Healthcare");
+              );
+              editDocument(FIREBASE_COLLECTION.HEALTHCARE, healthcareUser.id, {
+                push_notification_token: token,
+              });
+              console.log("Token updated in Healthcare");
             }
           }
         });
@@ -256,11 +276,6 @@ function Root() {
 
     return unsubscribe;
   }, []);
-
-  // Close Splash screen after fetched token
-  // if (isTryingLogin || initializing) {
-  //   SplashScreen.hideAsync();
-  // }
 
   return <Navigation />;
 }

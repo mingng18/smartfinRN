@@ -14,8 +14,11 @@ import LoadingIndicatorDialog from "../ui/LoadingIndicatorDialog";
 import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
 
 import {
+  authenticate,
   authenticateStoreNative,
   fetchPatientData,
+  logoutDeleteNative,
+  setFirstTimeLogin,
   setUserType,
 } from "../../store/redux/authSlice";
 import { addDocumentWithId, editDocument } from "../../util/firestoreWR";
@@ -39,7 +42,7 @@ export default function TreatmentInfoForm({ isEditing }) {
   const { key, name, params, path } = useRoute();
   const signupInfo = useSelector((state) => state.signupObject);
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.authObject);
+  const localUser = useSelector((state) => state.authObject);
   const { t } = useTranslation("auth");
 
   const [calendarLocale, setCalendarLocale] = React.useState("");
@@ -152,26 +155,20 @@ export default function TreatmentInfoForm({ isEditing }) {
     return formattedDate;
   }
 
+  function revertFailedSignup(){
+    try {
+      auth().currentUser.delete();
+      dispatch(setFirstTimeLogin({ first_time_login: false }));
+      dispatch(authenticate({isAuthenticated: false}))
+      dispatch(logoutDeleteNative())
+      dispatch(clearSignupSlice())
+      console.log("Signup reverted")
+    } catch (error) {
+      console.log("Failed to revert signup")
+    }
+  }
+
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
-    //Debug use---------------------------------------------------------------
-    // console.log(
-    //   "email : " + signupInfo.email,
-    //   "password : " + signupInfo.password,
-    //   "firstName : " + signupInfo.firstName,
-    //   "lastName : " + signupInfo.lastName,
-    //   "phoneNumber : " + signupInfo.phoneNumber,
-    //   "nric_passport : " + signupInfo.nric_passport,
-    //   "age : " + signupInfo.age,
-    //   "date_of_diagnosis : " + submitDate,
-    //   "diagnosis : " + signupInfo.diagnosis,
-    //   "diagnosis 2: " + diagnosis,
-    //   "treatment_duration_months : " + signupInfo.durationOfTreatment,
-    //   "treatment : " + signupInfo.currentTreatment,
-    //   "treatment 2: " + treatment,
-    //   "number_of_tablets : " + signupInfo.numberOfTablets,
-    //   "profilePictureURI : " + signupInfo.profilePictureURI
-    // );
-    //Debug use---------------------------------------------------------------
     try {
       await addDocumentWithId(userType, userId, {
         email: signupInfo.email,
@@ -303,12 +300,40 @@ export default function TreatmentInfoForm({ isEditing }) {
       );
     } catch (error) {
       console.log(error);
+      revertFailedSignup();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       setIsUploading(false);
       return Alert.alert(
         t("profile_picture_upload_failed"),
         t("try_again_later")
       );
+    }
+  }
+
+  async function uploadProfilePicAndWriteIntoDatabase(uid, userToken) {
+    try {
+      console.log("uploadProfilePicAndWriteIntoDatabase token: " + userToken);
+      console.log("uploadProfilePicAndWriteIntoDatabase uid: " + uid);
+      dispatch(
+        updateMedicalInformation({
+          diagnosis: diagnosis,
+          durationOfTreatment: durationOfTreatment,
+          currentTreatment: treatment,
+          numberOfTablets: numberOfTablets,
+        })
+      );
+      //Upload profile picture
+      const ppStorageRef = storage().ref("patientProfilePicture/" + uid);
+      setIsUploading(true);
+      await uploadImage(
+        signupInfo.profilePictureURI,
+        ppStorageRef,
+        uid,
+        userToken
+      );
+    } catch (error) {
+      console.log("Sign up user failed: " + error);
+      revertFailedSignup();
     }
   }
 
@@ -349,52 +374,49 @@ export default function TreatmentInfoForm({ isEditing }) {
       return Alert.alert(t("invalid_input"), t("check_entered_details"));
     }
 
-    //Calling APIs to create user, upload profile picture, then add user data to firestore
-    try {
-      //Create user
-      auth()
-        .createUserWithEmailAndPassword(signupInfo.email, signupInfo.password)
-        .then(async (userCredential) => {
-          const user = userCredential.user;
-          const token = await user.getIdToken();
-          dispatch(
-            updateMedicalInformation({
-              diagnosis: diagnosis,
-              durationOfTreatment: durationOfTreatment,
-              currentTreatment: treatment,
-              numberOfTablets: numberOfTablets,
-            })
-          );
-          //Upload profile picture
-          const ppStorageRef = storage().ref(
-            "patientProfilePicture/" + user.uid
-          );
-          setIsUploading(true);
-          await uploadImage(
-            signupInfo.profilePictureURI,
-            ppStorageRef,
-            user.uid,
-            token
-          );
-        });
-    } catch (error) {
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          return Alert.alert(
-            t("email_already_exists"),
-            t("use_another_email_or_reset_password")
-          );
-        case "auth/invalid-email":
-          return Alert.alert(t("invalid_email"), t("valid_email"));
-        case "auth/weak-password":
-          return Alert.alert(t("weak_password"), t("enter_valid_password"));
-        default:
-          console.log("Unknown error occured" + error);
-          //Delete user created just now if sign up fails because of other reasons
-          // await deleteUser(user.uid);
-          return Alert.alert(t("unknown_error"), t("unknown_error_message"));
+    if (localUser.first_time_login) {
+      try {
+        console.log("first time login");
+        console.log("token: " + localUser.token);
+        console.log("uid: " + localUser.user_uid);
+
+        uploadProfilePicAndWriteIntoDatabase(localUser.user_uid, localUser.token);
+        dispatch(setFirstTimeLogin({ first_time_login: false }));
+      } catch (error) {
+        console.log("Sign up for first time login user failed: " + error);
+      }
+    } else {
+      //Calling APIs to create user, upload profile picture, then add user data to firestore
+      try {
+        //Create user
+        auth()
+          .createUserWithEmailAndPassword(signupInfo.email, signupInfo.password)
+          .then(async (userCredential) => {
+            const user = userCredential.user;
+            const token = await user.getIdToken();
+
+            uploadProfilePicAndWriteIntoDatabase(user.uid, token);
+          });
+      } catch (error) {
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            return Alert.alert(
+              t("email_already_exists"),
+              t("use_another_email_or_reset_password")
+            );
+          case "auth/invalid-email":
+            return Alert.alert(t("invalid_email"), t("valid_email"));
+          case "auth/weak-password":
+            return Alert.alert(t("weak_password"), t("enter_valid_password"));
+          default:
+            console.log("Unknown error occured" + error);
+            //Delete user created just now if sign up fails because of other reasons
+            // await deleteUser(user.uid);
+            return Alert.alert(t("unknown_error"), t("unknown_error_message"));
+        }
       }
     }
+
     setIsUploading(false);
   }
 

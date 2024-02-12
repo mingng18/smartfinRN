@@ -2,18 +2,20 @@ import { useNavigation } from "@react-navigation/native";
 import { Alert, StyleSheet, View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
+import { SafeAreaView } from "react-native-safe-area-context";
+import CachedImage from "expo-cached-image";
+import { useTranslation } from "react-i18next";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import auth from "@react-native-firebase/auth";
+
 import {
   capitalizeFirstLetter,
   getLastTenCharacters,
 } from "../../util/wordUtil";
 import TextListButton from "../../components/ui/TextListButton";
 import { logoutDeleteNative } from "../../store/redux/authSlice";
-import CachedImage from "expo-cached-image";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { clearPatientDataSlice } from "../../store/redux/patientDataSlice";
-import { useTranslation } from "react-i18next";
-import auth from "@react-native-firebase/auth";
 import { clearAppointmentDateSlice } from "../../store/redux/bookedAppointmentDateSlice";
 import { clearSideEffectSlice } from "../../store/redux/sideEffectSlice";
 import { clearVideoSlice } from "../../store/redux/videoSlice";
@@ -44,8 +46,9 @@ export default function HealthcareProfileScreen() {
           auth()
             .signOut()
             .then(() => {
-              console.log("User signed out!");
               clearLocalData();
+              GoogleSignin.revokeAccess();
+              console.log("User signed out!");
             })
             .catch((error) => {
               // An error occurred during sign out

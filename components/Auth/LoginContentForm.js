@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -18,13 +18,34 @@ import {
   Modal,
   TextInput,
 } from "react-native-paper";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
-import { LOGO_NO_TYPE } from "../../constants/constants";
+import {
+  FIREBASE_COLLECTION,
+  LOGO_NO_TYPE,
+  USER_TYPE,
+} from "../../constants/constants";
 import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import {
+  authenticateStoreNative,
+  fetchHealthcareData,
+  fetchPatientData,
+  setFirstTimeLogin,
+} from "../../store/redux/authSlice";
+import { fetchDocument } from "../../util/firestoreWR";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
+import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { updateSignInCredentials } from "../../store/redux/signupSlice";
 
 function LoginContentForm({ onAuthenticate }) {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const theme = useTheme();
   const { t } = useTranslation("auth");
 
@@ -41,6 +62,132 @@ function LoginContentForm({ onAuthenticate }) {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [hidePassword, setHidePassword] = useState(true);
+
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+  const [token, setToken] = useState();
+
+  React.useEffect(() => {
+    function onAuthStateChanged(user) {
+      setUser(user);
+      // console.log("user is : " + user);
+      // console.log("user is : " + JSON.stringify(user));
+      // const token = user.getIdTokenResult();
+      // console.log("token is : " + idToken);
+      // dispatch(authenticateStoreNative(idToken, user.uid, "patient"));
+      if (initializing) setInitializing(false);
+    }
+
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber; // unsubscribe on unmount
+  }, []);
+
+  async function googleSignIn() {
+    try {
+      // Check if your device supports Google Play
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      // Get the users ID token
+      const { idToken } = await GoogleSignin.signIn();
+      setToken(idToken);
+      console.log("idToken is : " + idToken);
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      console.log("googleCredential is : " + googleCredential);
+      console.log("googleCredential is : " + JSON.stringify(googleCredential));
+      // Sign-in the user with the credential
+      return await auth().signInWithCredential(googleCredential);
+    } catch (error) {
+      if (error.message.includes("Sign in action cancelled")) {
+        console.log("Sign in with google cancelled");
+      } else {
+        Alert.alert(t("auth_fail"), t("auth_fail_message"));
+        console.log("Error signing in with Google: " + error);
+      }
+    }
+  }
+
+  async function googleButtonPressHandler() {
+    async function loginAndFetchUserFromDatabase(storedUid, storedToken, user) {
+      try {
+        const patientUser = await fetchDocument(
+          FIREBASE_COLLECTION.PATIENT,
+          storedUid
+        );
+        dispatch(authenticateStoreNative(storedToken, storedUid, "patient"));
+        dispatch(
+          fetchPatientData({
+            ...patientUser,
+            date_of_diagnosis: patientUser.date_of_diagnosis
+              .toDate()
+              .toISOString(),
+            treatment_start_date: patientUser.treatment_start_date
+              .toDate()
+              .toISOString(),
+            treatment_end_date: patientUser.treatment_end_date
+              .toDate()
+              .toISOString(),
+          })
+        );
+        dispatch(
+          fetchAppointments({
+            userId: storedUid,
+            userType: USER_TYPE.PATIENT,
+          })
+        );
+        dispatch(
+          fetchSideEffects({ userId: storedUid, userType: USER_TYPE.PATIENT })
+        );
+        dispatch(
+          fetchVideos({ userId: storedUid, userType: USER_TYPE.PATIENT })
+        );
+      } catch (error) {
+        try {
+          const healthcareUser = await fetchDocument(
+            FIREBASE_COLLECTION.HEALTHCARE,
+            storedUid
+          );
+
+          dispatch(
+            authenticateStoreNative(storedToken, storedUid, "healthcare")
+          );
+          dispatch(fetchHealthcareData({ ...healthcareUser }));
+          dispatch(fetchPatientCollectionData());
+          dispatch(
+            fetchAppointments({
+              userId: storedUid,
+              userType: USER_TYPE.HEALTHCARE,
+            })
+          );
+          dispatch(
+            fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+          );
+          dispatch(
+            fetchSideEffects({
+              userId: storedUid,
+              userType: USER_TYPE.HEALTHCARE,
+            })
+          );
+        } catch (error) {
+          console.log("No user found in database, first time login user");
+          dispatch(updateSignInCredentials({ email: user.email }));
+          dispatch(setFirstTimeLogin({ first_time_login: true }));
+          // Alert.alert(t("auth_fail"), t("auth_fail_message"));
+        }
+      }
+    }
+
+    userCredential = await googleSignIn();
+    const user = userCredential.user;
+
+    console.log("HAHAHAHAHA");
+    console.log("user checking is : " + user.uid);
+
+    //This function will first try to login as a patient, if not, then try to login as a healthcare
+    //If not both, then the user is first time login
+    loginAndFetchUserFromDatabase(user.uid, token, user);
+  }
 
   function updateInputValueHandler(inputType, enteredValue) {
     switch (inputType) {
@@ -245,7 +392,7 @@ function LoginContentForm({ onAuthenticate }) {
                 <Button
                   mode="contained-tonal"
                   icon="google"
-                  onPress={() => {}}
+                  onPress={googleButtonPressHandler}
                   style={[
                     {
                       height: 40,

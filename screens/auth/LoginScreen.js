@@ -52,7 +52,7 @@ function LoginScreen() {
               user.uid
             );
             dispatch(authenticateStoreNative(token, user.uid, "patient"));
-            
+
             dispatch(
               fetchPatientData({
                 ...isPatient,
@@ -83,30 +83,40 @@ function LoginScreen() {
               fetchVideos({ userId: user.uid, userType: USER_TYPE.PATIENT })
             );
           } catch (error) {
-            console.log("Error signing patient: " + error);
-            console.log("Check hereee");
-            const isHealthcare = await fetchDocument(
-              FIREBASE_COLLECTION.HEALTHCARE,
-              user.uid
-            );
-            dispatch(authenticateStoreNative(token, user.uid, "healthcare"));
-            dispatch(fetchHealthcareData({ ...isHealthcare }));
-            dispatch(fetchPatientCollectionData());
-            dispatch(
-              fetchAppointments({
-                userId: user.uid,
-                userType: USER_TYPE.HEALTHCARE,
-              })
-            );
-            dispatch(
-              fetchSideEffects({
-                userId: user.uid,
-                userType: USER_TYPE.HEALTHCARE,
-              })
-            );
-            dispatch(
-              fetchVideos({ userId: user.uid, userType: USER_TYPE.HEALTHCARE })
-            );
+            try {
+              console.log("error code here: " + error.code);
+              console.log("error message here: " + error.message);
+              console.log("Error signing patient: " + error);
+              console.log("Check hereee");
+              const isHealthcare = await fetchDocument(
+                FIREBASE_COLLECTION.HEALTHCARE,
+                user.uid
+              );
+              dispatch(authenticateStoreNative(token, user.uid, "healthcare"));
+              dispatch(fetchHealthcareData({ ...isHealthcare }));
+              dispatch(fetchPatientCollectionData());
+              dispatch(
+                fetchAppointments({
+                  userId: user.uid,
+                  userType: USER_TYPE.HEALTHCARE,
+                })
+              );
+              dispatch(
+                fetchSideEffects({
+                  userId: user.uid,
+                  userType: USER_TYPE.HEALTHCARE,
+                })
+              );
+              dispatch(
+                fetchVideos({
+                  userId: user.uid,
+                  userType: USER_TYPE.HEALTHCARE,
+                })
+              );
+            } catch (error) {
+              console.log("Error signing healthcare: " + error);
+              Alert.alert(t("auth_fail"), t("auth_fail_message"));
+            }
           }
         });
     } catch (error) {

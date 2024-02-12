@@ -5,13 +5,17 @@ import { ActivityIndicator, Button, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import * as Haptics from "expo-haptics";
 
-import { clearSignupSlice, updateProfilePictureURI } from "../../store/redux/signupSlice";
+import {
+  clearSignupSlice,
+  updateProfilePictureURI,
+} from "../../store/redux/signupSlice";
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 
 import {
   authenticateStoreNative,
   fetchHealthcareData,
+  setFirstTimeLogin,
   setUserType,
 } from "../../store/redux/authSlice";
 import { addDocumentWithId } from "../../util/firestoreWR";
@@ -27,6 +31,7 @@ export default function PreviewProfilePicScreen() {
 
   const signupMode = useSelector((state) => state.signupObject.signupMode);
   const signupInfo = useSelector((state) => state.signupObject);
+  const localUser = useSelector((state) => state.authObject);
   const { t } = useTranslation("auth");
 
   const [isUploading, setIsUploading] = React.useState(false);
@@ -40,6 +45,19 @@ export default function PreviewProfilePicScreen() {
     setUri(params.uri);
   });
 
+  async function revertFailedSignup() {
+    try {
+      await auth().currentUser.delete();
+      dispatch(setFirstTimeLogin({ first_time_login: false }));
+      dispatch(authenticate({ isAuthenticated: false }));
+      dispatch(logoutDeleteNative());
+      dispatch(clearSignupSlice());
+      console.log("Signup reverted");
+    } catch (error) {
+      console.log("Failed to revert signup");
+    }
+  }
+
   async function saveUserDateToFirestore(userType, userId, profilePicUrl) {
     await addDocumentWithId(userType, userId, {
       email: signupInfo.email,
@@ -52,52 +70,61 @@ export default function PreviewProfilePicScreen() {
     });
   }
 
-  async function uploadImage(uri, path, userId, token) {
-    setIsUploading(true);
-    console.log("Uploading image to " + uri);
-    console.log("User is  " + userId);
+  async function uploadImageAndWriteIntoDatabase(uri, path, userId, token) {
+    try {
+      setIsUploading(true);
+      console.log("Uploading image to " + uri);
+      console.log("User is  " + userId);
 
-    imageData = await fetch(uri);
-    imageBlob = await imageData.blob();
-    uploadTask = await path.put(imageBlob);
+      imageData = await fetch(uri);
+      imageBlob = await imageData.blob();
+      uploadTask = await path.put(imageBlob);
 
-    path.getDownloadURL().then(async (downloadURL) => {
-      console.log("File available at ", downloadURL);
-      dispatch(setUserType({ user_type: signupInfo.signupMode }));
-      dispatch(
-        fetchHealthcareData({
-          category: signupInfo.category,
-          email: signupInfo.email,
-          first_name: signupInfo.firstName,
-          last_name: signupInfo.lastName,
-          role: signupInfo.role,
-          mpm_Id: signupInfo.mpmId,
-          profile_pic_url: downloadURL,
-        })
-      );
+      path.getDownloadURL().then(async (downloadURL) => {
+        console.log("File available at ", downloadURL);
+        dispatch(setUserType({ user_type: signupInfo.signupMode }));
+        dispatch(
+          fetchHealthcareData({
+            category: signupInfo.category,
+            email: signupInfo.email,
+            first_name: signupInfo.firstName,
+            last_name: signupInfo.lastName,
+            role: signupInfo.role,
+            mpm_Id: signupInfo.mpmId,
+            profile_pic_url: downloadURL,
+          })
+        );
 
-      dispatch(clearSignupSlice());
-      await saveUserDateToFirestore("healthcare", userId, downloadURL);
-      dispatch(authenticateStoreNative(token, userId, "healthcare"));
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        dispatch(clearSignupSlice());
+        await saveUserDateToFirestore("healthcare", userId, downloadURL);
+        dispatch(authenticateStoreNative(token, userId, "healthcare"));
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-      setIsUploading(false);
-      Alert.alert(
-        t("sign_up_successful"),
-        t("thanks_for_signing_up"),
-        [
+        setIsUploading(false);
+        Alert.alert(
+          t("sign_up_successful"),
+          t("thanks_for_signing_up"),
+          [
+            {
+              text: "OK",
+              onPress: () => {},
+              style: "cancel",
+            },
+          ],
           {
-            text: "OK",
-            onPress: () => {},
-            style: "cancel",
-          },
-        ],
-        {
-          cancelable: false,
-        }
+            cancelable: false,
+          }
+        );
+      });
+    } catch (error) {
+      setIsUploading(false);
+      revertFailedSignup();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      return Alert.alert(
+        t("profile_picture_upload_failed"),
+        t("try_again_later")
       );
-    });
-
+    }
   }
 
   async function signupHealthcare() {
@@ -114,26 +141,59 @@ export default function PreviewProfilePicScreen() {
       "profile_pic_url: " + signupInfo.profilePictureURI
     );
 
-    try {
-      //Create user
-      const userCredential = await auth().createUserWithEmailAndPassword(
-        signupInfo.email,
-        signupInfo.password
-      );
-      const user = userCredential.user;
-      const token = await user.getIdToken();
+    if (localUser.first_time_login) {
+      try {
+        console.log("first time login");
+        console.log("token: " + localUser.token);
+        console.log("uid: " + localUser.user_uid);
+        //Upload profile picture
+        const ppStorageRef = storage().ref(
+          "healthcareProfilePicture/" + localUser.user_uid
+        );
+        uploadImageAndWriteIntoDatabase(
+          uri,
+          ppStorageRef,
+          localUser.user_uid,
+          localUser.token
+        );
+        dispatch(setFirstTimeLogin({ first_time_login: false }));
+        setIsUploading(false);
+      } catch (error) {
+        revertFailedSignup();
+        Alert.alert(t("sign_up_failed"));
+        console.log("Sign up for first time login user failed: " + error);
+        setIsUploading(false);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    } else {
+      try {
+        //Create user
+        const userCredential = await auth().createUserWithEmailAndPassword(
+          signupInfo.email,
+          signupInfo.password
+        );
+        const user = userCredential.user;
+        const token = await user.getIdToken();
 
-      //Upload profile picture
-      const ppStorageRef = storage().ref(
-        "healthcareProfilePicture/" + user.uid
-      );
-      setIsUploading(true);
-      const donwloadURL = await uploadImage(uri, ppStorageRef, user.uid, token);
-      setIsUploading(false);
-    } catch (error) {
-      Alert.alert(t("sign_up_failed"));
-      console.log(error); //Debug use
-      setIsUploading(false);
+        //Upload profile picture
+        const ppStorageRef = storage().ref(
+          "healthcareProfilePicture/" + user.uid
+        );
+        setIsUploading(true);
+        const donwloadURL = await uploadImageAndWriteIntoDatabase(
+          uri,
+          ppStorageRef,
+          user.uid,
+          token
+        );
+        setIsUploading(false);
+      } catch (error) {
+        revertFailedSignup();
+        Alert.alert(t("sign_up_failed"));
+        console.log(error); //Debug use
+        setIsUploading(false);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
     }
   }
 

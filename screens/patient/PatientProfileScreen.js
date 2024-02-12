@@ -6,8 +6,14 @@ import TextListButton from "../../components/ui/TextListButton";
 import { useNavigation } from "@react-navigation/native";
 import * as SecureStore from "expo-secure-store";
 import { useDispatch, useSelector } from "react-redux";
-import { logoutDeleteNative } from "../../store/redux/authSlice";
 import React from "react";
+import CachedImage from "expo-cached-image";
+import { useTranslation } from "react-i18next";
+import { ScrollView } from "react-native-gesture-handler";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import auth from "@react-native-firebase/auth";
+
+import { logoutDeleteNative } from "../../store/redux/authSlice";
 import { BLANK_PROFILE_PIC } from "../../constants/constants";
 import {
   capitalizeFirstLetter,
@@ -15,15 +21,11 @@ import {
 } from "../../util/wordUtil";
 import InformationChip from "../../components/ui/InformationChip";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CachedImage from "expo-cached-image";
 import { clearAppointmentDateSlice } from "../../store/redux/bookedAppointmentDateSlice";
 import { clearAppointmentSlice } from "../../store/redux/appointmentSlice";
 import { clearSideEffectSlice } from "../../store/redux/sideEffectSlice";
 import { clearVideoSlice } from "../../store/redux/videoSlice";
 import { clearSignupSlice } from "../../store/redux/signupSlice";
-import { useTranslation } from "react-i18next";
-import { ScrollView } from "react-native-gesture-handler";
-import auth from "@react-native-firebase/auth";
 
 function PatientProfileScreen() {
   const theme = useTheme();
@@ -55,8 +57,9 @@ function PatientProfileScreen() {
           auth()
             .signOut()
             .then(() => {
-              console.log("User signed out!");
               clearLocalData();
+              GoogleSignin.revokeAccess();
+              console.log("User signed out!");
             })
             .catch((error) => {
               // An error occurred during sign out

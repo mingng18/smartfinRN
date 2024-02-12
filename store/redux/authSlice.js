@@ -126,10 +126,13 @@ const authSlice = createSlice({
 });
 
 export const authenticateStoreNative = (storedToken, userId, userType) => {
+  console.log("storedToken: " + storedToken);
+  console.log("userId: " + userId);
+  console.log("userType: " + userType);
   return async (dispatch) => {
-    dispatch(authenticate({ token: storedToken, user_uid: userId, isAuthenticated: true}));
-    dispatch(setUserType({ user_type: userType }));
     try {
+      dispatch(authenticate({ token: storedToken, user_uid: userId, isAuthenticated: true}));
+      dispatch(setUserType({ user_type: userType }));
       await SecureStore.setItemAsync("token", storedToken);
       await SecureStore.setItemAsync("uid", userId);
       await SecureStore.setItemAsync("user_type", userType);

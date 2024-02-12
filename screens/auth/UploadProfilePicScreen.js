@@ -8,12 +8,15 @@ import { useDispatch, useSelector } from "react-redux";
 import auth from "@react-native-firebase/auth";
 import storage from "@react-native-firebase/storage";
 
-
 import { BLANK_PROFILE_PIC, USER_TYPE } from "../../constants/constants";
-import { clearSignupSlice, updateProfilePictureURI } from "../../store/redux/signupSlice";
+import {
+  clearSignupSlice,
+  updateProfilePictureURI,
+} from "../../store/redux/signupSlice";
 import {
   authenticateStoreNative,
   fetchHealthcareData,
+  setFirstTimeLogin,
   setUserType,
 } from "../../store/redux/authSlice";
 import { addDocumentWithId } from "../../util/firestoreWR";
@@ -24,6 +27,7 @@ export default function UploadProfilePicScreen() {
   const navigation = useNavigation();
   const theme = useTheme();
   const signupInfo = useSelector((state) => state.signupObject);
+  const localUser = useSelector((state) => state.authObject);
 
   const dispatch = useDispatch();
 
@@ -46,56 +50,53 @@ export default function UploadProfilePicScreen() {
       category: signupInfo.category,
       role: signupInfo.role,
       mpm_id: signupInfo.mpmId,
-      profile_pic_url: profilePicUrl,
+      profile_pic_url: "",
     });
   }
 
-  async function uploadImage(path, userId, token) {
-    setIsUploading(true);
+  async function uploadProfilePicAndWriteIntoDatabase(uid, userToken) {
     try {
       dispatch(setUserType({ user_type: signupInfo.signupMode }));
-        dispatch(
-          fetchHealthcareData({
-            category: signupInfo.category,
-            email: signupInfo.email,
-            first_name: signupInfo.firstName,
-            last_name: signupInfo.lastName,
-            role: signupInfo.role,
-            mpm_Id: signupInfo.mpmId,
-            profile_pic_url: "",
-          })
-        );
+      dispatch(
+        fetchHealthcareData({
+          category: signupInfo.category,
+          email: signupInfo.email,
+          first_name: signupInfo.firstName,
+          last_name: signupInfo.lastName,
+          role: signupInfo.role,
+          mpm_Id: signupInfo.mpmId,
+          profile_pic_url: "",
+        })
+      );
 
-        dispatch(clearSignupSlice());
-        await saveUserDateToFirestore("healthcare", userId, "");
-        dispatch(authenticateStoreNative(token, userId, "healthcare"));
+      dispatch(clearSignupSlice());
+      await saveUserDateToFirestore("healthcare", uid, "");
+      dispatch(authenticateStoreNative(userToken, uid, "healthcare"));
 
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-        setIsUploading(false);
-        Alert.alert(
-          t("sign_up_successful"),
-          t("thanks_for_signing_up"),
-          [
-            {
-              text: "OK",
-              onPress: () => {},
-              style: "cancel",
-            },
-          ],
+      Alert.alert(
+        t("sign_up_successful"),
+        t("thanks_for_signing_up"),
+        [
           {
-            cancelable: false,
-          }
-        );
-      
+            text: "OK",
+            onPress: () => {},
+            style: "cancel",
+          },
+        ],
+        {
+          cancelable: false,
+        }
+      );
     } catch (error) {
       console.log(error + "Error uploading image at uploadProfilePicScreen");
-      setIsUploading(false);
     }
+    setIsUploading(false);
   }
 
   async function signupHealthcare() {
+    setIsUploading(true);
     dispatch(updateProfilePictureURI(""));
     //Debug use
     console.log(
@@ -109,32 +110,36 @@ export default function UploadProfilePicScreen() {
       "profile_pic_url: " + signupInfo.profilePictureURI
     );
 
-    try {
-      //Create user
-      const userCredential = await auth().createUserWithEmailAndPassword(
-        signupInfo.email,
-        signupInfo.password
-      );
-      const user = userCredential.user;
-      const token = await user.getIdToken();
+    if (localUser.first_time_login) {
+      try {
+        console.log("first time login");
+        console.log("token: " + localUser.token);
+        console.log("uid: " + localUser.user_uid);
 
-      //Upload profile picture
-      const ppStorageRef = storage().ref(
-        "healthcareProfilePicture/" + user.uid
-      );
+        uploadProfilePicAndWriteIntoDatabase(
+          localUser.user_uid,
+          localUser.token
+        );
+        dispatch(setFirstTimeLogin({ first_time_login: false }));
+      } catch (error) {
+        console.log("Sign up for first time login user failed: " + error);
+      }
+    } else {
+      try {
+        //Create user
+        const userCredential = await auth().createUserWithEmailAndPassword(
+          signupInfo.email,
+          signupInfo.password
+        );
+        const user = userCredential.user;
+        const token = await user.getIdToken();
 
-      setIsUploading(true);
-
-      const donwloadURL = await uploadImage(
-        ppStorageRef,
-        user.uid,
-        token
-      );
-      setIsUploading(false);
-    } catch (error) {
-      Alert.alert(t("sign_up_failed"));
-      console.log(error); //Debug use
-      setIsUploading(false);
+        uploadProfilePicAndWriteIntoDatabase(user.uid, token);
+      } catch (error) {
+        Alert.alert(t("sign_up_failed"));
+        console.log(error); //Debug use
+        setIsUploading(false);
+      }
     }
   }
 

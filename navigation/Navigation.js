@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import * as SplashScreen from "expo-splash-screen";
 
 import React from "react";
+import FirstTimeLoginStack from "./FirstTimeLoginStack";
 
 //A function component to choose the Entry Point for user based on the log in status
 //TODO determine healthcare login status
@@ -20,6 +21,9 @@ export default function Navigation() {
   );
   const user_type = useSelector((state) => state.authObject.user_type);
   const uid = useSelector((state) => state.authObject.uid);
+  const firstTimeLogin = useSelector(
+    (state) => state.authObject.first_time_login
+  );
   const dispatch = useDispatch();
 
   React.useState(() => {
@@ -30,6 +34,7 @@ export default function Navigation() {
   React.useEffect(() => {
     console.log("user type: " + user_type);
     console.log("authenticated: " + authenticated);
+    console.log("first time login: " + first_time_login);
   }, []);
   // if (authenticated) {
   //   patientExist = fetchDocument("patients", uid);
@@ -51,10 +56,10 @@ export default function Navigation() {
 
   return (
     <NavigationContainer>
-      {authenticated == null ? (
-        null
-      ) : authenticated ? (
-        user_type === "patient" ? (
+      {authenticated == null ? null : authenticated ? (
+        firstTimeLogin ? (
+          <FirstTimeLoginStack />
+        ) : user_type === "patient" ? (
           <PatientStackGroup />
         ) : (
           <HealthcareStackGroup />
