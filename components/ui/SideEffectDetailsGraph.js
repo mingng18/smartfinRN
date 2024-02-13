@@ -124,7 +124,7 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       <Text
         variant="labelLarge"
         style={{
-          paddingTop: 32,
+          paddingTop: 8,
           marginHorizontal: 16,
           paddingBottom: 16,
         }}

@@ -42,6 +42,13 @@ export default function CustomCalendar({
               .toISOString()
               .slice(0, 10) === date
         );
+        acc[date] = {
+          selected: true,
+          selectedColor: sideEffectMatch
+            ? theme.colors.yellowContainer
+            : theme.colors.background,
+          selectedTextColor: theme.colors.onBackground,
+        };
       }
 
       //Appointment is selected

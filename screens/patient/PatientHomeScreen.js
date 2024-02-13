@@ -22,12 +22,16 @@ import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
 import {
   APPOINTMENT_STATUS,
   BLANK_PROFILE_PIC,
+  FIREBASE_COLLECTION,
   LOGO_BLACK_TYPE,
   USER_TYPE,
   VIDEO_STATUS,
 } from "../../constants/constants";
 import { fetchAppointments } from "../../store/redux/appointmentSlice";
-import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
+import {
+  fetchSideEffects,
+  updateSideEffect,
+} from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
 import {
   capitalizeFirstLetter,
@@ -38,6 +42,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
 import { fetchBookedAppointmentDates } from "../../store/redux/bookedAppointmentDateSlice";
 import { useTranslation } from "react-i18next";
+import { editDocument } from "../../util/firestoreWR";
 
 function PatientHomeScreen() {
   const { navigate } = useNavigation();
@@ -46,17 +51,23 @@ function PatientHomeScreen() {
   const appointments = useSelector(
     (state) => state.appointmentObject.appointments
   );
-  const bookedAppointmentDates = useSelector(
-    (state) => state.bookedAppointmentDateObject.bookedAppointmentDates
+  const sideEffects = useSelector(
+    (state) => state.sideEffectObject.sideEffects
   );
+  // const bookedAppointmentDates = useSelector(
+  //   (state) => state.bookedAppointmentDateObject.bookedAppointmentDates
+  // );
   const user = useSelector((state) => state.authObject);
   const videos = useSelector((state) => state.videoObject.videos);
   const { t } = useTranslation("patient");
+  const scrollRef = React.useRef(null);
 
   const [pendingAppointmentsCount, setPendingAppointmentsCount] =
     React.useState(0);
   const [rejectedVideo, setRejectedVideo] = React.useState(null);
   const [hasAteMedicine, setHasAteMedicine] = React.useState(false);
+  const [unviewedSideEffect, setUnviewedSideEffect] = React.useState(null);
+  const [unviewedAppointment, setUnviewedAppointment] = React.useState(null);
   const [refreshing, setRefreshing] = React.useState(false);
 
   // React.useLayoutEffect(() => {
@@ -86,20 +97,6 @@ function PatientHomeScreen() {
   };
 
   React.useEffect(() => {
-    
-    // console.log("the diagnosis date: " + user.date_of_diagnosis);
-    // console.log("the user : " + user.first_name + " " + user.last_name);
-    // console.log("the profile pic : " + user.profile_pic_url);
-    //Check the count of the pending appointment
-    const calculatePendingAppointmentsCount = () => {
-      const appointmentData = appointments.filter(
-        (appointment) =>
-          appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED ||
-          appointment.appointment_status === APPOINTMENT_STATUS.PENDING
-      );
-      setPendingAppointmentsCount(appointmentData.length);
-    };
-
     //Check whether video today has been rejected
     const isVideoTodayRejected = () => {
       const vid = videos.find((video) => {
@@ -133,15 +130,47 @@ function PatientHomeScreen() {
       setHasAteMedicine(vid.length > 0);
     };
 
-    calculatePendingAppointmentsCount();
     isVideoTodayRejected();
     calculateHasAteMedicine();
+
     dispatch(fetchBookedAppointmentDates({}));
-    // console.log("the rejected video: " + rejectedVideo);
-    // console.log("the has ate medicine: " + hasAteMedicine);
-    // console.log("the pending appointment: " + pendingAppointmentsCount);
     SplashScreen.hideAsync();
-  }, [appointments, videos]);
+  }, [videos]);
+
+  React.useEffect(() => {
+    //Check the count of the pending appointment
+    const calculatePendingAppointmentsCount = () => {
+      const appointmentData = appointments.filter(
+        (appointment) =>
+          appointment.appointment_status === APPOINTMENT_STATUS.ACCEPTED ||
+          appointment.appointment_status === APPOINTMENT_STATUS.PENDING
+      );
+      setPendingAppointmentsCount(appointmentData.length);
+    };
+
+    //Check whether any appointmnet remarks is unviewed
+    const fetchUnviewAppointmentRemarks = () => {
+      const unviewedAppointment = appointments.filter((appointment) => {
+        return appointment.is_patient_viewed === false;
+      });
+      setUnviewedAppointment(unviewedAppointment);
+    };
+
+    calculatePendingAppointmentsCount();
+    fetchUnviewAppointmentRemarks();
+  }, [appointments]);
+
+  React.useEffect(() => {
+    //Check whether any side effects remarks is unviewed
+    const fetchUnviewSideEffectRemarks = () => {
+      const unviewedSideEffect = sideEffects.filter((sideEffect) => {
+        return sideEffect.is_patient_viewed === false;
+      });
+      setUnviewedSideEffect(unviewedSideEffect);
+    };
+
+    fetchUnviewSideEffectRemarks();
+  }, [sideEffects]);
 
   const pendingNumber = () => {
     var count = 0;
@@ -184,7 +213,6 @@ function PatientHomeScreen() {
   };
 
   return (
-    
     <GestureHandlerRootView>
       <SafeAreaView
         edges={["right", "left", "top"]}
@@ -290,6 +318,7 @@ function PatientHomeScreen() {
                 </Text>
               ) : (
                 <ScrollView
+                  ref={scrollRef}
                   horizontal
                   showsVerticalScrollIndicator={false}
                   showsHorizontalScrollIndicator={false}
@@ -324,6 +353,76 @@ function PatientHomeScreen() {
                         });
                       }}
                     />
+                  )}
+                  {unviewedSideEffect && (
+                    <>
+                      {unviewedSideEffect.map((sideEffect) => {
+                        console.log(
+                          "SIDE EFFECT IS " + JSON.stringify(sideEffect)
+                        );
+                        return (
+                          <ToDoCard
+                            title={"Unviewed Side\nEffect Remarks"}
+                            icon="eye-off"
+                            count={0}
+                            onPressedCallback={() => {
+                              editDocument(
+                                FIREBASE_COLLECTION.SIDE_EFFECT,
+                                sideEffect.id,
+                                { is_patient_viewed: true }
+                              );
+                              dispatch(
+                                updateSideEffect({
+                                  id: sideEffect.id,
+                                  changes: { is_patient_viewed: true },
+                                })
+                              );
+                              navigate("SideEffectDetailsScreen", {
+                                sideEffect: sideEffect,
+                              });
+                              if (scrollRef.current) {
+                                scrollRef.current.scrollTo({
+                                  x: 0,
+                                  animated: false,
+                                });
+                              }
+                            }}
+                          />
+                        );
+                      })}
+                    </>
+                  )}
+                  {unviewedAppointment && (
+                    <>
+                      {unviewedAppointment.map((appointment) => {
+                        console.log(
+                          "SIDE EFFECT IS " + JSON.stringify(appointment)
+                        );
+                        return (
+                          <ToDoCard
+                            title={"Unviewed Appointment\nRemarks"}
+                            icon="eye-off"
+                            count={0}
+                            onPressedCallback={() => {
+                              editDocument(
+                                FIREBASE_COLLECTION.APPOINTMENT,
+                                appointment.id,
+                                { is_patient_viewed: true }
+                              );
+                              dispatch(
+                                up({
+                                  id: appointment.id,
+                                  changes: { is_patient_viewed: true },
+                                })
+                              );
+                              navigate("AppointmentDetailsScreen", {
+                                appointment: appointment,
+                              });
+                            }}
+                          />
+                        );
+                      })}
+                    </>
                   )}
                   {/* TODO Video Call Missed */}
                   {/* <ToDoCard

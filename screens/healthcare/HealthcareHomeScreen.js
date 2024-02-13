@@ -94,7 +94,7 @@ function HealthcareHomeScreen() {
       fetchSideEffects({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
     );
 
-    videoSubmittedGraphRef.current.fetchData();
+    // videoSubmittedGraphRef.current.fetchData();
     sideEffectSubmittedGraphRef.current.fetchData();
     sideEffectSymptomsGraphRef.current.fetchData();
   };
@@ -135,8 +135,8 @@ function HealthcareHomeScreen() {
 
   //Fetch data for graph
   React.useEffect(() => {
-    videoSubmittedGraphRef.current.fetchData();
-    sideEffectSubmittedGraphRef.current.fetchData();
+    // videoSubmittedGraphRef.current.fetchData();
+    // sideEffectSubmittedGraphRef.current.fetchData();
     sideEffectSymptomsGraphRef.current.fetchData();
   }, []);
 
@@ -306,8 +306,8 @@ function HealthcareHomeScreen() {
           >
             {t("analytics")}
           </Text>
-          <VideoSubmittedGraph ref={videoSubmittedGraphRef} />
-          <SideEffectSubmittedGraph ref={sideEffectSubmittedGraphRef} />
+          {/* <VideoSubmittedGraph ref={videoSubmittedGraphRef} />
+          <SideEffectSubmittedGraph ref={sideEffectSubmittedGraphRef} /> */}
           <SideEffectDetailsGraph ref={sideEffectSymptomsGraphRef} />
         </View>
         <View

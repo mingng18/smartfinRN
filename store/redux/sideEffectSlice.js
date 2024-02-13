@@ -66,6 +66,7 @@ export const sideEffectSlice = createSlice({
       const index = state.sideEffects.findIndex(
         (sideEffect) => sideEffect.id === action.payload.id
       );
+      console.log( "slice is " + JSON.stringify(state.sideEffects[index]))
       if (index !== -1) {
         state.sideEffects[index] = {
           ...state.sideEffects[index],
