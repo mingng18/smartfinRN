@@ -429,42 +429,42 @@ export default function TreatmentInfoForm({ isEditing }) {
       //treatment
       // setDiagnosisDate(user.date_of_diagnosis.slice(0, 10));
       setDiagnosisDate(
-        new Date(user.date_of_diagnosis).toISOString().slice(0, 10)
+        new Date(localUser.date_of_diagnosis).toISOString().slice(0, 10)
       );
-      setDiagnosisSubmitDate(new Date(user.date_of_diagnosis));
+      setDiagnosisSubmitDate(new Date(localUser.date_of_diagnosis));
 
-      setDiagnosis(user.diagnosis);
-      setDurationOfTreatment(parseInt(user.treatment_duration_months));
+      setDiagnosis(localUser.diagnosis);
+      setDurationOfTreatment(parseInt(localUser.treatment_duration_months));
 
-      setTreatment(user.treatment);
-      setNumberOfTablets(parseInt(user.number_of_tablets));
+      setTreatment(localUser.treatment);
+      setNumberOfTablets(parseInt(localUser.number_of_tablets));
 
       console.log(
         "treatment start date: " +
-          new Date(user.treatment_start_date).toISOString().slice(0, 10)
+          new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
       );
       console.log(
         "treatment end date: " +
-          new Date(user.treatment_end_date).toISOString().slice(0, 10)
+          new Date(localUser.treatment_end_date).toISOString().slice(0, 10)
       );
       setTreatmentStartDate(
-        new Date(user.treatment_start_date).toISOString().slice(0, 10)
+        new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
       );
-      setTreatmentStartSubmitDate(new Date(user.treatment_start_date));
+      setTreatmentStartSubmitDate(new Date(localUser.treatment_start_date));
 
       setTreatmentEndDate(
-        new Date(user.treatment_end_date).toISOString().slice(0, 10)
+        new Date(localUser.treatment_end_date).toISOString().slice(0, 10)
       );
-      setTreatmentEndSubmitDate(new Date(user.treatment_end_date));
+      setTreatmentEndSubmitDate(new Date(localUser.treatment_end_date));
     }
   }, [isEditing]);
 
   //TODO healthcare update profile
   async function handleUpdateTreatment() {
-    if (user.user_type == USER_TYPE.PATIENT) {
+    if (localUser.user_type == USER_TYPE.PATIENT) {
       // console.log("user first name: " + user.first_name);
       try {
-        await editDocument(FIREBASE_COLLECTION.PATIENT, user.user_uid, {
+        await editDocument(FIREBASE_COLLECTION.PATIENT, localUser.user_uid, {
           date_of_diagnosis: diagnosisSubmitDate,
           diagnosis: diagnosis,
           treatment_duration_months: durationOfTreatment,
@@ -476,17 +476,17 @@ export default function TreatmentInfoForm({ isEditing }) {
         dispatch(
           fetchPatientData({
             //unchanged part
-            first_name: user.first_name,
-            last_name: user.last_name,
-            gender: user.gender,
-            phone_number: user.phone_number,
-            nationality: user.nationality,
-            nric_passport: user.nric_passport,
-            age: user.age,
-            compliance_status: user.compliance_status,
-            email: user.email,
-            notes: user.notes,
-            profile_pic_url: user.profile_pic_url,
+            first_name: localUser.first_name,
+            last_name: localUser.last_name,
+            gender: localUser.gender,
+            phone_number: localUser.phone_number,
+            nationality: localUser.nationality,
+            nric_passport: localUser.nric_passport,
+            age: localUser.age,
+            compliance_status: localUser.compliance_status,
+            email: localUser.email,
+            notes: localUser.notes,
+            profile_pic_url: localUser.profile_pic_url,
             //changed part
             date_of_diagnosis: diagnosisDate,
             diagnosis: diagnosis,

@@ -27,7 +27,7 @@ import {
 } from "../../constants/constants";
 import { fetchPatientData } from "../../store/redux/authSlice";
 import { editDocument } from "../../util/firestoreWR";
-import countryList from "../../assets/data/countryList.json"
+import countryList from "../../assets/data/countryList.json";
 import * as Haptics from "expo-haptics";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
@@ -98,7 +98,7 @@ export default function PersonalInfoForm({ isEditing }) {
       setFirstName(user.first_name);
       setLastName(user.last_name);
       setGender(user.gender);
-      setPhoneNumber(user.phone_number);
+      setPhoneNumber(user.phone_number.substring(3));
       setNationality(user.nationality);
       setNric(user.nric_passport);
       setPassport(user.nric_passport);
@@ -116,8 +116,7 @@ export default function PersonalInfoForm({ isEditing }) {
         countryList.find((country) => country.name === "Indonesia")
       );
     }
-  },[nationality])
-
+  }, [nationality]);
 
   //Calculate the age based on nric, triggered when nric is changed
   function handlerForAgeInputChange(value) {
@@ -325,7 +324,7 @@ export default function PersonalInfoForm({ isEditing }) {
           items={nationalityData}
           setItems={setNationalityData}
           placeholder={t("nationality_placeholder")}
-          listMode="MODAL"
+          // listMode="MODAL"
         />
         <View
           style={{
