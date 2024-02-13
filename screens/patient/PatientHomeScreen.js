@@ -357,12 +357,12 @@ function PatientHomeScreen() {
                   {unviewedSideEffect && (
                     <>
                       {unviewedSideEffect.map((sideEffect) => {
-                        console.log(
-                          "SIDE EFFECT IS " + JSON.stringify(sideEffect)
-                        );
+                        // console.log(
+                        //   "SIDE EFFECT IS " + JSON.stringify(sideEffect)
+                        // );
                         return (
                           <ToDoCard
-                            title={"Unviewed Side\nEffect Remarks"}
+                            title={t("unviewed_side_effect")}
                             icon="eye-off"
                             count={0}
                             onPressedCallback={() => {
@@ -395,12 +395,9 @@ function PatientHomeScreen() {
                   {unviewedAppointment && (
                     <>
                       {unviewedAppointment.map((appointment) => {
-                        console.log(
-                          "SIDE EFFECT IS " + JSON.stringify(appointment)
-                        );
                         return (
                           <ToDoCard
-                            title={"Unviewed Appointment\nRemarks"}
+                            title={t("unviewed_appointment")}
                             icon="eye-off"
                             count={0}
                             onPressedCallback={() => {

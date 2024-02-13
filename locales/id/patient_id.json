@@ -9,6 +9,8 @@
   "medication_not_taken_title": "Anda belum mengonsumsi\nobat hari ini",
   "appointment_title": "Janji Temu",
   "video_rejected_title": "Video Ditolak",
+  "unviewed_side_effect": "Catatan Efek Samping yang\nBelum Dilihat",
+  "unviewed_appointment": "Catatan Janji yang\nBelum Dilihat",
   "up_for_something_text": "Apakah Anda ingin melakukan sesuatu?",
   "upload_video_title": "Mengambil Video",
   "side_effect_title": "Efek Samping",
@@ -240,6 +242,6 @@
   "completed": "Selesai",
   "cancelled": "Dibatalkan",
 
-  "updating_reminder":"Sedang Mengemaskini Peringatan",
-  "wait_while_updating_reminder":"Sila tunggu sementara pengingat anda dikemaskini"
+  "updating_reminder": "Sedang Mengemaskini Peringatan",
+  "wait_while_updating_reminder": "Sila tunggu sementara pengingat anda dikemaskini"
 }
