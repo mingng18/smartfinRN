@@ -176,15 +176,21 @@ function PatientHomeScreen() {
   }, [sideEffects]);
 
   const pendingNumber = () => {
-    var count = unviewedAppointment.length + unviewedSideEffect.length;
+    var count = 0;
     if (pendingAppointmentsCount > 0) {
-      count++;
+      count += pendingAppointmentsCount;
     }
     if (!hasAteMedicine) {
       count++;
     }
     if (rejectedVideo) {
       count++;
+    }
+    if (unviewedAppointment) {
+      count += unviewedAppointment.length;
+    }
+    if (unviewedSideEffect) {
+      count += unviewedSideEffect.length;
     }
 
     return count;
