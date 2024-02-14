@@ -95,7 +95,7 @@ function HealthcareHomeScreen() {
     );
 
     // videoSubmittedGraphRef.current.fetchData();
-    sideEffectSubmittedGraphRef.current.fetchData();
+    // sideEffectSubmittedGraphRef.current.fetchData();
     sideEffectSymptomsGraphRef.current.fetchData();
   };
 
