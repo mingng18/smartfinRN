@@ -2,7 +2,10 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Chip, useTheme } from "react-native-paper";
-import { CALENDAR_ENTITIES } from "../../constants/constants";
+import {
+  APPOINTMENT_STATUS,
+  CALENDAR_ENTITIES,
+} from "../../constants/constants";
 import Legend from "./Legend";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -53,18 +56,26 @@ export default function CustomCalendar({
 
       //Appointment is selected
       if (currentSelected === CALENDAR_ENTITIES.APPOINTMENT) {
-        const appointmentMatch = appointment.some(
+        const appointmentMatch = appointment.filter(
           (item) =>
             new Date(item.scheduled_timestamp).toISOString().slice(0, 10) ===
             date
         );
-        acc[date] = {
-          selected: true,
-          selectedColor: appointmentMatch
-            ? theme.colors.secondaryContainer
-            : theme.colors.background,
-          selectedTextColor: theme.colors.onBackground,
-        };
+        if (appointmentMatch) {
+          appointmentMatch.forEach((appointment) => {
+            acc[date] = {
+              selected: true,
+              selectedColor:
+                appointment.appointment_status === APPOINTMENT_STATUS.PENDING
+                  ? theme.colors.errorContainer
+                  : appointment.appointment_status ===
+                    APPOINTMENT_STATUS.COMPLETED
+                  ? theme.colors.secondaryContainer
+                  : theme.colors.background,
+              selectedTextColor: theme.colors.onBackground,
+            };
+          });
+        }
       }
 
       //Video is selected

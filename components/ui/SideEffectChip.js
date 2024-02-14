@@ -1,4 +1,4 @@
-import { Chip, useTheme } from "react-native-paper";
+import { Chip, Text, useTheme } from "react-native-paper";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +8,7 @@ export default function SideEffectChip({ symptom }) {
 
   function formatSymptomKey(symptom) {
     // Replace spaces with underscores and convert to lowercase
-    return symptom.toLowerCase().replace(/\s+/g, "_").replace(/\(|\)/g, "");;
+    return symptom.toLowerCase().replace(/\s+/g, "_").replace(/\(|\)/g, "");
   }
 
   return (
@@ -23,10 +23,16 @@ export default function SideEffectChip({ symptom }) {
             ? theme.colors.errorContainer
             : theme.colors.surfaceContainer,
       }}
-    >{console.log(formatSymptomKey(symptom.label))}
+      textStyle={{
+        flexWrap: "wrap",
+      }}
+    >
+      {/* <Text numberOfLines={2} style={{ flexWrap: "wrap" }}> */}
       {symptom.grade == 0
-        ? symptom.label
+        ? capitalizeFirstLetter(symptom.label)
         : `${t(formatSymptomKey(symptom.label))} : ${symptom.grade}`}
+      {/* </Text> */}
+      {/* {console.log(formatSymptomKey(symptom.label))} */}
     </Chip>
   );
 }

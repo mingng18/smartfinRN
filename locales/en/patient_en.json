@@ -220,8 +220,8 @@
   "umi": "Umi",
   "profile": "Profile",
 
-  "more_tb_materials": "More TB Materials",
-  "my_tb_materials": "My TB Materials",
+  "more_tb_materials": "About Tuberculosis",
+  "my_tb_materials": "About MyTBCompanion",
 
   "tb_definition_title": "What is Tuberculosis (TB)?",
   "tb_definition_description": "Tuberculosis (TB) is an infectious disease that most often affects the lungs. TB is caused by a type of bacteria. It spreads through the air when infected people cough, sneeze, or spit.",
@@ -244,5 +244,9 @@
   "cancelled": "Cancelled",
 
   "updating_reminder":"Updating Reminder",
-  "wait_while_updating_reminder":"Please wait while updating your reminder"
+  "wait_while_updating_reminder":"Please wait while updating your reminder",
+
+  "continue_vots": "Continue VOTS",
+  "switch_to_dots": "Switch to DOTS",
+  "appointment_to_see_dr": "Appointment to see Doctor"
 }

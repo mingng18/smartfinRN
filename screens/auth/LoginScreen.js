@@ -32,7 +32,7 @@ function LoginScreen() {
   }, []);
 
   React.useLayoutEffect(() => {
-    // navigate("TreatmentInfoScreen");
+    // navigate("ChooseYourAccountType");
   });
   async function loginHandler({ email, password }) {
     setIsAuthenticating(true);

@@ -37,18 +37,38 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
     "#2F628C",
     "#BA1A1A",
     "#DBE1FF",
-    "#1E6586",
+    "#9E6586",
     "#CEE5FF",
-    "#C5E7FF",
+    "#A4C6E0",
     "#FFDAD6",
     "#FAF8F0",
     "#E2E2EC",
     "#757680",
-    "#000000",
+    "#FFFFDD",
+    "#E2FDED",
+    "#B4C5FF",
+    "#87CEEB",
+    "#DAD9E0",
+    "#4B5C92",
+    "#2F628C",
+    "#BA1A1A",
+    "#DBE1FF",
+    "#1E6586",
+    "#CEE5FF",
+    "#A4C6E0",
+    "#FFDAD6",
+    "#F8F8E0",
+    "#E2E2EC",
+    "#757680",
+    "#F0E68C",
     "#2F3036",
     "#B4C5FF",
-    "#9BCBFB",
+    "#87CEEB",
     "#DAD9E0",
+    "#4B5C92",
+    "#2F628C",
+    "#BA1A1A",
+    "#DBE1FF",
   ];
 
   //Change patient modal
@@ -88,7 +108,10 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       sideEffectData.forEach((sideEffect) => {
         sideEffect.symptoms.forEach((symptom) => {
           const count = sideEffectCounts.get(symptom.label) || 0;
-          sideEffectCounts.set(symptom.label, count + 1);
+          sideEffectCounts.set(
+            `${t(symptom.label)} : ${symptom.grade}`,
+            count + 1
+          );
           totalCount++;
         });
       });
@@ -96,10 +119,9 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       // Convert the map to the desired format with percentage values
       const formattedData = Array.from(sideEffectCounts).map(
         ([symptom, count]) => {
-          const percentage = (count / totalCount) * 100;
           return {
             x: t(symptom),
-            y: percentage,
+            y: count,
           };
         }
       );
@@ -166,9 +188,9 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
         <>
           <VictoryPie
             colorScale={colorContainer}
-            labels={({ datum }) => `${Math.round(datum.y)}%`}
+            labels={({ datum }) => `${Math.round(datum.y)}`}
             labelRadius={100}
-            style={{ labels: { fontSize: 14, fontFamily: 'DMSans-Bold' } }}
+            style={{ labels: { fontSize: 14, fontFamily: "DMSans-Bold" } }}
             data={sideEffectSymptoms}
           />
           <View

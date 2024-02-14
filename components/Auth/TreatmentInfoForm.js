@@ -50,19 +50,18 @@ export default function TreatmentInfoForm({ isEditing }) {
   const [diagnosisCalendarOpen, setDiagnosisCalendarOpen] =
     React.useState(false);
   const [diagnosisDate, setDiagnosisDate] = React.useState("");
-  const [diagnosisSubmitDate, setDiagnosisSubmitDate] = React.useState("");
+  const [diagnosisSubmitDate, setDiagnosisSubmitDate] = React.useState();
 
   const [treatmentStartCalendarOpen, setTreatmentStartCalendarOpen] =
     React.useState(false);
   const [treatmentStartDate, setTreatmentStartDate] = React.useState("");
   const [treatmentStartSubmitDate, setTreatmentStartSubmitDate] =
-    React.useState("");
+    React.useState();
 
   const [treatmentEndCalendarOpen, setTreatmentEndCalendarOpen] =
     React.useState(false);
   const [treatmentEndDate, setTreatmentEndDate] = React.useState("");
-  const [treatmentEndSubmitDate, setTreatmentEndSubmitDate] =
-    React.useState("");
+  const [treatmentEndSubmitDate, setTreatmentEndSubmitDate] = React.useState();
 
   //Diagnosis Drop down
   const [diagnosisOpen, setDiagnosisOpen] = React.useState(false);
@@ -155,16 +154,16 @@ export default function TreatmentInfoForm({ isEditing }) {
     return formattedDate;
   }
 
-  function revertFailedSignup(){
+  function revertFailedSignup() {
     try {
       auth().currentUser.delete();
       dispatch(setFirstTimeLogin({ first_time_login: false }));
-      dispatch(authenticate({isAuthenticated: false}))
-      dispatch(logoutDeleteNative())
-      dispatch(clearSignupSlice())
-      console.log("Signup reverted")
+      dispatch(authenticate({ isAuthenticated: false }));
+      dispatch(logoutDeleteNative());
+      dispatch(clearSignupSlice());
+      console.log("Signup reverted");
     } catch (error) {
-      console.log("Failed to revert signup")
+      console.log("Failed to revert signup");
     }
   }
 
@@ -380,7 +379,10 @@ export default function TreatmentInfoForm({ isEditing }) {
         console.log("token: " + localUser.token);
         console.log("uid: " + localUser.user_uid);
 
-        uploadProfilePicAndWriteIntoDatabase(localUser.user_uid, localUser.token);
+        uploadProfilePicAndWriteIntoDatabase(
+          localUser.user_uid,
+          localUser.token
+        );
         dispatch(setFirstTimeLogin({ first_time_login: false }));
       } catch (error) {
         console.log("Sign up for first time login user failed: " + error);
@@ -434,7 +436,7 @@ export default function TreatmentInfoForm({ isEditing }) {
       setDiagnosisSubmitDate(new Date(localUser.date_of_diagnosis));
 
       setDiagnosis(localUser.diagnosis);
-      setDurationOfTreatment(parseInt(localUser.treatment_duration_months));
+      // setDurationOfTreatment(parseInt(localUser.treatment_duration_months));
 
       setTreatment(localUser.treatment);
       setNumberOfTablets(parseInt(localUser.number_of_tablets));
@@ -507,6 +509,34 @@ export default function TreatmentInfoForm({ isEditing }) {
       }
     }
   }
+  React.useEffect(() => {
+    setDurationOfTreatment(
+      calculateTreatmentDuration(
+        treatmentStartSubmitDate,
+        treatmentEndSubmitDate
+      )
+    );
+  }, [treatmentEndSubmitDate]);
+
+  function calculateTreatmentDuration(
+    treatmentStartSubmitDate,
+    treatmentEndSubmitDate
+  ) {
+    if (treatmentStartSubmitDate && treatmentEndSubmitDate) {
+      const startMonth = treatmentStartSubmitDate.getMonth();
+      const endMonth = treatmentEndSubmitDate.getMonth();
+      const startYear = treatmentStartSubmitDate.getFullYear();
+      const endYear = treatmentEndSubmitDate.getFullYear();
+
+      // console.log("as " + Math.floor(
+      //   (endYear - startYear) * 12 + (endMonth - startMonth) + 1
+      // ))
+
+      return Math.floor(
+        (endYear - startYear) * 12 + (endMonth - startMonth) + 1
+      );
+    }
+  }
 
   const today = new Date();
   const validEndRange = {
@@ -569,18 +599,8 @@ export default function TreatmentInfoForm({ isEditing }) {
         placeholder={t("diagnosis")}
         listMode="SCROLLVIEW"
       />
-      <TextInput
-        mode="outlined"
-        label={t("diagnosis_duration")}
-        style={{ marginTop: 12 }}
-        placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
-        maxLength={2}
-        value={`${durationOfTreatment}`}
-        keyboardType="numeric"
-        onChangeText={(text) => setDurationOfTreatment(text)}
-        error={credentialsInvalid.durationOfTreatment}
-      />
-      <Text variant="titleLarge" style={{ marginTop: 32, marginBottom: 16 }}>
+
+      <Text variant="titleLarge" style={{ marginTop: 40, marginBottom: 16 }}>
         {t("my_treatment")}
       </Text>
       <Pressable
@@ -629,6 +649,17 @@ export default function TreatmentInfoForm({ isEditing }) {
           />
         </View>
       </Pressable>
+      <TextInput
+        mode="outlined"
+        label={t("diagnosis_duration")}
+        style={{ marginBottom: 16 }}
+        placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
+        maxLength={2}
+        value={`${durationOfTreatment}`}
+        keyboardType="numeric"
+        onChangeText={(text) => setDurationOfTreatment(text)}
+        error={credentialsInvalid.durationOfTreatment}
+      />
       <CustomDropDownPicker
         zIndex={3000}
         zIndexInverse={1000}

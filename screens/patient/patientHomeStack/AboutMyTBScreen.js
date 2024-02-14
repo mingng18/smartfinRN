@@ -20,39 +20,57 @@ export default function AboutMyTBScreen() {
 
   const accordionData = [
     {
-      title: "What is Tuberculosis (TB)?",
+      title: "What is MyTBCompanion?",
       description:
-        "Tuberculosis (TB) is an infectious disease that most often affects the lungs. TB is caused by a type of bacteria. It spreads through the air when infected people cough, sneeze, or spit.",
+        "MyTBCompanion is a mobile health application designed to improve Tuberculosis management among patients and healthcare providers. Its main feature is Video Observed Therapy.",
     },
     {
-      title: "What are the common signs and symptoms of TB?",
+      title: "What can MyTBCompanion do?",
       description:
-        "The most common symptoms of TB include:\n• A cough that lasts for more than two (2) weeks\n• Cough with sputum which is occasionally bloodstained\n• Loss of appetite and loss of weight\n• Fever\n• Dyspnea, night sweats, chest pain, and hoarseness of voice.",
+        "MyTBCompanion allows users to:\n- Upload self-medication videos\n- Report side effects\n- Book appointments\n- Monitor progress\n- Set medication reminders and receive alerts",
     },
     {
-      title: "How does TB spread?",
-      description:
-        "Infection is usually by direct airborne transmission from person to person.",
+      title: "How should I register?",
+      description: "",
     },
     {
-      title: "Can TB be cured?",
-      description:
-        "The vast majority of TB cases can be cured when medicines are provided and taken properly.",
+      title: "How do I record and upload the video?",
+      description: "",
     },
     {
-      title: "What is Direct Observed Therapy (DOT)?",
-      description:
-        "DOT is a strategy used to ensure TB patient adherence to and tolerability of the prescribed treatment regimen; a health care worker or another designated person watches the TB patient swallow each dose of the prescribed drugs.",
+      title: "Is there any specification and requirement of the video?",
+      description: "",
     },
     {
-      title: "What is Video Observed Therapy (VOT)?",
-      description:
-        "VOT is the use of a videophone or other video/computer equipment to observe tuberculosis (TB) patients taking their medications remotely.",
+      title: "How should I report the side effects of the medication?",
+      description: "",
     },
     {
-      title: "Video example",
-      description: "Video example",
-      videoId: "iee2TATGMyI",
+      title: "How should I track the progress of my medication?",
+      description: "",
+    },
+    {
+      title: "How should I make an appointment for online consultations?",
+      description: "",
+    },
+    {
+      title:
+        "How should I set the reminder to remind me to take medications on time?",
+      description: "",
+    },
+    {
+      title: "How to use Umi Chatbot?",
+      description: "",
+    },
+    {
+      title: "Five things to know about Tuberculosis",
+      description: "",
+      videoId: "https://www.youtube.com/watch?v=wA_fObLY6GE",
+    },
+    {
+      title: "How the body reacts to Tuberculosis?",
+      description: "",
+      videoId: "https://www.youtube.com/watch?v=IGZLkRN76Dc",
     },
   ];
 

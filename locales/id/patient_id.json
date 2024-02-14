@@ -219,8 +219,8 @@
   "umi": "Umi",
   "profile": "Profil",
 
-  "more_tb_materials": "Bahan TB Tambahan",
-  "my_tb_materials": "Bahan MyTB",
+  "more_tb_materials": "Tentang Tuberkulosis",
+  "my_tb_materials": "Tentang MyTBCompanion",
 
   "tb_definition_title": "Apa itu Tuberkulosis (TB)?",
   "tb_definition_description": "Tuberkulosis (TB) adalah penyakit menular yang paling sering mempengaruhi paru-paru. TB disebabkan oleh jenis bakteri. Penyebarannya melalui udara ketika orang yang terinfeksi batuk, bersin, atau meludah.",
@@ -243,5 +243,9 @@
   "cancelled": "Dibatalkan",
 
   "updating_reminder": "Sedang Mengemaskini Peringatan",
-  "wait_while_updating_reminder": "Sila tunggu sementara pengingat anda dikemaskini"
+  "wait_while_updating_reminder": "Sila tunggu sementara pengingat anda dikemaskini",
+
+  "continue_vots": "Lanjutkan VOTS",
+  "switch_to_dots": "Beralih ke DOTS",
+  "appointment_to_see_dr": "Janji untuk bertemu dengan dokter"
 }

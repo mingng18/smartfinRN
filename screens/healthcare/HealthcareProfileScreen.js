@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import { Alert, StyleSheet, View } from "react-native";
-import { Button, IconButton, Text, useTheme } from "react-native-paper";
+import { Alert, StyleSheet, View, Image } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CachedImage from "expo-cached-image";
@@ -99,7 +99,8 @@ export default function HealthcareProfileScreen() {
           </Text>
         </View>
         <Button
-          mode="text"
+          mode="contained"
+          style={{ alignSelf: "flex-start" }}
           onPress={() => {
             navigate("HealthcareEditProfileScreen");
           }}

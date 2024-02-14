@@ -35,7 +35,8 @@ const PatientDetailsTab = ({ patient }) => {
     fetchData();
   }, [patient.id]);
 
-  function ViewPatientAppointment() {
+  const ViewPatientAppointment = React.useCallback(() => {
+    console.log("hahahha")
     return (
       <ScrollView
         nestedScrollEnabled
@@ -101,9 +102,9 @@ const PatientDetailsTab = ({ patient }) => {
         )}
       </ScrollView>
     );
-  }
+  }, [patientAppointments]);
 
-  function ViewPatientSideEffect() {
+  const ViewPatientSideEffect = React.useCallback(() => {
     return (
       <ScrollView
         nestedScrollEnabled
@@ -115,7 +116,7 @@ const PatientDetailsTab = ({ patient }) => {
         <View style={{ marginTop: 16 }} />
         {patientSideEffects.length > 0 ? (
           patientSideEffects.map((sideEffect, i) => {
-            console.log(patientSideEffects);
+            // console.log(patientSideEffects);
             return (
               <ScrollView
                 horizontal
@@ -158,7 +159,7 @@ const PatientDetailsTab = ({ patient }) => {
         )}
       </ScrollView>
     );
-  }
+  }, [patientSideEffects]);
 
   function ViewPatientGoalTracker() {
     const marked = React.useMemo(() => {
@@ -270,9 +271,18 @@ const PatientDetailsTab = ({ patient }) => {
       backBehavior="none"
       style={{ margin: 0, padding: 0 }}
     >
-      <TopTabs.Screen name={t("appointment")} component={ViewPatientAppointment} />
-      <TopTabs.Screen name={t("side_effect")} component={ViewPatientSideEffect} />
-      <TopTabs.Screen name={t("goal_tracker")} component={ViewPatientGoalTracker} />
+      <TopTabs.Screen
+        name={t("appointment")}
+        component={ViewPatientAppointment}
+      />
+      <TopTabs.Screen
+        name={t("side_effect")}
+        component={ViewPatientSideEffect}
+      />
+      <TopTabs.Screen
+        name={t("goal_tracker")}
+        component={ViewPatientGoalTracker}
+      />
     </TopTabs.Navigator>
   );
 };

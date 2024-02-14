@@ -198,6 +198,8 @@ export default function ReviewVideoDetailsScreen() {
             <Text variant="bodyMedium">{t("provide_reasons")}</Text>
             <TextInput
               mode="outlined"
+              multiline
+              numberOfLines={10}
               style={{ marginTop: 8 }}
               placeholder={t("type_reason_here")}
               value={reason}

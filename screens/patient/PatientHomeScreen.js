@@ -27,7 +27,10 @@ import {
   USER_TYPE,
   VIDEO_STATUS,
 } from "../../constants/constants";
-import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import {
+  fetchAppointments,
+  updateAppointment,
+} from "../../store/redux/appointmentSlice";
 import {
   fetchSideEffects,
   updateSideEffect,
@@ -173,7 +176,7 @@ function PatientHomeScreen() {
   }, [sideEffects]);
 
   const pendingNumber = () => {
-    var count = 0;
+    var count = unviewedAppointment.length + unviewedSideEffect.length;
     if (pendingAppointmentsCount > 0) {
       count++;
     }
@@ -362,6 +365,7 @@ function PatientHomeScreen() {
                         // );
                         return (
                           <ToDoCard
+                            key={sideEffect.id}
                             title={t("unviewed_side_effect")}
                             icon="eye-off"
                             count={0}
@@ -397,6 +401,7 @@ function PatientHomeScreen() {
                       {unviewedAppointment.map((appointment) => {
                         return (
                           <ToDoCard
+                            key={appointment.id}
                             title={t("unviewed_appointment")}
                             icon="eye-off"
                             count={0}
@@ -407,7 +412,7 @@ function PatientHomeScreen() {
                                 { is_patient_viewed: true }
                               );
                               dispatch(
-                                up({
+                                updateAppointment({
                                   id: appointment.id,
                                   changes: { is_patient_viewed: true },
                                 })
@@ -415,6 +420,12 @@ function PatientHomeScreen() {
                               navigate("AppointmentDetailsScreen", {
                                 appointment: appointment,
                               });
+                              if (scrollRef.current) {
+                                scrollRef.current.scrollTo({
+                                  x: 0,
+                                  animated: false,
+                                });
+                              }
                             }}
                           />
                         );

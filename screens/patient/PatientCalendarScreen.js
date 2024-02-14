@@ -122,7 +122,9 @@ function PatientCalendarScreen() {
 
       if (today.getDate() === new Date(selectedDate).getDate()) {
         return (
-          <Pressable onPress={() => navigate("CameraScreen", { isVideo: true })}>
+          <Pressable
+            onPress={() => navigate("CameraScreen", { isVideo: true })}
+          >
             <View
               style={{
                 backgroundColor: theme.colors.surfaceContainerHigh,
@@ -257,7 +259,11 @@ function PatientCalendarScreen() {
                   minute: "numeric",
                   hour12: true,
                 })}
-                color={theme.colors.secondaryContainer}
+                color={
+                  appointment.appointment_status === APPOINTMENT_STATUS.PENDING
+                    ? theme.colors.errorContainer
+                    : theme.colors.secondaryContainer
+                }
                 onPressedCallback={() => {
                   navigate("AppointmentDetailsScreen", {
                     appointment: appointment,
