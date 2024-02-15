@@ -52,7 +52,7 @@ const ChooseYourAccountType = () => {
       }}
     >
       <Image source={LOGO_BLACK_TYPE} style={{ width: 148, height: 148 }} />
-      <Text variant="titleLarge" style={{ marginTop: 24, marginBottom: 8 }}>
+      <Text variant="titleLarge" style={{ marginTop: 24, marginBottom: 8 , marginHorizontal:8}}>
         Welcome to MyTBCompanion
       </Text>
       <Text variant="bodyLarge">Who are you?</Text>

@@ -1,28 +1,39 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useRef } from "react";
+import * as Haptics from "expo-haptics";
 import { useTheme, Text, Divider } from "react-native-paper";
+import { Pressable, ScrollView, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+import {
+  GestureHandlerRootView,
+  RefreshControl,
+} from "react-native-gesture-handler";
+import * as SecureStore from "expo-secure-store";
+
 import CustomCalendar from "../../components/ui/CustomCalendar";
-import { ScrollView } from "react-native-gesture-handler";
 import HorizontalCard from "../../components/ui/HorizontalCard";
-import { Pressable, View } from "react-native";
 import { capitalizeFirstLetter } from "../../util/wordUtil";
-import { useSelector } from "react-redux";
 import {
   APPOINTMENT_STATUS,
   CALENDAR_ENTITIES,
   HORIZONTAL_CARD_TYPE,
   SIDE_EFFECT_SEVERITY,
+  USER_TYPE,
 } from "../../constants/constants";
 import UploadVideoModal from "./patientHomeStack/UploadVideoModal";
-import { useTranslation } from "react-i18next";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchBookedAppointmentDates } from "../../store/redux/bookedAppointmentDateSlice";
 
 function PatientCalendarScreen() {
   const { navigate } = useNavigation();
   const theme = useTheme();
   const bottomSheetModalRef = useRef(null);
   const { t } = useTranslation("patient");
+  const dispatch = useDispatch();
 
   //Data state
+  const [refreshing, setRefreshing] = React.useState(false);
   const [highlightedDates, setHighlightedDates] = React.useState([]);
   const [selectedDate, setSelectedDate] = React.useState("");
   const [currentSelected, setCurrentSelected] = React.useState(
@@ -39,6 +50,23 @@ function PatientCalendarScreen() {
     (state) => state.sideEffectObject.sideEffects
   );
   const videos = useSelector((state) => state.videoObject.videos);
+
+  const onRefresh = React.useCallback(() => {
+    async function fetchDataForPatientInCalendarScreen() {
+      const storedUid = await SecureStore.getItemAsync("uid");
+      dispatch(
+        fetchAppointments({ userId: storedUid, userType: USER_TYPE.PATIENT })
+      );
+      dispatch(fetchBookedAppointmentDates({}));
+    }
+
+    setRefreshing(true);
+    fetchDataForPatientInCalendarScreen();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   //Refresh the calendar when there is new data
   React.useEffect(() => {
@@ -282,39 +310,49 @@ function PatientCalendarScreen() {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: theme.colors.background,
-        height: "100%",
-        paddingHorizontal: 16,
-        paddingTop: 56,
-      }}
-    >
-      <CustomCalendar
-        highlightedDates={highlightedDates}
-        setHighlightedDates={setHighlightedDates}
-        video={videos}
-        appointment={appointments}
-        sideEffect={sideEffects}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        currentSelected={currentSelected}
-        setCurrentSelected={setCurrentSelected}
-      />
-      <Divider style={{ marginTop: 32 }} />
+    <GestureHandlerRootView>
       <ScrollView
-        style={{ paddingTop: 32, flexGrow: 1 }}
-        showsVerticalScrollIndicator={false}
+        style={{
+          backgroundColor: theme.colors.background,
+          height: "100%",
+          paddingHorizontal: 16,
+          paddingTop: 56,
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
-        {currentSelected === CALENDAR_ENTITIES.VIDEO && VideoHorizontalCard()}
-        {currentSelected === CALENDAR_ENTITIES.SIDE_EFFECT &&
-          SideEffectHorizontalCard()}
-        {currentSelected === CALENDAR_ENTITIES.APPOINTMENT &&
-          AppointmentHorizontalCard()}
-        <View style={{ marginBottom: 54 }}></View>
+        <CustomCalendar
+          highlightedDates={highlightedDates}
+          setHighlightedDates={setHighlightedDates}
+          video={videos}
+          appointment={appointments}
+          sideEffect={sideEffects}
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          currentSelected={currentSelected}
+          setCurrentSelected={setCurrentSelected}
+        />
+        <Divider style={{ marginTop: 32 }} />
+        <ScrollView
+          style={{ paddingTop: 32, flexGrow: 1 }}
+          showsVerticalScrollIndicator={false}
+        >
+          {currentSelected === CALENDAR_ENTITIES.VIDEO && VideoHorizontalCard()}
+          {currentSelected === CALENDAR_ENTITIES.SIDE_EFFECT &&
+            SideEffectHorizontalCard()}
+          {currentSelected === CALENDAR_ENTITIES.APPOINTMENT &&
+            AppointmentHorizontalCard()}
+          <View style={{ marginBottom: 54 }}></View>
+        </ScrollView>
+        <UploadVideoModal bottomSheetModalRef={bottomSheetModalRef} />
       </ScrollView>
-      <UploadVideoModal bottomSheetModalRef={bottomSheetModalRef} />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 

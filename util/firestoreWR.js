@@ -149,7 +149,7 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
 
     const querySnapshot = await firestore()
       .collection(FIREBASE_COLLECTION.APPOINTMENT)
-      .where("appointment_status", "in", ["pending", "accepted"])
+      .where("appointment_status", "in", ["pending", "accepted", "completed"])
       .get();
 
     querySnapshot.forEach((doc) => {

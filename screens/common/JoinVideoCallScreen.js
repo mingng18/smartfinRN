@@ -74,7 +74,7 @@ export default function JoinVideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    roomRef.update({ answer: firestore.FieldValue.delete() });
+    roomRef.update({ answer: firestore.FieldValue.delete(), connected: false });
 
    
     // const roomRef = doc(db, "room", roomId);
@@ -240,6 +240,7 @@ export default function JoinVideoCallScreen({ route }) {
     if (!remoteStream) {
       return;
     }
+    
     localStream.getAudioTracks().forEach((track) => {
       track.enabled = !track.enabled;
       setIsMuted(!track.enabled);
@@ -252,6 +253,8 @@ export default function JoinVideoCallScreen({ route }) {
       setIsOffCam(!isOffCam);
     });
   };
+
+  const toggleLoudSpeaker = () => {}
 
   return (
     <View
@@ -270,11 +273,11 @@ export default function JoinVideoCallScreen({ route }) {
       {remoteStream && !isOffCam && (
         <RTCView
           style={{
-            width: 64,
-            height: 96,
+            width: "20%",
+            height: "30%",
             position: "absolute",
-            right: 6,
-            top: 10,
+            right: 8,
+            top: 8,
           }}
           streamURL={localStream && localStream.toURL()}
         />

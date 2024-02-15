@@ -20,7 +20,7 @@ const initialState = {
             {
               title: "2.1) Can I ask everything using UMI?",
               respond:
-                "You can ask anything about MyTBCompanion, but if you have any medical questions, please consult your doctor!",
+                "You can ask mostly anything about MyTBCompanion, but if you have any medical questions, please consult your doctor!",
             },
           ],
         },
@@ -41,7 +41,38 @@ const initialState = {
             {
               title: "2.3) How to upload a video",
               respond:
-                "In the home page, click on the upload button, select the way you want to upload a video (from storage or take a video) and press upload!",
+                "In the home page, click on the upload button, record a video with your built-in camera and press upload!",
+            },
+            {
+              title: "2.4) What should I do if my video gets rejected?",
+              respond:
+                "If your video gets rejected, you should check for the remarks from your doctor to understand the reason why your video is rejected.\nYou can also consult your doctor for more information!\nYou don't have to upload another video again if your video gets rejected!",
+                nextSelections: [
+                  {
+                    title: "2.4.1) How to check for the remarks?",
+                    respond:
+                      "In the bottom of the home page, click on \"My Calendar\", and click on the video you have submitted, and you will see the remarks from your doctor!",
+                  }
+                ]
+            },
+            {
+              title: "2.5) Can I preview my video after taking the video and right before uploading?",
+              respond:
+                "Yes, you can preview your video after taking the video and right before uploading!\nHowever, you can no longer view your video after uploading it!",
+            },
+            {
+              title: "2.6) Can I delete my video after uploading?",
+              respond:
+                "No, you cannot delete your video after uploading it!\nYou also cannot review your video after uploading.",
+            },
+            {
+              title: "2.7) Can I upload a video after the due date?",
+              respond:
+                "No, you cannot upload a video after the due date!",
+            },
+            {
+              title: "2.8) Is it safe to upload my video? How my video will be used?",
+              respond: "Yes, it is safe to upload your video!\nYour video will only be used by your doctor to monitor your progress and to make sure that you are taking your medication correctly!\nAfter the review, your video will be deleted from the server!",
             },
           ],
         },

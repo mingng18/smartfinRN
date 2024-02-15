@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import React from "react";
+import React, { useEffect } from "react";
 import { Alert, Pressable, View } from "react-native";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { DatePickerModal } from "react-native-paper-dates";
@@ -24,6 +24,7 @@ export default function BookAppointmentScreen() {
   const theme = useTheme();
   const { params } = useRoute();
   const { t } = useTranslation("patient");
+  const dispatch = useDispatch();
 
   const bookedAppointmentDates = useSelector(
     (state) => state.bookedAppointmentDateObject.bookedAppointmentDates
@@ -44,7 +45,7 @@ export default function BookAppointmentScreen() {
     setItems((prevItems) => {
       return prevItems.map((item) => {
         if (item.label === timeSlot) {
-          console.log("item value " + item.label);
+          console.log("item value " + item.label + " " + newValue);
           // Update the value of the item with the specified key
           return { ...item, disabled: newValue };
         }
@@ -53,7 +54,11 @@ export default function BookAppointmentScreen() {
     });
   };
 
-  const dispatch = useDispatch();
+  
+
+  useEffect(() => {
+    dispatch(fetchBookedAppointmentDates({}));
+  }, []);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -68,6 +73,7 @@ export default function BookAppointmentScreen() {
     };
 
     loadCalendarLocale();
+    
   }, [t]);
 
   function disableTimeSlotsBasedOnDate(params, isReschedule) {
@@ -86,7 +92,6 @@ export default function BookAppointmentScreen() {
           timeSlot.startsWith(selectedDate.toISOString().slice(0, 10))
         )
         .map((timeSlot) => {
-          console.log("time slot here " + timeSlot);
           const localeTime = new Date(timeSlot); // Convert to Date object
           return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
         });

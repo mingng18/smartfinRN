@@ -28,7 +28,10 @@ import { useNavigation } from "@react-navigation/native";
 import { addDocument, editDocument } from "../../util/firestoreWR";
 import { useDispatch } from "react-redux";
 import { updateAppointment } from "../../store/redux/appointmentSlice";
-import { APPOINTMENT_STATUS, FIREBASE_COLLECTION } from "../../constants/constants";
+import {
+  APPOINTMENT_STATUS,
+  FIREBASE_COLLECTION,
+} from "../../constants/constants";
 
 const configuration = {
   iceServers: [
@@ -77,8 +80,15 @@ export default function VideoCallScreen({ route }) {
     const roomRef = firestore().collection("room").doc(roomId);
     roomRef.update({ answer: firestore.FieldValue.delete() });
 
-    dispatch(updateAppointment({ ...currentAppointment, changes:{appointment_status: APPOINTMENT_STATUS.COMPLETED} }));
-    editDocument(FIREBASE_COLLECTION.APPOINTMENT, currentAppointment.id, { appointment_status: APPOINTMENT_STATUS.COMPLETED });
+    dispatch(
+      updateAppointment({
+        ...currentAppointment,
+        changes: { appointment_status: APPOINTMENT_STATUS.COMPLETED },
+      })
+    );
+    editDocument(FIREBASE_COLLECTION.APPOINTMENT, currentAppointment.id, {
+      appointment_status: APPOINTMENT_STATUS.COMPLETED,
+    });
     // const roomRef = doc(db, "room", roomId);
     // await updateDoc(roomRef, { answer: deleteField() });
 
@@ -126,8 +136,14 @@ export default function VideoCallScreen({ route }) {
     });
 
     const roomRef = firestore().collection("room").doc(id);
-    const callerCandidatesCollection = firestore().collection("room").doc(id).collection("callerCandidates");
-    const calleeCandidatesCollection = firestore().collection("room").doc(id).collection("calleeCandidates");
+    const callerCandidatesCollection = firestore()
+      .collection("room")
+      .doc(id)
+      .collection("callerCandidates");
+    const calleeCandidatesCollection = firestore()
+      .collection("room")
+      .doc(id)
+      .collection("calleeCandidates");
 
     // const roomRef = doc(db, "room", id);
     // const callerCandidatesCollection = collection(roomRef, "callerCandidates");
@@ -155,22 +171,39 @@ export default function VideoCallScreen({ route }) {
     const offer = await localPC.createOffer();
     await localPC.setLocalDescription(offer);
 
-    await roomRef.set({ offer, connected:false }, { merge: true });
+    await roomRef.set({ offer, connected: false }, { merge: true });
     // await setDoc(roomRef, { offer, connected: false }, { merge: true });
 
-
     // Listen for remote answer
-    roomRef.onSnapshot((doc) => {
+    roomRef.onSnapshot(async (doc) => {
       const data = doc.data();
       if (!localPC.currentRemoteDescription && data.answer) {
-        console.log("Got remote answer--------------------------------------------------------------------------------------------------------------------------------------------------");
+        console.log(
+          "Got remote answer--------------------------------------------------------------------------------------------------------------------------------------------------"
+        );
+        setRemoteStream(newStream);
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         localPC.setRemoteDescription(rtcSessionDescription);
+        localPC.ontrack = (e) => {
+          const newStream = new MediaStream();
+          e.streams[0].getTracks().forEach((track) => {
+            newStream.addTrack(track);
+          });
+          console.log("Got remote stream", newStream);
+          setRemoteStream(newStream);
+        };
+      } else if (!data.answer) {
+        console.log("No remote answer here");
+        localPC.setRemoteDescription(null);
+        localPC.setLocalDescription(null);
+        setRemoteStream(null);
       } else {
-        console.log("No remote answer");
+        console.log("No remote answer hereee");
+        localPC.setLocalDescription(null);
+        localPC.setRemoteDescription(null);
         setRemoteStream(null);
       }
-    })
+    });
 
     // onSnapshot(roomRef, (doc) => {
     //   const data = doc.data();
@@ -187,12 +220,12 @@ export default function VideoCallScreen({ route }) {
     // when answered, add candidate to peer connection
     calleeCandidatesCollection.onSnapshot((querySnapshot) => {
       querySnapshot.forEach((snapshot) => {
-        if(snapshot.data()) {
+        if (snapshot.data()) {
           const candidate = new RTCIceCandidate(snapshot.data());
           localPC.addIceCandidate(candidate);
         }
-      })
-    })
+      });
+    });
     // onSnapshot(calleeCandidatesCollection, (snapshot) => {
     //   snapshot.docChanges().forEach((change) => {
     //     if (change.type === "added") {

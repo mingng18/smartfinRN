@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { Alert, DeviceEventEmitter, View } from "react-native";
 import { Calendar } from "react-native-calendars";
-import { ScrollView } from "react-native-gesture-handler";
+import { RefreshControl, ScrollView } from "react-native-gesture-handler";
 import {
   Button,
   Divider,
@@ -33,6 +33,9 @@ import {
 } from "../../store/redux/appointmentSlice";
 import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 import { useTranslation } from "react-i18next";
+import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 
 export default function HealthcareAppointmentScreen() {
   const navigation = useNavigation();
@@ -49,6 +52,7 @@ export default function HealthcareAppointmentScreen() {
   );
   const today = new Date();
 
+  const [refreshing, setRefreshing] = React.useState(false);
   const [selectedDate, setSelectedDate] = React.useState("");
   const [callingAppointment, setcallingAppointment] = React.useState(null);
   const [callingAppointmentDate, setcallingAppointmentDate] =
@@ -67,6 +71,35 @@ export default function HealthcareAppointmentScreen() {
     hideAppointmentNoteModal();
     setCallingAppointmentNotes("");
   }
+
+  const onRefresh = React.useCallback(() => {
+  //Load all data with userId on the home page
+  const fetchDataForHealthcare = async () => {
+    const storedUid = await SecureStore.getItemAsync("uid");
+    dispatch(fetchPatientCollectionData());
+    dispatch(
+      fetchAppointments({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+    dispatch(
+      fetchVideos({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+    dispatch(
+      fetchSideEffects({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
+    );
+
+    // videoSubmittedGraphRef.current.fetchData();
+    // sideEffectSubmittedGraphRef.current.fetchData();
+  };
+
+    setRefreshing(true);
+    fetchDataForHealthcare();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+  
 
   useEffect(() => {
     DeviceEventEmitter.removeAllListeners("onCallOrJoin");
@@ -269,6 +302,15 @@ export default function HealthcareAppointmentScreen() {
         showsVerticalScrollIndicator={false}
         automaticallyAdjustKeyboardInsets={true}
         automaticallyAdjustContentInsets={true}
+        refreshControl={
+          <RefreshControl
+            enabled={true}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[theme.colors.primary]}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
         {/* <Portal>
           <Modal
