@@ -11,12 +11,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   createAppointment,
   deleteAppointment,
-  fetchBookedAppointmentDates,
 } from "../../../store/redux/appointmentSlice";
 import {
   APPOINTMENT_TIME,
   FIREBASE_COLLECTION,
 } from "../../../constants/constants";
+import { fetchBookedAppointmentDates } from "../../../store/redux/bookedAppointmentDateSlice";
 import { useTranslation } from "react-i18next";
 
 export default function BookAppointmentScreen() {
@@ -90,7 +90,12 @@ export default function BookAppointmentScreen() {
           const localeTime = new Date(timeSlot); // Convert to Date object
           return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
         });
+      //reset all the time slot to enable
+      items.forEach((item) => {
+        updateItemValue(item.label, false);
+      });
 
+      //disable the time slot that is already booked
       timeSlots.forEach((timeslot) => {
         updateItemValue(timeslot, true);
       });
@@ -103,7 +108,7 @@ export default function BookAppointmentScreen() {
   }
 
   React.useEffect(() => {
-    async () => await fetchBookedAppointmentDates();
+    async () => fetchBookedAppointmentDates();
 
     if (params && params.isReschedule) {
       setIsReschedule(params.isReschedule);
