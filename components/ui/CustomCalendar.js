@@ -69,7 +69,9 @@ export default function CustomCalendar({
                 appointment.appointment_status === APPOINTMENT_STATUS.PENDING
                   ? theme.colors.errorContainer
                   : appointment.appointment_status ===
-                    APPOINTMENT_STATUS.COMPLETED
+                      APPOINTMENT_STATUS.COMPLETED ||
+                    appointment.appointment_status ===
+                      APPOINTMENT_STATUS.ACCEPTED
                   ? theme.colors.secondaryContainer
                   : theme.colors.background,
               selectedTextColor: theme.colors.onBackground,
