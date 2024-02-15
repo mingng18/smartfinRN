@@ -21,6 +21,7 @@ import {
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 import { useNavigation } from "@react-navigation/native";
+import * as SplashScreen from "expo-splash-screen";
 
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
 import {
@@ -83,6 +84,7 @@ function LoginContentForm({ onAuthenticate }) {
   }, []);
 
   async function googleSignIn() {
+    
     try {
       // Check if your device supports Google Play
       await GoogleSignin.hasPlayServices({
@@ -183,6 +185,7 @@ function LoginContentForm({ onAuthenticate }) {
 
     console.log("HAHAHAHAHA");
     console.log("user checking is : " + user.uid);
+    const token = await user.getIdToken();
 
     //This function will first try to login as a patient, if not, then try to login as a healthcare
     //If not both, then the user is first time login
