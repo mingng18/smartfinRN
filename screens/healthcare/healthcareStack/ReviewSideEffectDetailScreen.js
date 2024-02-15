@@ -46,6 +46,7 @@ export default function ReviewSideEffectDetailScreen() {
         healthcare_id: storedUid,
         reviewed_timestamp: new Date(),
         se_status: SIDE_EFFECT_STATUS.REVIEWED,
+        is_patient_viewed: false,
       };
 
       await editDocument(

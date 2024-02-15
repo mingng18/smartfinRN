@@ -9,6 +9,8 @@
   "medication_not_taken_title": "Anda belum mengambil\nubat hari ini",
   "appointment_title": "Janji Temu",
   "video_rejected_title": "Video Ditolak",
+  "unviewed_side_effect": "Ulasan Kesan Sampingan\nyang Belum Dilihat",
+  "unviewed_appointment": "Ulasan Janji Temu\nyang Belum Dilihat",
   "up_for_something_text": "Adakah anda mahu melakukan sesuatu?",
   "upload_video_title": "Mengambil Video",
   "side_effect_title": "Kesan Sampingan",
@@ -217,8 +219,8 @@
   "umi": "Umi",
   "profile": "Profil",
 
-  "more_tb_materials": "Bahan TB Tambahan",
-  "my_tb_materials": "Bahan MyTB",
+  "more_tb_materials": "Mengenai Tuberkulosis",
+  "my_tb_materials": "Mengenai MyTBCompanion",
 
   "tb_definition_title": "Apakah Tuberkulosis (TB)?",
   "tb_definition_description": "Tuberkulosis (TB) adalah penyakit berjangkit yang paling sering menjejaskan paru-paru. TB disebabkan oleh jenis bakteria. Ia tersebar melalui udara apabila orang yang dijangkiti batuk, bersin, atau meludah.",
@@ -240,6 +242,10 @@
   "completed": "Selesai",
   "cancelled": "Dibatalkan",
 
-  "updating_reminder":"Sedang Mengemaskini Peringatan",
-  "wait_while_updating_reminder":"Sila tunggu sementara pengingat anda dikemaskini"
+  "updating_reminder": "Sedang Mengemaskini Peringatan",
+  "wait_while_updating_reminder": "Sila tunggu sementara pengingat anda dikemaskini",
+
+  "continue_vots": "Teruskan VOTS",
+  "switch_to_dots": "Tukar kepada DOTS",
+  "appointment_to_see_dr": "Temu janji untuk jumpa doktor"
 }

@@ -8,6 +8,9 @@ import * as SplashScreen from "expo-splash-screen";
 
 import React from "react";
 import FirstTimeLoginStack from "./FirstTimeLoginStack";
+import { USER_TYPE } from "../constants/constants";
+import { ActivityIndicator, Text } from "react-native-paper";
+import { View } from "react-native";
 
 //A function component to choose the Entry Point for user based on the log in status
 //TODO determine healthcare login status
@@ -59,10 +62,16 @@ export default function Navigation() {
       {authenticated == null ? null : authenticated ? (
         firstTimeLogin ? (
           <FirstTimeLoginStack />
-        ) : user_type === "patient" ? (
+        ) : user_type === USER_TYPE.PATIENT ? (
           <PatientStackGroup />
-        ) : (
+        ) : user_type === USER_TYPE.HEALTHCARE ? (
           <HealthcareStackGroup />
+        ) : (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <ActivityIndicator size={48} style={{ marginRight: 16 }} />
+          </View>
         )
       ) : (
         <AuthStack />

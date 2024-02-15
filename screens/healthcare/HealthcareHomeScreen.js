@@ -94,8 +94,8 @@ function HealthcareHomeScreen() {
       fetchSideEffects({ userId: storedUid, userType: USER_TYPE.HEALTHCARE })
     );
 
-    videoSubmittedGraphRef.current.fetchData();
-    sideEffectSubmittedGraphRef.current.fetchData();
+    // videoSubmittedGraphRef.current.fetchData();
+    // sideEffectSubmittedGraphRef.current.fetchData();
     sideEffectSymptomsGraphRef.current.fetchData();
   };
 
@@ -135,8 +135,8 @@ function HealthcareHomeScreen() {
 
   //Fetch data for graph
   React.useEffect(() => {
-    videoSubmittedGraphRef.current.fetchData();
-    sideEffectSubmittedGraphRef.current.fetchData();
+    // videoSubmittedGraphRef.current.fetchData();
+    // sideEffectSubmittedGraphRef.current.fetchData();
     sideEffectSymptomsGraphRef.current.fetchData();
   }, []);
 
@@ -175,11 +175,16 @@ function HealthcareHomeScreen() {
             },
           ]}
         >
-          {user.profile_pic_url && (
+          {user.profile_pic_url && user.profile_pic_url !== "" ? (
             <CachedImage
               source={{ uri: user.profile_pic_url }}
               cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
               defaultSource={BLANK_PROFILE_PIC}
+              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+            />
+          ) : (
+            <Image
+              source={BLANK_PROFILE_PIC}
               style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
             />
           )}
@@ -306,8 +311,8 @@ function HealthcareHomeScreen() {
           >
             {t("analytics")}
           </Text>
-          <VideoSubmittedGraph ref={videoSubmittedGraphRef} />
-          <SideEffectSubmittedGraph ref={sideEffectSubmittedGraphRef} />
+          {/* <VideoSubmittedGraph ref={videoSubmittedGraphRef} />
+          <SideEffectSubmittedGraph ref={sideEffectSubmittedGraphRef} /> */}
           <SideEffectDetailsGraph ref={sideEffectSymptomsGraphRef} />
         </View>
         <View

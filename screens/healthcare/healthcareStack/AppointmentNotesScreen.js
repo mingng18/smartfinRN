@@ -28,6 +28,7 @@ export default function AppointmentNotesScreen() {
 
   function submitButtonHandler() {
     editDocument(FIREBASE_COLLECTION.APPOINTMENT, currentAppointment.id, {
+      is_patient_viewed: false,
       remarks: remark,
     }).then(() => {
       dispatch(updateAppointment({ ...currentAppointment, remarks: remark }));
@@ -62,7 +63,9 @@ export default function AppointmentNotesScreen() {
             })}
             color={theme.colors.secondaryContainer}
           ></HorizontalCard>
-          <Text variant="titleLarge" style={{marginTop:16}}>{t("remarks_notes")}</Text>
+          <Text variant="titleLarge" style={{ marginTop: 16 }}>
+            {t("remarks_notes")}
+          </Text>
           <TextInput
             mode="outlined"
             multiline
@@ -73,12 +76,13 @@ export default function AppointmentNotesScreen() {
             onChangeText={setRemark}
           ></TextInput>
           <View
-            style={{justifyContent: "flex-end", alignItems: "flex-end", marginTop: 16}}
+            style={{
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+              marginTop: 16,
+            }}
           >
-            <Button
-              mode="contained"
-              onPress={() => submitButtonHandler()}
-            >
+            <Button mode="contained" onPress={() => submitButtonHandler()}>
               {t("submit")}
             </Button>
           </View>

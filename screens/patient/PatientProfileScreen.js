@@ -215,24 +215,26 @@ function PatientProfileScreen() {
             />
           )}
           <View style={[styles.headerText]}>
-            <View style={{ flexDirection: "row" }}>
-              <Text variant="bodyLarge">
-                {streakCounter() === 7
-                  ? t("keep_it_up_message")
-                  : streakCounter() > 1
-                  ? t("take_medication_message")
-                  : t("you_can_do_better_message")}
-              </Text>
-            </View>
+            <Text variant="bodyLarge">
+              {streakCounter() === 7
+                ? t("keep_it_up_message")
+                : streakCounter() > 1
+                ? t("take_medication_message")
+                : t("you_can_do_better_message")}
+            </Text>
             <Text variant="headlineLarge">
               {capitalizeFirstLetter(user.first_name)}
             </Text>
+            {user.notes !== "" && (
+              <Text variant="labelLarge">{t(user.notes)}</Text>
+            )}
           </View>
           <Button
             onPress={() => {
               navigate("PatientEditProfileScreen");
             }}
-            mode="text"
+            mode="contained"
+            style={{ alignSelf: "flex-start" }}
           >
             Edit
           </Button>

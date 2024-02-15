@@ -4,10 +4,9 @@ import { Image, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { useSelector } from "react-redux";
-import PersonalInfoForm from "../../../components/Auth/PersonalInfoForm";
 import HealthcareInfoForm from "../../../components/Auth/HealthcareInfoForm";
 import UploadProfilePicModal from "../../common/UploadProfilePicModal";
-import { USER_TYPE } from "../../../constants/constants";
+import { BLANK_PROFILE_PIC, USER_TYPE } from "../../../constants/constants";
 import { useTranslation } from "react-i18next";
 
 export default function HealthcareEditProfileScreen() {

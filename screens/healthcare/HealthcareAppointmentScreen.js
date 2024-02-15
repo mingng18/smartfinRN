@@ -139,9 +139,6 @@ export default function HealthcareAppointmentScreen() {
   }
 
   const marked = React.useMemo(() => {
-    pendingAppointments.forEach((element) => {
-      console.log(element.scheduled_timestamp + " pending appointments");
-    });
     const allDates = [
       ...appointments.map((item) =>
         new Date(item.scheduled_timestamp).toISOString().slice(0, 10)
@@ -215,7 +212,9 @@ export default function HealthcareAppointmentScreen() {
                   DeviceEventEmitter.addListener(
                     "onCallOrJoin",
                     (appointment) => {
-                      navigation.navigate("AppointmentNotesScreen", {appointment: appointment})
+                      navigation.navigate("AppointmentNotesScreen", {
+                        appointment: appointment,
+                      });
                       // showAppointmentNotesRecorderHandler(appointment);
                     }
                   );
@@ -232,7 +231,9 @@ export default function HealthcareAppointmentScreen() {
                   DeviceEventEmitter.addListener(
                     "onCallOrJoin",
                     (appointment) => {
-                      navigation.navigate("AppointmentNotesScreen", {appointment})
+                      navigation.navigate("AppointmentNotesScreen", {
+                        appointment,
+                      });
                       // showAppointmentNotesRecorderHandler(appointment);
                     }
                   );
@@ -342,12 +343,12 @@ export default function HealthcareAppointmentScreen() {
           }}
           onDayPress={(day) => setSelectedDate(day.dateString)}
           markedDates={{
-            ...marked,
             [today.toISOString().slice(0, 10)]: {
               selected: true,
               selectedColor: theme.colors.background,
               selectedTextColor: theme.colors.onBackground,
             },
+            ...marked,
             [selectedDate]: {
               selected: true,
               selectedColor: theme.colors.surfaceContainerHigh,

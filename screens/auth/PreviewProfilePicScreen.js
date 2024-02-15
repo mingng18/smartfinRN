@@ -22,6 +22,10 @@ import { addDocumentWithId } from "../../util/firestoreWR";
 import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
 import { USER_TYPE } from "../../constants/constants";
 import { useTranslation } from "react-i18next";
+import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 
 export default function PreviewProfilePicScreen() {
   const navigation = useNavigation();
@@ -98,6 +102,15 @@ export default function PreviewProfilePicScreen() {
         dispatch(clearSignupSlice());
         await saveUserDateToFirestore("healthcare", userId, downloadURL);
         dispatch(authenticateStoreNative(token, userId, "healthcare"));
+        dispatch(fetchPatientCollectionData());
+        dispatch(
+          fetchAppointments({ userId: uid, userType: USER_TYPE.HEALTHCARE })
+        );
+        dispatch(fetchVideos({ userId: uid, userType: USER_TYPE.HEALTHCARE }));
+        dispatch(
+          fetchSideEffects({ userId: uid, userType: USER_TYPE.HEALTHCARE })
+        );
+
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
         setIsUploading(false);

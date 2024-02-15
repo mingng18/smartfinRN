@@ -22,6 +22,10 @@ import {
 import { addDocumentWithId } from "../../util/firestoreWR";
 import { useTranslation } from "react-i18next";
 import LoadingIndicatorDialog from "../../components/ui/LoadingIndicatorDialog";
+import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
+import { fetchAppointments } from "../../store/redux/appointmentSlice";
+import { fetchVideos } from "../../store/redux/videoSlice";
+import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 
 export default function UploadProfilePicScreen() {
   const navigation = useNavigation();
@@ -72,9 +76,18 @@ export default function UploadProfilePicScreen() {
       dispatch(clearSignupSlice());
       await saveUserDateToFirestore("healthcare", uid, "");
       dispatch(authenticateStoreNative(userToken, uid, "healthcare"));
+      dispatch(fetchPatientCollectionData());
+      dispatch(
+        fetchAppointments({ userId: uid, userType: USER_TYPE.HEALTHCARE })
+      );
+      dispatch(fetchVideos({ userId: uid, userType: USER_TYPE.HEALTHCARE }));
+      dispatch(
+        fetchSideEffects({ userId: uid, userType: USER_TYPE.HEALTHCARE })
+      );
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
+      setIsUploading(false);
       Alert.alert(
         t("sign_up_successful"),
         t("thanks_for_signing_up"),
@@ -92,7 +105,6 @@ export default function UploadProfilePicScreen() {
     } catch (error) {
       console.log(error + "Error uploading image at uploadProfilePicScreen");
     }
-    setIsUploading(false);
   }
 
   async function signupHealthcare() {
