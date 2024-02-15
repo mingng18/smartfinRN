@@ -218,7 +218,7 @@ function Root() {
                 storedUid
               );
               editDocument(FIREBASE_COLLECTION.PATIENT, patientUser.id, {
-                pushNotificationToken: token,
+                push_notification_token: token,
               });
               console.log("Token updated in Patient");
             } catch (error) {
