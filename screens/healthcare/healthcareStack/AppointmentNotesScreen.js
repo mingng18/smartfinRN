@@ -9,6 +9,7 @@ import { updateAppointment } from "../../../store/redux/appointmentSlice";
 import { FIREBASE_COLLECTION } from "../../../constants/constants";
 import { useDispatch } from "react-redux";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import { capitalizeFirstLetter } from "../../../util/wordUtil";
 
 export default function AppointmentNotesScreen() {
   const navigation = useNavigation();
@@ -28,7 +29,7 @@ export default function AppointmentNotesScreen() {
 
   function submitButtonHandler() {
     editDocument(FIREBASE_COLLECTION.APPOINTMENT, currentAppointment.id, {
-      is_patient_viewed: false,
+      is_patient_viewed: remark === "" ? true : false,
       remarks: remark,
     }).then(() => {
       dispatch(updateAppointment({ ...currentAppointment, remarks: remark }));
@@ -48,8 +49,10 @@ export default function AppointmentNotesScreen() {
       <KeyboardAvoidingView>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <HorizontalCard
-            profilePic={currentAppointment.patient_data.profile_pic}
-            subject={currentAppointment.patient_data.name}
+            profilePic={currentAppointment.patient_data.profile_pic_url}
+            subject={capitalizeFirstLetter(
+              currentAppointment.patient_data.first_name
+            )}
             status={t("completed")}
             date={new Date(currentAppointment.scheduled_timestamp)
               .toISOString()

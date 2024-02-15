@@ -253,10 +253,10 @@ export default function VideoCallScreen({ route }) {
           {!isOffCam && (
             <RTCView
               style={{
-                width: 32,
-                height: 48,
+                width: '20%',
+                height: '30%',
                 position: "absolute",
-                right: 6,
+                right: 8,
                 top: 8,
               }}
               streamURL={localStream && localStream.toURL()}
