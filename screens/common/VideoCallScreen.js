@@ -129,6 +129,60 @@ export default function VideoCallScreen({ route }) {
     setLocalStream(newStream);
   };
 
+  async function recreatePeerConnection() {
+    const roomRef = firestore().collection("room").doc(id);
+
+    const callerCandidatesCollection = firestore()
+      .collection("room")
+      .doc(id)
+      .collection("callerCandidates");
+
+    const calleeCandidatesCollection = firestore()
+      .collection("room")
+      .doc(id)
+      .collection("calleeCandidates");
+
+    const localPC = new RTCPeerConnection(configuration);
+    localStream.getTracks().forEach((track) => {
+      localPC.addTrack(track, localStream);
+    });
+
+    localPC.addEventListener("icecandidate", (e) => {
+      if (!e.candidate) {
+        console.log("Got final candidate!");
+        return;
+      }
+      callerCandidatesCollection.add(e.candidate.toJSON());
+      // addDocument(callerCandidatesCollection, e.candidate.toJSON());
+      // addDoc(callerCandidatesCollection, e.candidate.toJSON());
+    });
+
+    localPC.ontrack = (e) => {
+      const newStream = new MediaStream();
+      e.streams[0].getTracks().forEach((track) => {
+        newStream.addTrack(track);
+      });
+      console.log("Got remote stream", newStream);
+      setRemoteStream(newStream);
+    };
+
+    const offer = await localPC.createOffer();
+    await localPC.setLocalDescription(offer);
+
+    await roomRef.set({ offer, connected: false }, { merge: true });
+
+    calleeCandidatesCollection.onSnapshot((querySnapshot) => {
+      querySnapshot.forEach((snapshot) => {
+        if (snapshot.data()) {
+          const candidate = new RTCIceCandidate(snapshot.data());
+          localPC.addIceCandidate(candidate);
+        }
+      });
+    });
+
+    setCachedLocalPC(localPC);
+  }
+
   const startCall = async (id) => {
     const localPC = new RTCPeerConnection(configuration);
     localStream.getTracks().forEach((track) => {
@@ -189,11 +243,13 @@ export default function VideoCallScreen({ route }) {
         localPC.setRemoteDescription(null);
         localPC.setLocalDescription(null);
         setRemoteStream(null);
+        recreatePeerConnection();
       } else {
         console.log("No remote answer hereee");
         localPC.setLocalDescription(null);
         localPC.setRemoteDescription(null);
         setRemoteStream(null);
+        recreatePeerConnection();
       }
     });
 
