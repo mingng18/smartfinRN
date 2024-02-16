@@ -14,7 +14,6 @@ export const fetchBookedAppointmentDates = createAsyncThunk(
       // console.log("fetching booked dates");
       const bookedAppointmentDates =
         await fetchBookedDateOfAppointmentFromFirebase();
-      // console.log("bookedAppointmentDates", bookedAppointmentDates);
       return bookedAppointmentDates;
     } catch (error) {
       console.log("error in bookedAppointmentDateSlice", error);

@@ -93,7 +93,7 @@ export default function BookAppointmentScreen() {
         )
         .map((timeSlot) => {
           const localeTime = new Date(timeSlot); // Convert to Date object
-          return localeTime.toLocaleTimeString().slice(0, 4) + " pm"; // Convert to time string
+          return localeTime.toLocaleTimeString([],{ hour12: true }).slice(0, 4) + " pm"; // Convert to time string
         });
       //reset all the time slot to enable
       items.forEach((item) => {
@@ -199,7 +199,6 @@ export default function BookAppointmentScreen() {
 
     const compareDate = new Date(date);
     compareDate.setHours(0, 0, 0, 0);
-
     return bookedDates.some(
       (bookedDate) => bookedDate.getTime() === compareDate.getTime()
     );

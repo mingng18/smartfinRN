@@ -148,7 +148,7 @@ const ChatBubble = ({
                 }
               }}
             >
-              <Text>{item.title}</Text>
+              {item.title}
             </Button>
           ))}
       </View>

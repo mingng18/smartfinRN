@@ -181,17 +181,9 @@ export default function VideoCallScreen({ route }) {
         console.log(
           "Got remote answer--------------------------------------------------------------------------------------------------------------------------------------------------"
         );
-        setRemoteStream(newStream);
+
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         localPC.setRemoteDescription(rtcSessionDescription);
-        localPC.ontrack = (e) => {
-          const newStream = new MediaStream();
-          e.streams[0].getTracks().forEach((track) => {
-            newStream.addTrack(track);
-          });
-          console.log("Got remote stream", newStream);
-          setRemoteStream(newStream);
-        };
       } else if (!data.answer) {
         console.log("No remote answer here");
         localPC.setRemoteDescription(null);
@@ -286,10 +278,10 @@ export default function VideoCallScreen({ route }) {
           {!isOffCam && (
             <RTCView
               style={{
-                width: '20%',
-                height: '30%',
+                width: 32,
+                height: 48,
                 position: "absolute",
-                right: 8,
+                right: 6,
                 top: 8,
               }}
               streamURL={localStream && localStream.toURL()}
