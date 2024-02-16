@@ -1,0 +1,89 @@
+{
+  "umi_chatbot": "Umi Chatbot",
+  "have_any_problem_chat_now": "Ada masalah? Berbual sekarang!",
+  "type_your_question_here": "Taip soalan anda di sini",
+  "beginning": "Mulakan dari awal",
+  "what_you_like_to_know": "Hi, saya UMI! Apa yang anda ingin ketahui?",
+  "how_to_use_umi": {
+    "title": "1) Bagaimana cara menggunakan UMI?",
+    "respond": "Cukup klik pada mesej, dan anda akan melihat jawapannya! Anda juga boleh klik pada pilihan di bawah untuk melihat lebih banyak jawapan tentang soalan lain!",
+    "nextSelections": [
+      {
+        "title": "1.1) Apa yang boleh saya ketahui melalui UMI?",
+        "respond": "Anda boleh belajar bagaimana menggunakan MyTBCompanion dan bagaimana ia boleh membantu anda dalam perjalanan rawatan anda!"
+      },
+      {
+        "title": "2.1) Bolehkah saya bertanya tentang segala-galanya menggunakan UMI?",
+        "respond": "Anda boleh bertanya tentang kebanyakan perkara tentang MyTBCompanion, tetapi jika anda mempunyai soalan perubatan, sila berunding dengan doktor anda!"
+      }
+    ]
+  },
+  "video_upload": {
+    "title": "2) Mengenai Pengunggahan Video",
+    "respond": "Apa yang anda ingin ketahui tentang pengunggahan video?",
+    "nextSelections": [
+      {
+        "title": "2.1) Apakah itu pengunggahan video?",
+        "respond": "Pengunggahan video adalah ciri yang membolehkan anda mengunggah video diri anda mengambil ubat anda!"
+      },
+      {
+        "title": "2.2) Mengapa saya perlu mengunggah video?",
+        "respond": "Pengunggahan video memastikan bahawa anda mengambil ubat anda dengan betul, dan ia akan membantu doktor anda untuk memantau kemajuan anda!"
+      },
+      {
+        "title": "2.3) Bagaimana cara mengunggah video",
+        "respond": "Di halaman utama, klik butang unggah, rakam video dengan kamera bawaan anda dan tekan unggah!"
+      },
+      {
+        "title": "2.4) Apa yang harus saya lakukan jika video saya ditolak?",
+        "respond": "Jika video anda ditolak, anda perlu menyemak catatan dari doktor anda untuk memahami alasan mengapa video anda ditolak.\nAnda juga boleh berunding dengan doktor anda untuk maklumat lanjut!\nAnda tidak perlu mengunggah video lain jika video anda ditolak!",
+        "nextSelections": [
+          {
+            "title": "2.4.1) Bagaimana cara menyemak catatan tersebut?",
+            "respond": "Di bahagian bawah halaman utama, klik 'Kalendar Saya', dan klik video yang anda telah hantar, dan anda akan melihat catatan dari doktor anda!"
+          }
+        ]
+      },
+      {
+        "title": "2.5) Bolehkah saya melihat pratonton video saya setelah merekam dan sebelum mengunggah?",
+        "respond": "Ya, anda boleh melihat pratonton video anda selepas merekam dan sebelum mengunggah!\nWalau bagaimanapun, anda tidak boleh lagi melihat video anda selepas mengunggahnya!"
+      },
+      {
+        "title": "2.6) Bolehkah saya memadam video saya selepas mengunggah?",
+        "respond": "Tidak, anda tidak boleh memadam video anda selepas mengunggahnya!\nAnda juga tidak boleh meninjau semula video anda selepas mengunggah."
+      },
+      {
+        "title": "2.7) Bolehkah saya mengunggah video selepas tarikh tamat?",
+        "respond": "Tidak, anda tidak boleh mengunggah video selepas tarikh tamat!"
+      },
+      {
+        "title": "2.8) Adakah selamat untuk mengunggah video saya? Bagaimana video saya akan digunakan?",
+        "respond": "Ya, adalah selamat untuk mengunggah video anda!\nVideo anda hanya akan digunakan oleh doktor anda untuk memantau kemajuan anda dan memastikan bahawa anda mengambil ubat dengan betul!\nSelepas ditinjau, video anda akan dihapuskan dari pelayan!"
+      }
+    ]
+  },
+  "side_effect": {
+    "title": "3) Mengenai Kesan Sampingan?",
+    "respond": "Apa yang anda ingin ketahui tentang kesan sampingan?",
+    "nextSelections": [
+      {
+        "title": "3.1) Apakah itu kesan sampingan?",
+        "respond": "Kesan sampingan adalah reaksi yang berlaku apabila anda mengambil ubat anda!"
+      },
+      {
+        "title": "3.2) Apa yang harus saya lakukan jika saya mengalami kesan sampingan?",
+        "respond": "Anda boleh melaporkan kesan sampingan anda kepada doktor anda melalui MyTBCompanion!",
+        "nextSelections": [
+          {
+            "title": "3.2.1) Bagaimana cara melaporkan kesan sampingan?",
+            "respond": "Di halaman utama, klik butang kesan sampingan, isi tarikh, waktu, dan kesan sampingan yang anda alami, dan klik butang hantar!\nDoktor anda akan dimaklumkan tentang kesan sampingan anda!"
+          }
+        ]
+      },
+      {
+        "title": "3.3) Bagaimana cara melaporkan kesan sampingan?",
+        "respond": "Di halaman utama, klik butang kesan sampingan, isi tarikh, waktu, dan kesan sampingan yang anda alami, dan klik butang hantar!\nDoktor anda akan dimaklumkan tentang kesan sampingan anda!"
+      }
+    ]
+  }
+}

@@ -257,8 +257,6 @@ export default function JoinVideoCallScreen({ route }) {
     });
   };
 
-  const toggleLoudSpeaker = () => {}
-
   React.useEffect(() =>{
     InCallManager.start({media: 'video'}) 
     InCallManager.setSpeakerphoneOn(true);

@@ -7,16 +7,19 @@ import auth_en from "./locales/en/auth_en.json";
 import common_en from "./locales/en/common_en.json";
 import patient_en from "./locales/en/patient_en.json";
 import healthcare_en from "./locales/en/healthcare_en.json";
+import umi_en from "./locales/en/umi_en.json";
 
 import auth_ms from "./locales/ms/auth_ms.json";
 import common_ms from "./locales/ms/common_ms.json";
 import patient_ms from "./locales/ms/patient_ms.json";
 import healthcare_ms from "./locales/ms/healthcare_ms.json";
+import umi_ms from "./locales/ms/umi_ms.json";
 
 import auth_id from "./locales/id/auth_id.json";
 import common_id from "./locales/id/common_id.json";
 import patient_id from "./locales/id/patient_id.json";
 import healthcare_id from "./locales/id/healthcare_id.json";
+import umi_id from "./locales/id/umi_id.json";
 import {
   changeCalendarsLocales,
   changePaperLocales,
@@ -73,18 +76,21 @@ i18n
         common: common_en,
         patient: patient_en,
         healthcare: healthcare_en,
+        umi: umi_en,
       },
       "ms-MY": {
         auth: auth_ms,
         common: common_ms,
         patient: patient_ms,
         healthcare: healthcare_ms,
+        umi: umi_ms,
       },
       "id-ID": {
         auth: auth_id,
         common: common_id,
         patient: patient_id,
         healthcare: healthcare_id,
+        umi: umi_id,
       },
     },
     supportedLngs: ["en-MY", "ms-MY", "id-ID"],

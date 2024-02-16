@@ -44,14 +44,14 @@ export default function AboutTBScreen() {
       description: t("tb_vot_description"),
     },
     {
-      title: "Five things to know about Tuberculosis",
+      title: t("five_things_title"),
       description: "",
-      videoId: "https://www.youtube.com/watch?v=wA_fObLY6GE",
+      videoId: "wA_fObLY6GE",
     },
     {
-      title: "How the body reacts to Tuberculosis?",
+      title: t("body_reacts_title"),
       description: "",
-      videoId: "https://www.youtube.com/watch?v=IGZLkRN76Dc",
+      videoId: "IGZLkRN76Dc",
     },
   ];
 

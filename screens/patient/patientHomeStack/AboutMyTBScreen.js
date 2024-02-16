@@ -20,57 +20,44 @@ export default function AboutMyTBScreen() {
 
   const accordionData = [
     {
-      title: "What is MyTBCompanion?",
-      description:
-        "MyTBCompanion is a mobile health application designed to improve Tuberculosis management among patients and healthcare providers. Its main feature is Video Observed Therapy.",
+      title: t("mytbcompanion_title"),
+      description: t("mytbcompanion_description"),
     },
     {
-      title: "What can MyTBCompanion do?",
-      description:
-        "MyTBCompanion allows users to:\n- Upload self-medication videos\n- Report side effects\n- Book appointments\n- Monitor progress\n- Set medication reminders and receive alerts",
+      title: t("mytbcompanion_do_title"),
+      description: t("mytbcompanion_do_description"),
     },
     {
-      title: "How should I register?",
+      title: t("register_title"),
       description: "",
     },
     {
-      title: "How do I record and upload the video?",
+      title: t("record_upload_title"),
       description: "",
     },
     {
-      title: "Is there any specification and requirement of the video?",
+      title: t("video_spec_title"),
       description: "",
     },
     {
-      title: "How should I report the side effects of the medication?",
+      title: t("report_side_effects_title"),
       description: "",
     },
     {
-      title: "How should I track the progress of my medication?",
+      title: t("track_progress_title"),
       description: "",
     },
     {
-      title: "How should I make an appointment for online consultations?",
+      title: t("make_appointment_title"),
       description: "",
     },
     {
-      title:
-        "How should I set the reminder to remind me to take medications on time?",
+      title: t("set_reminder_title"),
       description: "",
     },
     {
-      title: "How to use Umi Chatbot?",
+      title: t("use_chatbot_title"),
       description: "",
-    },
-    {
-      title: "Five things to know about Tuberculosis",
-      description: "",
-      videoId: "wA_fObLY6GE",
-    },
-    {
-      title: "How the body reacts to Tuberculosis?",
-      description: "",
-      videoId: "IGZLkRN76Dc",
     },
   ];
 

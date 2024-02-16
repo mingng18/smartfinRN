@@ -5,15 +5,112 @@ import { Button, Chip, Text, TextInput, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { createMessage, resetMessage } from "../../store/redux/umiChatSlice";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 function UmiScreen() {
   const theme = useTheme();
-  const { t } = useTranslation("patient");
+  const { t } = useTranslation("umi");
   const messages = useSelector((state) => state.umiChatObject.messages);
   const dispatch = useDispatch();
   const [isInitial, setIsInitial] = React.useState(true);
   const scrollRef = React.useRef(null);
+  const initialMessages = {
+    isUser: false,
+    content: t("what_you_like_to_know"),
+    selection: [
+      {
+        title: t("how_to_use_umi.title"),
+        respond: t("how_to_use_umi.respond"),
+        nextSelections: [
+          {
+            title: t("how_to_use_umi.nextSelections.0.title"),
+            respond: t("how_to_use_umi.nextSelections.0.respond"),
+          },
+          {
+            title: t("how_to_use_umi.nextSelections.1.title"),
+            respond: t("how_to_use_umi.nextSelections.1.respond"),
+          },
+        ],
+      },
+      {
+        title: t("video_upload.title"),
+        respond: t("video_upload.respond"),
+        nextSelections: [
+          {
+            title: t("video_upload.nextSelections.0.title"),
+            respond: t("video_upload.nextSelections.0.respond"),
+          },
+          {
+            title: t("video_upload.nextSelections.1.title"),
+            respond: t("video_upload.nextSelections.1.respond"),
+          },
+          {
+            title: t("video_upload.nextSelections.2.title"),
+            respond: t("video_upload.nextSelections.2.respond"),
+          },
+          {
+            title: t("video_upload.nextSelections.3.title"),
+            respond: t("video_upload.nextSelections.3.respond"),
+            nextSelections: [
+              {
+                title: t(
+                  "video_upload.nextSelections.3.nextSelections.0.title"
+                ),
+                respond: t(
+                  "video_upload.nextSelections.3.nextSelections.0.respond"
+                ),
+              },
+            ],
+          },
+          {
+            title: t("video_upload.nextSelections.4.title"),
+            respond: t("video_upload.nextSelections.4.respond"),
+          },
+          {
+            title: t("video_upload.nextSelections.5.title"),
+            respond: t("video_upload.nextSelections.5.respond"),
+          },
+          {
+            title: t("video_upload.nextSelections.6.title"),
+            respond: t("video_upload.nextSelections.6.respond"),
+          },
+          {
+            title: t("video_upload.nextSelections.7.title"),
+            respond: t("video_upload.nextSelections.7.respond"),
+          },
+        ],
+      },
+      {
+        title: t("side_effect.title"),
+        respond: t("side_effect.respond"),
+        nextSelections: [
+          {
+            title: t("side_effect.nextSelections.0.title"),
+            respond: t("side_effect.nextSelections.0.respond"),
+          },
+          {
+            title: t("side_effect.nextSelections.1.title"),
+            respond: t("side_effect.nextSelections.1.respond"),
+            nextSelections: [
+              {
+                title: t("side_effect.nextSelections.1.nextSelections.0.title"),
+                respond: t(
+                  "side_effect.nextSelections.1.nextSelections.0.respond"
+                ),
+              },
+            ],
+          },
+          {
+            title: t("side_effect.nextSelections.2.title"),
+            respond: t("side_effect.nextSelections.2.respond"),
+          },
+        ],
+      },
+    ],
+  };
+
+  React.useEffect(() => {
+    dispatch(createMessage(initialMessages));
+  }, [t]);
 
   return (
     <ScrollView
@@ -53,7 +150,7 @@ function UmiScreen() {
           <Button
             style={{ marginTop: 16, backgroundColor: theme.colors.primary }}
             onPress={() => {
-              dispatch(resetMessage());
+              dispatch(resetMessage(initialMessages));
               setIsInitial(true);
             }}
           >
@@ -61,7 +158,7 @@ function UmiScreen() {
               variant="titleSmall"
               style={{ color: theme.colors.onPrimary }}
             >
-              Start from the beginning
+              {t("beginning")}
             </Text>
           </Button>
           <View style={{ marginTop: 72 }} />
