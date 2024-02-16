@@ -3,7 +3,7 @@ import {
   BLANK_PROFILE_PIC,
   HORIZONTAL_CARD_TYPE,
 } from "../../constants/constants";
-import { VictoryPie } from "victory-native";
+import { VictoryPie, VictoryTheme } from "victory-native";
 import { useTranslation } from "react-i18next";
 import {
   ActivityIndicator,
@@ -35,7 +35,7 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
   const colorContainer = [
     "#4B5C92",
     "#2F628C",
-    "#BA1A1A",
+    "#4FB9AF",
     "#DBE1FF",
     "#9E6586",
     "#CEE5FF",
@@ -106,10 +106,12 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       let totalCount = 0;
 
       sideEffectData.forEach((sideEffect) => {
+        console.log(sideEffect);
         sideEffect.symptoms.forEach((symptom) => {
-          const count = sideEffectCounts.get(symptom.label) || 0;
+          const key = `${t(symptom.label)} : ${t(`grade.${symptom.grade}`)}`;
+          const count = sideEffectCounts.get(key) || 0;
           sideEffectCounts.set(
-            `${t(symptom.label)} : ${symptom.grade}`,
+            `${t(symptom.label)} : ${t(`grade.${symptom.grade}`)}`,
             count + 1
           );
           totalCount++;
@@ -119,12 +121,18 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
       // Convert the map to the desired format with percentage values
       const formattedData = Array.from(sideEffectCounts).map(
         ([symptom, count]) => {
+          const grade = parseInt(symptom.slice(-1)); // Extract grade from symptom string by taking the last character
           return {
             x: t(symptom),
             y: count,
+            grade: grade,
           };
         }
       );
+
+      // Sort the formattedData array by grade in descending order
+      formattedData.sort((a, b) => b.grade - a.grade);
+      formattedData.sort((a, b) => b.count - a.count);
 
       // Assign the color to legend
       formattedData.forEach((data, i) => {
@@ -186,13 +194,34 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
         </Text>
       ) : (
         <>
+          <Text
+            style={{ marginTop: 16, alignSelf: "center" }}
+            variant="bodyLarge"
+          >
+            {t("count_side_effect")}
+          </Text>
           <VictoryPie
+            // theme={VictoryTheme.material}
             colorScale={colorContainer}
             labels={({ datum }) => `${Math.round(datum.y)}`}
             labelRadius={100}
-            style={{ labels: { fontSize: 14, fontFamily: "DMSans-Bold" } }}
+            style={{ labels: { fontSize: 18, fontFamily: "DMSans-Bold" } }}
             data={sideEffectSymptoms}
           />
+          <View style={{ flexDirection: "row" }}>
+            <Text
+              style={{ marginVertical: 16, marginLeft: 16 }}
+              variant="labelMediumProminent"
+            >
+              {t("legend")}
+            </Text>
+            <Text
+              style={{ marginVertical: 16, marginLeft: 4 }}
+              variant="labelMedium"
+            >
+              {t("side_effect_grade")}
+            </Text>
+          </View>
           <View
             style={{
               flexDirection: "row",

@@ -44,12 +44,16 @@ export default function AboutTBScreen() {
       description: t("tb_vot_description"),
     },
     {
-      title: t("video_example_title"),
-      description: t("video_example_description"),
-      videoId: "iee2TATGMyI",
+      title: t("five_things_title"),
+      description: "",
+      videoId: "wA_fObLY6GE",
+    },
+    {
+      title: t("body_reacts_title"),
+      description: "",
+      videoId: "IGZLkRN76Dc",
     },
   ];
-  
 
   const filteredAccordionData = accordionData.filter(
     (item) =>

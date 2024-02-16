@@ -105,7 +105,7 @@ export default function HealthcareProfileScreen() {
             navigate("HealthcareEditProfileScreen");
           }}
         >
-          Edit
+          {t("edit")}
         </Button>
       </View>
       <TextListButton

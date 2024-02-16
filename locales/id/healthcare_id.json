@@ -20,6 +20,9 @@
   "number_of_symptoms_this_month": "Efek samping dilaporkan oleh {{name}}",
   "no_patient_selected": "Tidak Ada Pasien yang Dipilih",
   "no_side_effect_reported": "Tidak ada efek samping yang dilaporkan oleh pasien ini",
+  "count_side_effect": "Jumlah Efek Samping menurut Kelas",
+  "legend": "Legenda",
+  "side_effect_grade": "(Efek Samping: Kelas)",
   "change_patient": "Ganti pasien",
 
   "eyesight_worsening": "Penglihatan Memperburuk",
@@ -63,8 +66,10 @@
   "signing_out": "Keluar",
   "confirm_sign_out": "Apakah Anda yakin ingin keluar?",
   "sign_out": "Keluar",
+  "edit": "Edit",
   "cancel": "Batal",
   "language": "Bahasa",
+
   "all_patient": "Semua Pasien",
   "search": "Cari",
   "good": "Baik",
