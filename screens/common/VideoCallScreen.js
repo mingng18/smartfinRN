@@ -68,6 +68,8 @@ export default function VideoCallScreen({ route }) {
     }
   }, [localStream]);
 
+  useEffect(() => {},[remoteStream,localStream])
+
   //End call button
   async function endCall() {
     if (cachedLocalPC) {
@@ -79,7 +81,9 @@ export default function VideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    roomRef.update({ answer: firestore.FieldValue.delete() });
+    await roomRef.update({ answer: firestore.FieldValue.delete() });
+
+    await roomRef.delete();
 
     dispatch(
       updateAppointment({
@@ -90,8 +94,6 @@ export default function VideoCallScreen({ route }) {
     editDocument(FIREBASE_COLLECTION.APPOINTMENT, currentAppointment.id, {
       appointment_status: APPOINTMENT_STATUS.COMPLETED,
     });
-    // const roomRef = doc(db, "room", roomId);
-    // await updateDoc(roomRef, { answer: deleteField() });
 
     setLocalStream();
     setRemoteStream(); // set remoteStream to null or empty when callee leaves the call
@@ -154,8 +156,6 @@ export default function VideoCallScreen({ route }) {
         return;
       }
       callerCandidatesCollection.add(e.candidate.toJSON());
-      // addDocument(callerCandidatesCollection, e.candidate.toJSON());
-      // addDoc(callerCandidatesCollection, e.candidate.toJSON());
     });
 
     localPC.ontrack = (e) => {
@@ -163,8 +163,8 @@ export default function VideoCallScreen({ route }) {
       e.streams[0].getTracks().forEach((track) => {
         newStream.addTrack(track);
       });
-      console.log("Got remote stream", newStream);
       setRemoteStream(newStream);
+      console.log("Got remote stream", newStream);
     };
 
     const offer = await localPC.createOffer();
@@ -200,18 +200,12 @@ export default function VideoCallScreen({ route }) {
       .doc(id)
       .collection("calleeCandidates");
 
-    // const roomRef = doc(db, "room", id);
-    // const callerCandidatesCollection = collection(roomRef, "callerCandidates");
-    // const calleeCandidatesCollection = collection(roomRef, "calleeCandidates");
-
     localPC.addEventListener("icecandidate", (e) => {
       if (!e.candidate) {
         console.log("Got final candidate!");
         return;
       }
       callerCandidatesCollection.add(e.candidate.toJSON());
-      // addDocument(callerCandidatesCollection, e.candidate.toJSON());
-      // addDoc(callerCandidatesCollection, e.candidate.toJSON());
     });
 
     localPC.ontrack = (e) => {
@@ -219,7 +213,7 @@ export default function VideoCallScreen({ route }) {
       e.streams[0].getTracks().forEach((track) => {
         newStream.addTrack(track);
       });
-      console.log("Got remote stream", newStream);
+      console.log("Got remote stream here at video call screen", newStream);
       setRemoteStream(newStream);
     };
 
@@ -227,7 +221,6 @@ export default function VideoCallScreen({ route }) {
     await localPC.setLocalDescription(offer);
 
     await roomRef.set({ offer, connected: false }, { merge: true });
-    // await setDoc(roomRef, { offer, connected: false }, { merge: true });
 
     // Listen for remote answer
     roomRef.onSnapshot(async (doc) => {
@@ -236,53 +229,30 @@ export default function VideoCallScreen({ route }) {
         console.log(
           "Got remote answer--------------------------------------------------------------------------------------------------------------------------------------------------"
         );
-
+          console.log("remote answer here", data.answer)
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         localPC.setRemoteDescription(rtcSessionDescription);
-      } else if (!data.answer) {
+        console.log(remoteStream, "remoteStream here")
+        
+      } else if (!data.answer && data.leftRoom) {
         console.log("No remote answer here");
         localPC.setRemoteDescription(null);
         localPC.setLocalDescription(null);
         setRemoteStream(null);
-        recreatePeerConnection();
-      } else {
-        console.log("No remote answer hereee");
-        localPC.setLocalDescription(null);
-        localPC.setRemoteDescription(null);
-        setRemoteStream(null);
-        recreatePeerConnection();
+        endCall()
       }
     });
-
-    // onSnapshot(roomRef, (doc) => {
-    //   const data = doc.data();
-    //   if (!localPC.currentRemoteDescription && data.answer) {
-    //     console.log("Got remote answer");
-    //     const rtcSessionDescription = new RTCSessionDescription(data.answer);
-    //     localPC.setRemoteDescription(rtcSessionDescription);
-    //   } else {
-    //     console.log("No remote answer");
-    //     setRemoteStream(null);
-    //   }
-    // });
 
     // when answered, add candidate to peer connection
     calleeCandidatesCollection.onSnapshot((querySnapshot) => {
       querySnapshot.forEach((snapshot) => {
         if (snapshot.data()) {
+          console.log("Host adding guest IceCandidates " + snapshot.data() )
           const candidate = new RTCIceCandidate(snapshot.data());
           localPC.addIceCandidate(candidate);
         }
       });
     });
-    // onSnapshot(calleeCandidatesCollection, (snapshot) => {
-    //   snapshot.docChanges().forEach((change) => {
-    //     if (change.type === "added") {
-    //       let data = change.doc.data();
-    //       localPC.addIceCandidate(new RTCIceCandidate(data));
-    //     }
-    //   });
-    // });
 
     setCachedLocalPC(localPC);
   };

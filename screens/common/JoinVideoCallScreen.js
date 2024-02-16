@@ -20,6 +20,7 @@ import {
   updateDoc,
   onSnapshot,
   deleteField,
+  DocumentSnapshot,
 } from "firebase/firestore";
 
 import InCallManager from 'react-native-incall-manager'
@@ -77,7 +78,20 @@ export default function JoinVideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    roomRef.update({ answer: firestore.FieldValue.delete(), connected: false });
+    const calleeCandidatesCollection = firestore().collection("room").doc(roomId).collection("calleeCandidates");
+
+    try {
+      roomRef.update({ answer: firestore.FieldValue.delete(), connected: false, leftRoom: true });
+      console.log("after roomRef.update")
+      calleeCandidatesCollection.get().then((querySnapshot) => {
+        querySnapshot.forEach(documentSnapshot => {
+          calleeCandidatesCollection.doc(documentSnapshot.id).delete();
+        })
+      });
+      
+    } catch (error) {
+      console.log("Error on snapshot joinVideoCallScreen endCall: " + error);
+    }
 
    
     // const roomRef = doc(db, "room", roomId);
@@ -139,7 +153,7 @@ export default function JoinVideoCallScreen({ route }) {
 
     localPC.addEventListener("icecandidate", (e) => {
       if (!e.candidate) {
-        console.log("Got final candidate!");
+        console.log("Got final candidate! Join Call screen");
         return;
       }
       calleeCandidatesCollection.add(e.candidate.toJSON());
@@ -150,6 +164,7 @@ export default function JoinVideoCallScreen({ route }) {
       e.streams[0].getTracks().forEach((track) => {
         newStream.addTrack(track);
       });
+      console.log("got remote stream here at join video call")
       setRemoteStream(newStream);
     };
 
@@ -159,8 +174,13 @@ export default function JoinVideoCallScreen({ route }) {
     const answer = await localPC.createAnswer();
     await localPC.setLocalDescription(answer);
 
-    await roomRef.update({ answer: answer, connected: true });
-    // await updateDoc(roomRef, { answer, connected: true }, { merge: true });
+    try {
+      await roomRef.update({ answer: answer, connected: true });
+      
+    } catch (error) {
+      console.log("After roomRef.update")
+      console.log("Error on snapshot joinVideoCallScreen joinCall: " + error);
+    }
 
     callerCandidatesCollection.onSnapshot((querySnapshot) => {
       querySnapshot.forEach((snapshot) => {
@@ -169,67 +189,21 @@ export default function JoinVideoCallScreen({ route }) {
           localPC.addIceCandidate(candidate);
         }
       });
-      // snapshot.docChanges().forEach((change) => {
-      //   if (change.type === "added") {
-      //     let data = change.doc.data();
-      //     localPC.addIceCandidate(new RTCIceCandidate(data));
-      //   }
-      // });
     });
-
-    callerCandidatesCollection.onSnapshot((querySnapshot) => {
-      querySnapshot.forEach((snapshot) => {
-        if (snapshot.data()) {
-          const candidate = new RTCIceCandidate(snapshot.data());
-          localPC.addIceCandidate(candidate);
+    try {
+      roomRef.onSnapshot((doc) => {
+        const data = doc.data();
+        if (!data.answer) {
+          console.log("After roomRef.onSnapshot")
+          endCall();
+          // navigation.goBack();
         }
       });
-      // snapshot.docChanges().forEach((change) => {
-      //   if (change.type === "added") {
-      //     let data = change.doc.data();
-      //     localPC.addIceCandidate(new RTCIceCandidate(data));
-      //   }
-      // });
-    });
+      
+    } catch (error) {
+      console.log("Error on snapshot roomRef.onSnapshot: " + error);
+    }
 
-    // firebase().onSnapshot(callerCandidatesCollection, (snapshot) => {
-    //   snapshot.docChanges().forEach((change) => {
-    //     if (change.type === "added") {
-    //       let data = change.doc.data();
-    //       localPC.addIceCandidate(new RTCIceCandidate(data));
-    //     }
-    //   });
-    // });
-
-    roomRef.onSnapshot((doc) => {
-      const data = doc.data();
-      if (!data.answer) {
-        navigation.goBack();
-      }
-    });
-
-    // firebase().onSnapshot(roomRef, (doc) => {
-    //   const data = doc.data();
-    //   if (!data.answer) {
-    //     navigation.goBack();
-    //   }
-    // })
-
-    // onSnapshot(callerCandidatesCollection, (snapshot) => {
-    //   snapshot.docChanges().forEach((change) => {
-    //     if (change.type === "added") {
-    //       let data = change.doc.data();
-    //       localPC.addIceCandidate(new RTCIceCandidate(data));
-    //     }
-    //   });
-    // });
-
-    // onSnapshot(roomRef, (doc) => {
-    //   const data = doc.data();
-    //   if (!data.answer) {
-    //     navigation.goBack();
-    //   }
-    // });
 
     setCachedLocalPC(localPC);
   };
