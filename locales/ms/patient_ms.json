@@ -28,6 +28,8 @@
   "side_effect_label": "Kesan Sampingan",
   "video_submitted_label": "Video Di Hantar",
   "video_missed_label": "Video Terlepas",
+  "appointment_pending": "Janji Temu Menunggu",
+  "appointment_accepted": "Janji Temu Diterima",
 
   "signing_out_message": "Sedang log keluar",
   "confirmation_message": "Adakah anda pasti ingin log keluar?",

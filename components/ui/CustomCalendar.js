@@ -214,6 +214,25 @@ export default function CustomCalendar({
           />
         </View>
       )}
+      {currentSelected === CALENDAR_ENTITIES.APPOINTMENT && (
+        <View
+          style={{
+            flexDirection: "row-reverse",
+            flexWrap: "wrap",
+            alignItems: "center",
+            marginVertical: 24,
+          }}
+        >
+          <Legend
+            color={theme.colors.errorContainer}
+            text={t("appointment_pending")}
+          />
+          <Legend
+            color={theme.colors.secondaryContainer}
+            text={t("appointment_accepted")}
+          />
+        </View>
+      )}
     </>
   );
 }

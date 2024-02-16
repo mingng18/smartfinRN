@@ -84,7 +84,7 @@ export const customVariants = {
   },
   labelMediumProminent: {
     ...baseVariants.labelMedium,
-    fontFamily: "DMSans-SemiBold",
+    fontFamily: "DMSans-ExtraBold",
     fontSize: normalize(baseVariants.labelMedium.fontSize)
   },
   labelMedium: {

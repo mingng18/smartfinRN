@@ -20,6 +20,9 @@
   "number_of_symptoms_this_month": "Kesan sampingan dilaporkan oleh {{name}}",
   "no_patient_selected": "Tiada Pesakit",
   "no_side_effect_reported": "Tiada kesan sampingan dilaporkan oleh pesakit ini",
+  "count_side_effect": "Jumlah Kesan Sampingan Mengikut Gred",
+  "legend": "Legenda",
+  "side_effect_grade": "(Kesan Sampingan: Gred)",
   "change_patient": "Tukar pesakit",
 
   "eyesight_worsening": "Penglihatan Menurun",
@@ -63,8 +66,10 @@
   "signing_out": "Log Keluar",
   "confirm_sign_out": "Adakah anda pasti ingin log keluar?",
   "sign_out": "Log Keluar",
+  "edit": "Kemaskini",
   "cancel": "Batal",
   "language": "Bahasa",
+
   "all_patient": "Semua Pesakit",
   "search": "Carian",
   "good": "Baik",

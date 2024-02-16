@@ -143,8 +143,8 @@ export default function TreatmentInfoForm({ isEditing }) {
 
   function formatDate(dateObject) {
     dateObject.setHours(0, 0, 0, 0);
-    console.log(dateObject);
-    console.log(dateObject.toISOString());
+    // console.log(dateObject);
+    // console.log(dateObject.toISOString());
     const formattedDate = `${dateObject.getFullYear()}-${(
       dateObject.getMonth() + 1
     )
@@ -436,19 +436,19 @@ export default function TreatmentInfoForm({ isEditing }) {
       setDiagnosisSubmitDate(new Date(localUser.date_of_diagnosis));
 
       setDiagnosis(localUser.diagnosis);
-      // setDurationOfTreatment(parseInt(localUser.treatment_duration_months));
+      setDurationOfTreatment(parseInt(localUser.treatment_duration_months));
 
       setTreatment(localUser.treatment);
       setNumberOfTablets(parseInt(localUser.number_of_tablets));
 
-      console.log(
-        "treatment start date: " +
-          new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
-      );
-      console.log(
-        "treatment end date: " +
-          new Date(localUser.treatment_end_date).toISOString().slice(0, 10)
-      );
+      // console.log(
+      //   "treatment start date: " +
+      //     new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
+      // );
+      // console.log(
+      //   "treatment end date: " +
+      //     new Date(localUser.treatment_end_date).toISOString().slice(0, 10)
+      // );
       setTreatmentStartDate(
         new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
       );
@@ -510,32 +510,27 @@ export default function TreatmentInfoForm({ isEditing }) {
     }
   }
   React.useEffect(() => {
-    setDurationOfTreatment(
-      calculateTreatmentDuration(
-        treatmentStartSubmitDate,
-        treatmentEndSubmitDate
-      )
+    const treatmentEndDate = calculateTreatmentEndDuration(
+      treatmentStartDate,
+      durationOfTreatment
     );
-  }, [treatmentEndSubmitDate]);
 
-  function calculateTreatmentDuration(
-    treatmentStartSubmitDate,
-    treatmentEndSubmitDate
-  ) {
-    if (treatmentStartSubmitDate && treatmentEndSubmitDate) {
-      const startMonth = treatmentStartSubmitDate.getMonth();
-      const endMonth = treatmentEndSubmitDate.getMonth();
-      const startYear = treatmentStartSubmitDate.getFullYear();
-      const endYear = treatmentEndSubmitDate.getFullYear();
-
-      // console.log("as " + Math.floor(
-      //   (endYear - startYear) * 12 + (endMonth - startMonth) + 1
-      // ))
-
-      return Math.floor(
-        (endYear - startYear) * 12 + (endMonth - startMonth) + 1
-      );
+    if (treatmentEndDate) {
+      setTreatmentEndSubmitDate(treatmentEndDate);
+      setTreatmentEndDate(formatDate(treatmentEndDate));
     }
+  }, [treatmentStartDate, durationOfTreatment]);
+
+  function calculateTreatmentEndDuration(
+    treatmentStartDate,
+    durationOfTreatment
+  ) {
+    if (treatmentStartDate && durationOfTreatment) {
+      const endDate = new Date(treatmentStartDate);
+      endDate.setMonth(endDate.getMonth() + parseInt(durationOfTreatment));
+      return endDate;
+    }
+    return null;
   }
 
   const today = new Date();
@@ -599,7 +594,17 @@ export default function TreatmentInfoForm({ isEditing }) {
         placeholder={t("diagnosis")}
         listMode="SCROLLVIEW"
       />
-
+      <TextInput
+        mode="outlined"
+        label={t("diagnosis_duration")}
+        style={{ marginVertical: 16 }}
+        placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
+        maxLength={2}
+        value={`${durationOfTreatment}`}
+        keyboardType="numeric"
+        onChangeText={(text) => setDurationOfTreatment(text)}
+        error={credentialsInvalid.durationOfTreatment}
+      />
       <Text variant="titleLarge" style={{ marginTop: 40, marginBottom: 16 }}>
         {t("my_treatment")}
       </Text>
@@ -649,17 +654,7 @@ export default function TreatmentInfoForm({ isEditing }) {
           />
         </View>
       </Pressable>
-      <TextInput
-        mode="outlined"
-        label={t("diagnosis_duration")}
-        style={{ marginBottom: 16 }}
-        placeholder={durationOfTreatment ? durationOfTreatment.toString() : "5"}
-        maxLength={2}
-        value={`${durationOfTreatment}`}
-        keyboardType="numeric"
-        onChangeText={(text) => setDurationOfTreatment(text)}
-        error={credentialsInvalid.durationOfTreatment}
-      />
+
       <CustomDropDownPicker
         zIndex={3000}
         zIndexInverse={1000}

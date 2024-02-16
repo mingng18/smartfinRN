@@ -28,6 +28,8 @@
   "side_effect_label": "Efek Samping",
   "video_submitted_label": "Video Dikirim",
   "video_missed_label": "Video Terlewat",
+  "appointment_pending": "Janji Temu Belum Diterima",
+  "appointment_accepted": "Janji Temu Diterima",
 
   "signing_out_message": "Keluar",
   "confirmation_message": "Apakah Anda yakin ingin keluar?",

@@ -44,12 +44,16 @@ export default function AboutTBScreen() {
       description: t("tb_vot_description"),
     },
     {
-      title: t("video_example_title"),
-      description: t("video_example_description"),
-      videoId: "iee2TATGMyI",
+      title: "Five things to know about Tuberculosis",
+      description: "",
+      videoId: "https://www.youtube.com/watch?v=wA_fObLY6GE",
+    },
+    {
+      title: "How the body reacts to Tuberculosis?",
+      description: "",
+      videoId: "https://www.youtube.com/watch?v=IGZLkRN76Dc",
     },
   ];
-  
 
   const filteredAccordionData = accordionData.filter(
     (item) =>

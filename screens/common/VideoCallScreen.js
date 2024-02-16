@@ -32,6 +32,8 @@ import {
   APPOINTMENT_STATUS,
   FIREBASE_COLLECTION,
 } from "../../constants/constants";
+import InCallManager from 'react-native-incall-manager'
+
 
 const configuration = {
   iceServers: [
@@ -251,6 +253,12 @@ export default function VideoCallScreen({ route }) {
       setIsOffCam(!isOffCam);
     });
   };
+
+  React.useEffect(() =>{
+    InCallManager.start({media: 'video'}) 
+    InCallManager.setSpeakerphoneOn(true);
+    InCallManager.setForceSpeakerphoneOn(true);
+  },[])
 
   return (
     <View

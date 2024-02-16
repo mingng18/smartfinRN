@@ -22,6 +22,7 @@ import {
   deleteField,
 } from "firebase/firestore";
 
+import InCallManager from 'react-native-incall-manager'
 import CallActionBox from "../../components/ui/CallActionBox";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -62,6 +63,8 @@ export default function JoinVideoCallScreen({ route }) {
       joinCall(roomId);
     }
   }, [localStream]);
+
+  
 
   //End call button
   async function endCall() {
@@ -255,6 +258,12 @@ export default function JoinVideoCallScreen({ route }) {
   };
 
   const toggleLoudSpeaker = () => {}
+
+  React.useEffect(() =>{
+    InCallManager.start({media: 'video'}) 
+    InCallManager.setSpeakerphoneOn(true);
+    InCallManager.setForceSpeakerphoneOn(true);
+  },[])
 
   return (
     <View

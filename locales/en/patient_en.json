@@ -29,6 +29,8 @@
   "side_effect_label": "Side Effect",
   "video_submitted_label": "Video Submitted",
   "video_missed_label": "Video Missed",
+  "appointment_pending": "Appointment Pending",
+  "appointment_accepted": "Appointment Accepted",
 
   "signing_out_message": "Signing out",
   "confirmation_message": "Are you sure you want to sign out?",

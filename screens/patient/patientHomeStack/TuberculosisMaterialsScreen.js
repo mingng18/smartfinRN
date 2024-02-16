@@ -31,11 +31,6 @@ export default function TuberculosisMaterialsScreen() {
       title: t("tb_dot_title"),
       description: t("tb_dot_description"),
     },
-    // {
-    //   title: t("video_example_title"),
-    //   description: t("video_example_description"),
-    //   videoId: "iee2TATGMyI",
-    // },
   ];
 
   const filteredAccordionData = accordionData.filter(

@@ -200,7 +200,7 @@ export default function ReviewVideoDetailsScreen() {
               mode="outlined"
               multiline
               numberOfLines={10}
-              style={{ marginTop: 8 }}
+              style={{ marginTop: 8, paddingTop: 16 }}
               placeholder={t("type_reason_here")}
               value={reason}
               onChangeText={(text) => setReason(text)}
