@@ -1,7 +1,7 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Camera, CameraType } from "expo-camera";
 import React from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Linking, View } from "react-native";
 import { Button, IconButton, Text, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
@@ -58,7 +58,6 @@ export default function CameraScreen() {
         }
       }
 
-      
       // set the best match
       desiredRatio = minDistance;
       //  calculate the difference between the camera width and the screen height
@@ -150,16 +149,34 @@ export default function CameraScreen() {
   if (!hasCameraPermission || !hasAudioPermission) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>{t("no_access_camera")}</Text>
+        <IconButton
+          icon="chevron-left"
+          iconColor="black"
+          size={40}
+          style={{ position: "absolute", left: "3%", top: "3%" }}
+          onPress={() => navigation.goBack()}
+        />
+        <Text variant="bodyLarge">{t("no_access_camera")}</Text>
+        <Button
+          style={{ marginTop: 16 }}
+          mode="contained"
+          onPress={() => {
+            Linking.openSettings();
+          }}
+        >
+          Open settings
+        </Button>
       </View>
     );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.onBackground }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.onBackground }}
+    >
       <View
         style={{
-          flex:1,
+          flex: 1,
           backgroundColor: theme.colors.onBackground,
         }}
       >

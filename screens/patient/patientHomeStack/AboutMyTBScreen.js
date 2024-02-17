@@ -5,6 +5,7 @@ import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { List, Searchbar, useTheme } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import { MEDI_SAMPLE_VIDEO } from "../../../constants/constants";
 
 export default function AboutMyTBScreen() {
   const navigation = useNavigation();
@@ -29,35 +30,53 @@ export default function AboutMyTBScreen() {
     },
     {
       title: t("register_title"),
-      description: "",
+      description: t("register_description"),
     },
     {
       title: t("record_upload_title"),
-      description: "",
+      description: t("record_upload_description"),
     },
     {
       title: t("video_spec_title"),
-      description: "",
+      description: t("video_spec_description"),
     },
     {
       title: t("report_side_effects_title"),
-      description: "",
+      description: t("report_side_effects_description"),
     },
     {
       title: t("track_progress_title"),
-      description: "",
+      description: t("track_progress_description"),
     },
     {
       title: t("make_appointment_title"),
-      description: "",
+      description: t("make_appointment_description"),
     },
     {
       title: t("set_reminder_title"),
-      description: "",
+      description: t("set_reminder_description"),
     },
     {
       title: t("use_chatbot_title"),
+      description: t("use_chatbot_description"),
+    },
+    {
+      title: t("record_title"),
+      description: t("record_description"),
+      videoSource: MEDI_SAMPLE_VIDEO,
+    },
+    {
+      title: t("medi_title"),
       description: "",
+      videoSource: MEDI_SAMPLE_VIDEO,
+    },
+    {
+      title: t("edit_title"),
+      description: t("edit_description"),
+    },
+    {
+      title: t("history_title"),
+      description: t("history_description"),
     },
   ];
 
@@ -93,6 +112,8 @@ export default function AboutMyTBScreen() {
               title={item.title}
               description={item.description}
               videoId={item.videoId}
+              videoSource={item.videoSource}
+              pdfSource={item.pdfSource}
             />
           ))}
         </List.Section>

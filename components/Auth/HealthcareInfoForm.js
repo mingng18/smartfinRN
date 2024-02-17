@@ -1,21 +1,25 @@
-import { Button, TextInput } from "react-native-paper";
 import React from "react";
-import { Alert, View } from "react-native";
-import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
-import { useDispatch, useSelector } from "react-redux";
-import { updateHealthcareInformation } from "../../store/redux/signupSlice";
 import * as Haptics from "expo-haptics";
-import { editDocument } from "../../util/firestoreWR";
+import { Alert, View } from "react-native";
+import { Button, TextInput } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
+
+import CustomDropDownPicker from "../../components/ui/CustomDropDownPicker";
+import { updateHealthcareInformation } from "../../store/redux/signupSlice";
+import { editDocument } from "../../util/firestoreWR";
 import { editHealthcareInfo } from "../../store/redux/authSlice";
 import { FIREBASE_COLLECTION } from "../../constants/constants";
-import { useTranslation } from "react-i18next";
 
 export default function HealthcareInfoForm({ isEditing }) {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { t } = useTranslation("auth");
+  const user = useSelector((state) => state.authObject);
+  const signupInfo = useSelector((state) => state.signupObject);
 
+  //Role data dropdownbox
   const [roleOpen, setRoleOpen] = React.useState(false);
   const [role, setRole] = React.useState("doctor");
   const [roleData, setRoleData] = React.useState([
@@ -24,6 +28,7 @@ export default function HealthcareInfoForm({ isEditing }) {
     { label: t("medical_assistant"), value: "medical_assistant" },
   ]);
 
+  //Category dropdown box
   const [categoryOpen, setCategoryOpen] = React.useState(false);
   const [category, setCategory] = React.useState("government_hospital");
   const [categoryData, setCategoryData] = React.useState([
@@ -32,19 +37,17 @@ export default function HealthcareInfoForm({ isEditing }) {
     { label: t("ngo"), value: "ngo" },
   ]);
 
+  //Other Input data
   const [firstName, setFirstName] = React.useState("");
   const [lastName, setLastName] = React.useState("");
   const [mpmId, setMpmId] = React.useState("");
-
   const [credentialsInvalid, setCredentialsInvalid] = React.useState({
     firstName: false,
     lastName: false,
     mpmId: false,
   });
 
-  const user = useSelector((state) => state.authObject);
-  const signupInfo = useSelector((state) => state.signupObject);
-
+  //If the patient is editing, populate the data into textinput
   React.useEffect(() => {
     console.log(signupInfo.signupMode);
     if (isEditing) {
@@ -56,6 +59,7 @@ export default function HealthcareInfoForm({ isEditing }) {
     }
   }, [isEditing]);
 
+  //Next button during sign up stage
   async function nextButtonHandler() {
     const inputValid = inputCheck();
 
@@ -77,6 +81,7 @@ export default function HealthcareInfoForm({ isEditing }) {
     navigation.navigate("UploadProfilePicScreen");
   }
 
+  //Update button in edit page
   async function updateButtonHandler() {
     const inputValid = inputCheck();
 
@@ -192,7 +197,6 @@ export default function HealthcareInfoForm({ isEditing }) {
       <View style={{ marginTop: 16 }} />
       <CustomDropDownPicker
         zIndex={4000}
-        // zIndexInverse={2000}
         open={categoryOpen}
         setOpen={setCategoryOpen}
         value={category}
