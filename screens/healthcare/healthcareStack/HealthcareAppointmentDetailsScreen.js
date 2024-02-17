@@ -68,7 +68,7 @@ export default function HealthcareAppointmentDetailsScreen() {
 
       const characters = "abcdefghijklmnopqrstuvwxyz";
       let roomIdResult = "";
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < 26; i++) {
         const randomIndex = Math.floor(Math.random() * characters.length);
         roomIdResult += characters.charAt(randomIndex);
       }

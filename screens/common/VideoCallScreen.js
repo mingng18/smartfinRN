@@ -68,7 +68,7 @@ export default function VideoCallScreen({ route }) {
     }
   }, [localStream]);
 
-  useEffect(() => {},[remoteStream,localStream])
+  useEffect(() => {}, [remoteStream, localStream]);
 
   //End call button
   async function endCall() {
@@ -81,7 +81,10 @@ export default function VideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    await roomRef.update({ answer: firestore.FieldValue.delete() });
+    const snapshot = await roomRef.get();
+    // if (snapshot.data().answer) {
+    //   await roomRef.update({ answer: firestore.FieldValue.delete() });
+    // }
 
     await roomRef.delete();
 
@@ -229,17 +232,16 @@ export default function VideoCallScreen({ route }) {
         console.log(
           "Got remote answer--------------------------------------------------------------------------------------------------------------------------------------------------"
         );
-          console.log("remote answer here", data.answer)
+        console.log("remote answer here", data.answer);
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         localPC.setRemoteDescription(rtcSessionDescription);
-        console.log(remoteStream, "remoteStream here")
-        
+        console.log(remoteStream, "remoteStream here");
       } else if (!data.answer && data.leftRoom) {
         console.log("No remote answer here");
         localPC.setRemoteDescription(null);
         localPC.setLocalDescription(null);
         setRemoteStream(null);
-        endCall()
+        endCall();
       }
     });
 
@@ -247,7 +249,7 @@ export default function VideoCallScreen({ route }) {
     calleeCandidatesCollection.onSnapshot((querySnapshot) => {
       querySnapshot.forEach((snapshot) => {
         if (snapshot.data()) {
-          console.log("Host adding guest IceCandidates " + snapshot.data() )
+          console.log("Host adding guest IceCandidates " + snapshot.data());
           const candidate = new RTCIceCandidate(snapshot.data());
           localPC.addIceCandidate(candidate);
         }
