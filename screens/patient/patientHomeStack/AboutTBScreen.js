@@ -5,6 +5,12 @@ import { View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { List, Searchbar, useTheme } from "react-native-paper";
 import { useTranslation } from "react-i18next";
+import {} from "../../../assets/medication-sample.mp4";
+import {
+  MEDI_SAMPLE_VIDEO,
+  TB_POSTER,
+  WHAT_IS_TB_VIDEO,
+} from "../../../constants/constants";
 
 export default function AboutTBScreen() {
   const navigation = useNavigation();
@@ -53,6 +59,16 @@ export default function AboutTBScreen() {
       description: "",
       videoId: "IGZLkRN76Dc",
     },
+    {
+      title: t("tb_definition_title"),
+      description: "",
+      videoSource: WHAT_IS_TB_VIDEO,
+    },
+    {
+      title: t("tb_poster"),
+      description: "",
+      pdfSource: "https://firebasestorage.googleapis.com/v0/b/mytbcompanion.appspot.com/o/poster.pdf?alt=media&token=9aadc1f1-06e2-4435-9aaf-9dcb85ab199b",
+    },
   ];
 
   const filteredAccordionData = accordionData.filter(
@@ -87,6 +103,8 @@ export default function AboutTBScreen() {
               title={item.title}
               description={item.description}
               videoId={item.videoId}
+              videoSource={item.videoSource}
+              pdfSource={item.pdfSource}
             />
           ))}
         </List.Section>

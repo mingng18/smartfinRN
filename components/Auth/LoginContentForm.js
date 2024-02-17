@@ -18,10 +18,9 @@ import {
   Modal,
   TextInput,
 } from "react-native-paper";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useNavigation } from "@react-navigation/native";
-import * as SplashScreen from "expo-splash-screen";
 
 import { sendPasswordResetEmail } from "../../util/firebaseAuth";
 import {

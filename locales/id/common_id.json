@@ -28,7 +28,8 @@
   "preview_profile_picture": "Pratinjau foto profil",
   "back": "Kembali",
 
-  "no_access_camera": "Tidak ada akses ke kamera",
+  "no_access_camera": "Tidak ada akses ke kamera. Silakan buka pengaturan dan berikan izin kamera.",
+  "open_settings": "Buka pengaturan",
 
   "change_language": "Tukar Bahasa",
   "confirm_change_language": "Apakah Anda yakin ingin mengubah bahasa?",

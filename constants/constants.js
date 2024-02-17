@@ -1,4 +1,7 @@
 export const BLANK_PROFILE_PIC = require("../assets/blank-profile-pic.png");
+export const TB_POSTER = require("../assets/poster.pdf");
+export const MEDI_SAMPLE_VIDEO = require("../assets/medication-sample.mp4");
+export const WHAT_IS_TB_VIDEO = require("../assets/what-is-tb.mp4");
 export const LOGO_NO_TYPE = require("../assets/logo-no-type.png");
 export const LOGO_WHITE_TYPE = require("../assets/logo-white-type.png");
 export const LOGO_BLACK_TYPE = require("../assets/logo-black-type.png");
