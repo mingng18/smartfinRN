@@ -16,8 +16,9 @@ import {
   APPOINTMENT_TIME,
   FIREBASE_COLLECTION,
 } from "../../../constants/constants";
-import { fetchBookedAppointmentDates } from "../../../store/redux/bookedAppointmentDateSlice";
+import { createAppointmentDate, fetchBookedAppointmentDates } from "../../../store/redux/bookedAppointmentDateSlice";
 import { useTranslation } from "react-i18next";
+import LoadingIndicatorDialog from "../../../components/ui/LoadingIndicatorDialog";
 
 export default function BookAppointmentScreen() {
   const navigation = useNavigation();
@@ -41,6 +42,8 @@ export default function BookAppointmentScreen() {
   const [time, setTime] = React.useState();
   const [items, setItems] = React.useState(APPOINTMENT_TIME);
 
+  const [loading, setLoading] = React.useState(false);
+
   const updateItemValue = (timeSlot, newValue) => {
     setItems((prevItems) => {
       return prevItems.map((item) => {
@@ -57,7 +60,14 @@ export default function BookAppointmentScreen() {
   
 
   useEffect(() => {
-    dispatch(fetchBookedAppointmentDates({}));
+    console.log("Loading set to true")
+    setLoading(true);
+    dispatch(fetchBookedAppointmentDates());
+    setTimeout(() => {
+      // Code to be executed after the timeout
+      console.log("Timeout completed!");
+      setLoading(false);
+    }, 1000);
   }, []);
 
   React.useLayoutEffect(() => {
@@ -265,6 +275,7 @@ export default function BookAppointmentScreen() {
         scheduled_timestamp: submitDate.toISOString(),
       })
     );
+    dispatch(createAppointmentDate({ date: submitDate.toISOString() }));
     navigation.popToTop();
   };
 
@@ -342,6 +353,11 @@ export default function BookAppointmentScreen() {
           buttonText="Back to Home Page"
         /> */}
       </View>
+      <LoadingIndicatorDialog
+        visible={loading}
+        title={t("fetching_available_slots_title")}
+        bodyText={t("fetching_available_slots_body_message")}
+      ></LoadingIndicatorDialog>
     </View>
   );
 }

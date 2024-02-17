@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, DeviceEventEmitter, StyleSheet, View } from "react-native";
 import { Button, Dialog, Portal, Text, useTheme } from "react-native-paper";
 import HorizontalCard from "../../../components/ui/HorizontalCard";
 import {
@@ -197,9 +197,12 @@ export default function AppointmentDetailsScreen() {
     );
   }
 
-  const onCallOrJoin = (meeting_room_id) => {
+  const onCallOrJoin = (meeting_room_id, currentAppointment) => {
     if (meeting_room_id != null || meeting_room_id != "") {
-      navigation.navigate("JoinVideoCallScreen", { roomId: meeting_room_id });
+      navigation.navigate("JoinVideoCallScreen", {
+        roomId: meeting_room_id,
+        currentAppointment: currentAppointment,
+      });
     }
   };
 
@@ -218,7 +221,10 @@ export default function AppointmentDetailsScreen() {
         Alert.alert("The meeting room does not exist.");
         return;
       } else {
-        onCallOrJoin(currentAppointment.meeting_room_id);
+        // DeviceEventEmitter.addListener("onCallEnds", (appointment) => {
+        //   navigation.goBack();
+        // });
+        onCallOrJoin(currentAppointment.meeting_room_id, currentAppointment);
       }
     } else {
       Alert.alert("Provide a valid Room ID.");

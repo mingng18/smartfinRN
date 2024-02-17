@@ -77,6 +77,8 @@
   "try_again_later_text": "Please try again later",
 
   "book_appointment_header_title": "Book Appointment",
+  "fetching_available_slots_title": "Fetching available slots",
+  "fetching_available_slots_body_message": "Please wait while we fetch the available slots",
   "invalid_input_text": "Invalid Input",
   "fill_all_input_text": "Please fill in all the input",
   "reschedule_successful_text": "Reschedule Successful!",

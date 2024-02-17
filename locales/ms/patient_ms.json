@@ -76,6 +76,8 @@
   "try_again_later_text": "Sila cuba lagi kemudian",
 
   "book_appointment_header_title": "Tempah Janji Temu",
+  "fetching_available_slots_title": "Mencari slot yang tersedia",
+  "fetching_available_slots_body_message": "Sila tunggu sementara kami mencari slot yang tersedia untuk anda.",
   "invalid_input_text": "Input tidak sah",
   "fill_all_input_text": "Sila isi semua input",
   "reschedule_successful_text": "Jadual semula berjaya!",

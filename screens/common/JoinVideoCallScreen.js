@@ -23,11 +23,15 @@ import {
   DocumentSnapshot,
 } from "firebase/firestore";
 
-import InCallManager from 'react-native-incall-manager'
+import InCallManager from "react-native-incall-manager";
 import CallActionBox from "../../components/ui/CallActionBox";
 import { Button } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-import { addDocument, editDocument, fetchDocument } from "../../util/firestoreWR";
+import {
+  addDocument,
+  editDocument,
+  fetchDocument,
+} from "../../util/firestoreWR";
 import { firebase } from "@react-native-firebase/auth";
 import { useDispatch } from "react-redux";
 import { updateAppointment } from "../../store/redux/appointmentSlice";
@@ -53,7 +57,7 @@ export default function JoinVideoCallScreen({ route }) {
   const [isMuted, setIsMuted] = useState(false);
   const [isOffCam, setIsOffCam] = useState(false);
 
-  const { roomId } = route.params;
+  const { roomId, currentAppointment } = route.params;
 
   useEffect(() => {
     startLocalStream();
@@ -64,8 +68,6 @@ export default function JoinVideoCallScreen({ route }) {
       joinCall(roomId);
     }
   }, [localStream]);
-
-  
 
   //End call button
   async function endCall() {
@@ -78,22 +80,35 @@ export default function JoinVideoCallScreen({ route }) {
     }
 
     const roomRef = firestore().collection("room").doc(roomId);
-    const calleeCandidatesCollection = firestore().collection("room").doc(roomId).collection("calleeCandidates");
+    const calleeCandidatesCollection = firestore()
+      .collection("room")
+      .doc(roomId)
+      .collection("calleeCandidates");
 
     try {
-      roomRef.update({ answer: firestore.FieldValue.delete(), connected: false, leftRoom: true });
-      console.log("after roomRef.update")
-      calleeCandidatesCollection.get().then((querySnapshot) => {
-        querySnapshot.forEach(documentSnapshot => {
-          calleeCandidatesCollection.doc(documentSnapshot.id).delete();
-        })
-      });
-      
+      console.log("before roomRef.update");
+      const snapshot = await roomRef.get();
+      if (!snapshot.exists) {
+        console.log("No such document anymore!");
+        dispatch(updateAppointment({id: currentAppointment.id, changes:{appointment_status: APPOINTMENT_STATUS.COMPLETED}}));
+        return;
+      } else {
+        roomRef.update({
+          answer: firestore.FieldValue.delete(),
+          connected: false,
+          leftRoom: true,
+        });
+        console.log("after roomRef.update");
+        calleeCandidatesCollection.get().then((querySnapshot) => {
+          querySnapshot.forEach((documentSnapshot) => {
+            calleeCandidatesCollection.doc(documentSnapshot.id).delete();
+          });
+        });
+      }
     } catch (error) {
       console.log("Error on snapshot joinVideoCallScreen endCall: " + error);
     }
 
-   
     // const roomRef = doc(db, "room", roomId);
     // await updateDoc(roomRef, { answer: deleteField() });
 
@@ -101,7 +116,10 @@ export default function JoinVideoCallScreen({ route }) {
     setRemoteStream(); // set remoteStream to null or empty when callee leaves the call
     setCachedLocalPC();
     // cleanup
-    navigation.goBack(); //go back to previous screen
+    navigation.pop(2); //go back to previous screen
+
+    // DeviceEventEmitter.emit("onCallEnds", currentAppointment);
+    // DeviceEventEmitter.removeAllListeners("onCallEnds");
   }
 
   //start local webcam on your device
@@ -132,24 +150,29 @@ export default function JoinVideoCallScreen({ route }) {
   };
 
   const joinCall = async (id) => {
-
     const roomRef = firestore().collection("room").doc(id);
-    const roomSnapshot = await roomRef.get()
+    const roomSnapshot = await roomRef.get();
     // const roomSnapshot = fetchDocument("room", id);
     // const roomRef = doc(db, "room", id);
     // const roomSnapshot = await getDoc(roomRef);
 
-    if (!roomSnapshot.exists){
+    if (!roomSnapshot.exists) {
       Alert.alert("Room not found");
       navigation.goBack();
-    } 
+    }
     const localPC = new RTCPeerConnection(configuration);
     localStream.getTracks().forEach((track) => {
       localPC.addTrack(track, localStream);
     });
 
-    const callerCandidatesCollection = firestore().collection("room").doc(id).collection("callerCandidates");
-    const calleeCandidatesCollection = firestore().collection("room").doc(id).collection("calleeCandidates");
+    const callerCandidatesCollection = firestore()
+      .collection("room")
+      .doc(id)
+      .collection("callerCandidates");
+    const calleeCandidatesCollection = firestore()
+      .collection("room")
+      .doc(id)
+      .collection("calleeCandidates");
 
     localPC.addEventListener("icecandidate", (e) => {
       if (!e.candidate) {
@@ -164,7 +187,7 @@ export default function JoinVideoCallScreen({ route }) {
       e.streams[0].getTracks().forEach((track) => {
         newStream.addTrack(track);
       });
-      console.log("got remote stream here at join video call")
+      console.log("got remote stream here at join video call");
       setRemoteStream(newStream);
     };
 
@@ -176,9 +199,9 @@ export default function JoinVideoCallScreen({ route }) {
 
     try {
       await roomRef.update({ answer: answer, connected: true });
-      
+      console.log("After roomRef.update");
     } catch (error) {
-      console.log("After roomRef.update")
+      console.log("After roomRef.update");
       console.log("Error on snapshot joinVideoCallScreen joinCall: " + error);
     }
 
@@ -193,17 +216,19 @@ export default function JoinVideoCallScreen({ route }) {
     try {
       roomRef.onSnapshot((doc) => {
         const data = doc.data();
-        if (!data.answer) {
-          console.log("After roomRef.onSnapshot")
+        console.log("Before testing roomRef.onSnapshot");
+        if (!data) {
+          console.log("No data in roomRef.onSnapshot");
+          return endCall();
+        } else if (!data.answer) {
+          console.log("After roomRef.onSnapshot");
           endCall();
           // navigation.goBack();
         }
       });
-      
     } catch (error) {
       console.log("Error on snapshot roomRef.onSnapshot: " + error);
     }
-
 
     setCachedLocalPC(localPC);
   };
@@ -217,7 +242,7 @@ export default function JoinVideoCallScreen({ route }) {
     if (!remoteStream) {
       return;
     }
-    
+
     localStream.getAudioTracks().forEach((track) => {
       track.enabled = !track.enabled;
       setIsMuted(!track.enabled);
@@ -231,11 +256,11 @@ export default function JoinVideoCallScreen({ route }) {
     });
   };
 
-  React.useEffect(() =>{
-    InCallManager.start({media: 'video'}) 
+  React.useEffect(() => {
+    InCallManager.start({ media: "video" });
     InCallManager.setSpeakerphoneOn(true);
     InCallManager.setForceSpeakerphoneOn(true);
-  },[])
+  }, []);
 
   return (
     <View

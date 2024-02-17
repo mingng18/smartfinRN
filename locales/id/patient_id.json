@@ -76,6 +76,8 @@
   "try_again_later_text": "Harap coba lagi nanti",
 
   "book_appointment_header_title": "Buat Janji",
+  "fetching_available_slots_title": "Mencari slot yang tersedia",
+  "fetching_available_slots_body_message": "Sila tunggu sementara kami mencari slot yang tersedia untuk anda.",
   "invalid_input_text": "Input tidak valid",
   "fill_all_input_text": "Harap isi semua input",
   "reschedule_successful_text": "Pengaturan ulang berhasil!",

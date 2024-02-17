@@ -11,7 +11,7 @@ export const fetchBookedAppointmentDates = createAsyncThunk(
   "appointments/fetchBookedAppointmentDates",
   async (thunkAPI) => {
     try {
-      // console.log("fetching booked dates");
+      console.log("fetching booked dates");
       const bookedAppointmentDates =
         await fetchBookedDateOfAppointmentFromFirebase();
       return bookedAppointmentDates;
@@ -27,10 +27,7 @@ export const bookedAppointmentDateSlice = createSlice({
   initialState,
   reducers: {
     createAppointmentDate: (state, action) => {
-      const newAppointment = {
-        ...action.payload,
-      };
-      state.bookedAppointmentDates.push(newAppointment);
+      state.bookedAppointmentDates.push(action.payload.date);
     },
     deleteAppointmentDate: (state, action) => {
       const appointmentDateToDelete = action.payload;

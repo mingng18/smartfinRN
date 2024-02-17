@@ -159,7 +159,6 @@ export async function fetchBookedDateOfAppointmentFromFirebase() {
       );
     });
 
-    // console.log("bookedAppointmentDates", bookedAppointmentDates);
     return bookedAppointmentDates;
   } catch (error) {
     console.log("error in fetchBookedDateOfAppointment", error);
