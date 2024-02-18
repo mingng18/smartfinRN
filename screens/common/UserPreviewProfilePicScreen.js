@@ -89,6 +89,9 @@ export default function UserPreviewProfilePicScreen() {
             await CacheManager.downloadAsync({
               uri: downloadURL,
               key: getLastTenCharacters(downloadURL),
+            }).then((file) => {
+              console.log("Updated cache");
+              console.log(file.status);
             });
 
             setIsUploading(false);

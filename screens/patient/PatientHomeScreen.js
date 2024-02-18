@@ -5,6 +5,7 @@ import {
   RefreshControl,
   Platform,
   Alert,
+  Dimensions,
 } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
@@ -253,29 +254,48 @@ function PatientHomeScreen() {
             {
               backgroundColor:
                 Platform.OS === "android" && theme.colors.secondaryContainer,
+              paddingHorizontal: 16,
+              flexDirection: "row",
+              width: "100%",
+              paddingBottom: 16,
+              paddingTop: 8,
+              alignItems: "center",
             },
           ]}
         >
-          {user.profile_pic_url && user.profile_pic_url !== "" ? (
-            <CachedImage
-              source={{ uri: user.profile_pic_url }}
-              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
-              defaultSource={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          ) : (
-            <Image
-              source={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          )}
-          <View style={[styles.headerText]}>
+          <View style={{ flexShrink: 1 }}>
+            {user.profile_pic_url && user.profile_pic_url !== "" ? (
+              <CachedImage
+                source={{ uri: user.profile_pic_url }}
+                cacheKey={getLastTenCharacters(user.profile_pic_url)}
+                defaultSource={BLANK_PROFILE_PIC}
+                style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+              />
+            ) : (
+              <Image
+                source={BLANK_PROFILE_PIC}
+                style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+              />
+            )}
+          </View>
+          <View
+            style={[
+              {
+                flexGrow: 1,
+                flexDirection: "column",
+                maxWidth: Dimensions.get("window").width - 32 - 74 - 74 - 32,
+                marginHorizontal: 16,
+              },
+            ]}
+          >
             <Text variant="bodyLarge">{t("hello_text")}</Text>
-            <Text variant="headlineLarge">
+            <Text variant="headlineMedium" numberOfLines={2}>
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
-          <Image source={LOGO_BLACK_TYPE} style={{ width: 74, height: 74 }} />
+          <View style={{ flexShrink: 1 }}>
+            <Image source={LOGO_BLACK_TYPE} style={{ width: 74, height: 74 }} />
+          </View>
         </View>
         {/* ================ TodoList ============== */}
         <View
@@ -287,6 +307,7 @@ function PatientHomeScreen() {
             },
           ]}
         >
+          
           <View
             style={[
               styles.toDoList,

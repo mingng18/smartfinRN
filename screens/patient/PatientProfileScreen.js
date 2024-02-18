@@ -139,7 +139,6 @@ function PatientProfileScreen() {
 
   const monthsSinceDiagnosis = React.useMemo(() => {
     const diagnosis = new Date(user.date_of_diagnosis);
-    console.log(diagnosis);
 
     const months =
       (today.getFullYear() - diagnosis.getFullYear()) * 12 +
@@ -184,7 +183,6 @@ function PatientProfileScreen() {
       return acc;
     }, 0);
 
-    console.log(count);
     // Return the total number of videos submitted this month
     return count;
   };
@@ -201,42 +199,63 @@ function PatientProfileScreen() {
       >
         {/* ===================HEADER==================== */}
         <View style={[styles.homeHeader]}>
-          {user.profile_pic_url && user.profile_pic_url !== "" ? (
-            <CachedImage
-              source={{ uri: user.profile_pic_url }}
-              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
-              defaultSource={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          ) : (
-            <Image
-              source={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          )}
-          <View style={[styles.headerText]}>
-            <Text variant="bodyLarge">
-              {streakCounter() === 7
-                ? t("keep_it_up_message")
-                : streakCounter() > 1
-                ? t("take_medication_message")
-                : t("you_can_do_better_message")}
-            </Text>
-            <Text variant="headlineLarge">
-              {capitalizeFirstLetter(user.first_name)}
-            </Text>
-            {user.notes !== "" && (
-              <Text variant="labelLarge">{t(user.notes)}</Text>
-            )}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              flex: 1,
+            }}
+          >
+            <View style={{ flexShrink: 1 }}>
+              {user.profile_pic_url && user.profile_pic_url !== "" ? (
+                <CachedImage
+                  source={{ uri: user.profile_pic_url }}
+                  cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
+                  defaultSource={BLANK_PROFILE_PIC}
+                  style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+                />
+              ) : (
+                <Image
+                  source={BLANK_PROFILE_PIC}
+                  style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+                />
+              )}
+            </View>
+            <View
+              style={{
+                flexDirection: "column",
+                marginLeft: 16,
+                justifyContent: "center",
+              }}
+            >
+              <Text variant="bodyLarge" numberOfLines={1}>
+                {streakCounter() === 7
+                  ? t("keep_it_up_message")
+                  : streakCounter() > 1
+                  ? t("take_medication_message")
+                  : t("you_can_do_better_message")}
+              </Text>
+              <Text
+                variant="headlineMedium"
+                numberOfLines={2}
+                style={{ flexWrap: "wrap" }}
+              >
+                {capitalizeFirstLetter(user.first_name)}
+              </Text>
+              {user.notes !== "" && (
+                <Text variant="labelLarge">{t(user.notes)}</Text>
+              )}
+            </View>
           </View>
           <Button
             onPress={() => {
               navigate("PatientEditProfileScreen");
             }}
             mode="contained"
-            style={{ alignSelf: "flex-start" }}
+            style={{ alignSelf: "flex-start", flexShrink: 1 }}
           >
-            Edit
+            {t("edit")}
           </Button>
         </View>
         {/* ========================PERSONAL INFO======================= */}
@@ -355,13 +374,9 @@ export default PatientProfileScreen;
 const styles = StyleSheet.create({
   homeHeader: {
     flexDirection: "row",
+    justifyContent: "space-between",
   },
-  headerText: {
-    flexDirection: "column",
-    marginLeft: 16,
-    justifyContent: "center",
-    flexGrow: 1,
-  },
+  headerText: {},
   toDoList: {
     paddingTop: 16,
     borderRadius: 16,

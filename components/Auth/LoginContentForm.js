@@ -17,6 +17,7 @@ import {
   Portal,
   Modal,
   TextInput,
+  Chip,
 } from "react-native-paper";
 import auth from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -42,12 +43,17 @@ import { fetchSideEffects } from "../../store/redux/sideEffectSlice";
 import { fetchVideos } from "../../store/redux/videoSlice";
 import { fetchPatientCollectionData } from "../../store/redux/patientDataSlice";
 import { updateSignInCredentials } from "../../store/redux/signupSlice";
+import {
+  changeCalendarsLocales,
+  changePaperLocales,
+} from "../../util/calendarLocales";
 
 function LoginContentForm({ onAuthenticate }) {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const theme = useTheme();
   const { t } = useTranslation("auth");
+  const { i18n } = useTranslation();
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -83,7 +89,6 @@ function LoginContentForm({ onAuthenticate }) {
   }, []);
 
   async function googleSignIn() {
-    
     try {
       // Check if your device supports Google Play
       await GoogleSignin.hasPlayServices({
@@ -182,7 +187,6 @@ function LoginContentForm({ onAuthenticate }) {
     userCredential = await googleSignIn();
     const user = userCredential.user;
 
-    console.log("HAHAHAHAHA");
     console.log("user checking is : " + user.uid);
     const token = await user.getIdToken();
 
@@ -318,6 +322,61 @@ function LoginContentForm({ onAuthenticate }) {
                   </View>
                 </Modal>
               </Portal>
+              <View
+                style={{
+                  marginTop: 40,
+                  flexDirection: "row-reverse",
+                  marginHorizontal: 12,
+                }}
+              >
+                <Text
+                  variant="bodyLarge"
+                  style={{
+                    backgroundColor:
+                      i18n.language === "en-MY"
+                        ? theme.colors.onPrimary
+                        : theme.colors.primary,
+                    paddingHorizontal: 12,
+                    borderRadius: 16,
+                    marginHorizontal: 4,
+                    color:
+                      i18n.language === "en-MY"
+                        ? theme.colors.primary
+                        : theme.colors.onPrimary,
+                  }}
+                  onPress={() => {
+                    i18n.changeLanguage("en-MY");
+                    changeCalendarsLocales("en-MY");
+                    changePaperLocales("en-MY");
+                    console.log(i18n.language);
+                  }}
+                >
+                  EN
+                </Text>
+                <Text
+                  variant="bodyLarge"
+                  style={{
+                    backgroundColor:
+                      i18n.language === "ms-MY"
+                        ? theme.colors.onPrimary
+                        : theme.colors.primary,
+                    paddingHorizontal: 12,
+                    borderRadius: 16,
+                    marginHorizontal: 4,
+                    color:
+                      i18n.language === "ms-MY"
+                        ? theme.colors.primary
+                        : theme.colors.onPrimary,
+                  }}
+                  onPress={() => {
+                    i18n.changeLanguage("ms-MY");
+                    changeCalendarsLocales("ms-MY");
+                    changePaperLocales("ms-MY");
+                  }}
+                >
+                  MS
+                </Text>
+              </View>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Text
                   style={[styles.titleText, { color: theme.colors.onPrimary }]}
@@ -451,10 +510,8 @@ export default LoginContentForm;
 const styles = StyleSheet.create({
   titleText: {
     marginHorizontal: 16,
-    marginTop: 56,
+    marginTop: 16,
     alignSelf: "center",
-    alignItems: "center",
-    alignContent: "center",
   },
   titleText2: {
     marginHorizontal: 16,

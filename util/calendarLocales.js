@@ -123,7 +123,7 @@ export default function calendarLocales(i18n) {
 }
 
 export async function changePaperLocales(language) {
-  console.log(typeof(language));
+  console.log(language);
   await SecureStore.setItemAsync("storedLocale", language.toString());
 }
 

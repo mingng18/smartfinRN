@@ -314,6 +314,8 @@ export default function PersonalInfoForm({ isEditing }) {
           setItems={setGenderData}
           placeholder={t("gender_placeholder")}
           listMode="SCROLLVIEW"
+          zIndex={3000}
+          zIndexInverse={1000}
         />
         <View style={{ marginTop: 16 }} />
         <CustomDropDownPicker
@@ -324,6 +326,9 @@ export default function PersonalInfoForm({ isEditing }) {
           items={nationalityData}
           setItems={setNationalityData}
           placeholder={t("nationality_placeholder")}
+          zIndex={2000}
+          zIndexInverse={2000}
+          listMode="SCROLLVIEW"
           // listMode="MODAL"
         />
         <View

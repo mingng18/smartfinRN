@@ -90,12 +90,10 @@ export default function HealthcareProfileScreen() {
           <Text
             numberOfLines={2}
             ellipsizeMode="tail"
-            variant="headlineLarge"
+            variant="headlineMedium"
             style={[styles.headerText]}
           >
-            {`${capitalizeFirstLetter(user.first_name)} ${capitalizeFirstLetter(
-              user.last_name
-            )}`}
+            {`${capitalizeFirstLetter(user.first_name)}`}
           </Text>
         </View>
         <Button

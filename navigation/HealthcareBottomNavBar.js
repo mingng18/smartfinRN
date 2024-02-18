@@ -14,7 +14,7 @@ const HealthcareBottomNavBar = () => {
   const { t } = useTranslation("healthcare");
 
   //Routes for Bottom Nav Bar
-  const [routes, setRoutes] = React.useState([
+  const routes = [
     {
       index: 0,
       key: "healthcareHome",
@@ -47,7 +47,7 @@ const HealthcareBottomNavBar = () => {
       component: HealthcareProfileScreen,
       unfocusedIcon: "account-outline",
     },
-  ]);
+  ];
 
   return (
     <Tab.Navigator

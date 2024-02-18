@@ -24,7 +24,6 @@ export default function LanguageScreen() {
   });
 
   const handleLanguageSubmission = () => {
-    //TODO submit new language
     Alert.alert(
       t("change_language"),
       t("confirm_change_language"),

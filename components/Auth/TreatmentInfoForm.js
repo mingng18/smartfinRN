@@ -441,14 +441,18 @@ export default function TreatmentInfoForm({ isEditing }) {
       setTreatment(localUser.treatment);
       setNumberOfTablets(parseInt(localUser.number_of_tablets));
 
-      // console.log(
-      //   "treatment start date: " +
-      //     new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
-      // );
-      // console.log(
-      //   "treatment end date: " +
-      //     new Date(localUser.treatment_end_date).toISOString().slice(0, 10)
-      // );
+      console.log(
+        "diagnosis start date: " +
+          new Date(localUser.date_of_diagnosis).toISOString().slice(0, 10)
+      );
+      console.log(
+        "treatment start date: " +
+          new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
+      );
+      console.log(
+        "treatment end date: " +
+          new Date(localUser.treatment_end_date).toISOString().slice(0, 10)
+      );
       setTreatmentStartDate(
         new Date(localUser.treatment_start_date).toISOString().slice(0, 10)
       );

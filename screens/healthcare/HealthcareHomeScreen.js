@@ -23,6 +23,7 @@ import {
   Platform,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import {
   capitalizeFirstLetter,
@@ -172,29 +173,48 @@ function HealthcareHomeScreen() {
             {
               backgroundColor:
                 Platform.OS === "android" && theme.colors.secondaryContainer,
+              paddingHorizontal: 16,
+              flexDirection: "row",
+              width: "100%",
+              paddingBottom: 16,
+              paddingTop: 8,
+              alignItems: "center",
             },
           ]}
         >
-          {user.profile_pic_url && user.profile_pic_url !== "" ? (
-            <CachedImage
-              source={{ uri: user.profile_pic_url }}
-              cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
-              defaultSource={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          ) : (
-            <Image
-              source={BLANK_PROFILE_PIC}
-              style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-            />
-          )}
-          <View style={[styles.headerText]}>
+          <View style={{ width: 74 }}>
+            {user.profile_pic_url && user.profile_pic_url !== "" ? (
+              <CachedImage
+                source={{ uri: user.profile_pic_url }}
+                cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
+                defaultSource={BLANK_PROFILE_PIC}
+                style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+              />
+            ) : (
+              <Image
+                source={BLANK_PROFILE_PIC}
+                style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+              />
+            )}
+          </View>
+          <View
+            style={[
+              {
+                flexGrow: 1,
+                flexDirection: "column",
+                maxWidth: Dimensions.get("window").width - 32 - 74 - 74 - 16,
+                marginHorizontal: 8,
+              },
+            ]}
+          >
             <Text variant="bodyLarge">{t("hello")}</Text>
-            <Text variant="headlineLarge">
+            <Text variant="headlineMedium" numberOfLines={2}>
               {capitalizeFirstLetter(user.first_name)}
             </Text>
           </View>
-          <Image source={LOGO_BLACK_TYPE} style={{ width: 74, height: 74 }} />
+          <View style={{ width: 74 }}>
+            <Image source={LOGO_BLACK_TYPE} style={{ width: 74, height: 74 }} />
+          </View>
         </View>
         {/* ================ TodoList ============== */}
         <View
@@ -332,17 +352,10 @@ function HealthcareHomeScreen() {
 export default HealthcareHomeScreen;
 
 const styles = StyleSheet.create({
-  homeHeader: {
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    paddingBottom: 32,
-    paddingTop: 8,
-  },
+  homeHeader: {},
   headerText: {
-    flexDirection: "column",
-    marginLeft: 16,
     justifyContent: "center",
-    flexGrow: 1,
+    marginHorizontal: 16,
   },
   toDoList: {
     borderRadius: 16,

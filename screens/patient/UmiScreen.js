@@ -109,7 +109,7 @@ function UmiScreen() {
   };
 
   React.useEffect(() => {
-    dispatch(createMessage(initialMessages));
+    dispatch(resetMessage(initialMessages));
   }, [t]);
 
   return (
