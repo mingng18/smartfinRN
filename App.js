@@ -22,6 +22,7 @@ import {
   authenticateStoreNative,
   fetchHealthcareData,
   fetchPatientData,
+  logoutDeleteNative,
   setFirstTimeLogin,
 } from "./store/redux/authSlice";
 import * as SplashScreen from "expo-splash-screen";
@@ -68,9 +69,9 @@ function Root() {
     async function onAuthStateChanged(user) {
       if (user != null || user != undefined) {
         setUser(user);
-        console.log("App.js user is : " + user.uid);
+        console.log("App.js user from google is : " + user.uid);
         const token = await user.getIdToken();
-        console.log("App.js token is : " + token);
+        console.log("App.js token from google is : " + token);
         dispatch(authenticateStoreNative(token, user.uid, "unknown"));
       }
       if (initializing) setInitializing(false);
@@ -162,10 +163,29 @@ function Root() {
         If not both, then the user is first time login and the user will be directed to the choose account type screen */
     //If there's no token stored locally, then set the log in status to false
     async function fetchToken() {
-      const storedToken = await SecureStore.getItemAsync("token");
+      var storedToken;
+      var storedUid;
+      try {
+        storedToken = await SecureStore.getItemAsync("token");
+      } catch (error) {
+        console.log("Error fetching token from local storage");
+        console.log("Error token  App.js: " + error)
+        storedToken = null;
+        dispatch(authenticate({ isAuthenticated: false }));
+        dispatch(logoutDeleteNative());
+      }
+      try {
+        storedUid = await SecureStore.getItemAsync("uid");
+      } catch (error) {
+        console.log("Error fetching uid from local storage");
+        console.log("Error uid App.js: " + error)
+        storedToken = null;
+        dispatch(authenticate({ isAuthenticated: false }));
+        dispatch(logoutDeleteNative());
+      }
+      console.log("Stored token is at App.js : " + storedToken);
       if (storedToken != "" && storedToken != null) {
-        const storedUid = await SecureStore.getItemAsync("uid");
-
+        console.log("Stored token is not null")
         //This function will first try to login as a patient, if not, then try to login as a healthcare
         //If not both, then the user is first time login
         autoLoginAndFetchFromDatabase(storedUid, storedToken);
@@ -210,7 +230,17 @@ function Root() {
         .getToken()
         .then(async (token) => {
           console.log("The notification token is " + token);
-          const storedUid = await SecureStore.getItemAsync("uid");
+          var storedUid;
+          try {
+            storedUid = await SecureStore.getItemAsync("uid");
+            console.log("Stored uid is at App.js fmi : " + storedUid)
+          } catch (error) {
+            console.log("Error fetching uid from local storage at fmi")
+            console.log("Error uid App.js fmi: " + error) 
+            storedUid = null;
+            dispatch(authenticate({ isAuthenticated: false }));
+            dispatch(logoutDeleteNative());
+          }
           if (storedUid != null && storedUid != "" && storedUid != undefined) {
             try {
               const patientUser = await fetchDocument(
