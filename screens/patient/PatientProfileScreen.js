@@ -198,55 +198,59 @@ function PatientProfileScreen() {
         }}
       >
         {/* ===================HEADER==================== */}
-        <View style={[styles.homeHeader]}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ flexShrink: 1 }}>
+            {user.profile_pic_url && user.profile_pic_url !== "" ? (
+              <CachedImage
+                source={{ uri: user.profile_pic_url }}
+                cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
+                defaultSource={BLANK_PROFILE_PIC}
+                style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+              />
+            ) : (
+              <Image
+                source={BLANK_PROFILE_PIC}
+                style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
+              />
+            )}
+          </View>
           <View
             style={{
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
+              flexDirection: "column",
+              marginHorizontal: 16,
+              justifyContent: "center",
               flex: 1,
             }}
           >
-            <View style={{ flexShrink: 1 }}>
-              {user.profile_pic_url && user.profile_pic_url !== "" ? (
-                <CachedImage
-                  source={{ uri: user.profile_pic_url }}
-                  cacheKey={`${getLastTenCharacters(user.profile_pic_url)}`}
-                  defaultSource={BLANK_PROFILE_PIC}
-                  style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-                />
-              ) : (
-                <Image
-                  source={BLANK_PROFILE_PIC}
-                  style={{ width: 74, height: 74, borderRadius: 74 / 2 }}
-                />
-              )}
-            </View>
-            <View
-              style={{
-                flexDirection: "column",
-                marginLeft: 16,
-                justifyContent: "center",
-              }}
+            <Text
+              variant="bodyLarge"
+              style={{ flexWrap: "wrap" }}
+              numberOfLines={1}
             >
-              <Text variant="bodyLarge" numberOfLines={1}>
-                {streakCounter() === 7
-                  ? t("keep_it_up_message")
-                  : streakCounter() > 1
-                  ? t("take_medication_message")
-                  : t("you_can_do_better_message")}
+              {streakCounter() === 7
+                ? t("keep_it_up_message")
+                : streakCounter() > 1
+                ? t("take_medication_message")
+                : t("you_can_do_better_message")}
+            </Text>
+            <Text
+              variant="headlineMedium"
+              numberOfLines={2}
+              style={{ flexWrap: "wrap" }}
+            >
+              {capitalizeFirstLetter(user.first_name)}
+            </Text>
+            {user.notes !== "" && (
+              <Text numberOfLines={1} variant="labelLarge">
+                {t(user.notes)}
               </Text>
-              <Text
-                variant="headlineMedium"
-                numberOfLines={2}
-                style={{ flexWrap: "wrap" }}
-              >
-                {capitalizeFirstLetter(user.first_name)}
-              </Text>
-              {user.notes !== "" && (
-                <Text variant="labelLarge">{t(user.notes)}</Text>
-              )}
-            </View>
+            )}
           </View>
           <Button
             onPress={() => {
@@ -259,7 +263,6 @@ function PatientProfileScreen() {
           </Button>
         </View>
         {/* ========================PERSONAL INFO======================= */}
-        {/* TODO change the personal information */}
         <View style={{ marginTop: 16, flexDirection: "row", flexWrap: "wrap" }}>
           <InformationChip
             text={user.nric_passport}
@@ -372,10 +375,7 @@ function PatientProfileScreen() {
 export default PatientProfileScreen;
 
 const styles = StyleSheet.create({
-  homeHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
+  homeHeader: {},
   headerText: {},
   toDoList: {
     paddingTop: 16,

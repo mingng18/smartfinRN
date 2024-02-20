@@ -72,6 +72,7 @@ function LoginContentForm({ onAuthenticate }) {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [token, setToken] = useState();
+  const [language, setLanguage] = useState("en-MY");
 
   React.useEffect(() => {
     function onAuthStateChanged(user) {
@@ -83,6 +84,8 @@ function LoginContentForm({ onAuthenticate }) {
       // dispatch(authenticateStoreNative(idToken, user.uid, "patient"));
       if (initializing) setInitializing(false);
     }
+
+    setLanguage(i18n.language);
 
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
@@ -333,22 +336,24 @@ function LoginContentForm({ onAuthenticate }) {
                   variant="bodyLarge"
                   style={{
                     backgroundColor:
-                      i18n.language === "en-MY"
+                      language === "en-MY"
                         ? theme.colors.onPrimary
                         : theme.colors.primary,
                     paddingHorizontal: 12,
                     borderRadius: 16,
                     marginHorizontal: 4,
                     color:
-                      i18n.language === "en-MY"
+                      language === "en-MY"
                         ? theme.colors.primary
                         : theme.colors.onPrimary,
+                    borderColor: theme.colors.onPrimary,
+                    borderWidth: 1,
                   }}
                   onPress={() => {
                     i18n.changeLanguage("en-MY");
                     changeCalendarsLocales("en-MY");
                     changePaperLocales("en-MY");
-                    console.log(i18n.language);
+                    setLanguage("en-MY");
                   }}
                 >
                   EN
@@ -357,21 +362,24 @@ function LoginContentForm({ onAuthenticate }) {
                   variant="bodyLarge"
                   style={{
                     backgroundColor:
-                      i18n.language === "ms-MY"
+                      language === "ms-MY"
                         ? theme.colors.onPrimary
                         : theme.colors.primary,
                     paddingHorizontal: 12,
                     borderRadius: 16,
                     marginHorizontal: 4,
                     color:
-                      i18n.language === "ms-MY"
+                      language === "ms-MY"
                         ? theme.colors.primary
                         : theme.colors.onPrimary,
+                    borderColor: theme.colors.onPrimary,
+                    borderWidth: 1,
                   }}
                   onPress={() => {
                     i18n.changeLanguage("ms-MY");
                     changeCalendarsLocales("ms-MY");
                     changePaperLocales("ms-MY");
+                    setLanguage("ms-MY");
                   }}
                 >
                   MS

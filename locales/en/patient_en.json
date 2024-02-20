@@ -3,7 +3,7 @@
   "already_uploaded_message": "You have already uploaded a video today. If you upload again, it will replace the previous video.",
   "continue_button": "Continue",
   "cancel_button": "Cancel",
-  "hello_text": "Hello",
+  "hello_text": "Welcome",
   "pending_text": "Pending",
   "congratulations_message": "Congratulations! Your to-do lists have been cleared!",
   "medication_not_taken_title": "You haven’t taken\nmedication yet today",
@@ -13,7 +13,7 @@
   "unviewed_appointment": "Unviewed Appointment\nRemarks",
 
   "up_for_something_text": "Are you up for something?",
-  "upload_video_title": "Take Video",
+  "upload_video_title": "Upload Video",
   "side_effect_title": "Side Effect",
   "materials_title": "Materials",
   "learn_more_button": "Learn more",
