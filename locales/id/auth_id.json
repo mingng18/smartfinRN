@@ -1,5 +1,8 @@
 {
   "auth_fail": "Autentikasi gagal!",
+  "auth_fail_message": "Masalah saat mengautentikasi pengguna. Sila semak rangkaian anda dan harap cuba lagi nanti.",
+  "network_error" : "Masalah Rangkaian!",
+  "network_error_message": "Sila pastikan anda mempunyai sambungan internet yang baik dan cuba lagi.",
   "diff_acc": "Kami menemukan akun Anda dengan metode masuk yang berbeda. Silakan masuk dengan metode masuk yang benar.",
   "user_not_found": "Pengguna tidak ditemukan",
   "sign_up_new_acc": "Silakan daftar akun baru.",

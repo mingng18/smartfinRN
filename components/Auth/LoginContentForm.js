@@ -107,7 +107,10 @@ function LoginContentForm({ onAuthenticate }) {
     } catch (error) {
       if (error.message.includes("Sign in action cancelled")) {
         console.log("Sign in with google cancelled");
-      } else {
+      } else if(error.message.includes("NETWORK_ERROR")){
+        Alert.alert(t("network_error"), t("network_error_message"));
+      }
+       else {
         Alert.alert(t("auth_fail"), t("auth_fail_message"));
         console.log("Error signing in with Google: " + error);
       }

@@ -1,5 +1,8 @@
 {
   "auth_fail": "Authentication failed!",
+  "auth_fail_message": "Something went wrong! Please check your internet connection, credential and try again later.",
+  "network_error" : "Network error",
+  "network_error_message": "Please check your internet connection and try again later.",
   "diff_acc": "We have found your account with a different sign in method. Please sign in with the correct sign in method.",
   "user_not_found": "User not found",
   "sign_up_new_acc": "Please kindly sign up a new account.",
