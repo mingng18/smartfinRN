@@ -1,5 +1,5 @@
 {
-  "hello": "Salam",
+  "hello": "Selamat Datang",
   "pending": "Tertunda",
   "total_patient": "Total Pasien",
   "appointment": "Janji Temu",
@@ -33,9 +33,9 @@
   "bleeding": "Pendarahan",
   "joint_pains": "Nyeri Sendi",
   "rashes": "Ruam",
-  "mood_worsening_changes": "Perubahan Mood/Memperburuk",
+  "mood_worsening_changes": "Mood Memburuk/Berubah",
   "weight_loss": "Penurunan Berat Badan",
-  "tiredness": "Kebiasaan",
+  "tiredness": "Kelelahan",
   "seizures": "Sawan",
   "itchiness": "Gatal-gatal",
   "dark_urine": "Urin Gelap",

@@ -89,6 +89,7 @@ const SideEffectDetailsGraph = forwardRef((props, ref) => {
   useImperativeHandle(ref, () => ({
     fetchData() {
       fetchSideEffectSymptomsNumbersThisMonth("");
+      setCurrentPatient(null);
     },
   }));
 

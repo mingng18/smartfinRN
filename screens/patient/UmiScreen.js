@@ -5,6 +5,7 @@ import { Button, Chip, Text, TextInput, useTheme } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { createMessage, resetMessage } from "../../store/redux/umiChatSlice";
 import React from "react";
+import { t } from "i18next";
 
 function UmiScreen() {
   const theme = useTheme();
@@ -217,11 +218,15 @@ const ChatBubble = ({
         </Text>
         {selection &&
           selection.map((item, index) => (
-            <Button
+            <Text
               key={index}
+              variant="bodyMedium"
+              ellipsizeMode="head"
+              numberOfLines={4}
               style={{
-                alignItems: "flex-start",
-                overflow: "visible",
+                marginVertical: 8,
+                color: theme.colors.secondary,
+                marginLeft: 16,
               }}
               onPress={() => {
                 dispatch(
@@ -246,7 +251,7 @@ const ChatBubble = ({
               }}
             >
               {item.title}
-            </Button>
+            </Text>
           ))}
       </View>
     </View>
