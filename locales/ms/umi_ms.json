@@ -6,7 +6,7 @@
   "what_you_like_to_know": "Hi, saya UMI! Apa yang anda ingin ketahui?",
   "how_to_use_umi": {
     "title": "1) Bagaimana cara menggunakan UMI?",
-    "respond": "Cukup klik pada mesej, dan anda akan melihat jawapannya! Anda juga boleh klik pada pilihan di bawah untuk melihat lebih banyak jawapan tentang soalan lain!",
+    "respond": "Klik sahaja pada mesej, dan anda akan melihat jawapannya! Anda juga boleh klik pada pilihan di bawah untuk melihat lebih banyak jawapan tentang soalan lain!",
     "nextSelections": [
       {
         "title": "1.1) Apa yang boleh saya ketahui melalui UMI?",
@@ -14,29 +14,29 @@
       },
       {
         "title": "2.1) Bolehkah saya bertanya tentang segala-galanya menggunakan UMI?",
-        "respond": "Anda boleh bertanya tentang kebanyakan perkara tentang MyTBCompanion, tetapi jika anda mempunyai soalan perubatan, sila berunding dengan doktor anda!"
+        "respond": "Anda boleh bertanya tentang kebanyakan perkara tentang MyTBCompanion, tetapi jika anda mempunyai soalan perubatan, sila jumpa doktor anda!"
       }
     ]
   },
   "video_upload": {
-    "title": "2) Mengenai Pengunggahan Video",
-    "respond": "Apa yang anda ingin ketahui tentang pengunggahan video?",
+    "title": "2) Mengenai Muat Naik Video",
+    "respond": "Apa yang anda ingin ketahui tentang muat naik video?",
     "nextSelections": [
       {
-        "title": "2.1) Apakah itu pengunggahan video?",
-        "respond": "Pengunggahan video adalah ciri yang membolehkan anda mengunggah video diri anda mengambil ubat anda!"
+        "title": "2.1) Apakah itu muat naik video?",
+        "respond": "Muat Naik video adalah ciri yang membolehkan anda memuat naik video diri anda mengambil ubat anda!"
       },
       {
-        "title": "2.2) Mengapa saya perlu mengunggah video?",
-        "respond": "Pengunggahan video memastikan bahawa anda mengambil ubat anda dengan betul, dan ia akan membantu doktor anda untuk memantau kemajuan anda!"
+        "title": "2.2) Mengapa saya perlu memuat naik video?",
+        "respond": "Muat Naik video memastikan bahawa anda mengambil ubat anda dengan betul, dan ia akan membantu doktor anda untuk memantau kemajuan anda!"
       },
       {
-        "title": "2.3) Bagaimana cara mengunggah video",
-        "respond": "Di halaman utama, klik butang unggah, rakam video dengan kamera bawaan anda dan tekan unggah!"
+        "title": "2.3) Bagaimana cara memuat naik video",
+        "respond": "Di halaman utama, klik butang Muat Naik Video, rakam video dengan kamera bawaan anda dan tekan Muat Naik!"
       },
       {
         "title": "2.4) Apa yang harus saya lakukan jika video saya ditolak?",
-        "respond": "Jika video anda ditolak, anda perlu menyemak catatan dari doktor anda untuk memahami alasan mengapa video anda ditolak.\nAnda juga boleh berunding dengan doktor anda untuk maklumat lanjut!\nAnda tidak perlu mengunggah video lain jika video anda ditolak!",
+        "respond": "Jika video anda ditolak, anda perlu menyemak catatan dari doktor anda untuk memahami alasan mengapa video anda ditolak.\nAnda juga boleh berunding dengan doktor anda untuk maklumat lanjut!\nAnda tidak perlu memuat naik video lain jika video anda ditolak!",
         "nextSelections": [
           {
             "title": "2.4.1) Bagaimana cara menyemak catatan tersebut?",
@@ -45,20 +45,20 @@
         ]
       },
       {
-        "title": "2.5) Bolehkah saya melihat pratonton video saya setelah merekam dan sebelum mengunggah?",
-        "respond": "Ya, anda boleh melihat pratonton video anda selepas merekam dan sebelum mengunggah!\nWalau bagaimanapun, anda tidak boleh lagi melihat video anda selepas mengunggahnya!"
+        "title": "2.5) Bolehkah saya pratonton video saya setelah merekam dan sebelum memuat naik?",
+        "respond": "Ya, anda boleh pratonton video anda selepas merekam dan sebelum memuat naik!\nWalau bagaimanapun, anda tidak boleh lagi melihat video anda selepas memuat naiknya!"
       },
       {
-        "title": "2.6) Bolehkah saya memadam video saya selepas mengunggah?",
-        "respond": "Tidak, anda tidak boleh memadam video anda selepas mengunggahnya!\nAnda juga tidak boleh meninjau semula video anda selepas mengunggah."
+        "title": "2.6) Bolehkah saya memadam video saya selepas memuat naik?",
+        "respond": "Tidak, anda tidak boleh memadam video anda selepas memuat naiknya!\nAnda juga tidak boleh meninjau semula video anda selepas memuat naik."
       },
       {
-        "title": "2.7) Bolehkah saya mengunggah video selepas tarikh tamat?",
-        "respond": "Tidak, anda tidak boleh mengunggah video selepas tarikh tamat!"
+        "title": "2.7) Bolehkah saya memuat naik video selepas tarikh tamat?",
+        "respond": "Tidak, anda tidak boleh memuat naik video selepas tarikh tamat!"
       },
       {
-        "title": "2.8) Adakah selamat untuk mengunggah video saya? Bagaimana video saya akan digunakan?",
-        "respond": "Ya, adalah selamat untuk mengunggah video anda!\nVideo anda hanya akan digunakan oleh doktor anda untuk memantau kemajuan anda dan memastikan bahawa anda mengambil ubat dengan betul!\nSelepas ditinjau, video anda akan dihapuskan dari pelayan!"
+        "title": "2.8) Adakah selamat untuk memuat naik video saya? Bagaimana video saya akan digunakan?",
+        "respond": "Ya, adalah selamat untuk memuat naik video anda!\nVideo anda hanya akan digunakan oleh doktor anda untuk memantau kemajuan anda dan memastikan bahawa anda mengambil ubat dengan betul!\nSelepas ditinjau, video anda akan dihapuskan dari pelayan!"
       }
     ]
   },
